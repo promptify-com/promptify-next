@@ -36,7 +36,7 @@ export default function AccordionBox({ children }: Props) {
           borderColor: "surfaceContainerHigh",
           borderRadius: "99px",
           p: "8px 16px",
-          fontSize: 14,
+          fontSize: { xs: 12, md: 14 },
           fontWeight: 500,
           gap: 0.5,
           color: "onSurface",

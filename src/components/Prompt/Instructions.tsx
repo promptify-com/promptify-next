@@ -13,10 +13,10 @@ export default function Instructions({ prompts }: Props) {
   return (
     <Stack
       gap={3}
-      p={"48px"}
+      p={{ xs: "10px 24px", md: "48px" }}
     >
       <Typography
-        fontSize={32}
+        fontSize={{ xs: 24, md: 32 }}
         fontWeight={400}
         color={"onSurface"}
         py={"16px"}
@@ -36,14 +36,14 @@ export default function Instructions({ prompts }: Props) {
                   gap={1}
                 >
                   <Typography
-                    fontSize={16}
+                    fontSize={{ xs: 14, md: 16 }}
                     fontWeight={500}
                     color={"onSurface"}
                   >
                     {prompt.title}
                   </Typography>
                   <Typography
-                    fontSize={16}
+                    fontSize={{ xs: 14, md: 16 }}
                     fontWeight={400}
                     color={"secondary.main"}
                   >
@@ -56,7 +56,7 @@ export default function Instructions({ prompts }: Props) {
                   }}
                 >
                   <Typography
-                    fontSize={16}
+                    fontSize={{ xs: 14, md: 16 }}
                     fontWeight={400}
                     color={"onSurface"}
                     sx={{

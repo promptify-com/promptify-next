@@ -43,10 +43,10 @@ const Feedback = () => {
   return (
     <Stack
       gap={2}
-      p={"48px"}
+      p={{ xs: "10px 24px", md: "48px" }}
     >
       <Typography
-        fontSize={32}
+        fontSize={{ xs: 24, md: 32 }}
         fontWeight={400}
         color={"onSurface"}
         py={"16px"}

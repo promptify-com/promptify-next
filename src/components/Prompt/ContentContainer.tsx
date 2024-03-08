@@ -98,12 +98,12 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           zIndex: 999,
           top: 0,
           bgcolor: "surfaceContainerLowest",
-          p: "32px 36px",
+          p: { xs: "2px 16px", md: "32px 36px" },
         }}
       >
         <Stack
           direction={"row"}
-          gap={2}
+          gap={{ xs: 0.5, md: 2 }}
           sx={{
             width: "100%",
             minWidth: "fit-content",
@@ -122,7 +122,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                 sx={{
                   flex: 1,
                   minWidth: "fit-content",
-                  p: "8px 16px",
+                  p: { xs: "8px", md: "8px 16px" },
                   color: selected ? "onSecondary" : "onSurface",
                   bgcolor: selected ? "secondary.main" : "transparent",
                   ":hover": {
@@ -130,7 +130,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                   },
                 }}
               >
-                {tab.title}
+                {selected && tab.title}
               </Button>
             );
           })}

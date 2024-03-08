@@ -134,24 +134,28 @@ function TemplatePage({ template, popup }: Props) {
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Stack
-        direction={"row"}
+        direction={{ md: "row" }}
         gap={4}
         height={{
           xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
           md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
         }}
-        px={"32px"}
-        bgcolor={"surfaceContainerLowest"}
+        sx={{
+          bgcolor: "surfaceContainerLowest",
+          overflow: { xs: "auto", md: "unset" },
+          mt: { xs: theme.custom.headerHeight.xs, md: 0 },
+          px: { md: "32px" },
+        }}
       >
         <Box
           ref={tabsRef}
           flex={4}
+          order={1}
           height={{
-            xs: `calc(100% - ${popup ? "24px" : 0})`,
-            md: `calc(100% - ${popup ? "24px" : 0})`,
+            md: `calc(100% - ${popup ? "24px" : "0px"})`,
           }}
-          overflow={"auto"}
           sx={{
+            overflow: { md: "auto" },
             "&::-webkit-scrollbar": {
               width: 0,
             },
@@ -164,33 +168,38 @@ function TemplatePage({ template, popup }: Props) {
                 close={closeTemplatePopup}
               />
             )}
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                height: isMobile ? "408px" : "446px",
-                borderRadius: "24px",
-                overflow: "hidden",
-              }}
-            >
-              <Image
-                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                alt={template.title?.slice(0, 1) ?? "P"}
-                priority={true}
-                fill
-                sizes="(max-width: 900px) 253px, 446px"
-                style={{
-                  objectFit: "cover",
+            {!isMobile && (
+              <Box
+                sx={{
+                  position: "relative",
+                  width: "100%",
+                  height: isMobile ? "408px" : "446px",
+                  borderRadius: "24px",
+                  overflow: "hidden",
                 }}
-              />
-            </Box>
+              >
+                <Image
+                  src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                  alt={template.title?.slice(0, 1) ?? "P"}
+                  priority={true}
+                  fill
+                  sizes="(max-width: 900px) 253px, 446px"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                />
+              </Box>
+            )}
             <ContentContainer
               template={template}
               tabsFixed={tabsFixed}
             />
           </Stack>
         </Box>
-        <Box flex={2}>
+        <Box
+          flex={2}
+          order={0}
+        >
           <TemplateDetails template={template} />
         </Box>
       </Stack>

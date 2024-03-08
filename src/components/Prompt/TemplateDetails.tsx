@@ -2,7 +2,7 @@ import { stripTags } from "@/common/helpers";
 import { formatDate } from "@/common/helpers/timeManipulation";
 import { Templates } from "@/core/api/dto/templates";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import { Button, Chip, Stack, Typography, alpha } from "@mui/material";
+import { Box, Button, Chip, Stack, Typography, alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Image from "@/components/design-system/Image";
@@ -16,6 +16,7 @@ import ContentCopy from "@mui/icons-material/ContentCopy";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 import { setSelectedTemplate } from "@/core/store/chatSlice";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import useBrowser from "../../hooks/useBrowser";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -23,6 +24,7 @@ interface TemplateDetailsProps {
 
 const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
   const router = useRouter();
+  const { isMobile } = useBrowser();
   const dispatch = useDispatch();
   const { cloneTemplate } = useCloneTemplate({ template });
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -80,7 +82,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
     >
       <Stack
         gap={6}
-        p={"48px 40px 24px"}
+        p={{ xs: "24px 20px 8px", md: "48px 40px 24px" }}
       >
         <Stack gap={3}>
           <Typography
@@ -90,6 +92,28 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
           >
             {template.title}
           </Typography>
+          {isMobile && (
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                height: "226px",
+                borderRadius: "24px",
+                overflow: "hidden",
+              }}
+            >
+              <Image
+                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                alt={template.title?.slice(0, 1) ?? "P"}
+                priority={true}
+                fill
+                sizes="(max-width: 900px) 253px, 446px"
+                style={{
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+          )}
           <Stack
             direction={"row"}
             alignItems={"center"}
@@ -129,7 +153,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
             />
           </Stack>
           <Typography
-            fontSize={16}
+            fontSize={{ xs: 14, md: 16 }}
             fontWeight={400}
             color={alpha(theme.palette.onSurface, 0.75)}
           >
