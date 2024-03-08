@@ -38,7 +38,7 @@ export default function ChatsHistory({}: Props) {
   };
 
   const filteredChats = chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1);
-  const emptyChats = Boolean(!chats?.length || chats?.length === 0);
+  const emptyChats = Boolean(!chats?.length);
 
   return (
     <Stack
