@@ -2,7 +2,6 @@ import { useMemo, memo, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { executionsApi } from "@/core/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import useChatBox from "@/hooks/useChatBox";
 import useChat from "@/components/Prompt/Hooks/useChat";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setInputs, setParams, setParamsValues } from "@/core/store/chatSlice";
@@ -15,6 +14,7 @@ import dynamic from "next/dynamic";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import { randomId } from "@/common/helpers";
+import useChatBox from "../../Hooks/useChatBox";
 
 interface Props {
   template: Templates;

@@ -1,5 +1,6 @@
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
+import { IParameters } from "@/common/types";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
@@ -13,7 +14,9 @@ export type MessageType =
   | "credentials"
   | "suggestedTemplates"
   | "HeaderWithText"
-  | "question";
+  | "question"
+  | "readyMessage"
+  | "contextualParam";
 
 export interface IMessage {
   id: number;
@@ -33,6 +36,7 @@ export interface IMessage {
 }
 
 export interface IAnswer {
+  parameter?: IParameters;
   inputName: string;
   required: boolean;
   question: string;

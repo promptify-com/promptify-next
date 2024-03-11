@@ -75,7 +75,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData = preparePromptsData(uploadedFiles.current, _answers, paramsValues, template.prompts);
+    const promptsData = preparePromptsData(uploadedFiles.current, _answers, template.prompts);
 
     dispatch(setSelectedExecution(null));
     uploadedFiles.current.clear();

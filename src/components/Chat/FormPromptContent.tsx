@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import HighlightContent from "@/components/Chat/HighlightPrompt";
-import FormParam from "@/components/Prompt/Common/Chat/FormParams";
+import FormParam from "@/components/Prompt/Common/Chat/FormParam";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
 
@@ -68,6 +68,7 @@ function FormPromptContent({ template }: Props) {
             <FormParam
               key={param.parameter.id}
               param={param}
+              variant="slider"
             />
           ))}
         </Stack>

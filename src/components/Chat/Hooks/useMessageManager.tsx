@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { randomId } from "@/common/helpers";
 import { extractTemplateIDs, fetchData, sendMessageAPI } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useChatBox from "@/hooks/useChatBox";
 import {
   setAnswers,
   setChatMode,
   setInitialChat,
+  setSelectedChat,
   setInputs,
   setIsSimulationStreaming,
   setParams,
   setParamsValues,
 } from "@/core/store/chatSlice";
+import useChatBox from "@/components/Prompt/Hooks/useChatBox";
+import { useCreateChatMutation } from "@/core/api/chats";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { useCreateChatMutation } from "@/core/api/chats";
-import { setSelectedChat } from "@/core/store/chatSlice";
 
 interface CreateMessageProps {
   type: MessageType;
@@ -42,6 +42,7 @@ const useMessageManager = () => {
     selectedChatOption,
     selectedChat,
     inputs,
+    params,
     answers,
     chatMode,
     initialChat,
@@ -54,7 +55,8 @@ const useMessageManager = () => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
-  const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
+  const [currentParamIndex, setCurrentParamIndex] = useState(0);
 
   const [createChat] = useCreateChatMutation();
 
@@ -115,6 +117,7 @@ const useMessageManager = () => {
       formMessage.text = welcomeMessage.text;
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
     } else {
+      dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
       headerWithTextMessage.text = welcomeMessage.text;
       const questionMessage = createMessage({
@@ -231,51 +234,66 @@ const useMessageManager = () => {
   };
 
   const questionAnswerSubmitMessage = async (value: string) => {
-    const { required, name: inputName, question, prompt } = inputs[answers.length];
+    const currentIndex = answers.length;
+    const currentInput = inputs[currentIndex];
+    const { required, name: inputName, question, prompt } = currentInput;
 
     if (!value) {
       return;
     }
+
     const userMessage = createMessage({
       type: "text",
       fromUser: true,
       isEditable: true,
-      questionInputName: inputs[answers.length].name,
+      questionInputName: inputName,
     });
     userMessage.text = value;
 
     setMessages(prevMessages => prevMessages.concat(userMessage));
 
-    const _answers = answers.filter(answer => answer.inputName !== inputs[answers.length].name);
-
-    const newAnswer: IAnswer = {
-      question: question!,
-      required,
-      inputName,
-      prompt: prompt!,
-      answer: value,
-    };
-    _answers.push(newAnswer);
-    dispatch(setAnswers(_answers));
-
-    const questions = inputs.map(_q => _q.question).filter(Boolean);
-
-    const nextQuestionIndex = _answers.length;
-    const nextQuestion = questions[nextQuestionIndex];
-    let botMessage: IMessage;
-    if (nextQuestion) {
-      botMessage = createMessage({
+    const nextInput = inputs[currentIndex + 1];
+    if (nextInput) {
+      const newAnswer: IAnswer = {
+        question: question || inputName,
+        required,
+        inputName,
+        prompt: prompt!,
+        answer: value,
+      };
+      const updatedAnswers = [...answers, newAnswer];
+      dispatch(setAnswers(updatedAnswers));
+      const nextQuestionText = nextInput.question || ` what is your ${nextInput.fullName}?`;
+      const botMessage = createMessage({
         type: "question",
-        isRequired: inputs[nextQuestionIndex].required,
-        questionIndex: Math.min(_answers.length + 1, inputs.length),
+        isRequired: nextInput.required,
+        questionIndex: currentIndex + 2,
       });
-      botMessage.text = nextQuestion;
+      botMessage.text = nextQuestionText;
       setMessages(prevMessages => prevMessages.concat(botMessage));
     } else {
-      botMessage = createMessage({ type: "text" });
-      botMessage.text = "Congrats! We are ready to run the prompt";
-      setMessages(prevMessages => prevMessages.concat(botMessage));
-      setAllQuestionsAnswered(true);
+      handleNextContextualParam();
+    }
+  };
+
+  const handleNextContextualParam = () => {
+    if (currentParamIndex < params.length) {
+      const param = params[currentParamIndex];
+      const contextualParamMessage = createMessage({
+        type: "contextualParam",
+        questionIndex: answers.length + 1,
+        questionInputName: param.parameter.name,
+      });
+      contextualParamMessage.text = `what is your ${param.parameter.name} ?`;
+      setMessages(prevMessages => prevMessages.concat(contextualParamMessage));
+
+      setCurrentParamIndex(currentIndex => currentIndex + 1);
+      setIsInputDisabled(true);
+    } else {
+      const completionMessage = createMessage({ type: "readyMessage" });
+      completionMessage.text = "Congrats! We are ready to run the prompt";
+      setMessages(prevMessages => prevMessages.concat(completionMessage));
+      setIsInputDisabled(false);
     }
   };
 
@@ -301,9 +319,9 @@ const useMessageManager = () => {
     suggestedTemplates,
     createMessage,
     showGenerateButton,
-    allQuestionsAnswered,
-    setAllQuestionsAnswered,
     initialChat,
+    isInputDisabled,
+    setIsInputDisabled,
   };
 };
 
