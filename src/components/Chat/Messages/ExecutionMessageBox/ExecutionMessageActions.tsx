@@ -52,7 +52,7 @@ function ExecutionMessageActions({ template }: Props) {
         dispatch(
           setToast({
             message: "Your document has been deleted.",
-            severity: "error",
+            severity: "success",
           }),
         );
       } else {
