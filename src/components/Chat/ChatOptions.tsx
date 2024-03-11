@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -18,6 +19,7 @@ interface Option {
 
 function ChatOptions() {
   const dispatch = useAppDispatch();
+  const [doNotAskAgain, setDoNotAskAgain] = useState(false);
   const options: Option[] = [
     {
       imagePath: "@/pages/chats/images/QA.png",
@@ -33,6 +35,15 @@ function ChatOptions() {
       type: "FORM",
     },
   ];
+
+  const handleOptionClick = (option: Option) => {
+    dispatch(setSelectedChatOption(option.type));
+
+    console.log("doNotAskAgain", doNotAskAgain);
+    if (doNotAskAgain) {
+      Storage.set("chatOption", JSON.stringify(option.type));
+    }
+  };
   return (
     <Box
       sx={{
@@ -95,10 +106,7 @@ function ChatOptions() {
                     bgcolor: "action.hover",
                   },
                 }}
-                onClick={() => {
-                  dispatch(setSelectedChatOption(option.type));
-                  Storage.set("chatOption", JSON.stringify(option.type));
-                }}
+                onClick={() => handleOptionClick(option)}
               >
                 <Box
                   sx={{
@@ -149,7 +157,12 @@ function ChatOptions() {
         </Stack>
 
         <FormControlLabel
-          control={<Checkbox defaultChecked />}
+          control={
+            <Checkbox
+              checked={doNotAskAgain}
+              onChange={e => setDoNotAskAgain(e.target.checked)}
+            />
+          }
           label="Don’t ask me again."
           sx={{
             fontSize: "50px",
