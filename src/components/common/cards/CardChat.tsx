@@ -5,10 +5,10 @@ import Typography from "@mui/material/Typography";
 import type { IChat } from "@/core/api/dto/chats";
 import Image from "@/components/design-system/Image";
 import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/material";
-import { DeleteForeverOutlined, MoreVert } from "@mui/icons-material";
+import { DeleteForeverOutlined, FileCopyOutlined, MoreVert } from "@mui/icons-material";
 import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
-import { useDeleteChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { useDeleteChatMutation, useDuplicateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
@@ -33,6 +33,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [deleteChat] = useDeleteChatMutation();
   const [updateChat] = useUpdateChatMutation();
+  const [duplicateChat] = useDuplicateChatMutation();
 
   const handleDeleteChat = async () => {
     try {
@@ -42,6 +43,16 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
       }
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    }
+  };
+
+  const handleDuplicateChat = async () => {
+    handleCloseActions();
+    try {
+      const newChat = await duplicateChat(chat.id).unwrap();
+      dispatch(setSelectedChat(newChat));
+    } catch (_) {
+      dispatch(setToast({ message: "Chat not duplicated! Please try again.", severity: "error", duration: 6000 }));
     }
   };
 
@@ -160,10 +171,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             <Edit />
             <Box>Rename</Box>
           </MenuItem>
-          {/* <MenuItem sx={menuItemStyle}>
+          <MenuItem
+            onClick={handleDuplicateChat}
+            sx={menuItemStyle}
+          >
             <FileCopyOutlined />
             <Box>Duplicate</Box>
-          </MenuItem> */}
+          </MenuItem>
           <MenuItem
             onClick={() => setConfirmDelete(true)}
             sx={menuItemStyle}
