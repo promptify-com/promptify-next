@@ -36,6 +36,7 @@ export default function ChatsHistory({}: Props) {
       }).unwrap();
       handleClickChat(newChat);
       dispatch(setInitialChat(false));
+      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not created! Please try again.", severity: "error", duration: 6000 }));
     }

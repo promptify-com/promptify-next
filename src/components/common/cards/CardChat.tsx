@@ -35,12 +35,23 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [updateChat] = useUpdateChatMutation();
   const [duplicateChat] = useDuplicateChatMutation();
 
+  const handleUpdateChat = async (title: string) => {
+    try {
+      await updateChat({ id: chat.id, data: { title } });
+      setRenameAllow(false);
+      dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
+    } catch (_) {
+      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    }
+  };
+
   const handleDeleteChat = async () => {
     try {
       await deleteChat(chat.id);
       if (selectedChat?.id === chat.id) {
         dispatch(setSelectedChat(undefined));
       }
+      dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
     }
@@ -51,6 +62,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
     try {
       const newChat = await duplicateChat(chat.id).unwrap();
       dispatch(setSelectedChat(newChat));
+      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not duplicated! Please try again.", severity: "error", duration: 6000 }));
     }
@@ -127,10 +139,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             <RenameForm
               placeholder="New Chat"
               initialValue={chat.title}
-              onSave={val => {
-                updateChat({ id: chat.id, data: { title: val } });
-                setRenameAllow(false);
-              }}
+              onSave={handleUpdateChat}
               onCancel={() => setRenameAllow(false)}
             />
           )}
