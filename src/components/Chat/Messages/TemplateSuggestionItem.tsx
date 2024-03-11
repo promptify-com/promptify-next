@@ -15,6 +15,7 @@ import Popper from "@mui/material/Popper";
 import { MoreVert } from "@mui/icons-material";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import { useRef, useState } from "react";
+import Link from "next/link";
 
 interface Props {
   template: Templates;
@@ -22,7 +23,7 @@ interface Props {
 }
 
 function TemplateSuggestionItem({ template, onClick }: Props) {
-  const { thumbnail, title, description, favorites_count, executions_count } = template;
+  const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
   const [actionsOpened, setActionsOpened] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
@@ -43,15 +44,18 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
         gap={"24px"}
       >
         <Box
+          component={Link}
+          href={`/prompt/${slug}`}
+          target="_blank"
           sx={{
             zIndex: 0,
             position: "relative",
             width: { xs: "260px", md: "152px" },
             minWidth: "152px",
-
             height: "113px",
             borderRadius: "24px",
             overflow: "hidden",
+            textDecoration: "none",
           }}
         >
           <Image
@@ -69,14 +73,22 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           justifyItems={"flex-start"}
           gap={2}
         >
-          <Box>
-            <Typography
-              fontSize={{ xs: 15, md: 18 }}
-              fontWeight={500}
-              lineHeight={"25.2px"}
+          <Stack alignItems={"flex-start"}>
+            <Link
+              href={`/prompt/${slug}`}
+              target="_blank"
+              style={{
+                textDecoration: "none",
+              }}
             >
-              {title}
-            </Typography>
+              <Typography
+                fontSize={{ xs: 15, md: 18 }}
+                fontWeight={500}
+                lineHeight={"25.2px"}
+              >
+                {title}
+              </Typography>
+            </Link>
             <Typography
               fontSize={{ xs: 14, md: 16 }}
               fontWeight={400}
@@ -87,7 +99,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
             >
               {description}
             </Typography>
-          </Box>
+          </Stack>
           <Stack
             direction={"row"}
             gap={"8px"}
@@ -156,7 +168,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           Run prompt
         </Button>
 
-        <IconButton
+        {/* <IconButton
           ref={actionsAnchorRef}
           onClick={() => setActionsOpened(true)}
           sx={{
@@ -167,9 +179,9 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           }}
         >
           <MoreVert />
-        </IconButton>
+        </IconButton> */}
       </Stack>
-      {actionsOpened && (
+      {/* {actionsOpened && (
         <Popper
           sx={{ zIndex: 1200 }}
           open={actionsOpened}
@@ -205,7 +217,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
             </Fade>
           )}
         </Popper>
-      )}
+      )} */}
     </Stack>
   );
 }
