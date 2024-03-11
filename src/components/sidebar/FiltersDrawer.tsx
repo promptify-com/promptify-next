@@ -19,7 +19,9 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
 
   useEffect(() => {
     const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
-    if (isPromptsFiltersSticky) {
+    if (isPromptsFiltersSticky === null) {
+      dispatch(setStickyPromptsFilters(true));
+    } else {
       dispatch(setStickyPromptsFilters(isPromptsFiltersSticky));
     }
   }, []);

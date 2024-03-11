@@ -17,20 +17,12 @@ const sidebarSlice = createSlice({
     setStickyPromptsFilters: (state, action: PayloadAction<boolean>) => {
       const sticky = action.payload;
       state.isPromptsFiltersSticky = sticky;
-      if (sticky) {
-        Storage.set("isPromptsFiltersSticky", String(sticky));
-      } else {
-        Storage.remove("isPromptsFiltersSticky");
-      }
+      Storage.set("isPromptsFiltersSticky", String(sticky));
     },
     setStickyChatHistory: (state, action: PayloadAction<boolean>) => {
       const sticky = action.payload;
       state.isChatHistorySticky = sticky;
-      if (sticky) {
-        Storage.set("isChatHistorySticky", String(sticky));
-      } else {
-        Storage.remove("isChatHistorySticky");
-      }
+      Storage.set("isChatHistorySticky", String(sticky));
     },
   },
 });
