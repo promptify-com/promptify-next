@@ -10,17 +10,26 @@ import { setToast } from "@/core/store/toastSlice";
 import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
+import { useRouter } from "next/router";
 
 interface Props {}
 
 export default function ChatsHistory({}: Props) {
+  const router = useRouter();
   const dispatch = useAppDispatch();
-  const { data: chats, isLoading: loadingChats } = useGetChatsQuery();
-  const [createChat] = useCreateChatMutation();
-  const [search, setSearch] = useState("");
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const selectedChat = useAppSelector(state => state.chat.selectedChat);
+  const [search, setSearch] = useState("");
+
+  const { data: chats, isLoading: loadingChats } = useGetChatsQuery();
+
+  const [createChat] = useCreateChatMutation();
 
   const handleNewChat = async () => {
+    if (!currentUser?.id) {
+      return router.push("/signin");
+    }
+
     try {
       const newChat = await createChat({
         title: "Welcome",
