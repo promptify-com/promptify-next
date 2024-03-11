@@ -39,7 +39,7 @@ function ChatOptions() {
   const handleOptionClick = (option: Option) => {
     dispatch(setSelectedChatOption(option.type));
     if (isChecked) {
-      Storage.set("chatOption", JSON.stringify(option.type));
+      Storage.set("chatOption", option.type);
     }
   };
   return (
