@@ -5,11 +5,16 @@ import Favorite from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
-
-import Image from "../../design-system/Image";
+import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
-import { IconButton } from "@mui/material";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Fade from "@mui/material/Fade";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
 import { MoreVert } from "@mui/icons-material";
+import TemplateActions from "@/components/Chat/TemplateActions";
+import { useRef, useState } from "react";
 
 interface Props {
   template: Templates;
@@ -18,6 +23,8 @@ interface Props {
 
 function TemplateSuggestionItem({ template, onClick }: Props) {
   const { thumbnail, title, description, favorites_count, executions_count } = template;
+  const [actionsOpened, setActionsOpened] = useState(false);
+  const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Stack
@@ -150,6 +157,8 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
         </Button>
 
         <IconButton
+          ref={actionsAnchorRef}
+          onClick={() => setActionsOpened(true)}
           sx={{
             border: "none",
             "&:hover": {
@@ -160,6 +169,43 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           <MoreVert />
         </IconButton>
       </Stack>
+      {actionsOpened && (
+        <Popper
+          sx={{ zIndex: 1200 }}
+          open={actionsOpened}
+          anchorEl={actionsAnchorRef.current}
+          placement={"bottom-end"}
+          transition
+        >
+          {({ TransitionProps }) => (
+            <Fade
+              {...TransitionProps}
+              timeout={350}
+            >
+              <Paper
+                sx={{
+                  borderRadius: "16px",
+                  width: "199px",
+                  marginTop: "5px",
+                  overflow: "hidden",
+                }}
+                elevation={1}
+              >
+                <ClickAwayListener
+                  onClickAway={() => {
+                    console.log("close");
+                    setActionsOpened(false);
+                  }}
+                >
+                  <Box>
+                    <TemplateActions template={template} />
+                  </Box>
+                </ClickAwayListener>
+              </Paper>
+            </Fade>
+          )}
+        </Popper>
+      )}
     </Stack>
   );
 }
