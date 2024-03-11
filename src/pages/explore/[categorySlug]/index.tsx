@@ -227,6 +227,16 @@ export default function Page({ category }: { category: Category }) {
                     hasPrev={hasPrev}
                     onPrevPage={handlePrevPage}
                   />
+                  {templates?.length === 0 && (
+                    <Typography
+                      fontSize={{ xs: 14, md: 18 }}
+                      fontWeight={400}
+                      textAlign={"center"}
+                      color={"onSurface"}
+                    >
+                      No templates found. Please adjust your filters.
+                    </Typography>
+                  )}
                 </Box>
               )}
 

@@ -41,7 +41,7 @@ function FooterPrompt() {
         justifyContent={"center"}
         alignItems={"center"}
         alignSelf={"stretch"}
-        bgcolor={"surface.1"}
+        bgcolor={"surfaceContainerLowest"}
         m={{ sm: "auto", md: 0 }}
         width={{ xs: "100%", sm: "80%", md: "100%" }}
       >
