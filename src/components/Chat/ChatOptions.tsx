@@ -19,7 +19,7 @@ interface Option {
 
 function ChatOptions() {
   const dispatch = useAppDispatch();
-  const [doNotAskAgain, setDoNotAskAgain] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const options: Option[] = [
     {
       imagePath: "@/pages/chats/images/QA.png",
@@ -38,9 +38,7 @@ function ChatOptions() {
 
   const handleOptionClick = (option: Option) => {
     dispatch(setSelectedChatOption(option.type));
-
-    console.log("doNotAskAgain", doNotAskAgain);
-    if (doNotAskAgain) {
+    if (isChecked) {
       Storage.set("chatOption", JSON.stringify(option.type));
     }
   };
@@ -159,8 +157,8 @@ function ChatOptions() {
         <FormControlLabel
           control={
             <Checkbox
-              checked={doNotAskAgain}
-              onChange={e => setDoNotAskAgain(e.target.checked)}
+              checked={isChecked}
+              onChange={e => setIsChecked(e.target.checked)}
             />
           }
           label="Don’t ask me again."
