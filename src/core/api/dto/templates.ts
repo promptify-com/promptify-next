@@ -290,6 +290,12 @@ export interface TempalteApiStatusState {
   isLoading: boolean;
 }
 
+export interface PopupTemplates {
+  template: Templates | null;
+  previous?: Templates | null;
+  next?: Templates | null;
+}
+
 export interface IFeedback {
   id: number;
   user: UserPartial;

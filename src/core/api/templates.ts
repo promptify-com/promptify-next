@@ -53,6 +53,18 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
+      addTemplateLike: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/like`,
+          method: "post",
+        }),
+      }),
+      removeTemplateLike: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/like`,
+          method: "delete",
+        }),
+      }),
       getPromptTemplates: builder.query<Templates, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}`,
@@ -132,7 +144,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-
       getFeedbacks: builder.query<IFeedback[], number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/feedbacks/`,
@@ -221,6 +232,8 @@ export const templatesApi = baseApi.injectEndpoints({
 export const {
   useGetTemplatesSuggestedQuery,
   useDeleteTemplateMutation,
+  useAddTemplateLikeMutation,
+  useRemoveTemplateLikeMutation,
   useUpdatePromptMutation,
   useGetTemplatesByFilterQuery,
   useGetTemplatesBySearchQuery,

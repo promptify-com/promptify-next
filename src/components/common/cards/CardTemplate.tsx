@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
-import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
@@ -13,14 +13,13 @@ import useTruncate from "@/hooks/useTruncate";
 import { isDesktopViewPort, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
-import Link from "next/link";
 import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
 import { Bolt } from "@mui/icons-material";
-import Box from "@mui/material/Box";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 type CardTemplateProps = {
-  template: Templates | TemplateExecutionsDisplay;
+  template: Templates;
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
@@ -40,6 +39,14 @@ function CardTemplate({
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const isDesktop = isDesktopViewPort();
+
+  const openTemplateDetails = () => {
+    dispatch(
+      updatePopupTemplate({
+        template,
+      }),
+    );
+  };
 
   const highlightSearchQuery = (text: string) => {
     if (!query) return text;
@@ -69,257 +76,203 @@ function CardTemplate({
   };
 
   return (
-    <Box
-      component={Link}
-      href={`/prompt/${template.slug}`}
+    <Card
+      onClick={e => {
+        e.preventDefault();
+        openTemplateDetails();
+      }}
       sx={{
         flex: isDesktop ? 1 : "none",
-        textDecoration: "none",
         width: isDesktop ? "auto" : "100%",
-        position: "relative",
-        maxWidth: {
-          xs: "100%",
-          sm: "300px",
-          md: "300px",
-          lg: "254px",
+        minWidth: isDesktop && vertical ? "210px" : "auto",
+        height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
+        borderRadius: "16px",
+        cursor: "pointer",
+        p: isDesktop && vertical ? "16px 16px 8px" : "8px",
+        bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
+        "&:hover": {
+          bgcolor: "action.hover",
         },
       }}
+      elevation={0}
     >
-      <Card
-        sx={{
-          width: "auto",
-          minWidth: isDesktop && vertical ? "210px" : "auto",
-          height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
-          borderRadius: {
-            sm: "16px",
-            md: showTagsOnHover ? "16px 16px 0 0" : "16px",
-          },
-          cursor: "pointer",
-          p: isDesktop && vertical ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop && vertical ? "transparent" : bgColor,
-          transition: "background-color 0.1s ease",
-          "&:hover": {
-            bgcolor: bgColor,
-          },
-          ...conditionalTagStyles,
-        }}
-        elevation={0}
+      <Stack
+        direction={{ xs: "column", md: vertical ? "column" : "row" }}
+        alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
+        justifyContent={"space-between"}
+        gap={1}
+        height={"100%"}
       >
         <Stack
-          direction={{ xs: "column", md: vertical ? "column" : "row" }}
-          alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
-          justifyContent={"space-between"}
-          gap={1}
+          direction={isDesktop && vertical ? "column" : "row"}
+          justifyContent={{ xs: "flex-start", md: "space-between" }}
+          alignItems={vertical ? "flex-start" : "center"}
+          flexWrap={"wrap"}
+          gap={2}
+          width={"100%"}
           height={"100%"}
         >
-          <Stack
-            direction={isDesktop && vertical ? "column" : "row"}
-            justifyContent={{ xs: "flex-start", md: "space-between" }}
-            alignItems={vertical ? "flex-start" : "center"}
-            flexWrap={"wrap"}
-            gap={2}
-            width={"100%"}
-            height={"100%"}
+          <CardMedia
+            sx={{
+              zIndex: 1,
+              borderRadius: "16px",
+              overflow: "hidden",
+              width: { xs: "98px", sm: vertical ? "100%" : "72px" },
+              height: { xs: "73px", sm: vertical ? "160px" : "54px" },
+            }}
           >
-            <CardMedia
+            <Image
+              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={template.title}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            />
+          </CardMedia>
+          <Stack
+            flex={1}
+            gap={0.5}
+          >
+            <Typography
+              fontSize={14}
+              fontWeight={500}
+            >
+              {highlightSearchQuery(template.title)}
+            </Typography>
+            <Typography
               sx={{
-                zIndex: 1,
-                borderRadius: "16px",
-                overflow: "hidden",
-                width: { xs: "98px", sm: vertical ? "100%" : "72px" },
-                height: { xs: "73px", sm: vertical ? "160px" : "54px" },
+                fontSize: 12,
+                fontWeight: 400,
+                lineHeight: "16.8px",
+                letterSpacing: "0.15px",
+                color: "onSurface",
+                opacity: vertical ? 0.75 : 1,
               }}
             >
-              <Image
-                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                alt={template.title}
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              />
-            </CardMedia>
+              {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
+            </Typography>
+          </Stack>
+          {!vertical && (
+            <Image
+              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+              width={32}
+              height={32}
+              style={{
+                display: isDesktop ? "none" : asResult ? "none" : "flex",
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
+              }}
+            />
+          )}
+          {vertical && (
             <Stack
-              flex={1}
-              gap={0.5}
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+              width={"100%"}
             >
-              <Typography
-                fontSize={{ xs: 16, md: 14 }}
-                fontWeight={500}
-              >
-                {highlightSearchQuery(template.title)}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: { xs: 14, md: 12 },
-                  fontWeight: 400,
-                  lineHeight: "16.8px",
-                  letterSpacing: "0.15px",
-                  color: "onSurface",
-                  opacity: vertical ? 0.75 : 1,
-                }}
-              >
-                {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
-              </Typography>
-            </Stack>
-            {!vertical && (
-              <Image
-                src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-                width={32}
-                height={32}
-                style={{
-                  display: isDesktop ? "none" : asResult ? "none" : "flex",
-                  backgroundColor: theme.palette.surface[5],
-                  borderRadius: "50%",
-                }}
-              />
-            )}
-            {vertical && (
               <Stack
                 direction={"row"}
                 alignItems={"center"}
-                gap={1}
-                width={"100%"}
+                gap={0.5}
+                sx={iconTextStyle}
               >
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={0.5}
-                  sx={iconTextStyle}
-                >
-                  <Favorite />
-                  {template.favorites_count || 0}
-                </Stack>
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={0.5}
-                  sx={iconTextStyle}
-                >
-                  <Bolt />
-                  {template.executions_count || 0}
-                </Stack>
-                <Typography
-                  ml={"auto"}
-                  fontSize={13}
-                  fontWeight={400}
-                  color={alpha(theme.palette.onSurface, 0.75)}
-                >
-                  by {template.created_by.first_name || template.created_by.username}
-                </Typography>
+                <Favorite />
+                {template.favorites_count || 0}
               </Stack>
-            )}
-          </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={0.5}
+                sx={iconTextStyle}
+              >
+                <Bolt />
+                {template.executions_count || 0}
+              </Stack>
+              <Typography
+                ml={"auto"}
+                fontSize={13}
+                fontWeight={400}
+                color={alpha(theme.palette.onSurface, 0.75)}
+              >
+                by {template.created_by.first_name || template.created_by.username}
+              </Typography>
+            </Stack>
+          )}
+        </Stack>
+        <Stack
+          display={asResult ? "none" : "flex"}
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={{ xs: "end", md: "center" }}
+          width={{ xs: "100%", md: "auto" }}
+          marginTop={{ xs: vertical ? 0 : "10px", md: "0px" }}
+          gap={2}
+        >
           <Stack
-            display={asResult ? "none" : "flex"}
             direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={{ xs: "end", md: "center" }}
-            width={{ xs: "100%", md: "auto" }}
-            marginTop={{ xs: vertical ? 0 : "10px", md: "0px" }}
-            gap={2}
+            gap={1}
           >
-            <Stack
-              direction={"row"}
-              gap={1}
-            >
-              {!vertical && (
-                <>
-                  {template.tags.slice(0, 3).map(tag => (
-                    <Chip
-                      key={tag.id}
-                      clickable
-                      size="small"
-                      label={tag.name}
-                      sx={{
-                        fontSize: { xs: 11, md: 13 },
-                        fontWeight: 400,
-                        bgcolor: "surface.5",
-                        color: "onSurface",
-                      }}
-                      onClick={e => {
-                        e.stopPropagation();
-
-                        dispatch(setSelectedTag(tag));
-
-                        router.push("/explore");
-                      }}
-                    />
-                  ))}
-                  <Grid
+            {!vertical && (
+              <>
+                {template.tags.slice(0, 3).map(tag => (
+                  <Chip
+                    key={tag.id}
+                    clickable
+                    size="small"
+                    label={tag.name}
                     sx={{
-                      display: "flex",
-                      gap: "0.4em",
+                      fontSize: { xs: 11, md: 13 },
+                      fontWeight: 400,
+                      bgcolor: "surface.5",
+                      color: "onSurface",
                     }}
-                  >
-                    <Stack
-                      direction={"row"}
-                      alignItems={"center"}
-                      gap={0.5}
-                      sx={{
-                        display: "flex",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        color: "onSurface",
-                      }}
-                    >
-                      <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
-                      {template.favorites_count || 0}
-                    </Stack>
-                  </Grid>
-                  <Image
-                    src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                    alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-                    width={32}
-                    height={32}
-                    style={{
-                      display: isDesktop ? "flex" : "none",
-                      backgroundColor: theme.palette.surface[5],
-                      borderRadius: "50%",
+                    onClick={e => {
+                      e.stopPropagation();
+
+                      dispatch(setSelectedTag(tag));
+
+                      router.push("/explore");
                     }}
                   />
-                </>
-              )}
-            </Stack>
+                ))}
+                <Grid
+                  sx={{
+                    display: "flex",
+                    gap: "0.4em",
+                  }}
+                >
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={0.5}
+                    sx={{
+                      display: "flex",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: "onSurface",
+                    }}
+                  >
+                    <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
+                    {template.favorites_count || 0}
+                  </Stack>
+                </Grid>
+                <Image
+                  src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                  alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+                  width={32}
+                  height={32}
+                  style={{
+                    display: isDesktop ? "flex" : "none",
+                    backgroundColor: theme.palette.surface[5],
+                    borderRadius: "50%",
+                  }}
+                />
+              </>
+            )}
           </Stack>
         </Stack>
-
-        {conditionalTagStyles && (
-          <Stack
-            sx={{
-              position: "absolute",
-              top: "100%",
-              left: 0,
-              right: 0,
-              zIndex: 0,
-              p: "8px",
-              bgcolor: "surface.2",
-              borderRadius: "0 0 16px 16px",
-              display: "none",
-              alignItems: "flex-start",
-              alignContent: "flex-start",
-              flexDirection: "row",
-              gap: "8px var(--1, 8px)",
-              flexWrap: "wrap",
-              transition: "background-color 0.3s ease",
-            }}
-            className="tags"
-          >
-            {template.tags.map(tag => (
-              <Chip
-                size="small"
-                label={tag.name}
-                key={tag.id}
-                sx={{
-                  fontSize: { xs: 11, md: 13 },
-                  fontWeight: 400,
-                  bgcolor: "white",
-                  color: "onSurface",
-                }}
-              />
-            ))}
-          </Stack>
-        )}
-      </Card>
-    </Box>
+      </Stack>
+    </Card>
   );
 }
 

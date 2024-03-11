@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 
-import ApiAccessModal from "@/components/modals/ApiAccessModal";
 import { theme } from "@/theme";
 import { ApiAccessIcon } from "@/assets/icons/ApiAccess";
 import { templatesApi, useSetTemplateEnableApiMutation } from "@/core/api/templates";
@@ -106,13 +105,6 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
           Learn more about API
         </Typography>
       </Link>
-
-      {isModalOpen && (
-        <ApiAccessModal
-          onClose={() => setIsModalOpen(false)}
-          templateData={template}
-        />
-      )}
     </Stack>
   );
 };

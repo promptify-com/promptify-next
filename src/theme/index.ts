@@ -10,6 +10,7 @@ interface SurfaceVariants {
 
 interface CustomPalette {
   onPrimary: string;
+  onSecondary: string;
   primaryContainer: string;
   secondaryContainer: string;
   tertiary: string;
@@ -78,6 +79,7 @@ export let theme: Theme = createTheme({
       main: "#BA1B1B",
     },
     onPrimary: "#FFFFFF",
+    onSecondary: "#FFFFFF",
     primaryContainer: "#D8E2FF",
     secondaryContainer: "#DCE2F9",
     tertiary: "#725472",
