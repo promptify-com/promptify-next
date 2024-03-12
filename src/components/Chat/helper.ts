@@ -1,7 +1,10 @@
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
-import { Templates } from "@/core/api/dto/templates";
 import { getTemplateById } from "@/hooks/api/templates";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { PromptParams } from "@/core/api/dto/prompts";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IQuestion } from "../Prompt/Types/chat";
 
 interface SendMessageResponse {
   output?: string;
@@ -34,7 +37,6 @@ export function extractTemplateIDs(message: string) {
   const mergedIds = new Set([...tplIds, ...tplIds2]);
 
   return Array.from(mergedIds)?.map(n => +n) ?? [450, 451, 127, 137, 138];
-  // return [450, 451, 127, 137, 138];
 }
 
 export async function fetchData(ids: number[]) {
@@ -107,4 +109,24 @@ export async function fetchData(ids: number[]) {
   }
 
   return filteredData;
+}
+
+export function prepareQuestions(inputs: IPromptInput[], params: PromptParams[]): IQuestion[] {
+  const inputQuestions: IQuestion[] = inputs.map(input => ({
+    inputName: input.name,
+    question: input.question || ` what is your ${input.fullName}?`,
+    required: input.required,
+    type: "input",
+    prompt: input.prompt,
+  }));
+
+  const paramQuestions: IQuestion[] = params.map(param => ({
+    inputName: param.parameter.name,
+    prompt: param.prompt,
+    question: `What is your ${param.parameter.name}?`,
+    required: false,
+    type: "param",
+  }));
+
+  return [...inputQuestions, ...paramQuestions];
 }

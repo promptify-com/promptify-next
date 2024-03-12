@@ -48,3 +48,15 @@ export interface IAnswer {
 export type ChatOption = "QA" | "FORM";
 
 export type ChatMode = "messages" | "automation";
+
+export interface IQuestion {
+  inputName: string;
+  prompt?: number;
+  question: string;
+  required: boolean;
+  type: "input" | "param";
+  defaultValue?: string | number | null;
+  choices?: string[];
+  fileExtensions?: string[];
+  // New property to distinguish between inputs and params
+}
