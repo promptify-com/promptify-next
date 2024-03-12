@@ -104,8 +104,8 @@ function Chat() {
   }, []);
 
   useEffect(() => {
+    console.log(selectedChat);
     if (!initialChat) {
-      dispatch(setInitialChat(false));
       setMessages([]);
       dispatch(setAnswers([]));
       dispatch(setInputs([]));

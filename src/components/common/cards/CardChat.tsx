@@ -144,24 +144,28 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
               </Typography>
             </>
           ) : (
-            <RenameForm
-              placeholder="New Chat"
-              initialValue={chat.title}
-              onSave={handleUpdateChat}
-              onCancel={() => setRenameAllow(false)}
-            />
+            <Box onClick={e => e.stopPropagation()}>
+              <RenameForm
+                placeholder="New Chat"
+                initialValue={chat.title}
+                onSave={handleUpdateChat}
+                onCancel={() => setRenameAllow(false)}
+              />
+            </Box>
           )}
         </CardContent>
-        <IconButton
-          onClick={e => {
-            e.stopPropagation();
-            handleOpenActions(e);
-          }}
-          className="actions-menu"
-          sx={{ border: "none", ":hover": { bgcolor: "action.hover" } }}
-        >
-          <MoreVert />
-        </IconButton>
+        {!renameAllow && (
+          <IconButton
+            onClick={e => {
+              e.stopPropagation();
+              handleOpenActions(e);
+            }}
+            className="actions-menu"
+            sx={{ border: "none", ":hover": { bgcolor: "action.hover" } }}
+          >
+            <MoreVert />
+          </IconButton>
+        )}
         <Menu
           anchorEl={actionsMenuAnchor}
           open={Boolean(actionsMenuAnchor)}
