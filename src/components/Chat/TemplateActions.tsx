@@ -1,5 +1,3 @@
-import BookmarkBorderOutlined from "@mui/icons-material/BookmarkBorderOutlined";
-import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
 import QuestionAnswerOutlined from "@mui/icons-material/QuestionAnswerOutlined";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
@@ -19,6 +17,10 @@ interface Props {
 
 function TemplateActions({ template }: Props) {
   const { saveFavorite, templateData } = useSaveFavoriteTemplate(template);
+
+  const handleViewPromptInfo = () => {
+    window.open(`/prompt/${template.slug}`, "_blank");
+  };
 
   return (
     <Stack
@@ -42,11 +44,11 @@ function TemplateActions({ template }: Props) {
       <Divider sx={{ m: "0 !important" }} />
 
       <MenuItem
-        onClick={() => {}}
+        onClick={handleViewPromptInfo}
         sx={menuItemStyle}
       >
         <VisibilityOutlined />
-        view prompt info
+        View prompt info
       </MenuItem>
 
       <MenuItem
