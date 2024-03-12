@@ -65,7 +65,7 @@ const HighlightContent = ({ content, promptId }: Props) => {
       }
 
       const inputName = match[1];
-      const isRequired = inputs.find(input => input.name === inputName)?.required;
+      const input = inputs.find(input => input.name === inputName);
       const isSelectedForInput = selectedPrompt && selectedPrompt.match === inputName;
       const answer = answers.find(answer => inputName === answer.inputName)?.answer as string;
       const existingAnswer = answer || inputName;
@@ -96,11 +96,12 @@ const HighlightContent = ({ content, promptId }: Props) => {
                 }
                 setSelectedPrompt(null);
               }}
+              type={input?.type}
               sx={{ color: "primary.main" }}
             />
           ) : (
             <Typography color="primary.main">
-              {existingAnswer + `${isRequired && inputName === existingAnswer ? "*" : ""}`}
+              {existingAnswer + `${input?.required && inputName === existingAnswer ? "*" : ""}`}
             </Typography>
           )}
         </Box>,
