@@ -49,7 +49,7 @@ const ParamButtons = ({ param, onChange }: Props) => {
     >
       <div
         ref={containerRef}
-        style={{ position: "relative", display: "flex", alignItems: "center", gap: "24px" }}
+        style={{ position: "relative", display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}
       >
         {param.parameter.score_descriptions.map((score, index) => {
           const keyword = extractFirstKeyword(score.description);
@@ -99,18 +99,18 @@ const ParamButtons = ({ param, onChange }: Props) => {
                   }}
                   PaperProps={{
                     sx: {
-                      marginTop: -24,
+                      marginTop: -7,
                       borderRadius: "24px",
                       pointerEvents: "auto",
                     },
                   }}
                   container={containerRef.current}
                   anchorOrigin={{
-                    vertical: "top",
+                    vertical: "bottom",
                     horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "top",
+                    vertical: "bottom",
                     horizontal: "left",
                   }}
                 >

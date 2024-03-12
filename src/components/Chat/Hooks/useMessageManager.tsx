@@ -23,6 +23,7 @@ import type { PromptParams } from "@/core/api/dto/prompts";
 
 interface CreateMessageProps {
   type: MessageType;
+  text?: string;
   fromUser?: boolean;
   noHeader?: boolean;
   timestamp?: string;
@@ -119,10 +120,10 @@ const useMessageManager = () => {
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
     } else {
       dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
-      const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
+      const headerWithTextMessage = createMessage({ type: "headerWithText" });
       headerWithTextMessage.text = welcomeMessage.text;
       const questionMessage = createMessage({
-        type: "question",
+        type: "questionInput",
         isRequired: questions[0].required,
         questionIndex: 1,
       });
@@ -239,17 +240,17 @@ const useMessageManager = () => {
 
   useEffect(() => {
     if (parameterSelected) {
-      handleSubmitInput(parameterSelected);
+      questionAnswerSubmitMessage(parameterSelected, true);
 
       dispatch(clearParameterSelection());
     }
   }, [parameterSelected]);
 
-  const questionAnswerSubmitMessage = async (value: string) => {
+  const questionAnswerSubmitMessage = async (value: string, isParam = false) => {
     if (!value) {
       return;
     }
-    const currentIndex = answers.length;
+    const currentIndex = isParam ? answers.length - 1 : answers.length;
 
     const currentQuestion = questions[currentIndex];
 
@@ -277,18 +278,19 @@ const useMessageManager = () => {
 
       dispatch(setAnswers(_answers));
     }
-
     const nextQuestion = questions[currentIndex + 1];
     if (nextQuestion) {
       const botMessage = createMessage({
-        type: nextQuestion.type === "input" ? "question" : "contextualParam",
+        type: nextQuestion.type === "input" ? "questionInput" : "questionParam",
         isRequired: nextQuestion.required,
-        questionIndex: currentIndex + 1,
+        questionIndex: currentIndex + 2,
         questionInputName: nextQuestion.inputName,
       });
       botMessage.text = nextQuestion.question;
 
       setMessages(prevMessages => prevMessages.concat(botMessage));
+
+      nextQuestion.type === "param" && setIsInputDisabled(true);
     } else {
       const completionMessage = createMessage({ type: "readyMessage" });
       completionMessage.text = "Congrats! We are ready to run the prompt";

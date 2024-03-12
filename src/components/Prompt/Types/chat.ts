@@ -13,10 +13,10 @@ export type MessageType =
   | "html"
   | "credentials"
   | "suggestedTemplates"
-  | "HeaderWithText"
-  | "question"
-  | "readyMessage"
-  | "contextualParam";
+  | "headerWithText"
+  | "questionInput"
+  | "questionParam"
+  | "readyMessage";
 
 export interface IMessage {
   id: number;

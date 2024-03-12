@@ -66,7 +66,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           </Stack>
         </Fade>
       )}
-      {message.type === "HeaderWithText" && (
+      {message.type === "headerWithText" && (
         <Fade
           in={true}
           unmountOnExit
@@ -78,13 +78,13 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           </Stack>
         </Fade>
       )}
-      {message.type === "question" && (
+      {message.type === "questionInput" && (
         <QuestionMessage
           variant="input"
           message={message}
         />
       )}
-      {message.type === "contextualParam" && (
+      {message.type === "questionParam" && (
         <QuestionMessage
           variant="param"
           message={message}
