@@ -81,8 +81,12 @@ function PopularTemplates({ catId }: Props) {
       >
         <Typography
           fontSize={{ xs: 19, md: 32 }}
-          fontWeight={500}
-          color={"#2A2A3C"}
+          fontWeight={400}
+          color={"onSurface"}
+          fontFamily={"Poppins"}
+          lineHeight={"120%"}
+          letterSpacing={"0.17px"}
+          fontStyle={"normal"}
         >
           Most popular templates:
         </Typography>

@@ -112,7 +112,7 @@ export let theme: Theme = createTheme({
     leftClosedSidebarWidth: "88px",
     headerHeight: {
       xs: "58px",
-      md: "90px",
+      md: "72px",
     },
     promptBuilder: {
       headerHeight: "75px",

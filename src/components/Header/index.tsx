@@ -232,6 +232,7 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
 
 export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
   const { isMobile, clientLoaded } = useBrowser();
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
 
   if (!clientLoaded) return <HeaderPlaceholder />;
 
@@ -239,8 +240,14 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
     <Box
       sx={{
         width: "100%",
+        maxWidth: {
+          xs: "100%",
+          md: isPromptsFiltersSticky ? "58%" : "91.2%",
+          lg: isPromptsFiltersSticky ? "70%" : "94%",
+          xl: isPromptsFiltersSticky ? "75.9%" : "95%",
+        },
         background: transparent ? "transparent" : "surface.1",
-        position: { xs: "fixed", md: fixed ? "fixed" : "relative" },
+        position: "fixed",
         zIndex: 1000,
         top: 0,
         display: "flex",

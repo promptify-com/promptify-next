@@ -8,12 +8,11 @@ import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import type { GetServerSideProps } from "next";
 import { Layout } from "@/layout";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { Category } from "@/core/api/dto/templates";
+import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import { CategoryCard } from "@/components/common/cards/CardCategory";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
@@ -21,22 +20,18 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import useBrowser from "@/hooks/useBrowser";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
+import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
+import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 
 interface Props {
   categories: Category[];
 }
 
 export default function ExplorePage({ categories }: Props) {
-  const {
-    templates,
-    isTemplatesLoading,
-    handleNextPage,
-    hasMore,
-    allFilterParamsNull,
-    isFetching,
-    hasPrev,
-    handlePrevPage,
-  } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
+  const { templates, handleNextPage, hasMore, allFilterParamsNull, isFetching, hasPrev, handlePrevPage } =
+    useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 8, paginatedList: true });
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
@@ -44,10 +39,13 @@ export default function ExplorePage({ categories }: Props) {
   });
 
   const isValidUser = useAppSelector(isValidUserFn);
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetSuggestedTemplatesByCategoryQuery(
-    undefined,
-    { skip: !isValidUser || !observer?.isIntersecting },
-  );
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+
+  const {
+    data: suggestedTemplates,
+    isLoading: isSuggestedTemplatesLoading,
+    isFetching: isFetchingSuggestios,
+  } = useGetSuggestedTemplatesByCategoryQuery(undefined, { skip: !isValidUser || !observer?.isIntersecting });
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
@@ -79,7 +77,7 @@ export default function ExplorePage({ categories }: Props) {
       <Box
         mt={{ xs: 7, md: 0 }}
         sx={{
-          maxWidth: "1072px",
+          maxWidth: "1184px",
           margin: "0 auto",
           width: "100%",
         }}
@@ -98,21 +96,21 @@ export default function ExplorePage({ categories }: Props) {
               <Stack p={"8px 16px"}>
                 <Typography
                   flex={1}
-                  fontSize={{ xs: 22, md: 32 }}
-                  fontWeight={400}
-                  color={"#2A2A3C"}
                   mb="33px"
+                  fontSize={{ xs: 19, md: 32 }}
+                  fontWeight={400}
+                  color={"onSurface"}
+                  fontFamily={"Poppins"}
+                  lineHeight={"120%"}
+                  letterSpacing={"0.17px"}
+                  fontStyle={"normal"}
                 >
                   Browse category
                 </Typography>
                 <Grid
-                  display={"flex"}
-                  flexDirection={"row"}
-                  gap={"8px"}
+                  container
+                  spacing={{ xs: 1, md: 2 }}
                   alignItems={"flex-start"}
-                  alignContent={"flex-start"}
-                  alignSelf={"stretch"}
-                  flexWrap={{ xs: "nowrap", md: "wrap" }}
                   sx={{
                     overflow: { xs: "auto", md: "initial" },
                     WebkitOverflowScrolling: { xs: "touch", md: "initial" },
@@ -120,15 +118,15 @@ export default function ExplorePage({ categories }: Props) {
                 >
                   {_categories.map(category => (
                     <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={isPromptsFiltersSticky ? 5 : 3}
+                      lg={isPromptsFiltersSticky ? 3 : 2.4}
+                      xl={2.4}
                       key={category.id}
-                      gap={"8px"}
                     >
-                      <CategoryCard
-                        category={category}
-                        priority={false}
-                        href={`/explore/${category.slug}`}
-                        min
-                      />
+                      <ExploreCardCategory category={category} />
                     </Grid>
                   ))}
                 </Grid>
@@ -139,24 +137,13 @@ export default function ExplorePage({ categories }: Props) {
                 userScrolled={hasUserScrolled}
                 onClick={() => setSeeAll(true)}
                 gap={1}
+                explore
               />
             ))}
 
           {!allFilterParamsNull && (
             <Box sx={{ px: { xs: "20px", md: "0px" } }}>
-              <TemplatesSection
-                filtered={!allFilterParamsNull}
-                templates={templates ?? []}
-                isLoading={isFetching}
-                templateLoading={isTemplatesLoading}
-                title="Best templates"
-                onNextPage={handleNextPage}
-                hasMore={hasMore}
-                isInfiniteScrolling={false}
-                hasPrev={hasPrev}
-                onPrevPage={handlePrevPage}
-              />
-              {templates?.length === 0 && (
+              {templates?.length === 0 ? (
                 <Typography
                   fontSize={{ xs: 14, md: 18 }}
                   fontWeight={400}
@@ -165,6 +152,43 @@ export default function ExplorePage({ categories }: Props) {
                 >
                   No templates found. Please adjust your filters.
                 </Typography>
+              ) : (
+                <TemplatesPaginatedList
+                  loading={isFetching}
+                  hasNext={!!hasMore}
+                  onNextPage={handleNextPage}
+                  hasPrev={hasPrev}
+                  onPrevPage={handlePrevPage}
+                  variant="outlined"
+                >
+                  <Grid
+                    container
+                    spacing={1}
+                    alignItems={"flex-start"}
+                    sx={{
+                      overflow: { xs: "auto", md: "initial" },
+                      WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+                    }}
+                  >
+                    {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
+                      <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={isPromptsFiltersSticky ? 5 : 4}
+                        lg={3}
+                        key={`${template.id}_${index}`}
+                      >
+                        <CardTemplate
+                          template={template as Templates}
+                          bgColor={"surfaceContainerLow"}
+                          vertical
+                          showTagsOnHover
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </TemplatesPaginatedList>
               )}
             </Box>
           )}
@@ -176,6 +200,19 @@ export default function ExplorePage({ categories }: Props) {
               m: { xs: "0 20px", md: "0px" },
             }}
           >
+            {isFetchingSuggestios && (
+              <Grid
+                display={"flex"}
+                flexDirection={"row"}
+                gap={"16px"}
+                alignItems={"flex-start"}
+                alignContent={"flex-start"}
+                alignSelf={"stretch"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+              >
+                <LatestTemplatePlaceholder count={4} />
+              </Grid>
+            )}
             {isValidUser && !!suggestedTemplates?.length && (
               <TemplatesSection
                 filtered={false}
@@ -183,6 +220,7 @@ export default function ExplorePage({ categories }: Props) {
                 isLoading={isSuggestedTemplatesLoading}
                 templateLoading={isSuggestedTemplatesLoading}
                 title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
+                explore
               />
             )}
           </Box>

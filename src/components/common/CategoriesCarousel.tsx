@@ -13,7 +13,7 @@ import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Link from "next/link";
 import { useAppSelector } from "@/hooks/useStore";
-import useBrowser from "@/hooks/useBrowser";
+import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -21,11 +21,18 @@ interface CategoryCarouselProps {
   userScrolled?: boolean;
   autoPlay?: boolean;
   gap?: number;
+  explore?: boolean;
 }
 
-function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false, gap = 5 }: CategoryCarouselProps) {
+function CategoryCarousel({
+  categories,
+  onClick,
+  userScrolled,
+  autoPlay = false,
+  gap = 5,
+  explore,
+}: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
-  const { isMobile } = useBrowser();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
@@ -49,8 +56,12 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
         <Typography
           flex={1}
           fontSize={{ xs: 19, md: 32 }}
-          fontWeight={500}
-          color={"#2A2A3C"}
+          fontWeight={400}
+          color={"onSurface"}
+          fontFamily={"Poppins"}
+          lineHeight={"120%"}
+          letterSpacing={"0.17px"}
+          fontStyle={"normal"}
         >
           Browse category
         </Typography>
@@ -82,13 +93,13 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
         <Box
           sx={{
             position: "fixed",
-            top: { md: 0, sm: " 58px" },
+            top: { sm: " 58px" },
             margin: "0 auto",
             zIndex: 1000,
             maxWidth: {
-              md: "875px",
-              lg: `${isPromptsFiltersSticky ? 920 : 1010}px`,
-              xl: "1010px",
+              md: `${isPromptsFiltersSticky ? 540 : 880}px`,
+              lg: `${isPromptsFiltersSticky ? 955 : 1120}px`,
+              xl: "1120px",
             },
             width: "100%",
             bgcolor: "surface.1",
@@ -99,6 +110,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
             scrollNext={scrollNext}
             canScrollNext={true}
             canScrollPrev={true}
+            withChikdren
           >
             <Stack
               ref={carouselRef}
@@ -108,7 +120,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
               <Stack
                 ref={containerRef}
                 direction={"row"}
-                m={"8px 16px"}
+                m={"8px"}
                 gap={"8px"}
               >
                 {categories.map(category => (
@@ -169,16 +181,17 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
           >
             {observer?.isIntersecting &&
               categories.map(category => (
-                <Box
-                  key={category.id}
-                  mx={"8px"}
-                >
-                  <CategoryCard
-                    category={category}
-                    priority={false}
-                    href={`/explore/${category.slug}`}
-                    min={!isMobile}
-                  />
+                <Box key={category.id}>
+                  {explore ? (
+                    <ExploreCardCategory category={category} />
+                  ) : (
+                    <CategoryCard
+                      category={category}
+                      priority={false}
+                      href={`/explore/${category.slug}`}
+                      min
+                    />
+                  )}
                 </Box>
               ))}
           </Stack>

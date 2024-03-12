@@ -8,7 +8,7 @@ import { theme } from "@/theme";
 import { ReactNode } from "react";
 import { KeyboardTab } from "@mui/icons-material";
 
-const drawerWidth = 284;
+const drawerWidth = 255;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -73,7 +73,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
           boxSizing: "border-box",
           bgcolor: "surfaceContainerLow",
           border: "none",
-          width: `calc(${theme.custom.leftClosedSidebarWidth} + 285px)`,
+          width: `calc(${theme.custom.leftClosedSidebarWidth} + ${drawerWidth}px)`,
           left: theme.custom.leftClosedSidebarWidth,
           overflow: "auto",
           overscrollBehavior: "contain",
@@ -87,7 +87,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
         flexDirection={"row"}
         alignItems={"center"}
         height={"40px"}
-        p={"20px 8px"}
+        p={"15px 8px"}
         justifyContent={"space-between"}
       >
         <Typography

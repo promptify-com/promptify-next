@@ -12,6 +12,7 @@ export default function useCarousel(autoplay = false) {
       containScroll: "trimSnaps",
       dragFree: true,
       loop: true,
+      align: "start",
     },
     autoplay ? [Autoplay()] : [],
   );
