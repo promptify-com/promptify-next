@@ -2,7 +2,12 @@ import { stripTags } from "@/common/helpers";
 import { formatDate } from "@/common/helpers/timeManipulation";
 import { Templates } from "@/core/api/dto/templates";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import { Box, Button, Chip, Stack, Typography, alpha } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Image from "@/components/design-system/Image";
@@ -16,7 +21,7 @@ import ContentCopy from "@mui/icons-material/ContentCopy";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 import { setSelectedTemplate } from "@/core/store/chatSlice";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
-import useBrowser from "../../hooks/useBrowser";
+import useBrowser from "@/hooks/useBrowser";
 
 interface TemplateDetailsProps {
   template: Templates;

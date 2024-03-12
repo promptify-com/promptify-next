@@ -5,15 +5,16 @@ import Typography from "@mui/material/Typography";
 import type { IChat } from "@/core/api/dto/chats";
 import Image from "@/components/design-system/Image";
 import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/material";
-import { DeleteForeverOutlined, MoreVert } from "@mui/icons-material";
+import { DeleteForeverOutlined, FileCopyOutlined, MoreVert } from "@mui/icons-material";
 import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
-import { useDeleteChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { useDeleteChatMutation, useDuplicateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
 import { setSelectedChat } from "@/core/store/chatSlice";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
 interface Props {
   chat: IChat;
@@ -33,6 +34,17 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [deleteChat] = useDeleteChatMutation();
   const [updateChat] = useUpdateChatMutation();
+  const [duplicateChat] = useDuplicateChatMutation();
+
+  const handleUpdateChat = async (title: string) => {
+    try {
+      await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } });
+      setRenameAllow(false);
+      dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
+    } catch (_) {
+      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    }
+  };
 
   const handleDeleteChat = async () => {
     try {
@@ -40,8 +52,20 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
       if (selectedChat?.id === chat.id) {
         dispatch(setSelectedChat(undefined));
       }
+      dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    }
+  };
+
+  const handleDuplicateChat = async () => {
+    handleCloseActions();
+    try {
+      const newChat = await duplicateChat(chat.id).unwrap();
+      dispatch(setSelectedChat(newChat));
+      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
+    } catch (_) {
+      dispatch(setToast({ message: "Chat not duplicated! Please try again.", severity: "error", duration: 6000 }));
     }
   };
 
@@ -79,15 +103,22 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             width: "40px",
             height: "40px",
             borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Image
-            src={!imgError && chat.thumbnail ? chat.thumbnail : require("@/assets/images/default-thumbnail.jpg")}
-            onError={() => setImgError(true)}
-            alt={chat.title}
-            style={{ borderRadius: "50%", objectFit: "cover", width: "100%", height: "100%" }}
-            priority={false}
-          />
+          {!imgError && chat.thumbnail ? (
+            <Image
+              src={chat.thumbnail}
+              onError={() => setImgError(true)}
+              alt={"P"}
+              style={{ borderRadius: "50%", objectFit: "cover", width: "100%", height: "100%" }}
+              priority={false}
+            />
+          ) : (
+            <LogoApp width={26} />
+          )}
         </CardMedia>
         <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1, p: 0, overflow: "hidden" }}>
           {!renameAllow ? (
@@ -113,27 +144,28 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
               </Typography>
             </>
           ) : (
-            <RenameForm
-              placeholder="New Chat"
-              initialValue={chat.title}
-              onSave={val => {
-                updateChat({ id: chat.id, data: { title: val } });
-                setRenameAllow(false);
-              }}
-              onCancel={() => setRenameAllow(false)}
-            />
+            <Box onClick={e => e.stopPropagation()}>
+              <RenameForm
+                placeholder="New Chat"
+                initialValue={chat.title}
+                onSave={handleUpdateChat}
+                onCancel={() => setRenameAllow(false)}
+              />
+            </Box>
           )}
         </CardContent>
-        <IconButton
-          onClick={e => {
-            e.stopPropagation();
-            handleOpenActions(e);
-          }}
-          className="actions-menu"
-          sx={{ border: "none", ":hover": { bgcolor: "action.hover" } }}
-        >
-          <MoreVert />
-        </IconButton>
+        {!renameAllow && (
+          <IconButton
+            onClick={e => {
+              e.stopPropagation();
+              handleOpenActions(e);
+            }}
+            className="actions-menu"
+            sx={{ border: "none", ":hover": { bgcolor: "action.hover" } }}
+          >
+            <MoreVert />
+          </IconButton>
+        )}
         <Menu
           anchorEl={actionsMenuAnchor}
           open={Boolean(actionsMenuAnchor)}
@@ -160,10 +192,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             <Edit />
             <Box>Rename</Box>
           </MenuItem>
-          {/* <MenuItem sx={menuItemStyle}>
+          <MenuItem
+            onClick={handleDuplicateChat}
+            sx={menuItemStyle}
+          >
             <FileCopyOutlined />
             <Box>Duplicate</Box>
-          </MenuItem> */}
+          </MenuItem>
           <MenuItem
             onClick={() => setConfirmDelete(true)}
             sx={menuItemStyle}

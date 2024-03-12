@@ -80,6 +80,10 @@ const HighlightContent = ({ content, promptId }: Props) => {
             borderRadius: "24px",
             bgcolor: "secondaryContainer",
             color: "primary.main",
+            ...(isSelectedForInput && {
+              height: "30px",
+              fontSize: "6px",
+            }),
             "&:hover": {
               bgcolor: "secondaryContainer",
             },
@@ -97,7 +101,13 @@ const HighlightContent = ({ content, promptId }: Props) => {
                 setSelectedPrompt(null);
               }}
               type={input?.type}
-              sx={{ color: "primary.main" }}
+              sx={{
+                color: "primary.main",
+                height: "30px",
+                "& .MuiInputBase-input": {
+                  fontSize: "14px",
+                },
+              }}
             />
           ) : (
             <Typography color="primary.main">
