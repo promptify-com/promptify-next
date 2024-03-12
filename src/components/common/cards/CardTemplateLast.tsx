@@ -13,6 +13,7 @@ import NoSpark from "@/assets/icons/NoSpark";
 import Image from "@/components/design-system/Image";
 import { redirectToPath, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
+import Link from "next/link";
 
 type CardTemplateLastProps = {
   template: TemplateExecutionsDisplay;
@@ -22,11 +23,13 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
   const { truncate } = useTruncate();
 
   return (
-    <Box>
+    <Link
+      href={`prompt/${template.slug}?hash=${template.executions[0].hash}`}
+      style={{
+        textDecoration: "none",
+      }}
+    >
       <Card
-        onClick={() => {
-          redirectToPath(`prompt/${template.slug}`, { hash: template.executions[0].hash });
-        }}
         sx={{
           cursor: "pointer",
           maxWidth: "266px",
@@ -206,7 +209,7 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
           )}
         </Box>
       </Card>
-    </Box>
+    </Link>
   );
 }
 

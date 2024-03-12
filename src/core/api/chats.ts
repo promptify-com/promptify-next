@@ -80,6 +80,23 @@ export const chatsApi = baseApi.injectEndpoints({
           }
         },
       }),
+      duplicateChat: builder.mutation<IChat, number>({
+        query: (id: number) => ({
+          url: `/api/chat/chats/${id}/duplicate`,
+          method: "post",
+        }),
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          try {
+            const newChat = await queryFulfilled;
+            dispatch(
+              chatsApi.util.updateQueryData("getChats", undefined, _chats => {
+                _chats.unshift(newChat.data);
+                return _chats;
+              }),
+            );
+          } catch {}
+        },
+      }),
     };
   },
 });
@@ -90,4 +107,5 @@ export const {
   useCreateChatMutation,
   useDeleteChatMutation,
   useUpdateChatMutation,
+  useDuplicateChatMutation,
 } = chatsApi;
