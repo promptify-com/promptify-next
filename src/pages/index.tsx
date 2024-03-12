@@ -8,6 +8,7 @@ import { Category } from "@/core/api/dto/templates";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 import HomepageLayout from "@/components/Homepage";
+import FooterPrompt from "@/components/explorer/FooterPrompt";
 
 const HomePage = ({ categories }: { categories: Category[] }) => {
   const isValidUser = useSelector(isValidUserFn);
@@ -17,14 +18,10 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
       <Box
         mt={{ xs: 7, md: 0 }}
         padding={{ xs: "4px 0px", md: "0px 8px" }}
+        p={{ xs: "16px", md: "32px" }}
       >
-        <Box
-          sx={{
-            padding: { xs: "16px", md: "32px" },
-          }}
-        >
-          {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
-        </Box>
+        {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
+        <FooterPrompt />
       </Box>
     </Layout>
   );

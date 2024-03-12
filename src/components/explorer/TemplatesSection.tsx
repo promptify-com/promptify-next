@@ -9,6 +9,8 @@ import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
 import { TemplatesFilter } from "./TemplatesFilter";
 import { Close, FilterList } from "@mui/icons-material";
 import { useState, forwardRef } from "react";
+import { useAppSelector } from "@/hooks/useStore";
+import ExploreCardTemplate from "@/components/common/cards/ExploreCardTemplate";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -23,6 +25,7 @@ interface TemplatesSectionProps {
   hasPrev?: boolean;
   onPrevPage?: () => void;
   bgColor?: string;
+  explore?: boolean;
 }
 
 function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "type">) {
@@ -87,36 +90,40 @@ function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">
 }
 
 function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "templates" | "bgColor">) {
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+
   if (!templates?.length) {
     return null;
   }
 
   return (
-    <Stack
-      direction={"row"}
-      flexWrap={"wrap"}
-      rowGap={3}
+    <Grid
+      container
+      spacing={1}
+      alignItems={"flex-start"}
       sx={{
-        justifyContent: {
-          xs: "center",
-          sm: "center",
-          md: "flex-start",
-        },
-        gap: {
-          sm: 1,
-        },
+        overflow: { xs: "auto", md: "initial" },
+        WebkitOverflowScrolling: { xs: "touch", md: "initial" },
       }}
     >
       {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
-        <CardTemplate
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={isPromptsFiltersSticky ? 5 : 4}
+          lg={3}
           key={`${template.id}_${index}`}
-          template={template as Templates}
-          bgColor={bgColor}
-          vertical
-          showTagsOnHover
-        />
+        >
+          <ExploreCardTemplate
+            template={template as Templates}
+            bgColor={bgColor}
+            vertical
+            showTagsOnHover
+          />
+        </Grid>
       ))}
-    </Stack>
+    </Grid>
   );
 }
 
@@ -172,6 +179,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
     hasPrev,
     onPrevPage = () => {},
     bgColor = "surface.2",
+    explore,
   },
   ref,
 ) {
@@ -228,6 +236,11 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
           {isLatestTemplates ? (
             <LatestTemplates templates={templates} />
           ) : isPopularTemplates ? (
+            <PopularTemplates
+              templates={templates}
+              bgColor={bgColor}
+            />
+          ) : explore ? (
             <PopularTemplates
               templates={templates}
               bgColor={bgColor}

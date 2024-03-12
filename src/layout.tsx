@@ -16,7 +16,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
   const sidebarExpanded = (isPromptsPage && isPromptsFiltersSticky) || (isChatPage && isChatHistorySticky);
 
-  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 375px" : ""}`;
+  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 
   return (
     <>
@@ -47,6 +47,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               borderTopRightRadius: "16px",
               overflow: "hidden",
               zIndex: 1,
+              marginTop: { xs: "0", md: `calc(${theme.custom.headerHeight.md} + 2px)` },
             }}
           >
             <Grid

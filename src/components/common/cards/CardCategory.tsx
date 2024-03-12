@@ -35,6 +35,7 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
           bgcolor: "transparent",
           borderRadius: "27px",
           overflow: "hidden",
+          mx: "8px",
         }}
       >
         <CardActionArea
@@ -88,7 +89,7 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
             >
               {category.name}
             </Typography>
-            {min && (
+            {!min && (
               <Typography
                 variant="body2"
                 color="text.secondary"
