@@ -30,6 +30,8 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
   });
 
   const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
+  const showRunButton =
+    showGenerateButton && selectedChatOption === "QA" && messages[messages.length - 1]?.type !== "readyMessage";
 
   return (
     <Stack
@@ -72,7 +74,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
           direction={"row"}
           justifyContent={"start"}
         >
-          {showGenerateButton && selectedChatOption === "QA" && (
+          {showRunButton && (
             <RunButton
               onClick={() => {
                 if (typeof onGenerate === "function") {

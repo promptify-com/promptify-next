@@ -11,6 +11,7 @@ import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "../Prompt/Types/chat";
+import ReadyMessage from "./Messages/ReadyMessage";
 
 interface Props {
   message: IMessage;
@@ -65,7 +66,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           </Stack>
         </Fade>
       )}
-      {message.type === "HeaderWithText" && (
+      {message.type === "headerWithText" && (
         <Fade
           in={true}
           unmountOnExit
@@ -77,11 +78,16 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           </Stack>
         </Fade>
       )}
-      {message.type === "question" && (
+      {message.type === "questionInput" && (
         <QuestionMessage
-          index={message.questionIndex!}
-          content={message.text}
-          isRequired={message.isRequired!}
+          variant="input"
+          message={message}
+        />
+      )}
+      {message.type === "questionParam" && (
+        <QuestionMessage
+          variant="param"
+          message={message}
         />
       )}
       {message.type === "spark" && (
@@ -95,6 +101,12 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
             <ExecutionMessageBox onAbort={onAbort} />
           </Stack>
         </Fade>
+      )}
+      {message.type === "readyMessage" && (
+        <ReadyMessage
+          content={message.text}
+          onGenerate={onGenerate}
+        />
       )}
     </>
   );

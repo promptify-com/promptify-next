@@ -1,61 +1,39 @@
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
-import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import CustomTooltip from "../CustomTooltip";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
-import { setParamsValues } from "@/core/store/chatSlice";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
-import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import Storage from "@/common/storage";
 
-interface GeneratorParamProps {
+import type { PromptParams } from "@/core/api/dto/prompts";
+import { useAppSelector } from "@/hooks/useStore";
+
+interface Props {
   param: PromptParams;
+  onChange: (score: number) => void;
 }
 
-export default function FormParam({ param }: GeneratorParamProps) {
-  const dispatch = useAppDispatch();
-  const { isVariantB, isAutomationPage } = useVariant();
+const HelpIcon = () => {
+  return (
+    <CustomTooltip title={"Parameter"}>
+      <IconButton
+        sx={{
+          opacity: 0.3,
+          border: "none",
+        }}
+      >
+        <HelpOutline />
+      </IconButton>
+    </CustomTooltip>
+  );
+};
 
+function ParamSlider({ param, onChange }: Props) {
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  useEffect(() => {
-    const paramsStored = Storage.get("paramsValue");
-
-    if (!paramsStored || isAutomationPage) return;
-
-    const isRelevantParam = paramsStored.some((paramStored: ResOverrides) => paramStored.id === param.prompt);
-
-    if (isRelevantParam) {
-      dispatch(setParamsValues(paramsStored));
-      Storage.remove("paramsValue");
-    }
-  }, []);
-
   const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
-
-  const handleScoreChange = (score: number) => {
-    const paramId = param.parameter.id;
-    const updatedParamsValues = paramsValues.map(paramValue => {
-      if (paramValue.id !== param.prompt) {
-        return paramValue;
-      }
-
-      return {
-        id: paramValue.id,
-        contextual_overrides: paramValue.contextual_overrides.map(ctx =>
-          ctx.parameter === paramId ? { parameter: paramId, score } : ctx,
-        ),
-      };
-    });
-
-    dispatch(setParamsValues(updatedParamsValues));
-  };
 
   const matchingContext = paramValue?.contextual_overrides.find(
     contextual_override => contextual_override?.parameter === param.parameter.id,
@@ -66,22 +44,6 @@ export default function FormParam({ param }: GeneratorParamProps) {
   const activeDescription = descriptions.find(description => description.score === activeScore);
   const marks = descriptions.map(description => ({ value: description.score }));
   const values = marks.map(obj => obj.value);
-
-  const HelpIcon = () => {
-    return (
-      <CustomTooltip title={"Parameter"}>
-        <IconButton
-          sx={{
-            opacity: 0.3,
-            border: "none",
-          }}
-        >
-          <HelpOutline />
-        </IconButton>
-      </CustomTooltip>
-    );
-  };
-
   return (
     <Stack
       direction={{ xs: "column", md: "row" }}
@@ -150,21 +112,20 @@ export default function FormParam({ param }: GeneratorParamProps) {
         step={1}
         min={Math.min(...values)}
         max={Math.max(...values)}
-        onChange={(e: any) => handleScoreChange(e.target.value as number)}
+        onChange={(e: any) => onChange(e.target.value as number)}
       />
 
-      {isVariantB && (
-        <Stack
-          sx={{
-            display: { xs: "none", md: "flex" },
-          }}
-        >
-          <HelpIcon />
-        </Stack>
-      )}
+      <Stack
+        sx={{
+          display: { xs: "none", md: "flex" },
+        }}
+      >
+        <HelpIcon />
+      </Stack>
     </Stack>
   );
 }
+
 const sliderStyle = {
   height: "2px",
   width: { xs: "70%", md: "100px" },
@@ -195,3 +156,5 @@ const sliderStyle = {
     height: "1px",
   },
 };
+
+export default ParamSlider;

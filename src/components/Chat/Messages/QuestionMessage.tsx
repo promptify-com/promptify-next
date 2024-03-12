@@ -2,18 +2,22 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { useAppSelector } from "@/hooks/useStore";
-import type { IMessage } from "@/components/Prompt/Types/chat";
+import { IMessage } from "@/components/Prompt/Types/chat";
+import FormParam from "@/components/Prompt/Common/Chat/FormParam";
 
 interface Props {
-  content: string;
-  isRequired: boolean;
-  index: number;
+  message: IMessage;
+  variant: "input" | "param";
 }
 
-function QuestionMessage({ content, isRequired, index }: Props) {
-  const inputs = useAppSelector(state => state.chat.inputs);
+function QuestionMessage({ message, variant }: Props) {
+  const { inputs, params } = useAppSelector(state => state.chat);
 
-  const totalQuestions = inputs.length;
+  const { questionIndex, questionInputName, text, isRequired } = message;
+  const totalQuestions = inputs.length + params.length;
+
+  const param = params.find(param => param.parameter.name === questionInputName);
+
   return (
     <Stack
       direction={"column"}
@@ -26,17 +30,19 @@ function QuestionMessage({ content, isRequired, index }: Props) {
         lineHeight={"25.4px"}
         letterSpacing={"0.17px"}
       >
-        Question {index} of {totalQuestions}
+        Question {questionIndex} of {totalQuestions}
       </Typography>
-      <Stack>
+
+      <Stack gap={2}>
         <Typography
           fontSize={{ xs: 20, md: 24 }}
           fontWeight={400}
           lineHeight={"38px"}
           letterSpacing={"0.17px"}
         >
-          {content}
+          {text}
         </Typography>
+
         <Typography
           color={"text.secondary"}
           fontSize={14}
@@ -44,8 +50,15 @@ function QuestionMessage({ content, isRequired, index }: Props) {
           lineHeight={"22.4px"}
           letterSpacing={"0.17px"}
         >
-          This question is {isRequired ? "Required" : "Optional"}
+          {variant === "input" ? <>This question is {isRequired ? "Required" : "Optional"}</> : "Choose option:"}
         </Typography>
+
+        {param && variant === "param" && (
+          <FormParam
+            variant="button"
+            param={param}
+          />
+        )}
       </Stack>
     </Stack>
   );

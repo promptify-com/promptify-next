@@ -16,9 +16,11 @@ interface Props {
 }
 
 function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton }: Props) {
-  const { selectedChatOption, selectedTemplate, answers, inputs } = useAppSelector(state => state.chat);
+  const { selectedChatOption, selectedTemplate, answers, inputs, params } = useAppSelector(state => state.chat);
 
   const showHeaderActions = Boolean(selectedChatOption === "FORM" && variant === "FORM");
+
+  const totalQuestions = inputs.length + params.length;
 
   return (
     <Stack
@@ -87,7 +89,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton }: Prop
             }}
             onClick={onExpand}
           >
-            Instructions: {answers.length} of {inputs.length}
+            Instructions: {answers.length} of {totalQuestions}
           </Button>
           <RunButton
             onClick={() => {
