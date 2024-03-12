@@ -15,11 +15,17 @@ interface Props {
 }
 
 function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
+  const dispatch = useAppDispatch();
   const [visibleCount, setVisibleCount] = useState(3);
 
-  const showMore = visibleCount < templates.length;
+  const handleRunPrompt = (template: Templates, newChat?: boolean) => {
+    dispatch(setSelectedTemplate(template));
+    dispatch(setAnswers([]));
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  };
 
-  const dispatch = useAppDispatch();
   return (
     <Stack>
       <Typography
@@ -47,13 +53,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
             <TemplateSuggestionItem
               key={template.id}
               template={template}
-              onClick={() => {
-                dispatch(setSelectedTemplate(template));
-                dispatch(setAnswers([]));
-                setTimeout(() => {
-                  scrollToBottom();
-                }, 100);
-              }}
+              onRun={newChat => handleRunPrompt(template, newChat)}
             />
           ))}
 

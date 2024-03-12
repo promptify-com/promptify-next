@@ -19,10 +19,10 @@ import Link from "next/link";
 
 interface Props {
   template: Templates;
-  onClick: () => void;
+  onRun: (newChat?: boolean) => void;
 }
 
-function TemplateSuggestionItem({ template, onClick }: Props) {
+function TemplateSuggestionItem({ template, onRun }: Props) {
   const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
   const [actionsOpened, setActionsOpened] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
@@ -163,7 +163,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
               bgcolor: "action.hover",
             },
           }}
-          onClick={onClick}
+          onClick={() => onRun()}
         >
           Run prompt
         </Button>
@@ -210,7 +210,13 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
                   }}
                 >
                   <Box>
-                    <TemplateActions template={template} />
+                    <TemplateActions
+                      template={template}
+                      onRun={newChat => {
+                        setActionsOpened(false);
+                        onRun(newChat);
+                      }}
+                    />
                   </Box>
                 </ClickAwayListener>
               </Paper>

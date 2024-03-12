@@ -13,9 +13,10 @@ import { FavoriteBorder } from "@mui/icons-material";
 
 interface Props {
   template: Templates;
+  onRun?: (newChat?: boolean) => void;
 }
 
-function TemplateActions({ template }: Props) {
+function TemplateActions({ template, onRun }: Props) {
   const { saveFavorite, templateData } = useSaveFavoriteTemplate(template);
 
   const handleViewPromptInfo = () => {
@@ -28,14 +29,14 @@ function TemplateActions({ template }: Props) {
       direction={"column"}
     >
       <MenuItem
-        onClick={() => {}}
+        onClick={() => onRun?.()}
         sx={menuItemStyle}
       >
         <ChatBubbleOutline />
         Start in this chat
       </MenuItem>
       <MenuItem
-        onClick={() => {}}
+        onClick={() => onRun?.(true)}
         sx={menuItemStyle}
       >
         <QuestionAnswerOutlined />
