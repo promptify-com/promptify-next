@@ -67,7 +67,12 @@ export default function useChatBox() {
     };
   };
 
-  const preparePromptsData = (uploadedFiles: Map<string, string>, answers: IAnswer[], templatePrompts: Prompts[]) => {
+  const preparePromptsData = (
+    uploadedFiles: Map<string, string>,
+    answers: IAnswer[],
+    paramsValues: ResOverrides[],
+    templatePrompts: Prompts[],
+  ) => {
     const promptsData: ResPrompt[] = [];
     const promptParameterIds = new Map<number, number[]>();
 
@@ -108,12 +113,8 @@ export default function useChatBox() {
 
       const paramIds = promptParameterIds.get(promptData.prompt);
 
-      if (!paramIds?.length) {
-        return;
-      }
-
       answers.forEach(answer => {
-        if (answer.prompt === promptData.prompt && answer.parameter && paramIds.includes(answer.parameter.id)) {
+        if (answer.prompt === promptData.prompt && answer.parameter && paramIds?.includes(answer.parameter.id)) {
           const score = typeof answer.answer === "number" ? answer.answer : undefined;
           if (score !== undefined) {
             promptData.contextual_overrides.push({
