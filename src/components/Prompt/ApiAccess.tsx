@@ -47,17 +47,20 @@ const LanguageSelectorAndCopy = ({
   handleChange,
   status,
   onClick,
+  noSelect,
 }: {
   language: string;
   handleChange: (event: SelectChangeEvent) => void;
   status: string;
   onClick: () => void;
+  noSelect?: boolean;
 }) => (
   <Stack
     direction={"row"}
-    alignItems="center"
+    alignItems={"center"}
+    gap={1}
   >
-    <FormControl sx={{ m: 1 }}>
+    {!noSelect && (
       <Select
         value={language}
         onChange={handleChange}
@@ -65,8 +68,18 @@ const LanguageSelectorAndCopy = ({
         sx={{
           fontSize: 14,
           fontWeight: 500,
+          borderRadius: "999px",
+          p: "8px 16px",
           fieldset: {
             border: "none",
+            p: 0,
+          },
+          ".MuiSelect-select": {
+            p: 0,
+            pr: "16px !important",
+          },
+          ":hover": {
+            bgcolor: "action.hover",
           },
         }}
       >
@@ -76,10 +89,16 @@ const LanguageSelectorAndCopy = ({
         <MenuItem value={"3"}>Python - Requests</MenuItem>
         <MenuItem value={"4"}>JavaScript - Fetch</MenuItem>
       </Select>
-    </FormControl>
+    )}
     <Button
       sx={{
+        p: "8px 16px",
         color: "onSurface",
+        fontSize: 14,
+        fontWeight: 500,
+        ":hover": {
+          bgcolor: "action.hover",
+        },
       }}
       onClick={onClick}
       disabled={status === "success"}
@@ -217,6 +236,7 @@ export default function ApiAccess({ template }: Props) {
                 `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\`\n\nGET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\`\``,
               );
             }}
+            noSelect
           />
         </Stack>
         <SyntaxHighlighter

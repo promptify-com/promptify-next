@@ -26,11 +26,7 @@ const sidebarSlice = createSlice({
     setStickyChatHistory: (state, action: PayloadAction<boolean>) => {
       const sticky = action.payload;
       state.isChatHistorySticky = sticky;
-      if (sticky) {
-        Storage.set("isChatHistorySticky", String(sticky));
-      } else {
-        Storage.remove("isChatHistorySticky");
-      }
+      Storage.set("isChatHistorySticky", String(sticky));
     },
   },
 });

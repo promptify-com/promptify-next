@@ -5,11 +5,17 @@ import Favorite from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
-
-import Image from "../../design-system/Image";
+import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
-import { IconButton } from "@mui/material";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Fade from "@mui/material/Fade";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
 import { MoreVert } from "@mui/icons-material";
+import TemplateActions from "@/components/Chat/TemplateActions";
+import { useRef, useState } from "react";
+import Link from "next/link";
 
 interface Props {
   template: Templates;
@@ -17,7 +23,9 @@ interface Props {
 }
 
 function TemplateSuggestionItem({ template, onClick }: Props) {
-  const { thumbnail, title, description, favorites_count, executions_count } = template;
+  const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
+  const [actionsOpened, setActionsOpened] = useState(false);
+  const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Stack
@@ -36,15 +44,18 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
         gap={"24px"}
       >
         <Box
+          component={Link}
+          href={`/prompt/${slug}`}
+          target="_blank"
           sx={{
             zIndex: 0,
             position: "relative",
             width: { xs: "260px", md: "152px" },
             minWidth: "152px",
-
             height: "113px",
             borderRadius: "24px",
             overflow: "hidden",
+            textDecoration: "none",
           }}
         >
           <Image
@@ -62,14 +73,22 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           justifyItems={"flex-start"}
           gap={2}
         >
-          <Box>
-            <Typography
-              fontSize={{ xs: 15, md: 18 }}
-              fontWeight={500}
-              lineHeight={"25.2px"}
+          <Stack alignItems={"flex-start"}>
+            <Link
+              href={`/prompt/${slug}`}
+              target="_blank"
+              style={{
+                textDecoration: "none",
+              }}
             >
-              {title}
-            </Typography>
+              <Typography
+                fontSize={{ xs: 15, md: 18 }}
+                fontWeight={500}
+                lineHeight={"25.2px"}
+              >
+                {title}
+              </Typography>
+            </Link>
             <Typography
               fontSize={{ xs: 14, md: 16 }}
               fontWeight={400}
@@ -80,7 +99,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
             >
               {description}
             </Typography>
-          </Box>
+          </Stack>
           <Stack
             direction={"row"}
             gap={"8px"}
@@ -149,7 +168,9 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           Run prompt
         </Button>
 
-        <IconButton
+        {/* <IconButton
+          ref={actionsAnchorRef}
+          onClick={() => setActionsOpened(true)}
           sx={{
             border: "none",
             "&:hover": {
@@ -158,8 +179,45 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           }}
         >
           <MoreVert />
-        </IconButton>
+        </IconButton> */}
       </Stack>
+      {/* {actionsOpened && (
+        <Popper
+          sx={{ zIndex: 1200 }}
+          open={actionsOpened}
+          anchorEl={actionsAnchorRef.current}
+          placement={"bottom-end"}
+          transition
+        >
+          {({ TransitionProps }) => (
+            <Fade
+              {...TransitionProps}
+              timeout={350}
+            >
+              <Paper
+                sx={{
+                  borderRadius: "16px",
+                  width: "199px",
+                  marginTop: "5px",
+                  overflow: "hidden",
+                }}
+                elevation={1}
+              >
+                <ClickAwayListener
+                  onClickAway={() => {
+                    console.log("close");
+                    setActionsOpened(false);
+                  }}
+                >
+                  <Box>
+                    <TemplateActions template={template} />
+                  </Box>
+                </ClickAwayListener>
+              </Paper>
+            </Fade>
+          )}
+        </Popper>
+      )} */}
     </Stack>
   );
 }

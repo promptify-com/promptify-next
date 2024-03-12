@@ -75,6 +75,7 @@ function Chat() {
     try {
       const newChat = await createChat({
         title: selectedTemplate.title ?? "Welcome",
+        thumbnail: selectedTemplate.thumbnail,
       }).unwrap();
       dispatch(setSelectedChat(newChat));
     } catch (err) {
@@ -86,15 +87,25 @@ function Chat() {
     if (!selectedChat || !selectedTemplate?.title) return;
 
     try {
-      updateChat({ id: selectedChat.id, data: { title: selectedTemplate.title } });
+      updateChat({
+        id: selectedChat.id,
+        data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
+      });
     } catch (err) {
       console.error("Error updating chat: ", err);
     }
   };
 
   useEffect(() => {
+    return () => {
+      dispatch(setSelectedChat(undefined));
+      dispatch(setInitialChat(true));
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(selectedChat);
     if (!initialChat) {
-      dispatch(setInitialChat(false));
       setMessages([]);
       dispatch(setAnswers([]));
       dispatch(setInputs([]));
