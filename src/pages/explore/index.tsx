@@ -31,7 +31,7 @@ interface Props {
 
 export default function ExplorePage({ categories }: Props) {
   const { templates, handleNextPage, hasMore, allFilterParamsNull, isFetching, hasPrev, handlePrevPage } =
-    useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
+    useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 8, paginatedList: true });
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
