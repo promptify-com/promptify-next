@@ -75,6 +75,7 @@ function Chat() {
     try {
       const newChat = await createChat({
         title: selectedTemplate.title ?? "Welcome",
+        thumbnail: selectedTemplate.thumbnail,
       }).unwrap();
       dispatch(setSelectedChat(newChat));
     } catch (err) {
@@ -94,6 +95,13 @@ function Chat() {
       console.error("Error updating chat: ", err);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(setSelectedChat(undefined));
+      dispatch(setInitialChat(true));
+    };
+  }, []);
 
   useEffect(() => {
     if (!initialChat) {

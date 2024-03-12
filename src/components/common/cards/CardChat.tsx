@@ -38,7 +38,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
 
   const handleUpdateChat = async (title: string) => {
     try {
-      await updateChat({ id: chat.id, data: { title } });
+      await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } });
       setRenameAllow(false);
       dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
     } catch (_) {
