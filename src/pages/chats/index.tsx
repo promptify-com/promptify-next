@@ -86,7 +86,10 @@ function Chat() {
     if (!selectedChat || !selectedTemplate?.title) return;
 
     try {
-      updateChat({ id: selectedChat.id, data: { title: selectedTemplate.title } });
+      updateChat({
+        id: selectedChat.id,
+        data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
+      });
     } catch (err) {
       console.error("Error updating chat: ", err);
     }

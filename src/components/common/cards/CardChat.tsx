@@ -14,6 +14,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
 import { setSelectedChat } from "@/core/store/chatSlice";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
 interface Props {
   chat: IChat;
@@ -102,15 +103,22 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             width: "40px",
             height: "40px",
             borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Image
-            src={!imgError && chat.thumbnail ? chat.thumbnail : require("@/assets/images/default-thumbnail.jpg")}
-            onError={() => setImgError(true)}
-            alt={chat.title}
-            style={{ borderRadius: "50%", objectFit: "cover", width: "100%", height: "100%" }}
-            priority={false}
-          />
+          {!imgError && chat.thumbnail ? (
+            <Image
+              src={chat.thumbnail}
+              onError={() => setImgError(true)}
+              alt={"P"}
+              style={{ borderRadius: "50%", objectFit: "cover", width: "100%", height: "100%" }}
+              priority={false}
+            />
+          ) : (
+            <LogoApp width={26} />
+          )}
         </CardMedia>
         <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1, p: 0, overflow: "hidden" }}>
           {!renameAllow ? (
