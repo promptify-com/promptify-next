@@ -23,22 +23,15 @@ import FooterPrompt from "@/components/explorer/FooterPrompt";
 import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
+import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 
 interface Props {
   categories: Category[];
 }
 
 export default function ExplorePage({ categories }: Props) {
-  const {
-    templates,
-    isTemplatesLoading,
-    handleNextPage,
-    hasMore,
-    allFilterParamsNull,
-    isFetching,
-    hasPrev,
-    handlePrevPage,
-  } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
+  const { templates, handleNextPage, hasMore, allFilterParamsNull, isFetching, hasPrev, handlePrevPage } =
+    useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
@@ -48,10 +41,11 @@ export default function ExplorePage({ categories }: Props) {
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
 
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetSuggestedTemplatesByCategoryQuery(
-    undefined,
-    { skip: !isValidUser || !observer?.isIntersecting },
-  );
+  const {
+    data: suggestedTemplates,
+    isLoading: isSuggestedTemplatesLoading,
+    isFetching: isFetchingSuggestios,
+  } = useGetSuggestedTemplatesByCategoryQuery(undefined, { skip: !isValidUser || !observer?.isIntersecting });
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
@@ -206,6 +200,19 @@ export default function ExplorePage({ categories }: Props) {
               m: { xs: "0 20px", md: "0px" },
             }}
           >
+            {isFetchingSuggestios && (
+              <Grid
+                display={"flex"}
+                flexDirection={"row"}
+                gap={"16px"}
+                alignItems={"flex-start"}
+                alignContent={"flex-start"}
+                alignSelf={"stretch"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+              >
+                <LatestTemplatePlaceholder count={4} />
+              </Grid>
+            )}
             {isValidUser && !!suggestedTemplates?.length && (
               <TemplatesSection
                 filtered={false}

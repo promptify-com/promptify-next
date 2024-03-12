@@ -77,17 +77,34 @@ function ExploreCardCategory({ category }: Props) {
               <CardContent sx={{ p: "8px 0", m: 0 }}>
                 <Typography
                   gutterBottom
-                  fontSize={12}
-                  lineHeight={"16.8px"}
                   component="div"
+                  sx={{
+                    color: "var(--onSurface, var(--onSurface, #1A1C18))",
+                    fontFeatureSettings: "'clig' off, 'liga' off",
+                    fontFamily: "Poppins",
+                    fontSize: {
+                      xs: "12",
+                      md: "16px",
+                    },
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                  }}
                 >
                   {category.name}
                 </Typography>
 
                 <Typography
                   variant="body2"
-                  color="text.secondary"
-                  fontSize={12}
+                  sx={{
+                    color: "var(--onSurface, var(--onSurface, #1A1C18))",
+                    fontFeatureSettings: "'clig' off, 'liga' off",
+                    fontFamily: "Poppins",
+                    fontSize: "12px",
+                    fontStyle: "normal",
+                    fontWeight: 400,
+                    lineHeight: "140%",
+                  }}
                 >
                   {category.prompt_template_count} templates
                 </Typography>

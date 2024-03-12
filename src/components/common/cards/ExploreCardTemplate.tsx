@@ -148,26 +148,37 @@ function CardTemplate({
               gap={0.5}
             >
               <Typography
-                fontSize={{ xs: 16, md: 14 }}
-                fontWeight={500}
                 sx={{
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   width: "100%",
                   maxWidth: "200px",
+
+                  color: "var(--onSurface, var(--onSurface, #1A1C18))",
+                  fontFeatureSettings: "'clig' off, 'liga' off",
+                  fontFamily: "Poppins",
+                  fontSize: {
+                    xs: "12",
+                    md: "16px",
+                  },
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                  lineHeight: "140%",
                 }}
               >
                 {highlightSearchQuery(template.title)}
               </Typography>
               <Typography
                 sx={{
-                  fontSize: { xs: 14, md: 12 },
+                  color: "var(--onSurface, var(--onSurface, #1A1C18))",
+                  fontFeatureSettings: "'clig' off, 'liga' off",
+                  fontFamily: "Poppins",
+                  fontSize: "13px",
+                  fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "16.8px",
-                  letterSpacing: "0.15px",
-                  color: "onSurface",
-                  opacity: vertical ? 0.75 : 1,
+                  lineHeight: "140%",
+                  opacity: 0.75,
                 }}
               >
                 {highlightSearchQuery(truncate(stripTags(template.description), { length: 55 }))}

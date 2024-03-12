@@ -10,6 +10,7 @@ interface Props {
   canScrollNext: boolean;
   canScrollPrev: boolean;
   children?: React.ReactNode;
+  withChikdren?: boolean;
 }
 
 export const CarouselButtons: React.FC<Props> = ({
@@ -18,6 +19,7 @@ export const CarouselButtons: React.FC<Props> = ({
   canScrollNext,
   canScrollPrev,
   children,
+  withChikdren,
 }) => {
   return (
     <Stack
@@ -26,7 +28,10 @@ export const CarouselButtons: React.FC<Props> = ({
       gap={1}
     >
       <IconButton
-        sx={btnStyle}
+        sx={{
+          ...btnStyle,
+          mr: withChikdren ? "-31px" : "0",
+        }}
         disabled={!canScrollPrev}
         onClick={scrollPrev}
       >
@@ -34,7 +39,10 @@ export const CarouselButtons: React.FC<Props> = ({
       </IconButton>
       {children}
       <IconButton
-        sx={btnStyle}
+        sx={{
+          ...btnStyle,
+          ml: withChikdren ? "-31px" : "0",
+        }}
         disabled={!canScrollNext}
         onClick={scrollNext}
       >
@@ -47,6 +55,7 @@ export const CarouselButtons: React.FC<Props> = ({
 const btnStyle = {
   border: "none",
   color: "#67677C",
+  bgcolor: "transparent",
   "&.Mui-disabled": {
     opacity: 0.6,
   },
