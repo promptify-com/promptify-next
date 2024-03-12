@@ -120,7 +120,7 @@ function CategoryCarousel({
               <Stack
                 ref={containerRef}
                 direction={"row"}
-                m={"8px 16px"}
+                m={"8px"}
                 gap={"8px"}
               >
                 {categories.map(category => (
