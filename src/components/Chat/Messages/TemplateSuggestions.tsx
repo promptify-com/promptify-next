@@ -6,7 +6,8 @@ import Button from "@mui/material/Button";
 import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import type { Templates } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";
-import { setAnswers, setSelectedChatOption, setSelectedTemplate } from "@/core/store/chatSlice";
+import { setSelectedChat, setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
+import { useCreateChatMutation } from "@/core/api/chats";
 
 interface Props {
   content: string;
@@ -16,14 +17,31 @@ interface Props {
 
 function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
   const dispatch = useAppDispatch();
+  const [createChat] = useCreateChatMutation();
   const [visibleCount, setVisibleCount] = useState(3);
 
-  const handleRunPrompt = (template: Templates, newChat?: boolean) => {
+  const handleRunPrompt = async (template: Templates, newChat?: boolean) => {
+    if (newChat) {
+      await handleCreateChat(template);
+    }
+
     dispatch(setSelectedTemplate(template));
     dispatch(setAnswers([]));
     setTimeout(() => {
       scrollToBottom();
     }, 100);
+  };
+
+  const handleCreateChat = async (template: Templates) => {
+    try {
+      const newChat = await createChat({
+        title: template.title ?? "Welcome",
+        thumbnail: template.thumbnail,
+      }).unwrap();
+      dispatch(setSelectedChat(newChat));
+    } catch (err) {
+      console.error("Error creating a new chat: ", err);
+    }
   };
 
   return (
