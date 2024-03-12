@@ -5,6 +5,18 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import SuggestedPrompts from "@/components/Chat/SuggestedPrompts";
 import { useAppSelector } from "@/hooks/useStore";
+import { keyframes } from "@mui/system";
+
+const comeFromBottom = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
 
 function Landing() {
   const [showImages, setShowImages] = useState(false);
@@ -56,10 +68,11 @@ function Landing() {
             transition: "transform 1s ease",
           },
           "& > :nth-of-type(1)": {
-            transform: showImages ? "translateX(-100%)" : "translateX(0)",
+            transform: showImages ? "translateX(-100%)" : "translateX(20%)",
           },
           "& > :nth-of-type(3)": {
-            transform: showImages ? "translateX(100%)" : "translateX(0)",
+            transform: showImages ? "translateX(100%)" : "translateX(-20%)",
+            zIndex: 1,
           },
         }}
       >
@@ -140,14 +153,19 @@ function Landing() {
         >
           Let’s start new chat!
         </Typography>
-        <Typography
-          fontSize={{ xs: "14px", md: "16px" }}
-          fontWeight={"400"}
-          lineHeight={"25.6px"}
-        >
-          I can help you with your requests like any other AI, moreover I can run different models, also, you can look
-          at my pre-designed prompts for different cases!
-        </Typography>
+        {showImages && (
+          <Typography
+            fontSize={{ xs: "14px", md: "16px" }}
+            fontWeight={"400"}
+            lineHeight={"25.6px"}
+            sx={{
+              animation: showImages ? `${comeFromBottom} 0.5s ease-out forwards` : "none",
+            }}
+          >
+            I can help you with your requests like any other AI, moreover I can run different models, also, you can look
+            at my pre-designed prompts for different cases!
+          </Typography>
+        )}
       </Stack>
       <SuggestedPrompts />
       <div ref={scrollRef}></div>
