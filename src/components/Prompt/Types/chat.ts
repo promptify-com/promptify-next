@@ -1,5 +1,6 @@
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
+import { IParameters } from "@/common/types";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
@@ -12,8 +13,10 @@ export type MessageType =
   | "html"
   | "credentials"
   | "suggestedTemplates"
-  | "HeaderWithText"
-  | "question";
+  | "headerWithText"
+  | "questionInput"
+  | "questionParam"
+  | "readyMessage";
 
 export interface IMessage {
   id: number;
@@ -33,6 +36,7 @@ export interface IMessage {
 }
 
 export interface IAnswer {
+  parameter?: IParameters;
   inputName: string;
   required: boolean;
   question: string;
@@ -44,3 +48,15 @@ export interface IAnswer {
 export type ChatOption = "QA" | "FORM";
 
 export type ChatMode = "messages" | "automation";
+
+export interface IQuestion {
+  inputName: string;
+  prompt?: number;
+  question: string;
+  required: boolean;
+  type: "input" | "param";
+  defaultValue?: string | number | null;
+  choices?: string[];
+  fileExtensions?: string[];
+  // New property to distinguish between inputs and params
+}

@@ -47,9 +47,8 @@ function Chat() {
     setIsValidatingAnswer,
     suggestedTemplates,
     showGenerateButton,
-
-    allQuestionsAnswered,
-    setAllQuestionsAnswered,
+    isInputDisabled,
+    setIsInputDisabled,
   } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
@@ -223,7 +222,7 @@ function Chat() {
                   handleGenerateExecution();
                   dispatch(setChatMode("automation"));
                   if (selectedChatOption === "QA") {
-                    setAllQuestionsAnswered(false);
+                    setIsInputDisabled(false);
                   }
                 }}
               />
@@ -235,7 +234,7 @@ function Chat() {
                 {showChatInput && (
                   <ChatInput
                     onSubmit={handleSubmitInput}
-                    disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
+                    disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
                     isValidating={isValidatingAnswer}
                   />
                 )}

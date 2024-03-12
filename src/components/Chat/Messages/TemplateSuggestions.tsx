@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import type { Templates } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedChatOption, setSelectedTemplate } from "@/core/store/chatSlice";
+import { setAnswers, setSelectedChatOption, setSelectedTemplate } from "@/core/store/chatSlice";
 
 interface Props {
   content: string;
@@ -49,6 +49,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
               template={template}
               onClick={() => {
                 dispatch(setSelectedTemplate(template));
+                dispatch(setAnswers([]));
                 setTimeout(() => {
                   scrollToBottom();
                 }, 100);

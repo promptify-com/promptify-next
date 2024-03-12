@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { useAppSelector } from "@/hooks/useStore";
-import FormParam from "@/components/Prompt/Common/Chat/FormParams";
+import FormParam from "@/components/Prompt/Common/Chat/FormParam";
 import FormInput from "@/components/Prompt/Common/Chat/FormInput";
 import FormInputPlaceholder from "@/components/placeholders/FormInputPlaceholder";
 import type { IPromptInput } from "@/common/types/prompt";
@@ -97,6 +97,7 @@ function FormFields({ messageType, template }: FormLayoutProps) {
         <FormParam
           key={param.parameter.id}
           param={param}
+          variant="slider"
         />
       ))}
     </Stack>
