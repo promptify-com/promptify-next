@@ -8,7 +8,7 @@ import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import type { GetServerSideProps } from "next";
 import { Layout } from "@/layout";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
 import { isValidUserFn } from "@/core/store/userSlice";

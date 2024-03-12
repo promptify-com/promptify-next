@@ -13,7 +13,7 @@ import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Link from "next/link";
 import { useAppSelector } from "@/hooks/useStore";
-import ExploreCardCategory from "./cards/ExploreCardCategory";
+import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 
 interface CategoryCarouselProps {
   categories: Category[];
