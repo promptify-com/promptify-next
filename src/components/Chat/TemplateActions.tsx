@@ -7,12 +7,19 @@ import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import { Templates } from "@/core/api/dto/templates";
+import useSaveFavoriteTemplate from "@/hooks/useSaveFavoriteTemplate";
+import Favorite from "@mui/icons-material/Favorite";
+import Bookmark from "@mui/icons-material/Bookmark";
+import BookmarkBorder from "@mui/icons-material/BookmarkBorder";
+import { FavoriteBorder } from "@mui/icons-material";
 
 interface Props {
   template: Templates;
 }
 
 function TemplateActions({ template }: Props) {
+  const { saveFavorite, templateData } = useSaveFavoriteTemplate(template);
+
   return (
     <Stack
       overflow={"hidden"}
@@ -43,19 +50,37 @@ function TemplateActions({ template }: Props) {
       </MenuItem>
 
       <MenuItem
-        onClick={() => {}}
+        onClick={() => saveFavorite(true)}
         sx={menuItemStyle}
       >
-        <FavoriteBorderOutlined />
-        Like
+        {templateData.is_liked ? (
+          <>
+            <Favorite />
+            Liked
+          </>
+        ) : (
+          <>
+            <FavoriteBorder />
+            Like
+          </>
+        )}
       </MenuItem>
 
       <MenuItem
-        onClick={() => {}}
+        onClick={() => saveFavorite()}
         sx={menuItemStyle}
       >
-        <BookmarkBorderOutlined />
-        Add to favorites
+        {templateData.is_favorite ? (
+          <>
+            <BookmarkBorder />
+            Add to favorites
+          </>
+        ) : (
+          <>
+            <Bookmark />
+            Remove from favorites
+          </>
+        )}
       </MenuItem>
       {/* <Stack
         mt={0.5}

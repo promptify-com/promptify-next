@@ -168,7 +168,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           Run prompt
         </Button>
 
-        {/* <IconButton
+        <IconButton
           ref={actionsAnchorRef}
           onClick={() => setActionsOpened(true)}
           sx={{
@@ -179,9 +179,9 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           }}
         >
           <MoreVert />
-        </IconButton> */}
+        </IconButton>
       </Stack>
-      {/* {actionsOpened && (
+      {actionsOpened && (
         <Popper
           sx={{ zIndex: 1200 }}
           open={actionsOpened}
@@ -197,7 +197,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
               <Paper
                 sx={{
                   borderRadius: "16px",
-                  width: "199px",
+                  width: "218px",
                   marginTop: "5px",
                   overflow: "hidden",
                 }}
@@ -217,7 +217,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
             </Fade>
           )}
         </Popper>
-      )} */}
+      )}
     </Stack>
   );
 }
