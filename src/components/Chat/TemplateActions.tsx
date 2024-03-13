@@ -103,12 +103,7 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
                 }}
                 elevation={1}
               >
-                <ClickAwayListener
-                  onClickAway={() => {
-                    console.log("close");
-                    setActionsOpened(false);
-                  }}
-                >
+                <ClickAwayListener onClickAway={() => setActionsOpened(false)}>
                   <Stack
                     overflow={"hidden"}
                     direction={"column"}
@@ -162,33 +157,16 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
                     >
                       {templateData.is_favorite ? (
                         <>
-                          <BookmarkBorder />
-                          Add to favorites
-                        </>
-                      ) : (
-                        <>
                           <Bookmark />
                           Remove from favorites
                         </>
+                      ) : (
+                        <>
+                          <BookmarkBorder />
+                          Add to favorites
+                        </>
                       )}
                     </MenuItem>
-                    {/* <Stack
-                  mt={0.5}
-                  sx={{
-                    "&:hover": {
-                      bgcolor: "action.hover",
-                    },
-                  }}
-                >
-                  <Divider />
-                  <MenuItem
-                    onClick={() => {}}
-                    sx={menuItemStyle}
-                  >
-                    <DeleteOutline />
-                    Remove
-                  </MenuItem>
-                </Stack> */}
                   </Stack>
                 </ClickAwayListener>
               </Paper>
