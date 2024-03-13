@@ -21,10 +21,8 @@ function Template({ fetchedTemplate }: TemplateProps) {
 export const getServerSideProps: GetServerSideProps = async ({ params, query, res }) => {
   res.setHeader("Cache-Control", "public, maxage=900, stale-while-revalidate=2");
 
-  let fetchedTemplate: Templates = {} as Templates;
-
   try {
-    fetchedTemplate = await getTemplateBySlug(params?.slug as string);
+    const fetchedTemplate = await getTemplateBySlug(params?.slug as string);
 
     return {
       props: {
@@ -41,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
       props: {
         title: SEO_TITLE,
         description: SEO_DESCRIPTION,
-        fetchedTemplate,
+        fetchedTemplate: {} as Templates,
       },
     };
   }

@@ -38,7 +38,7 @@ export const getTemplateBySlug = async (slug: string): Promise<Templates> => {
       headers: { "Content-Type": "application/json" },
     })
     .then(response => {
-      return response.data;
+      return response.data ?? {};
     });
 };
 

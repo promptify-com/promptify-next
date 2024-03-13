@@ -144,7 +144,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
       <div id="example">
         <ExecutionExample
           execution={template.example_execution}
-          promptsData={template.prompts}
+          promptsData={template.prompts || []}
         />
       </div>
       <div id="api">
