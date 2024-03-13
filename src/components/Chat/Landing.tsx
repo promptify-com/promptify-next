@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,32 +9,48 @@ import { useAppSelector } from "@/hooks/useStore";
 function Landing() {
   const [showImages, setShowImages] = useState(false);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const showImagesAndScroll = () => {
       setShowImages(true);
-    }, 100);
+      setTimeout(() => {
+        scrollRef.current?.scrollIntoView({
+          block: "end",
+          behavior: "smooth",
+        });
+      }, 1000);
+    };
+
+    const timer = setTimeout(showImagesAndScroll, 100);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <Stack
-      direction={"column"}
+      height={"calc(100% - 48px)"}
+      overflow={"auto"}
       gap={4}
-      pt={"32px"}
-      pb={"16px"}
-      px={{ xs: "8px", md: isChatHistorySticky ? "80px" : "300px" }}
-      position={"relative"}
+      sx={{
+        pt: "32px",
+        pb: "16px",
+        px: { xs: "8px", md: isChatHistorySticky ? "80px" : "300px" },
+        position: "relative",
+        "&::-webkit-scrollbar": {
+          width: "0px",
+        },
+      }}
     >
       <Stack
         direction={"row"}
         alignItems={"center"}
-        gap={1}
         justifyContent={"center"}
+        gap={1}
         width={"300px"}
-        mx={"auto"}
         sx={{
+          mt: "auto",
+          mx: "auto",
           position: "relative",
           "& > *": {
             transition: "transform 1s ease",
@@ -134,6 +150,7 @@ function Landing() {
         </Typography>
       </Stack>
       <SuggestedPrompts />
+      <div ref={scrollRef}></div>
     </Stack>
   );
 }
