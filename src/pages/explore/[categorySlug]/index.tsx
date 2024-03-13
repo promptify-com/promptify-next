@@ -96,153 +96,126 @@ export default function Page({ category }: { category: Category }) {
           mt={{ xs: 7, md: -2 }}
           sx={{
             maxWidth: "1072px",
-            marginLeft: "auto",
-            marginRight: "auto",
-            width: "100%",
+            mx: "auto",
+            p: { xs: "16px", md: "32px 72px" },
           }}
         >
-          <Grid
-            sx={{
-              padding: { xs: "16px", md: "32px" },
-            }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            py={"16px"}
           >
-            <Stack
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
+            <Button
+              onClick={goBack}
+              variant="text"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                color: "onSurface",
+                p: "8px",
+                fontSize: 16,
+                fontWeight: 400,
+                opacity: 0.3,
+              }}
             >
-              <Stack
-                direction="row"
-                alignItems="center"
-                gap={2}
+              All Categories
+              <KeyboardArrowLeft />
+            </Button>
+
+            <Typography
+              sx={{
+                color: "onSurface",
+                fontSize: 16,
+                fontWeight: 400,
+                p: "8px",
+              }}
+            >
+              {category.name}
+            </Typography>
+          </Stack>
+
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            justifyContent="space-between"
+            alignItems="center"
+            gap="16px"
+            p={"24px 16px 40px"}
+          >
+            <Image
+              src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={category.name}
+              style={{ objectFit: "cover", width: "20%", height: "auto", borderRadius: "50%" }}
+              priority={true}
+            />
+            <Stack
+              sx={{
+                display: "flex",
+                p: "var(--none, 0px) var(--2, 16px)",
+                flexDirection: "column",
+                gap: "24px",
+                alignSelf: "stretch",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: 32,
+                  fontWeight: 400,
+                  lineHeight: "120%",
+                  letterSpacing: "0.17px",
+                  color: "onSurface",
+                  fontFeatureSettings: "'clig' off, 'liga' off",
+                }}
               >
-                <Stack>
-                  <Button
-                    onClick={() => goBack()}
-                    variant="text"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      color: "onSurface",
-                      p: "0px",
-                      fontSize: 16,
-                      fontWeight: 400,
-                      lineHeight: "160%",
-                      letterSpacing: "0.17px",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "onSurface",
-                        fontFeatureSettings: "'clig' off, 'liga' off",
-                        fontSize: "16px",
-                        opacity: 0.3,
-                        fontWeight: 400,
-                        lineHeight: "120%",
-                        letterSpacing: "0.2px",
-                      }}
-                    >
-                      All Categories
-                    </Typography>
-                    <KeyboardArrowLeft sx={{ opacity: 0.3 }} />
-                  </Button>
-                </Stack>
-
-                <Typography
-                  sx={{
-                    color: "onSurface",
-                    fontFeatureSettings: "'clig' off, 'liga' off",
-                    fontSize: "16px",
-                    fontWeight: 400,
-                    lineHeight: "120%",
-                    letterSpacing: "0.2px",
-                  }}
-                >
-                  {category.name}
-                </Typography>
-              </Stack>
-
-              <Stack
-                direction={{ xs: "column", md: "row" }}
-                justifyContent="space-between"
-                alignItems="center"
-                gap="16px"
+                {category.name}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  lineHeight: "160%",
+                  letterSpacing: "0.17px",
+                  color: "onSurface",
+                  fontFeatureSettings: "'clig' off, 'liga' off",
+                }}
               >
-                <Image
-                  src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
-                  alt={category.name}
-                  style={{ objectFit: "cover", width: "20%", height: "auto", borderRadius: "50%" }}
-                  priority={true}
-                />
-                <Stack
-                  sx={{
-                    display: "flex",
-                    p: "var(--none, 0px) var(--2, 16px)",
-                    flexDirection: "column",
-                    gap: "24px",
-                    alignSelf: "stretch",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: 38,
-                      fontWeight: 400,
-                      lineHeight: "120%",
-                      letterSpacing: "0.17px",
-                      color: "onSurface",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                    }}
-                  >
-                    {category.name}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: 16,
-                      fontWeight: 400,
-                      lineHeight: "160%",
-                      letterSpacing: "0.17px",
-                      color: "onSurface",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                    }}
-                  >
-                    {category.description}
-                  </Typography>{" "}
-                </Stack>
-              </Stack>
-
-              <FiltersSelected show={!allFilterParamsNull} />
-
-              {!allFilterParamsNull && (
-                <Box sx={{ px: { xs: "20px", md: "0px" } }}>
-                  <TemplatesSection
-                    filtered={!allFilterParamsNull}
-                    templates={templates ?? []}
-                    isLoading={isFetching}
-                    templateLoading={isTemplatesLoading}
-                    title="Best templates"
-                    onNextPage={handleNextPage}
-                    hasMore={hasMore}
-                    isInfiniteScrolling={false}
-                    hasPrev={hasPrev}
-                    onPrevPage={handlePrevPage}
-                  />
-                  {templates?.length === 0 && (
-                    <Typography
-                      fontSize={{ xs: 14, md: 18 }}
-                      fontWeight={400}
-                      textAlign={"center"}
-                      color={"onSurface"}
-                    >
-                      No templates found. Please adjust your filters.
-                    </Typography>
-                  )}
-                </Box>
-              )}
-
-              <PopularTemplates catId={category?.id} />
+                {category.description}
+              </Typography>{" "}
             </Stack>
-          </Grid>
+          </Stack>
+
+          <FiltersSelected show={!allFilterParamsNull} />
+
+          {!allFilterParamsNull && (
+            <Box sx={{ px: { xs: "20px", md: "0px" } }}>
+              <TemplatesSection
+                filtered={!allFilterParamsNull}
+                templates={templates ?? []}
+                isLoading={isFetching}
+                templateLoading={isTemplatesLoading}
+                title="Best templates"
+                onNextPage={handleNextPage}
+                hasMore={hasMore}
+                isInfiniteScrolling={false}
+                hasPrev={hasPrev}
+                onPrevPage={handlePrevPage}
+              />
+              {templates?.length === 0 && (
+                <Typography
+                  fontSize={{ xs: 14, md: 18 }}
+                  fontWeight={400}
+                  textAlign={"center"}
+                  color={"onSurface"}
+                >
+                  No templates found. Please adjust your filters.
+                </Typography>
+              )}
+            </Box>
+          )}
+
+          <Box py={"40px"}>
+            <PopularTemplates catId={category?.id} />
+          </Box>
           <FooterPrompt />
         </Box>
       </Layout>

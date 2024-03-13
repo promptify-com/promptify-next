@@ -1,15 +1,17 @@
+import { ReactNode, useState } from "react";
+import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { ReactNode, useState } from "react";
 
 interface Props {
   children: ReactNode;
+  footerText?: string;
 }
 
-export default function AccordionBox({ children }: Props) {
+export default function AccordionBox({ children, footerText }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -29,24 +31,39 @@ export default function AccordionBox({ children }: Props) {
         <AccordionSummary></AccordionSummary>
         <AccordionDetails>{children}</AccordionDetails>
       </Accordion>
-      <Button
-        onClick={() => setExpanded(!expanded)}
-        sx={{
-          border: "1px solid",
-          borderColor: "surfaceContainerHigh",
-          borderRadius: "99px",
-          p: "8px 16px",
-          fontSize: { xs: 12, md: 14 },
-          fontWeight: 500,
-          gap: 0.5,
-          color: "onSurface",
-          ":hover": {
-            bgcolor: "surfaceContainerHigh",
-          },
-        }}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={1}
       >
-        {expanded ? "Collapse" : "Expand"}
-      </Button>
+        <Button
+          onClick={() => setExpanded(!expanded)}
+          sx={{
+            border: "1px solid",
+            borderColor: "surfaceContainerHigh",
+            borderRadius: "99px",
+            p: "8px 16px",
+            fontSize: { xs: 12, md: 14 },
+            fontWeight: 500,
+            gap: 0.5,
+            color: "onSurface",
+            ":hover": {
+              bgcolor: "surfaceContainerHigh",
+            },
+          }}
+        >
+          {expanded ? "Collapse" : "Expand"}
+        </Button>
+        {!expanded && (
+          <Typography
+            fontSize={16}
+            fontWeight={400}
+            color={"secondary.light"}
+          >
+            {footerText}
+          </Typography>
+        )}
+      </Stack>
     </Stack>
   );
 }
