@@ -7,14 +7,7 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import Fade from "@mui/material/Fade";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import Popper from "@mui/material/Popper";
-import { MoreVert } from "@mui/icons-material";
 import TemplateActions from "@/components/Chat/TemplateActions";
-import { useRef, useState } from "react";
 import Link from "next/link";
 
 interface Props {
@@ -24,8 +17,6 @@ interface Props {
 
 function TemplateSuggestionItem({ template, onRun }: Props) {
   const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
-  const [actionsOpened, setActionsOpened] = useState(false);
-  const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Stack
@@ -167,63 +158,11 @@ function TemplateSuggestionItem({ template, onRun }: Props) {
         >
           Run prompt
         </Button>
-
-        <IconButton
-          ref={actionsAnchorRef}
-          onClick={() => setActionsOpened(true)}
-          sx={{
-            border: "none",
-            "&:hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-        >
-          <MoreVert />
-        </IconButton>
+        <TemplateActions
+          template={template}
+          onRun={onRun}
+        />
       </Stack>
-      {actionsOpened && (
-        <Popper
-          sx={{ zIndex: 1200 }}
-          open={actionsOpened}
-          anchorEl={actionsAnchorRef.current}
-          placement={"bottom-end"}
-          transition
-        >
-          {({ TransitionProps }) => (
-            <Fade
-              {...TransitionProps}
-              timeout={350}
-            >
-              <Paper
-                sx={{
-                  borderRadius: "16px",
-                  width: "218px",
-                  marginTop: "5px",
-                  overflow: "hidden",
-                }}
-                elevation={1}
-              >
-                <ClickAwayListener
-                  onClickAway={() => {
-                    console.log("close");
-                    setActionsOpened(false);
-                  }}
-                >
-                  <Box>
-                    <TemplateActions
-                      template={template}
-                      onRun={newChat => {
-                        setActionsOpened(false);
-                        onRun(newChat);
-                      }}
-                    />
-                  </Box>
-                </ClickAwayListener>
-              </Paper>
-            </Fade>
-          )}
-        </Popper>
-      )}
     </Stack>
   );
 }
