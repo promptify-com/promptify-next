@@ -16,14 +16,19 @@ import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
-import { MoreVert } from "@mui/icons-material";
+import MoreVert from "@mui/icons-material/MoreVert";
+import { useAppDispatch } from "@/hooks/useStore";
+import { useCreateChatMutation } from "@/core/api/chats";
+import { setAnswers, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
-  onRun?: (newChat?: boolean) => void;
+  onScrollToBottom?: () => void;
 }
 
-function TemplateActions({ template, onRun }: Props) {
+function TemplateActions({ template, onScrollToBottom }: Props) {
+  const dispatch = useAppDispatch();
+  const [createChat] = useCreateChatMutation();
   const [actionsOpened, setActionsOpened] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
@@ -33,10 +38,34 @@ function TemplateActions({ template, onRun }: Props) {
     window.open(`/prompt/${template.slug}`, "_blank");
   };
 
-  const handleRunPrompt = (newChat?: boolean) => {
+  const handleRunPrompt = async (newChat?: boolean) => {
     setActionsOpened(false);
-    onRun?.(newChat);
+
+    if (newChat) {
+      await handleCreateChat(template);
+    }
+
+    dispatch(setSelectedTemplate(template));
+    dispatch(setAnswers([]));
+    if (onScrollToBottom) {
+      setTimeout(() => {
+        onScrollToBottom();
+      }, 100);
+    }
   };
+
+  const handleCreateChat = async (template: Templates) => {
+    try {
+      const newChat = await createChat({
+        title: template.title ?? "Welcome",
+        thumbnail: template.thumbnail,
+      }).unwrap();
+      dispatch(setSelectedChat(newChat));
+    } catch (err) {
+      console.error("Error creating a new chat: ", err);
+    }
+  };
+
   return (
     <>
       <IconButton

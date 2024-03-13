@@ -4,44 +4,15 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import type { Templates } from "@/core/api/dto/templates";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedChat, setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
-import { useCreateChatMutation } from "@/core/api/chats";
 
 interface Props {
   content: string;
   templates: Templates[];
-  scrollToBottom: () => void;
+  onScrollToBottom: () => void;
 }
 
-function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
-  const dispatch = useAppDispatch();
-  const [createChat] = useCreateChatMutation();
+function TemplateSuggestions({ templates, onScrollToBottom, content }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-
-  const handleRunPrompt = async (template: Templates, newChat?: boolean) => {
-    if (newChat) {
-      await handleCreateChat(template);
-    }
-
-    dispatch(setSelectedTemplate(template));
-    dispatch(setAnswers([]));
-    setTimeout(() => {
-      scrollToBottom();
-    }, 100);
-  };
-
-  const handleCreateChat = async (template: Templates) => {
-    try {
-      const newChat = await createChat({
-        title: template.title ?? "Welcome",
-        thumbnail: template.thumbnail,
-      }).unwrap();
-      dispatch(setSelectedChat(newChat));
-    } catch (err) {
-      console.error("Error creating a new chat: ", err);
-    }
-  };
 
   return (
     <Stack>
@@ -70,7 +41,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
             <TemplateSuggestionItem
               key={template.id}
               template={template}
-              onRun={newChat => handleRunPrompt(template, newChat)}
+              onScrollToBottom={onScrollToBottom}
             />
           ))}
 

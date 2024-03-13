@@ -5,15 +5,19 @@ import MessageBoxHeader from "./MessageBoxHeader";
 
 interface Props {
   content: string;
+  onScrollToBottom(): void;
 }
 
-function HeaderWithTextMessage({ content }: Props) {
+function HeaderWithTextMessage({ content, onScrollToBottom }: Props) {
   return (
     <Stack
       direction={"column"}
       gap={2}
     >
-      <MessageBoxHeader variant="FORM" />
+      <MessageBoxHeader
+        variant="FORM"
+        onScrollToBottom={onScrollToBottom}
+      />
       <Typography
         fontSize={16}
         lineHeight={"25.6px"}

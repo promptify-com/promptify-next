@@ -9,14 +9,25 @@ import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
-  onRun: (newChat?: boolean) => void;
+  onScrollToBottom: () => void;
 }
 
-function TemplateSuggestionItem({ template, onRun }: Props) {
+function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
+  const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
+
+  const handleRunPrompt = () => {
+    dispatch(setSelectedTemplate(template));
+    dispatch(setAnswers([]));
+    setTimeout(() => {
+      onScrollToBottom();
+    }, 100);
+  };
 
   return (
     <Stack
@@ -154,13 +165,13 @@ function TemplateSuggestionItem({ template, onRun }: Props) {
               bgcolor: "action.hover",
             },
           }}
-          onClick={() => onRun()}
+          onClick={handleRunPrompt}
         >
           Run prompt
         </Button>
         <TemplateActions
           template={template}
-          onRun={onRun}
+          onScrollToBottom={onScrollToBottom}
         />
       </Stack>
     </Stack>
