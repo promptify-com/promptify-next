@@ -103,7 +103,6 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    console.log(selectedChat);
     if (!initialChat) {
       setMessages([]);
       dispatch(setAnswers([]));

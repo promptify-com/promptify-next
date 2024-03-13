@@ -153,23 +153,18 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (message.includes("[ERROR]")) {
             dispatch(setToast(EXECUTE_ERROR_TOAST));
-            if (message.includes("[ERROR]")) {
-              dispatch(setToast(EXECUTE_ERROR_TOAST));
-              setGeneratingResponse(prevState => {
-                const newState = { ...prevState, data: [...prevState.data] };
-                const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
-                if (activePromptIndex !== -1) {
-                  newState.data[activePromptIndex] = {
-                    ...newState.data[activePromptIndex],
-                    isLoading: false,
-                    isCompleted: true,
-                  };
-                }
-                return newState;
-              });
-              return;
-            }
-
+            setGeneratingResponse(prevState => {
+              const newState = { ...prevState, data: [...prevState.data] };
+              const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
+              if (activePromptIndex !== -1) {
+                newState.data[activePromptIndex] = {
+                  ...newState.data[activePromptIndex],
+                  isLoading: false,
+                  isCompleted: true,
+                };
+              }
+              return newState;
+            });
             return;
           }
 

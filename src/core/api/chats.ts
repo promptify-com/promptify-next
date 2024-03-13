@@ -1,6 +1,6 @@
 import { randomId } from "../../common/helpers";
 import { baseApi } from "./api";
-import { IChat, IChatPartial } from "./dto/chats";
+import { IChat, IChatPartial, ISaveChatInput } from "./dto/chats";
 
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -97,6 +97,28 @@ export const chatsApi = baseApi.injectEndpoints({
           } catch {}
         },
       }),
+      saveChatInput: builder.mutation<void, ISaveChatInput>({
+        query: ({ chat, text, type, sender }) => ({
+          url: "/api/chat/inputs/",
+          method: "POST",
+          data: {
+            chat,
+            text,
+            type,
+            sender,
+          },
+        }),
+      }),
+      saveChatSuggestions: builder.mutation<void, { chat: number; templates: number[] }>({
+        query: ({ chat, templates }) => ({
+          url: "/api/chat/suggestions/",
+          method: "POST",
+          data: {
+            chat,
+            templates,
+          },
+        }),
+      }),
     };
   },
 });
@@ -108,4 +130,6 @@ export const {
   useDeleteChatMutation,
   useUpdateChatMutation,
   useDuplicateChatMutation,
+  useSaveChatInputMutation,
+  useSaveChatSuggestionsMutation,
 } = chatsApi;

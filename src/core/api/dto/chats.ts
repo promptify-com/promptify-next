@@ -1,3 +1,5 @@
+import { MessageType } from "@/components/Prompt/Types/chat";
+
 export interface IChat {
   id: number;
   created_at: string;
@@ -9,3 +11,10 @@ export interface IChat {
 }
 
 export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
+
+export interface ISaveChatInput {
+  chat: number;
+  type: "text" | "question";
+  text: string;
+  sender: "system" | "user";
+}

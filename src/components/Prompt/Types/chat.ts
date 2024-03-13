@@ -60,3 +60,15 @@ export interface IQuestion {
   fileExtensions?: string[];
   // New property to distinguish between inputs and params
 }
+
+export interface CreateMessageProps {
+  type: MessageType;
+  text: string;
+  fromUser?: boolean;
+  noHeader?: boolean;
+  timestamp?: string;
+  isEditable?: boolean;
+  isRequired?: boolean;
+  questionIndex?: number;
+  questionInputName?: string;
+}
