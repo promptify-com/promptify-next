@@ -181,7 +181,7 @@ function Chat() {
     }
   };
 
-  const showLanding = !!!messages.length;
+  const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (
