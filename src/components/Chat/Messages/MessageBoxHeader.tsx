@@ -106,6 +106,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
           <TemplateActions
             template={selectedTemplate}
             onScrollToBottom={onScrollToBottom}
+            onlyNew
           />
         )}
       </Stack>

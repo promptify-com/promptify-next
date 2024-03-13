@@ -24,9 +24,10 @@ import { setAnswers, setSelectedChat, setSelectedTemplate } from "@/core/store/c
 interface Props {
   template: Templates;
   onScrollToBottom?: () => void;
+  onlyNew?: boolean;
 }
 
-function TemplateActions({ template, onScrollToBottom }: Props) {
+function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
   const dispatch = useAppDispatch();
   const [createChat] = useCreateChatMutation();
   const [actionsOpened, setActionsOpened] = useState(false);
@@ -112,13 +113,15 @@ function TemplateActions({ template, onScrollToBottom }: Props) {
                     overflow={"hidden"}
                     direction={"column"}
                   >
-                    <MenuItem
-                      onClick={() => handleRunPrompt()}
-                      sx={menuItemStyle}
-                    >
-                      <ChatBubbleOutline />
-                      Start in this chat
-                    </MenuItem>
+                    {!onlyNew && (
+                      <MenuItem
+                        onClick={() => handleRunPrompt()}
+                        sx={menuItemStyle}
+                      >
+                        <ChatBubbleOutline />
+                        Start in this chat
+                      </MenuItem>
+                    )}
                     <MenuItem
                       onClick={() => handleRunPrompt(true)}
                       sx={menuItemStyle}
