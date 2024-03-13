@@ -40,7 +40,12 @@ function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "
         alignItems={"center"}
         gap={1}
       >
-        <Typography fontSize={19}>{title}</Typography>
+        <Typography
+          fontSize={{ xs: 19, md: 32 }}
+          fontWeight={400}
+        >
+          {title}
+        </Typography>
         {filtersAllowed && (
           <IconButton
             onClick={e => setOpenFilters(!openFilters)}
