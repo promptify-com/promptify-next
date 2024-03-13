@@ -2,7 +2,6 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-
 import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import type { Templates } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";

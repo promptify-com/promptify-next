@@ -128,7 +128,11 @@ const useMessageManager = () => {
         questionIndex: 1,
       });
       questionMessage.text = `${filteredQuestions[0] || questions[0].fullName}`;
-      setMessages(prevMessages => prevMessages.concat([runMessage, headerWithTextMessage]));
+      setMessages(prevMessages =>
+        prevMessages
+          .filter(msg => !["questionInput", "headerWithText"].includes(msg.type))
+          .concat([runMessage, headerWithTextMessage]),
+      );
       addToQueuedMessages([questionMessage]);
     }
   };
