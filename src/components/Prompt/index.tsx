@@ -14,6 +14,7 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { updatePopupTemplate, updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useViewTemplateMutation } from "@/core/api/templates";
+import { redirectToPath } from "@/common/helpers";
 
 interface Props {
   template: Templates;
@@ -49,7 +50,8 @@ function TemplatePage({ template, popup }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!template) {
+    if (!template || !Object.keys(template).length) {
+      redirectToPath(window.location.pathname ?? "/");
       return;
     }
 

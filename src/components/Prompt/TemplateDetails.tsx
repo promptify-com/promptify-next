@@ -126,8 +126,8 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
             gap={1}
           >
             <Image
-              src={template.created_by.avatar ?? require("@/assets/images/default-avatar.jpg")}
-              alt={template.created_by.first_name?.slice(0, 1) ?? "P"}
+              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
               width={32}
               height={32}
               style={{
@@ -140,7 +140,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
               fontWeight={400}
               color={"onSurface"}
             >
-              by {template.created_by.first_name || template.created_by.username}
+              by {template.created_by?.first_name || template.created_by?.username}
             </Typography>
           </Stack>
           <Stack
@@ -227,10 +227,10 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
               Created: <span>{formatDate(template.created_at)}</span>
             </Typography>
             <Typography sx={detailsStyle}>
-              Views: <span>{template.views}</span>
+              Views: <span>{template.views ?? 0}</span>
             </Typography>
             <Typography sx={detailsStyle}>
-              Runs: <span>{template.executions_count}</span>
+              Runs: <span>{template.executions_count ?? 0}</span>
             </Typography>
           </Stack>
           <Stack

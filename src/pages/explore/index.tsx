@@ -29,7 +29,9 @@ interface Props {
   categories: Category[];
 }
 
-export default function ExplorePage({ categories }: Props) {
+const scrollYThreshold = 500;
+
+export default function ExplorePage({ categories = [] }: Props) {
   const { templates, handleNextPage, hasMore, allFilterParamsNull, isFetching, hasPrev, handlePrevPage } =
     useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 8, paginatedList: true });
   const { isMobile } = useBrowser();
@@ -53,8 +55,7 @@ export default function ExplorePage({ categories }: Props) {
   useEffect(() => {
     const handleScroll = () => {
       if (isMobile) return;
-      const threshold = 200;
-      if (window.scrollY > threshold) {
+      if (window.scrollY > scrollYThreshold) {
         setHasUserScrolled(true);
       } else {
         setHasUserScrolled(false);
@@ -67,10 +68,6 @@ export default function ExplorePage({ categories }: Props) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMobile]);
-
-  const _categories = categories.filter(
-    category => !category.parent && category.is_visible && category.prompt_template_count,
-  );
 
   return (
     <Layout>
@@ -116,7 +113,7 @@ export default function ExplorePage({ categories }: Props) {
                     WebkitOverflowScrolling: { xs: "touch", md: "initial" },
                   }}
                 >
-                  {_categories.map(category => (
+                  {categories?.map(category => (
                     <Grid
                       item
                       xs={12}
@@ -133,7 +130,7 @@ export default function ExplorePage({ categories }: Props) {
               </Stack>
             ) : (
               <CategoryCarousel
-                categories={_categories}
+                categories={categories}
                 userScrolled={hasUserScrolled}
                 onClick={() => setSeeAll(true)}
                 gap={1}

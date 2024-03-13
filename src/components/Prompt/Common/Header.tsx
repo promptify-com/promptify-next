@@ -42,7 +42,7 @@ export default function Header({ template, close }: TemplateHeaderProps) {
       }}
       sx={breadcrumbStyle}
     >
-      {template.category.name}
+      {template.category?.name}
     </Link>,
     <Typography
       key="2"
