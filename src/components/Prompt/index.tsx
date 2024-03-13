@@ -23,7 +23,13 @@ interface Props {
 
 function TemplatePage({ template, popup }: Props) {
   if (!template) {
-    template = {} as Templates;
+    // @ts-expect-error incomplete-template-object
+    template = {
+      category: {},
+      prompts: [],
+      created_by: {},
+      created_at: new Date(),
+    } as Templates;
   }
 
   const { isMobile } = useBrowser();
