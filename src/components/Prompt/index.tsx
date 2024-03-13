@@ -22,6 +22,10 @@ interface Props {
 }
 
 function TemplatePage({ template, popup }: Props) {
+  if (!template) {
+    template = {} as Templates;
+  }
+
   const { isMobile } = useBrowser();
   const theme = useTheme();
   const dispatch = useAppDispatch();
