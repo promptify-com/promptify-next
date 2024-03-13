@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, stripTags } from "@/common/helpers";
+import { isDesktopViewPort, redirectToPath, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
 import Link from "next/link";
@@ -54,6 +54,9 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
   return (
     <Link
       href={`/prompt/${template.slug}`}
+      onClick={() => {
+        redirectToPath(`/prompt/${template.slug}`);
+      }}
       style={{
         flex: isDesktop ? 1 : "none",
         textDecoration: "none",
