@@ -25,7 +25,7 @@ interface CategoryCarouselProps {
 }
 
 function CategoryCarousel({
-  categories,
+  categories = [],
   onClick,
   userScrolled,
   autoPlay = false,
@@ -65,31 +65,55 @@ function CategoryCarousel({
         >
           Browse category
         </Typography>
-        {!userScrolled && (
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            gap={1}
-            sx={{ display: { xs: "none", md: "flex" } }}
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          gap={1}
+          sx={{ display: { xs: "none", md: "flex" } }}
+        >
+          <Button
+            variant="outlined"
+            sx={{ color: "#67677C" }}
+            onClick={onClick}
           >
-            <Button
-              variant="outlined"
-              sx={{ color: "#67677C" }}
-              onClick={onClick}
-            >
-              See all
-            </Button>
-            <CarouselButtons
-              scrollPrev={scrollPrev}
-              scrollNext={scrollNext}
-              canScrollNext={true}
-              canScrollPrev={true}
-            />
-          </Stack>
-        )}
+            See all
+          </Button>
+          <CarouselButtons
+            scrollPrev={scrollPrev}
+            scrollNext={scrollNext}
+            canScrollNext={true}
+            canScrollPrev={true}
+          />
+        </Stack>
       </Stack>
-      {userScrolled ? (
+      <Stack
+        ref={carouselRef}
+        overflow={"hidden"}
+        m={"8px 16px"}
+      >
+        <Stack
+          ref={containerRef}
+          direction={"row"}
+        >
+          {observer?.isIntersecting &&
+            categories.map(category => (
+              <Box key={category.id}>
+                {explore ? (
+                  <ExploreCardCategory category={category} />
+                ) : (
+                  <CategoryCard
+                    category={category}
+                    priority={false}
+                    href={`/explore/${category.slug}`}
+                    min
+                  />
+                )}
+              </Box>
+            ))}
+        </Stack>
+      </Stack>
+      {userScrolled && (
         <Box
           sx={{
             position: "fixed",
@@ -169,33 +193,6 @@ function CategoryCarousel({
             </Stack>
           </CarouselButtons>
         </Box>
-      ) : (
-        <Stack
-          ref={carouselRef}
-          overflow={"hidden"}
-          m={"8px 16px"}
-        >
-          <Stack
-            ref={containerRef}
-            direction={"row"}
-          >
-            {observer?.isIntersecting &&
-              categories.map(category => (
-                <Box key={category.id}>
-                  {explore ? (
-                    <ExploreCardCategory category={category} />
-                  ) : (
-                    <CategoryCard
-                      category={category}
-                      priority={false}
-                      href={`/explore/${category.slug}`}
-                      min
-                    />
-                  )}
-                </Box>
-              ))}
-          </Stack>
-        </Stack>
       )}
     </Stack>
   );
