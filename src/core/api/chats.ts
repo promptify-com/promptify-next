@@ -128,6 +128,18 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
+
+      saveChatTemplate: builder.mutation<void, { chat: number; text: string; template_id: number }>({
+        query: ({ chat, text, template_id }) => ({
+          url: "/api/chat/template/",
+          method: "POST",
+          data: {
+            chat,
+            text,
+            template_id,
+          },
+        }),
+      }),
     };
   },
 });
@@ -142,4 +154,5 @@ export const {
   useSaveChatInputMutation,
   useSaveChatSuggestionsMutation,
   useSaveChatExecutionsMutation,
+  useSaveChatTemplateMutation,
 } = chatsApi;

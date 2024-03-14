@@ -1,5 +1,4 @@
 import { n8nClient as ApiClient } from "@/common/axios";
-import Storage from "@/common/storage";
 import { getTemplateById } from "@/hooks/api/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
@@ -11,9 +10,6 @@ interface SendMessageResponse {
   output?: string;
   message?: string;
 }
-
-const N8N_SAVED_TEMPLATES = "n8nSavedTemplates";
-const N8N_SAVED_TEMPLATES_REFS = "n8nSavedTemplatesRefs";
 
 export async function sendMessageAPI(message: string): Promise<SendMessageResponse> {
   const response = await ApiClient.post(`/webhook/${process.env.NEXT_PUBLIC_N8N_CHAT_WEBHOOK_PATH}`, {
@@ -46,11 +42,7 @@ export async function fetchData(ids: number[]) {
     return [];
   }
 
-  const data = await Promise.allSettled(
-    ids.map(id => {
-      return getTemplateById(id);
-    }),
-  );
+  const data = await Promise.allSettled(ids.map(id => getTemplateById(id)));
 
   const filteredData = data
     .map(_data => {

@@ -72,7 +72,10 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            <HeaderWithTextMessage content={message.text} />
+            <HeaderWithTextMessage
+              content={message.text}
+              onScrollToBottom={onScrollToBottom}
+            />
           </Stack>
         </Fade>
       )}

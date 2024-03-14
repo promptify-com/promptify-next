@@ -138,7 +138,7 @@ function Chat() {
     if (lastMessage.type !== "spark" && !lastMessage.executionId) {
       return;
     }
-    processQueuedMessages(queueSavedMessages, selectedChat?.id!, lastMessage?.executionId!);
+    processQueuedMessages(queueSavedMessages, selectedChat?.id!, lastMessage?.executionId!, selectedTemplate?.id!);
     setQueueSavedMessages([]);
   }, [queueSavedMessages]);
 
@@ -203,7 +203,7 @@ function Chat() {
     }
   };
 
-  const showLanding = !!!messages.length;
+  const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (

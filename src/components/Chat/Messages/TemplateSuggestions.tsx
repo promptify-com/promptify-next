@@ -2,11 +2,8 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-
 import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import type { Templates } from "@/core/api/dto/templates";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setAnswers, setSelectedChatOption, setSelectedTemplate } from "@/core/store/chatSlice";
 
 interface Props {
   content: string;
@@ -17,9 +14,6 @@ interface Props {
 function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
 
-  const showMore = visibleCount < templates.length;
-
-  const dispatch = useAppDispatch();
   return (
     <Stack>
       <Typography
@@ -47,13 +41,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
             <TemplateSuggestionItem
               key={template.id}
               template={template}
-              onClick={() => {
-                dispatch(setSelectedTemplate(template));
-                dispatch(setAnswers([]));
-                setTimeout(() => {
-                  scrollToBottom();
-                }, 100);
-              }}
+              onScrollToBottom={scrollToBottom}
             />
           ))}
 
