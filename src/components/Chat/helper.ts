@@ -93,6 +93,8 @@ export const createMessage = ({
   questionIndex,
   questionInputName,
   text,
+  executionId,
+  templates = [],
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -104,4 +106,6 @@ export const createMessage = ({
   isRequired,
   questionIndex,
   questionInputName,
+  executionId,
+  templates,
 });

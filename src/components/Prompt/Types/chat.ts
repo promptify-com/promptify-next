@@ -1,4 +1,4 @@
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
 import { IParameters } from "@/common/types";
 
@@ -33,6 +33,8 @@ export interface IMessage {
   isEditable?: boolean;
   questionIndex?: number;
   questionInputName?: string;
+  templates?: Templates[];
+  executionId?: number;
 }
 
 export interface IAnswer {
@@ -71,4 +73,6 @@ export interface CreateMessageProps {
   isRequired?: boolean;
   questionIndex?: number;
   questionInputName?: string;
+  templates?: Templates[];
+  executionId?: number;
 }

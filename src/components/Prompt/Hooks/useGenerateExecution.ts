@@ -49,7 +49,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { dispatchNewExecutionData } = useApiAccess();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
-  const generateExecutionHandler = async () => {
+  const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
     if (!template) return;
 
     if (!token) {
@@ -81,7 +81,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     uploadedFiles.current.clear();
 
     const endpoint = `/api/meta/templates/${template.id}/execute/`;
-    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData) });
+    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData), onGenerateExecution });
   };
 
   const streamExecutionHandler = async (response: string) => {
@@ -100,11 +100,13 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     method,
     body,
     streamExecution,
+    onGenerateExecution,
   }: {
     endpoint: string;
     method: string;
     body?: string;
     streamExecution?: IStreamExecution;
+    onGenerateExecution?: (executionId: number) => void;
   }) => {
     fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
       method,
@@ -142,6 +144,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (executionId) {
             setNewExecutionId(executionId);
+            onGenerateExecution?.(executionId);
             setGeneratingResponse(prevState => ({
               ...prevState,
               id: executionId,

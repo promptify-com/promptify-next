@@ -48,7 +48,6 @@ function Chat() {
     handleSubmitInput,
     isValidatingAnswer,
     setIsValidatingAnswer,
-    suggestedTemplates,
     showGenerateButton,
     isInputDisabled,
     setIsInputDisabled,
@@ -61,12 +60,11 @@ function Chat() {
   });
 
   const handleGenerateExecution = () => {
-    const executionMessage = createMessage({ type: "spark", text: "" });
-    setMessages(prevMessages =>
-      prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(executionMessage),
-    );
-    setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
-    generateExecutionHandler();
+    generateExecutionHandler((executionId: number) => {
+      const executionMessage = createMessage({ type: "spark", text: "", executionId });
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
+      setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
+    });
     dispatch(setChatMode("automation"));
     if (selectedChatOption === "QA") {
       setIsInputDisabled(false);
@@ -132,6 +130,18 @@ function Chat() {
     else handleCreateChat();
   }, [selectedTemplate]);
 
+  useEffect(() => {
+    if (!queueSavedMessages.length) {
+      return;
+    }
+    const lastMessage = queueSavedMessages[queueSavedMessages.length - 1];
+    if (lastMessage.type !== "spark" && !lastMessage.executionId) {
+      return;
+    }
+    processQueuedMessages(queueSavedMessages, selectedChat?.id!, lastMessage?.executionId!);
+    setQueueSavedMessages([]);
+  }, [queueSavedMessages]);
+
   const fetchDynamicColors = () => {
     //@ts-expect-error unfound-new-type
     materialDynamicColors(selectedTemplate.thumbnail)
@@ -177,8 +187,6 @@ function Chat() {
 
       if (allPromptsCompleted) {
         selectGeneratedExecution();
-        processQueuedMessages(queueSavedMessages, selectedChat?.id!, generatedExecution?.id!);
-        setQueueSavedMessages([]);
         dispatch(executionsApi.util.invalidateTags(["Executions"]));
       }
     }
@@ -226,7 +234,6 @@ function Chat() {
               }}
             >
               <ChatInterface
-                templates={suggestedTemplates}
                 messages={messages}
                 showGenerateButton={showGenerateButton}
                 onAbort={abortConnection}

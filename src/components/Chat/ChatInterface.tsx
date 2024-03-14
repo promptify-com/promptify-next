@@ -7,18 +7,16 @@ import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
-import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   messages: IMessage[];
-  templates: Templates[];
   onGenerate: () => void;
   showGenerateButton: boolean;
   onAbort: () => void;
 }
 
-const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, onAbort }: Props) => {
+const ChatInterface = ({ messages, onGenerate, showGenerateButton, onAbort }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
@@ -60,7 +58,6 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
             <Fragment key={msg.id}>
               <RenderMessage
                 message={msg}
-                templates={templates}
                 onScrollToBottom={scrollToBottom}
                 onGenerate={onGenerate}
                 onAbort={onAbort}

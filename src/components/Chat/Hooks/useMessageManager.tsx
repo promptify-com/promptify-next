@@ -50,7 +50,6 @@ const useMessageManager = () => {
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [questions, setQuestions] = useState<IQuestion[]>([]);
@@ -166,13 +165,14 @@ const useMessageManager = () => {
           } else {
             if (!!templateIDs.length) {
               const templates = await fetchData(templateIDs);
-              setSuggestedTemplates(templates);
+
               const pluralTemplates = templates.length > 1;
               const suggestionsMessage = createMessage({
                 type: "suggestedTemplates",
                 text: `I found ${pluralTemplates ? "these" : "this"} prompt${
                   pluralTemplates ? "s" : ""
                 }, following your request:`,
+                templates,
               });
               saveChatSuggestions(templateIDs, chatId);
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
@@ -271,7 +271,6 @@ const useMessageManager = () => {
     handleSubmitInput,
     isValidatingAnswer,
     setIsValidatingAnswer,
-    suggestedTemplates,
     createMessage,
     showGenerateButton,
     initialChat,

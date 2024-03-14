@@ -9,19 +9,17 @@ import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox"
 import HeaderWithTextMessage from "@/components/Chat/Messages/HeaderWithTextMessage";
 import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
-import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "../Prompt/Types/chat";
 import ReadyMessage from "./Messages/ReadyMessage";
 
 interface Props {
   message: IMessage;
   onScrollToBottom: () => void;
-  templates: Templates[];
   onGenerate: () => void;
   onAbort: () => void;
 }
 
-function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbort }: Props) {
+function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props) {
   const dispatch = useAppDispatch();
   const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
   return (
@@ -33,7 +31,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
         />
       )}
 
-      {message.type === "suggestedTemplates" && (
+      {message.type === "suggestedTemplates" && !!message.templates?.length && (
         <Fade
           in={true}
           unmountOnExit
@@ -43,7 +41,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           <Stack>
             <TemplateSuggestions
               content={message.text}
-              templates={templates}
+              templates={message.templates}
               scrollToBottom={onScrollToBottom}
             />
           </Stack>
