@@ -21,6 +21,7 @@ import { setChatMode, setInitialChat } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
+import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 
 function Chat() {
   const router = useRouter();
@@ -38,6 +39,8 @@ function Chat() {
   const [createChat] = useCreateChatMutation();
   const [updateChat] = useUpdateChatMutation();
 
+  const { processQueuedMessages } = useSaveChatInteractions();
+
   const {
     messages,
     setMessages,
@@ -49,6 +52,8 @@ function Chat() {
     showGenerateButton,
     isInputDisabled,
     setIsInputDisabled,
+    queueSavedMessages,
+    setQueueSavedMessages,
   } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
@@ -56,9 +61,16 @@ function Chat() {
   });
 
   const handleGenerateExecution = () => {
-    const executionMessage = createMessage({ type: "spark" });
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
+    const executionMessage = createMessage({ type: "spark", text: "" });
+    setMessages(prevMessages =>
+      prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(executionMessage),
+    );
+    setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
     generateExecutionHandler();
+    dispatch(setChatMode("automation"));
+    if (selectedChatOption === "QA") {
+      setIsInputDisabled(false);
+    }
   };
 
   const handleDynamicColors = () => {
@@ -165,6 +177,8 @@ function Chat() {
 
       if (allPromptsCompleted) {
         selectGeneratedExecution();
+        processQueuedMessages(queueSavedMessages, selectedChat?.id!, generatedExecution?.id!);
+        setQueueSavedMessages([]);
         dispatch(executionsApi.util.invalidateTags(["Executions"]));
       }
     }
@@ -216,14 +230,7 @@ function Chat() {
                 messages={messages}
                 showGenerateButton={showGenerateButton}
                 onAbort={abortConnection}
-                onGenerate={() => {
-                  setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
-                  handleGenerateExecution();
-                  dispatch(setChatMode("automation"));
-                  if (selectedChatOption === "QA") {
-                    setIsInputDisabled(false);
-                  }
-                }}
+                onGenerate={() => handleGenerateExecution()}
               />
             </Stack>
           )}

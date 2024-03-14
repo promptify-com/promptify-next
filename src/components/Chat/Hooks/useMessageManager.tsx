@@ -54,6 +54,7 @@ const useMessageManager = () => {
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [questions, setQuestions] = useState<IQuestion[]>([]);
+  const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
 
   useEffect(() => {
     if (!parameterSelected) {
@@ -128,6 +129,7 @@ const useMessageManager = () => {
       dispatch(setSelectedChat(newChat));
       // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
       setTimeout(() => dispatch(setInitialChat(false)), 1000);
+      return newChat;
     } catch (err) {
       console.error("Error creating a new chat: ", err);
     }
@@ -135,49 +137,56 @@ const useMessageManager = () => {
 
   const automationSubmitMessage = async (input: string) => {
     if (!input) return;
-    if (!selectedChat) {
-      createNewChat();
+
+    let chatId = selectedChat?.id;
+
+    if (!chatId) {
+      const newChat = await createNewChat();
+      chatId = newChat?.id;
     }
     const userMessage = createMessage({ type: "text", fromUser: true, text: input });
-    saveTextAndQuestionMessage(userMessage, selectedChat?.id!);
 
-    setMessages(prevMessages => prevMessages.concat(userMessage));
-    setIsValidatingAnswer(true);
+    if (chatId) {
+      saveTextAndQuestionMessage(userMessage, chatId);
 
-    const botMessage: IMessage = createMessage({ type: "text", text: "" });
-    try {
-      const sendMessageResponse = await sendMessageAPI(input);
+      setMessages(prevMessages => prevMessages.concat(userMessage));
+      setIsValidatingAnswer(true);
 
-      if (sendMessageResponse.message) {
-        botMessage.text = sendMessageResponse.message;
-      } else {
-        const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
+      const botMessage: IMessage = createMessage({ type: "text", text: "" });
+      try {
+        const sendMessageResponse = await sendMessageAPI(input);
 
-        if (!templateIDs.length) {
-          botMessage.text = sendMessageResponse.output!;
+        if (sendMessageResponse.message) {
+          botMessage.text = sendMessageResponse.message;
         } else {
-          if (!!templateIDs.length) {
-            const templates = await fetchData(templateIDs);
-            setSuggestedTemplates(templates);
-            const pluralTemplates = templates.length > 1;
-            const suggestionsMessage = createMessage({
-              type: "suggestedTemplates",
-              text: `I found ${pluralTemplates ? "these" : "this"} prompt${
-                pluralTemplates ? "s" : ""
-              }, following your request:`,
-            });
-            saveChatSuggestions(templateIDs, selectedChat?.id!);
-            setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
+          const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
+
+          if (!templateIDs.length) {
+            botMessage.text = sendMessageResponse.output!;
+          } else {
+            if (!!templateIDs.length) {
+              const templates = await fetchData(templateIDs);
+              setSuggestedTemplates(templates);
+              const pluralTemplates = templates.length > 1;
+              const suggestionsMessage = createMessage({
+                type: "suggestedTemplates",
+                text: `I found ${pluralTemplates ? "these" : "this"} prompt${
+                  pluralTemplates ? "s" : ""
+                }, following your request:`,
+              });
+              saveChatSuggestions(templateIDs, chatId);
+              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
+            }
           }
         }
+      } catch (err) {
+        botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
+      } finally {
+        setIsValidatingAnswer(false);
       }
-    } catch (err) {
-      botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
-    } finally {
-      setIsValidatingAnswer(false);
-    }
-    if (botMessage.text !== "") {
-      setMessages(prevMessages => prevMessages.concat(botMessage));
+      if (botMessage.text !== "") {
+        setMessages(prevMessages => prevMessages.concat(botMessage));
+      }
     }
   };
 
@@ -199,6 +208,7 @@ const useMessageManager = () => {
       questionInputName: inputName,
     });
     setMessages(prevMessages => prevMessages.concat(userMessage));
+    setQueueSavedMessages(newMessages => newMessages.concat(userMessage));
 
     if (type === "input") {
       const newAnswer: IAnswer = {
@@ -222,6 +232,13 @@ const useMessageManager = () => {
         questionInputName: nextQuestion.inputName,
       });
       setMessages(prevMessages => prevMessages.concat(botMessage));
+      const formattedQuestionMessage = { ...botMessage };
+      formattedQuestionMessage.text = `Question ${currentIndex + 2} of ${questions.length}##/${botMessage.text}##/${
+        botMessage.type === "questionInput"
+          ? `This question is ${botMessage.isRequired ? "Required" : "Optional"}`
+          : "Choose option"
+      }`;
+      setQueueSavedMessages(newMessages => newMessages.concat(formattedQuestionMessage));
 
       nextQuestion.type === "param" && setIsInputDisabled(true);
     } else {
@@ -230,6 +247,7 @@ const useMessageManager = () => {
         text: "Congrats! We are ready to run the prompt",
       });
       setMessages(prevMessages => prevMessages.concat(completionMessage));
+      setQueueSavedMessages(newMessages => newMessages.concat(completionMessage));
       setIsInputDisabled(true);
     }
   };
@@ -259,6 +277,8 @@ const useMessageManager = () => {
     initialChat,
     isInputDisabled,
     setIsInputDisabled,
+    queueSavedMessages,
+    setQueueSavedMessages,
   };
 };
 
