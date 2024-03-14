@@ -133,7 +133,6 @@ function CategoryCarousel({
             scrollNext={scrollNext}
             canScrollNext={true}
             canScrollPrev={true}
-            withChildren
           >
             <Stack
               ref={carouselRef}
