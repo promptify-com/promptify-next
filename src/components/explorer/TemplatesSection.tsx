@@ -39,6 +39,7 @@ function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "
         justifyContent={"space-between"}
         alignItems={"center"}
         gap={1}
+        p={"8px 16px"}
       >
         <Typography
           fontSize={{ xs: 19, md: 32 }}
