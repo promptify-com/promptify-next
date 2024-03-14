@@ -61,8 +61,8 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
           }}
         >
           <Image
-            src={thumbnail}
-            alt={"Image 1"}
+            src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            alt={title}
             priority={true}
             fill
             style={{

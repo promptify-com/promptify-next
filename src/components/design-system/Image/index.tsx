@@ -32,7 +32,7 @@ const Image: React.FC<NextImageProps> = ({
 }) => {
   return (
     <NextImage
-      src={src}
+      src={src ?? require("@/assets/images/default-thumbnail.jpg")}
       alt={alt}
       width={width}
       height={height}

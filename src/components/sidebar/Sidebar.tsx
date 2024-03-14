@@ -115,7 +115,7 @@ function Sidebar() {
       onMouseLeave={() => setMouseHover(false)}
       sx={{
         display: { xs: "none", md: "flex" },
-        "flex-direction": "column",
+        flexDirection: "column",
         height: "100%",
         flex: "1 0 auto",
         "z-index": 1200,

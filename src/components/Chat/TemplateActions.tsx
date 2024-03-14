@@ -19,7 +19,7 @@ import Popper from "@mui/material/Popper";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { useAppDispatch } from "@/hooks/useStore";
 import { useCreateChatMutation } from "@/core/api/chats";
-import { setAnswers, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
+import { setAnswers, setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
@@ -62,6 +62,8 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
         thumbnail: template.thumbnail,
       }).unwrap();
       dispatch(setSelectedChat(newChat));
+      dispatch(setAnswers([]));
+      dispatch(setInitialChat(true));
     } catch (err) {
       console.error("Error creating a new chat: ", err);
     }
