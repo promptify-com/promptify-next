@@ -7,25 +7,27 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import Fade from "@mui/material/Fade";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import Popper from "@mui/material/Popper";
-import { MoreVert } from "@mui/icons-material";
 import TemplateActions from "@/components/Chat/TemplateActions";
-import { useRef, useState } from "react";
 import Link from "next/link";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
-  onClick: () => void;
+  onScrollToBottom: () => void;
 }
 
-function TemplateSuggestionItem({ template, onClick }: Props) {
+function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
+  const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
-  const [actionsOpened, setActionsOpened] = useState(false);
-  const actionsAnchorRef = useRef<HTMLButtonElement>(null);
+
+  const handleRunPrompt = () => {
+    dispatch(setSelectedTemplate(template));
+    dispatch(setAnswers([]));
+    setTimeout(() => {
+      onScrollToBottom();
+    }, 100);
+  };
 
   return (
     <Stack
@@ -59,8 +61,8 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           }}
         >
           <Image
-            src={thumbnail}
-            alt={"Image 1"}
+            src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            alt={title}
             priority={true}
             fill
             style={{
@@ -163,61 +165,15 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
               bgcolor: "action.hover",
             },
           }}
-          onClick={onClick}
+          onClick={handleRunPrompt}
         >
           Run prompt
         </Button>
-
-        {/* <IconButton
-          ref={actionsAnchorRef}
-          onClick={() => setActionsOpened(true)}
-          sx={{
-            border: "none",
-            "&:hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-        >
-          <MoreVert />
-        </IconButton> */}
+        <TemplateActions
+          template={template}
+          onScrollToBottom={onScrollToBottom}
+        />
       </Stack>
-      {/* {actionsOpened && (
-        <Popper
-          sx={{ zIndex: 1200 }}
-          open={actionsOpened}
-          anchorEl={actionsAnchorRef.current}
-          placement={"bottom-end"}
-          transition
-        >
-          {({ TransitionProps }) => (
-            <Fade
-              {...TransitionProps}
-              timeout={350}
-            >
-              <Paper
-                sx={{
-                  borderRadius: "16px",
-                  width: "199px",
-                  marginTop: "5px",
-                  overflow: "hidden",
-                }}
-                elevation={1}
-              >
-                <ClickAwayListener
-                  onClickAway={() => {
-                    console.log("close");
-                    setActionsOpened(false);
-                  }}
-                >
-                  <Box>
-                    <TemplateActions template={template} />
-                  </Box>
-                </ClickAwayListener>
-              </Paper>
-            </Fade>
-          )}
-        </Popper>
-      )} */}
     </Stack>
   );
 }

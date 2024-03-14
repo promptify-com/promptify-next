@@ -103,7 +103,6 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    console.log(selectedChat);
     if (!initialChat) {
       setMessages([]);
       dispatch(setAnswers([]));
@@ -182,7 +181,7 @@ function Chat() {
     }
   };
 
-  const showLanding = !!!messages.length;
+  const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (

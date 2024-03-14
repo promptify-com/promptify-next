@@ -1,21 +1,21 @@
 import Stack from "@mui/material/Stack";
-import Image from "../../design-system/Image";
+import Image from "@/components/design-system/Image";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-
 import { useAppSelector } from "@/hooks/useStore";
-import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
 import RunButton from "../RunButton";
+import TemplateActions from "@/components/Chat/TemplateActions";
 
 interface Props {
   onExpand?: () => void;
   onGenerate?: () => void;
   variant: "FORM" | "EXECUTION";
   showRunButton?: boolean;
+  onScrollToBottom?: () => void;
 }
 
-function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton }: Props) {
+function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScrollToBottom }: Props) {
   const { selectedChatOption, selectedTemplate, answers, inputs, params } = useAppSelector(state => state.chat);
 
   const showHeaderActions = Boolean(selectedChatOption === "FORM" && variant === "FORM");
@@ -72,35 +72,44 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton }: Prop
           {selectedTemplate?.title}
         </Typography>
       </Stack>
-      {showHeaderActions && (
-        <Stack
-          direction={"row"}
-          gap={2}
-          alignItems={"center"}
-        >
-          <Button
-            variant="text"
-            sx={{
-              bgcolor: "surface.4",
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={2}
+      >
+        {showHeaderActions && (
+          <>
+            <Button
+              variant="text"
+              sx={{
+                bgcolor: "surface.4",
 
-              "&:hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-            onClick={onExpand}
-          >
-            Instructions: {answers.length} of {totalQuestions}
-          </Button>
-          <RunButton
-            onClick={() => {
-              if (typeof onGenerate === "function") {
-                onGenerate();
-              }
-            }}
-            disabled={!showRunButton}
+                "&:hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+              onClick={onExpand}
+            >
+              Instructions: {answers.length} of {totalQuestions}
+            </Button>
+            <RunButton
+              onClick={() => {
+                if (typeof onGenerate === "function") {
+                  onGenerate();
+                }
+              }}
+              disabled={!showRunButton}
+            />
+          </>
+        )}
+        {selectedTemplate && (
+          <TemplateActions
+            template={selectedTemplate}
+            onScrollToBottom={onScrollToBottom}
+            onlyNew
           />
-        </Stack>
-      )}
+        )}
+      </Stack>
     </Stack>
   );
 }

@@ -1,27 +1,33 @@
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { useState } from "react";
-import { updateCurrentFavorite, TemplatesProps, updateCurrentLike } from "@/core/store/templatesSlice";
+import { useEffect, useState } from "react";
+import { TemplatesProps, updateCurrentFavorite, updateCurrentLike } from "@/core/store/templatesSlice";
 import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import { useAppSelector } from "./useStore";
 import { useAddTemplateLikeMutation, useRemoveTemplateLikeMutation } from "@/core/api/templates";
+import { Templates } from "@/core/api/dto/templates";
 
-type ReturnProps = [() => Promise<undefined | boolean>, { templateData: TemplatesProps }];
-
-const useSaveFavoriteTemplate = (isVote?: boolean): ReturnProps => {
+const useSaveFavoriteTemplate = (template?: Templates) => {
   const router = useRouter();
-  const isValidUser = useAppSelector(isValidUserFn);
-  const templateData = useAppSelector(state => state.template);
-  const favoriteCollectionId = useAppSelector(state => state.user.currentUser?.favorite_collection_id);
-  const [isFetching, setIsFetching] = useState(false);
   const dispatch = useDispatch();
+  const [isFetching, setIsFetching] = useState(false);
+  const isValidUser = useAppSelector(isValidUserFn);
+  const favoriteCollectionId = useAppSelector(state => state.user.currentUser?.favorite_collection_id);
+  const selectedTemplate = useAppSelector(state => state.template);
+  const [templateData, setTemplateData] = useState<Templates | TemplatesProps>(selectedTemplate);
+
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();
   const [likeTemplate] = useAddTemplateLikeMutation();
   const [removeTemplateLike] = useRemoveTemplateLikeMutation();
 
-  const saveFavorite = async () => {
+  useEffect(() => {
+    if (template) setTemplateData(template);
+    else setTemplateData(selectedTemplate);
+  }, [template, selectedTemplate]);
+
+  const saveFavorite = async (isVote?: boolean) => {
     if (!isValidUser) {
       return router.push("/signin");
     }
@@ -44,7 +50,10 @@ const useSaveFavoriteTemplate = (isVote?: boolean): ReturnProps => {
   };
 
   const like = async () => {
-    dispatch(updateCurrentLike(!templateData.is_liked));
+    setTemplateData(prev => ({ ...prev, is_liked: !templateData.is_liked }));
+    if (!template) {
+      dispatch(updateCurrentLike(!templateData.is_liked));
+    }
 
     try {
       if (!templateData.is_liked) {
@@ -58,7 +67,10 @@ const useSaveFavoriteTemplate = (isVote?: boolean): ReturnProps => {
   };
 
   const favorite = async () => {
-    dispatch(updateCurrentFavorite(!templateData.is_favorite));
+    setTemplateData(prev => ({ ...prev, is_favorite: !templateData.is_favorite }));
+    if (!template) {
+      dispatch(updateCurrentFavorite(!templateData.is_favorite));
+    }
 
     try {
       if (!favoriteCollectionId) {
@@ -81,7 +93,7 @@ const useSaveFavoriteTemplate = (isVote?: boolean): ReturnProps => {
     }
   };
 
-  return [saveFavorite, { templateData }];
+  return { saveFavorite, templateData };
 };
 
 export default useSaveFavoriteTemplate;
