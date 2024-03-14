@@ -5,15 +5,14 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
-
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Link from "next/link";
 import { useAppSelector } from "@/hooks/useStore";
 import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
+import { theme } from "@/theme";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -126,7 +125,7 @@ function CategoryCarousel({
               xl: "1120px",
             },
             width: "100%",
-            bgcolor: "surface.1",
+            bgcolor: "surfaceContainerLowest",
           }}
         >
           <CarouselButtons
@@ -134,7 +133,7 @@ function CategoryCarousel({
             scrollNext={scrollNext}
             canScrollNext={true}
             canScrollPrev={true}
-            withChikdren
+            withChildren
           >
             <Stack
               ref={carouselRef}
@@ -153,40 +152,32 @@ function CategoryCarousel({
                     href={`/explore/${category.slug}`}
                     style={{ textDecoration: "none" }}
                   >
-                    <Paper
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={1}
                       sx={{
-                        flex: "none",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexDirection: "row",
-                        borderRadius: "50px",
+                        bgcolor: "surfaceContainerLowest",
+                        border: `1px solid ${theme.palette.surfaceContainer}`,
+                        borderRadius: "999px",
                         p: "4px 12px 4px 4px",
-                        gap: "8px",
-                        border: "1px solid",
-                        borderColor: "surfaceContainer",
-                        bgcolor: "onPrimary",
-                        width: "224px",
-                        height: "48px",
+                        ":hover": { bgcolor: "action.hover" },
                       }}
                     >
                       <Avatar
                         src={category.image}
                         alt={category.name}
-                        sx={{ width: "50px", height: "50px" }}
+                        sx={{ width: 40, height: 40, borderRadius: "50%" }}
                       />
                       <Typography
-                        variant="subtitle1"
-                        sx={{
-                          flexGrow: 1,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
+                        fontSize={14}
+                        fontWeight={500}
+                        color={"onSurface"}
+                        whiteSpace={"nowrap"}
                       >
                         {category.name}
                       </Typography>
-                    </Paper>
+                    </Stack>
                   </Link>
                 ))}
               </Stack>
