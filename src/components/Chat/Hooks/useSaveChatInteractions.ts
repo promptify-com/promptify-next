@@ -2,6 +2,7 @@ import {
   useSaveChatExecutionsMutation,
   useSaveChatInputMutation,
   useSaveChatSuggestionsMutation,
+  useSaveChatTemplateMutation,
 } from "@/core/api/chats";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
@@ -9,6 +10,7 @@ const useSaveChatInteractions = () => {
   const [saveChatInput] = useSaveChatInputMutation();
   const [saveSuggestions] = useSaveChatSuggestionsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
+  const [saveTemplate] = useSaveChatTemplateMutation();
 
   const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
@@ -46,7 +48,24 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const processQueuedMessages = async (queueSavedMessages: IMessage[], chatId: number, executionId: number) => {
+  const saveChatTemplate = async (templateId: number, text: string, chatId: number) => {
+    try {
+      await saveTemplate({
+        chat: chatId,
+        template_id: templateId,
+        text,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const processQueuedMessages = async (
+    queueSavedMessages: IMessage[],
+    chatId: number,
+    executionId: number,
+    templateId: number,
+  ) => {
     for (const message of queueSavedMessages) {
       try {
         switch (message.type) {
@@ -62,7 +81,11 @@ const useSaveChatInteractions = () => {
             await saveChatExecutions(executionId, chatId);
             break;
 
-          default:
+          case "headerWithText":
+            await saveChatTemplate(templateId, message.text, chatId);
+            break;
+
+          default: // case "text"
             await saveTextAndQuestionMessage(message, chatId);
         }
       } catch (error) {

@@ -177,7 +177,7 @@ function Chat() {
 
       if (allPromptsCompleted) {
         selectGeneratedExecution();
-        processQueuedMessages(queueSavedMessages, selectedChat?.id!, generatedExecution?.id!);
+        processQueuedMessages(queueSavedMessages, selectedChat?.id!, generatedExecution?.id!, selectedTemplate?.id!);
         setQueueSavedMessages([]);
         dispatch(executionsApi.util.invalidateTags(["Executions"]));
       }
@@ -195,7 +195,7 @@ function Chat() {
     }
   };
 
-  const showLanding = !!!messages.length;
+  const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (

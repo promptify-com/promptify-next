@@ -40,6 +40,7 @@ const useMessageManager = () => {
     selectedChatOption,
     selectedChat,
     inputs,
+    params,
     answers,
     chatMode,
     initialChat,
@@ -86,7 +87,19 @@ const useMessageManager = () => {
         isRequired: questions[0].required,
         questionIndex: 1,
       });
-      setMessages(prevMessages => prevMessages.concat([runMessage, headerWithTextMessage, questionMessage]));
+
+      setMessages(prevMessages =>
+        prevMessages
+          .filter(msg => !["questionInput", "headerWithText"].includes(msg.type))
+          .concat([runMessage, headerWithTextMessage, questionMessage]),
+      );
+      const formattedQuestionMessage = { ...questionMessage };
+      formattedQuestionMessage.text = `Question 1 of ${inputs.length + params.length}##/${questionMessage.text}##/${
+        questionMessage.type === "questionInput"
+          ? `This question is ${questionMessage.isRequired ? "Required" : "Optional"}`
+          : "Choose option"
+      }`;
+      setQueueSavedMessages(newMessages => newMessages.concat(formattedQuestionMessage));
     }
   };
 

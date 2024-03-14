@@ -9,11 +9,11 @@ interface Props {
 }
 
 const LikeButton: React.FC<Props> = ({ style = { sx: {} } }) => {
-  const [saveFavoriteTemplate, { templateData }] = useSaveFavoriteTemplate(true);
+  const { saveFavorite, templateData } = useSaveFavoriteTemplate();
 
   return (
     <Button
-      onClick={saveFavoriteTemplate}
+      onClick={() => saveFavorite(true)}
       startIcon={templateData.is_liked ? <Favorite /> : <FavoriteBorder />}
       sx={{
         border: "1px solid",

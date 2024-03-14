@@ -44,7 +44,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
             <TemplateSuggestions
               content={message.text}
               templates={templates}
-              scrollToBottom={onScrollToBottom}
+              onScrollToBottom={onScrollToBottom}
             />
           </Stack>
         </Fade>
@@ -74,7 +74,10 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            <HeaderWithTextMessage content={message.text} />
+            <HeaderWithTextMessage
+              content={message.text}
+              onScrollToBottom={onScrollToBottom}
+            />
           </Stack>
         </Fade>
       )}
