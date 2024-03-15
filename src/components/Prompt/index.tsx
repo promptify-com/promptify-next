@@ -75,7 +75,7 @@ function TemplatePage({ template, popup }: Props) {
           id: template.id,
           is_favorite: template.is_favorite,
           is_liked: template.is_liked,
-          likes: template.favorites_count,
+          likes: template.likes,
         }),
       );
     }
@@ -135,7 +135,6 @@ function TemplatePage({ template, popup }: Props) {
     <ThemeProvider theme={dynamicTheme}>
       <Stack
         direction={{ md: "row" }}
-        gap={4}
         height={{
           xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
           md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
@@ -155,6 +154,7 @@ function TemplatePage({ template, popup }: Props) {
             md: `calc(100% - ${popup ? "24px" : "0px"})`,
           }}
           sx={{
+            pr: { md: "32px" },
             overflow: { md: "auto" },
             "&::-webkit-scrollbar": {
               width: 0,

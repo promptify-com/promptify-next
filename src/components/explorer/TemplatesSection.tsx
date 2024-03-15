@@ -39,8 +39,15 @@ function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "
         justifyContent={"space-between"}
         alignItems={"center"}
         gap={1}
+        p={"8px 16px"}
       >
-        <Typography fontSize={19}>{title}</Typography>
+        <Typography
+          fontSize={{ xs: 19, md: 32 }}
+          fontWeight={400}
+          color={"onSurface"}
+        >
+          {title}
+        </Typography>
         {filtersAllowed && (
           <IconButton
             onClick={e => setOpenFilters(!openFilters)}

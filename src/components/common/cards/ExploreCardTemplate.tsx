@@ -261,10 +261,8 @@ function CardTemplate({
                         color: "onSurface",
                       }}
                       onClick={e => {
-                        e.stopPropagation();
-
+                        e.preventDefault();
                         dispatch(setSelectedTag(tag));
-
                         router.push("/explore");
                       }}
                     />
@@ -330,6 +328,11 @@ function CardTemplate({
           >
             {template.tags.map(tag => (
               <Chip
+                onClick={e => {
+                  e.preventDefault();
+                  dispatch(setSelectedTag(tag));
+                  router.push("/explore");
+                }}
                 size="small"
                 label={tag.name}
                 key={tag.id}

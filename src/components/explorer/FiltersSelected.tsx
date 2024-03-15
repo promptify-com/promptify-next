@@ -33,7 +33,7 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
           sx={{
             p: {
               xs: "20px",
-              md: "0px",
+              md: "0 16px",
             },
           }}
         >

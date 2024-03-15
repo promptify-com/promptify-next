@@ -9,7 +9,6 @@ export interface TemplatesProps {
   is_liked: boolean;
   id: number;
   likes: number;
-  executionData: string;
   isGenerating: boolean;
   answeredInputs: AnsweredInputType[];
   activeSideBarLink: Link | null;
@@ -25,7 +24,6 @@ const initialState: TemplatesProps = {
   is_liked: false,
   id: 0,
   likes: 0,
-  executionData: "[]",
   isGenerating: false,
   activeSideBarLink: null,
   answeredInputs: [],
@@ -52,13 +50,6 @@ export const templatesSlice = createSlice({
     updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
       state.is_favorite = action.payload;
     },
-    updateCurrentLike: (state, action: PayloadAction<boolean>) => {
-      state.is_liked = action.payload;
-      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
-    },
-    updateExecutionData: (state, action: PayloadAction<string>) => {
-      state.executionData = action.payload;
-    },
     updatePopupTemplate: (state, action: PayloadAction<PopupTemplates>) => {
       state.popupTemplate = action.payload;
     },
@@ -79,9 +70,7 @@ export const templatesSlice = createSlice({
 
 export const {
   updateCurrentFavorite,
-  updateCurrentLike,
   updateTemplateData,
-  updateExecutionData,
   updatePopupTemplate,
   setGeneratingStatus,
   setActiveToolbarLink,

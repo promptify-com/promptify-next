@@ -5,15 +5,15 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
-
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Link from "next/link";
 import { useAppSelector } from "@/hooks/useStore";
 import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
+import { theme } from "@/theme";
+import Slide from "@mui/material/Slide";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -33,15 +33,19 @@ function CategoryCarousel({
   explore,
 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const observer = useIntersectionObserver(containerRef, {
-    threshold: 0.5,
-  });
+  const {
+    containerRef: carouselScrollRef,
+    scrollNext: carouselScrollNext,
+    scrollPrev: carouselScrollPrev,
+  } = useCarousel(autoPlay);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <Stack
+      ref={carouselContainerRef}
       gap={gap}
       sx={{
         pt: { md: "48px" },
@@ -93,107 +97,99 @@ function CategoryCarousel({
         m={"8px 16px"}
       >
         <Stack
-          ref={containerRef}
+          ref={carouselContainerRef}
           direction={"row"}
         >
-          {observer?.isIntersecting &&
-            categories.map(category => (
-              <Box key={category.id}>
-                {explore ? (
-                  <ExploreCardCategory category={category} />
-                ) : (
-                  <CategoryCard
-                    category={category}
-                    priority={false}
-                    href={`/explore/${category.slug}`}
-                    min
-                  />
-                )}
-              </Box>
-            ))}
+          {categories.map(category => (
+            <Box key={category.id}>
+              {explore ? (
+                <ExploreCardCategory category={category} />
+              ) : (
+                <CategoryCard
+                  category={category}
+                  priority={false}
+                  href={`/explore/${category.slug}`}
+                  min
+                />
+              )}
+            </Box>
+          ))}
         </Stack>
       </Stack>
-      {userScrolled && (
+      <Slide
+        in={userScrolled}
+        container={containerRef.current}
+      >
         <Box
           sx={{
+            width: "100%",
             position: "fixed",
-            top: { sm: " 58px" },
-            margin: "0 auto",
+            top: { xs: theme.custom.headerHeight.xs, md: theme.custom.headerHeight.md },
             zIndex: 1000,
             maxWidth: {
               md: `${isPromptsFiltersSticky ? 540 : 880}px`,
               lg: `${isPromptsFiltersSticky ? 955 : 1120}px`,
               xl: "1120px",
             },
-            width: "100%",
-            bgcolor: "surface.1",
+            bgcolor: "surfaceContainerLowest",
           }}
         >
           <CarouselButtons
-            scrollPrev={scrollPrev}
-            scrollNext={scrollNext}
+            scrollPrev={carouselScrollPrev}
+            scrollNext={carouselScrollNext}
             canScrollNext={true}
             canScrollPrev={true}
-            withChikdren
           >
             <Stack
-              ref={carouselRef}
+              ref={carouselScrollRef}
               overflow={"hidden"}
-              m={"8px 16px"}
+              py={"8px"}
             >
               <Stack
                 ref={containerRef}
                 direction={"row"}
                 m={"8px"}
-                gap={"8px"}
               >
                 {categories.map(category => (
                   <Link
                     key={category.id}
                     href={`/explore/${category.slug}`}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: "none", margin: "0 4px" }}
                   >
-                    <Paper
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={1}
                       sx={{
-                        flex: "none",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexDirection: "row",
-                        borderRadius: "50px",
+                        minWidth: "224px",
+                        bgcolor: "surfaceContainerLowest",
+                        border: `1px solid ${theme.palette.surfaceContainer}`,
+                        borderRadius: "999px",
                         p: "4px 12px 4px 4px",
-                        gap: "8px",
-                        border: "1px solid",
-                        borderColor: "surfaceContainer",
-                        bgcolor: "onPrimary",
-                        width: "224px",
-                        height: "48px",
+                        ":hover": { bgcolor: "action.hover" },
                       }}
                     >
                       <Avatar
                         src={category.image}
                         alt={category.name}
-                        sx={{ width: "50px", height: "50px" }}
+                        sx={{ width: 40, height: 40, borderRadius: "50%" }}
                       />
                       <Typography
-                        variant="subtitle1"
-                        sx={{
-                          flexGrow: 1,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
+                        fontSize={14}
+                        fontWeight={500}
+                        color={"onSurface"}
+                        whiteSpace={"nowrap"}
                       >
                         {category.name}
                       </Typography>
-                    </Paper>
+                    </Stack>
                   </Link>
                 ))}
               </Stack>
             </Stack>
           </CarouselButtons>
         </Box>
-      )}
+      </Slide>
     </Stack>
   );
 }

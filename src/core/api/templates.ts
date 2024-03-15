@@ -65,7 +65,7 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "delete",
         }),
       }),
-      getPromptTemplates: builder.query<Templates, number>({
+      getTemplateById: builder.query<Templates, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}`,
           method: "get",
@@ -240,7 +240,7 @@ export const {
   useGetPromptParamsQuery,
   useDeletePromptMutation,
   useGetPromptTemplateBySlugQuery,
-  useGetPromptTemplatesQuery,
+  useGetTemplateByIdQuery,
   useGetMyTemplatesQuery,
   useCreateTemplateMutation,
   useUpdateTemplateMutation,

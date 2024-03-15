@@ -51,7 +51,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
       onClick={handleEdit}
       startIcon={isOwner ? <Tune /> : <ContentCopy />}
       sx={{
-        ml: "-20px",
+        ml: "-17px",
         color: "onSurface",
         ":hover": {
           bgcolor: "surfaceContainerHigh",
@@ -78,7 +78,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
 
   return (
     <Stack
-      height={{ md: "calc(100svh - 24px)" }}
+      height={"100%"}
       overflow={"auto"}
       sx={{
         "&::-webkit-scrollbar": {
