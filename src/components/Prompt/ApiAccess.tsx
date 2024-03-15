@@ -122,7 +122,6 @@ export default function ApiAccess({ template }: Props) {
   const [language, setLanguage] = useState("0");
   const [copy, result] = useCopyToClipboard();
   const token = useToken();
-  const executionData = useSelector((state: RootState) => state.template.executionData);
   const { prepareExecutionData } = useApiAccess(template);
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -142,7 +141,7 @@ export default function ApiAccess({ template }: Props) {
         postData: { text: prepareExecutionData() },
       }),
     );
-  }, [template, executionData]);
+  }, [template]);
 
   useEffect(() => {
     const options = { indent: "\t" };
