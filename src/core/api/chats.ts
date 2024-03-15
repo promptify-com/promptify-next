@@ -1,5 +1,5 @@
 import { baseApi } from "./api";
-import { IChat, IChatPartial, ISaveChatInput } from "./dto/chats";
+import { IChat, IChatPartial, IMessageList, ISaveChatInput } from "./dto/chats";
 
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -140,6 +140,12 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
+      getChatMessages: builder.query<IMessageList[], { chat: number; limit: number; offset: number }>({
+        query: ({ chat, limit, offset }) => ({
+          url: `/api/chat/chats/${chat}/messages?limit=${limit}&offset=${offset}`,
+          method: "GET",
+        }),
+      }),
     };
   },
 });
@@ -155,4 +161,5 @@ export const {
   useSaveChatSuggestionsMutation,
   useSaveChatExecutionsMutation,
   useSaveChatTemplateMutation,
+  useGetChatMessagesQuery,
 } = chatsApi;

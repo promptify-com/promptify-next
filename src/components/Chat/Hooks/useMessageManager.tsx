@@ -80,6 +80,8 @@ const useMessageManager = () => {
     } else {
       dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
       const headerWithTextMessage = createMessage({ type: "headerWithText", text: welcomeMessage.text });
+      setQueueSavedMessages(newMessages => newMessages.concat(headerWithTextMessage));
+
       const questionMessage = createMessage({
         type: "questionInput",
         text: `${filteredQuestions[0] || `What is your ${questions[0].fullName}?`}`,
@@ -93,7 +95,8 @@ const useMessageManager = () => {
           .concat([runMessage, headerWithTextMessage, questionMessage]),
       );
       const formattedQuestionMessage = { ...questionMessage };
-      formattedQuestionMessage.text = `Question 1 of ${inputs.length + params.length}##/${questionMessage.text}##/${
+      const totalQuestions = inputs.length + params.length;
+      formattedQuestionMessage.text = `Question 1 of ${totalQuestions}##/${questionMessage.text}##/${
         questionMessage.type === "questionInput"
           ? `This question is ${questionMessage.isRequired ? "Required" : "Optional"}`
           : "Choose option"

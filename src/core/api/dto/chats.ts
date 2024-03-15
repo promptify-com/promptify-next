@@ -1,4 +1,4 @@
-import { MessageType } from "@/components/Prompt/Types/chat";
+import type { Templates, TemplatesExecutions } from "./templates";
 
 export interface IChat {
   id: number;
@@ -17,4 +17,29 @@ export interface ISaveChatInput {
   type: "text" | "question";
   text: string;
   sender: "system" | "user";
+}
+
+interface IMessageResult {
+  id: number;
+  updated_at: string;
+  created_at: string;
+  message_type: "message" | "suggestion" | "execution" | "template";
+  message_object: {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    text: string; // for inputs
+    type: string; // for inputs
+    templates: Templates[];
+
+    execution: TemplatesExecutions;
+
+    template: Templates;
+  };
+}
+
+export interface IMessageList {
+  next: string;
+  previous: string;
+  results: IMessageResult[];
 }

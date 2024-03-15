@@ -1,4 +1,5 @@
 import {
+  chatsApi,
   useSaveChatExecutionsMutation,
   useSaveChatInputMutation,
   useSaveChatSuggestionsMutation,
@@ -11,6 +12,7 @@ const useSaveChatInteractions = () => {
   const [saveSuggestions] = useSaveChatSuggestionsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
+  const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
 
   const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
@@ -94,7 +96,13 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages };
+  const prepareSavedMessages = async (chatId: number) => {
+    const response = await getMessages({ chat: chatId, offset: 10, limit: 10 }).unwrap();
+
+    console.log(response);
+  };
+
+  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages, prepareSavedMessages };
 };
 
 export default useSaveChatInteractions;

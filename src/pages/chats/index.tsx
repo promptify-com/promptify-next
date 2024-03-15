@@ -39,7 +39,7 @@ function Chat() {
   const [createChat] = useCreateChatMutation();
   const [updateChat] = useUpdateChatMutation();
 
-  const { processQueuedMessages } = useSaveChatInteractions();
+  const { processQueuedMessages, prepareSavedMessages } = useSaveChatInteractions();
 
   const {
     messages,
@@ -120,6 +120,9 @@ function Chat() {
       dispatch(setSelectedTemplate(undefined));
       setIsValidatingAnswer(false);
       dispatch(setChatMode("automation"));
+    }
+    if (selectedChat?.id) {
+      prepareSavedMessages(selectedChat.id);
     }
   }, [selectedChat]);
 
