@@ -11,25 +11,25 @@ const useApiAccess = (template: Templates) => {
 
     inputs.forEach(_input => {
       const _promptId = _input.prompt!;
-
+      const promptParams = { ...promptsData[_promptId]?.prompt_params, [_input.name]: "" };
       promptsData[_promptId] = {
         prompt: _promptId,
-        prompt_params: { ...promptsData[_promptId]?.prompt_params, [_input.name]: "" },
+        prompt_params: promptParams,
         contextual_overrides: [],
       };
     });
 
     params.forEach(_param => {
       const _promptId = _param.prompt;
+      const promptParams = { ...promptsData[_promptId]?.prompt_params };
 
+      promptParams[_param.parameter.id] = "";
       promptsData[_promptId] = {
         prompt: _promptId,
-        prompt_params: { ...promptsData[_promptId]?.prompt_params },
+        prompt_params: promptParams,
         contextual_overrides: [
-          {
-            parameter: _param.parameter.id,
-            score: _param.score,
-          },
+          ...promptsData[_promptId]?.contextual_overrides,
+          { parameter: _param.parameter.id, score: _param.score },
         ],
       };
     });

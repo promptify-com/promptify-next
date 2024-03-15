@@ -35,7 +35,7 @@ const snippetProps = {
     color: "white",
     margin: 0,
     padding: "16px 16px 16px 24px",
-    "word-break": "break-word",
+    overflow: "auto",
     ".linenumber": {
       minWidth: "auto",
     },
