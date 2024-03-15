@@ -215,9 +215,7 @@ function CardTemplate({
                       }}
                       onClick={e => {
                         e.stopPropagation();
-
                         dispatch(setSelectedTag(tag));
-
                         router.push("/explore");
                       }}
                     />

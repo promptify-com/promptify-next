@@ -25,7 +25,7 @@ export const CarouselButtons: React.FC<Props> = ({
       alignItems={"center"}
       sx={{
         ".nav-btn": {
-          opacity: 0,
+          opacity: children ? 0 : 1,
         },
         ":hover": {
           ".nav-btn": {
