@@ -139,7 +139,7 @@ export interface Templates {
   executions_count: number;
   last_run: Date;
   views: number;
-  likes?: number;
+  likes: number;
   favorites_count: number;
   is_liked: boolean;
   is_favorite: boolean;

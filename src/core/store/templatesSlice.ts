@@ -8,7 +8,7 @@ export interface TemplatesProps {
   is_favorite: boolean;
   is_liked: boolean;
   id: number;
-  favorites_count: number;
+  likes: number;
   executionData: string;
   isGenerating: boolean;
   answeredInputs: AnsweredInputType[];
@@ -18,13 +18,13 @@ export interface TemplatesProps {
   popupTemplate: PopupTemplates;
 }
 
-type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "is_liked" | "id" | "favorites_count">;
+type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "is_liked" | "id" | "likes">;
 
 const initialState: TemplatesProps = {
   is_favorite: false,
   is_liked: false,
   id: 0,
-  favorites_count: 0,
+  likes: 0,
   executionData: "[]",
   isGenerating: false,
   activeSideBarLink: null,
@@ -47,14 +47,14 @@ export const templatesSlice = createSlice({
       state.is_favorite = action.payload.is_favorite;
       state.is_liked = action.payload.is_liked;
       state.id = action.payload.id;
-      state.favorites_count = action.payload.favorites_count;
+      state.likes = action.payload.likes;
     },
     updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
       state.is_favorite = action.payload;
     },
     updateCurrentLike: (state, action: PayloadAction<boolean>) => {
       state.is_liked = action.payload;
-      state.favorites_count = action.payload ? state.favorites_count + 1 : state.favorites_count - 1;
+      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
     },
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;

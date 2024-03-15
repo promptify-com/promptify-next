@@ -30,7 +30,7 @@ export const FavoriteMobileButton = () => {
       ) : (
         <FavoriteBorder sx={{ ml: "auto", mr: "5px" }} />
       )}
-      {templateData.favorites_count}
+      {templateData.likes}
     </Button>
   );
 };

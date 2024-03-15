@@ -58,11 +58,11 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
 
   const like = async () => {
     const newStatus = !templateData.is_liked;
-    const currentLikes = templateData.favorites_count;
+    const currentLikes = templateData.likes;
     setTemplateData(prev => ({
       ...prev,
       is_liked: newStatus,
-      favorites_count: newStatus ? currentLikes + 1 : currentLikes - 1,
+      likes: newStatus ? currentLikes + 1 : currentLikes - 1,
     }));
     if (!template) {
       dispatch(updateCurrentLike(newStatus));
