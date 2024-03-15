@@ -24,7 +24,7 @@ export default function Instructions({ prompts }: Props) {
         Prompt instructions:
       </Typography>
       {prompts.length > 0 ? (
-        <AccordionBox>
+        <AccordionBox footerText={`Chain of ${prompts.length - 1} more prompts...`}>
           <Stack gap={3}>
             {prompts.map(prompt => (
               <Stack
@@ -52,17 +52,17 @@ export default function Instructions({ prompts }: Props) {
                 </Stack>
                 <Box
                   sx={{
-                    px: "8px",
+                    ml: "8px",
+                    p: "16px 16px 16px 32px",
+                    borderLeft: `1px solid ${theme.palette.secondary.main}`,
                   }}
                 >
                   <Typography
                     fontSize={{ xs: 14, md: 16 }}
                     fontWeight={400}
                     color={"onSurface"}
-                    sx={{
-                      p: "16px 16px 16px 32px",
-                      borderLeft: `1px solid ${theme.palette.secondary.main}`,
-                    }}
+                    fontFamily={"Roboto, Mono"}
+                    lineHeight={"180%"}
                   >
                     {prompt.content}
                   </Typography>

@@ -6,7 +6,6 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
@@ -46,7 +45,6 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const abortController = useRef(new AbortController());
 
   const { preparePromptsData } = useChatBox();
-  const { dispatchNewExecutionData } = useApiAccess();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
@@ -251,10 +249,6 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       dispatch(setGeneratedExecution(generatingResponse));
     }
   }, [generatingResponse]);
-
-  useEffect(() => {
-    dispatchNewExecutionData();
-  }, [template]);
 
   return { generateExecutionHandler, streamExecutionHandler, disableChatInput, abortConnection };
 };

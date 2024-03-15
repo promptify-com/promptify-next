@@ -3,6 +3,8 @@ import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
+import { alpha } from "@mui/material";
+import { theme } from "@/theme";
 
 interface Props {
   scrollPrev(): void;
@@ -10,7 +12,6 @@ interface Props {
   canScrollNext: boolean;
   canScrollPrev: boolean;
   children?: React.ReactNode;
-  withChikdren?: boolean;
 }
 
 export const CarouselButtons: React.FC<Props> = ({
@@ -19,32 +20,43 @@ export const CarouselButtons: React.FC<Props> = ({
   canScrollNext,
   canScrollPrev,
   children,
-  withChikdren,
 }) => {
   return (
     <Stack
       direction={"row"}
-      alignItems={"center"}
-      gap={1}
+      sx={{
+        ".nav-btn": {
+          opacity: !children ? 1 : 0,
+        },
+        ":hover": {
+          ".nav-btn": {
+            opacity: 1,
+          },
+        },
+      }}
     >
       <IconButton
-        sx={{
-          ...btnStyle,
-          mr: withChikdren ? "-31px" : "0",
-        }}
         disabled={!canScrollPrev}
         onClick={scrollPrev}
+        className="nav-btn"
+        sx={{
+          ...btnStyle,
+          position: children ? "absolute" : "relative",
+          left: 0,
+        }}
       >
         <ArrowBackIosNew />
       </IconButton>
       {children}
       <IconButton
-        sx={{
-          ...btnStyle,
-          ml: withChikdren ? "-31px" : "0",
-        }}
         disabled={!canScrollNext}
         onClick={scrollNext}
+        className="nav-btn"
+        sx={{
+          ...btnStyle,
+          position: children ? "absolute" : "relative",
+          right: 0,
+        }}
       >
         <ArrowForwardIos />
       </IconButton>
@@ -53,9 +65,16 @@ export const CarouselButtons: React.FC<Props> = ({
 };
 
 const btnStyle = {
+  zIndex: 999,
+  height: "100%",
   border: "none",
-  color: "#67677C",
-  bgcolor: "transparent",
+  borderRadius: 0,
+  color: "#1C1B1F80",
+  bgcolor: alpha(theme.palette.surfaceContainerLowest, 0.9),
+  p: "8px 16px",
+  ":hover": {
+    bgcolor: "surfaceContainerLowest",
+  },
   "&.Mui-disabled": {
     opacity: 0.6,
   },

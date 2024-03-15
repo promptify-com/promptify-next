@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormControl, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { SelectChangeEvent } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import js from "react-syntax-highlighter/dist/cjs/languages/hljs/javascript";
-import { ExpandMore } from "@mui/icons-material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import HTTPSnippet from "httpsnippet";
 import { Templates } from "@/core/api/dto/templates";
 import { RootState } from "@/core/store";
 import { useSelector } from "react-redux";
 import useToken from "@/hooks/useToken";
+import useApiAccess from "./Hooks/useApiAccess";
 
 interface Props {
   template: Templates;
@@ -26,6 +32,7 @@ const getExecutionSnippet = (token: string) =>
       { name: "Content-Type", value: "application/json" },
     ],
   });
+
 const snippetProps = {
   language: "javascript",
   customStyle: {
@@ -34,6 +41,7 @@ const snippetProps = {
     color: "white",
     margin: 0,
     padding: "16px 16px 16px 24px",
+    overflow: "auto",
     ".linenumber": {
       minWidth: "auto",
     },
@@ -114,7 +122,7 @@ export default function ApiAccess({ template }: Props) {
   const [language, setLanguage] = useState("0");
   const [copy, result] = useCopyToClipboard();
   const token = useToken();
-  const executionData = useSelector((state: RootState) => state.template.executionData);
+  const { prepareExecutionData } = useApiAccess(template);
 
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value);
@@ -130,10 +138,10 @@ export default function ApiAccess({ template }: Props) {
           { name: "Accept", value: "application/json" },
           { name: "Content-Type", value: "application/json" },
         ],
-        postData: { text: executionData },
+        postData: { text: prepareExecutionData() },
       }),
     );
-  }, [template, executionData]);
+  }, [template]);
 
   useEffect(() => {
     const options = { indent: "\t" };

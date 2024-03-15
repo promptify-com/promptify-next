@@ -26,7 +26,7 @@ interface Props {
 function OutputOptions({ prompt, onSave, onCancel }: Props) {
   const initialOutputFormat = prompt.output_format;
   const initialOutputFormatMatching = outputFormatOptions.find(
-    format => format.toLowerCase() === initialOutputFormat.toLowerCase(),
+    format => format.toLowerCase() === initialOutputFormat?.toLowerCase(),
   );
 
   const initialState: IEditPrompts = {
