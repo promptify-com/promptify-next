@@ -1,18 +1,26 @@
 import {
-  chatsApi,
   useSaveChatExecutionsMutation,
   useSaveChatInputMutation,
   useSaveChatSuggestionsMutation,
   useSaveChatTemplateMutation,
 } from "@/core/api/chats";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import {
+  ExecutionMessage,
+  IMessageResult,
+  InputMessage,
+  SuggestionsMessage,
+  TemplateMessage,
+} from "@/core/api/dto/chats";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setSelectedTemplate } from "@/core/store/chatSlice";
 
 const useSaveChatInteractions = () => {
+  const dispatch = useAppDispatch();
   const [saveChatInput] = useSaveChatInputMutation();
   const [saveSuggestions] = useSaveChatSuggestionsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
-  const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
 
   const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
@@ -54,7 +62,7 @@ const useSaveChatInteractions = () => {
     try {
       await saveTemplate({
         chat: chatId,
-        template_id: templateId,
+        template: templateId,
         text,
       });
     } catch (error) {
@@ -83,7 +91,7 @@ const useSaveChatInteractions = () => {
             await saveChatExecutions(executionId, chatId);
             break;
 
-          case "headerWithText":
+          case "template":
             await saveChatTemplate(templateId, message.text, chatId);
             break;
 
@@ -96,13 +104,59 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const prepareSavedMessages = async (chatId: number) => {
-    const response = await getMessages({ chat: chatId, offset: 10, limit: 10 }).unwrap();
+  function mapApiMessageToIMessage(apiMessage: IMessageResult): IMessage {
+    const inputMessage = apiMessage.message_object as InputMessage;
+    const suggestionMessage = apiMessage.message_object as SuggestionsMessage;
+    const templateMessage = apiMessage.message_object as TemplateMessage;
+    const executionMessage = apiMessage.message_object as ExecutionMessage;
+    const baseMessage: IMessage = {
+      id: apiMessage.id,
+      createdAt: apiMessage.created_at,
+      fromUser: apiMessage.message_object.sender === "user",
+      text: "",
+      type: "text",
+    };
 
-    console.log(response);
-  };
+    switch (apiMessage.message_type) {
+      case "message":
+        return {
+          ...baseMessage,
+          text: inputMessage.text,
+          type:
+            inputMessage.type === "text"
+              ? "text"
+              : inputMessage.text.includes("ready to run")
+              ? "readyMessage"
+              : "questionInput", // Assuming direct mapping; adjust if needed
+        };
+      case "suggestion":
+        return {
+          ...baseMessage,
+          templates: suggestionMessage.templates,
+          type: "suggestion",
+        };
 
-  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages, prepareSavedMessages };
+      case "template":
+        dispatch(setSelectedTemplate(templateMessage.template));
+        return {
+          ...baseMessage,
+          template: templateMessage.template,
+          text: templateMessage.text,
+          type: "template",
+        };
+      case "execution":
+        return {
+          ...baseMessage,
+          spark: executionMessage.execution,
+          type: "spark",
+        };
+      // Add other cases as necessary
+      default:
+        return baseMessage;
+    }
+  }
+
+  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
 };
 
 export default useSaveChatInteractions;

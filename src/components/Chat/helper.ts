@@ -1,10 +1,18 @@
 import { n8nClient as ApiClient } from "@/common/axios";
 import { getTemplateById } from "@/hooks/api/templates";
+import { randomId } from "@/common/helpers";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
-import type { CreateMessageProps, IQuestion } from "../Prompt/Types/chat";
-import { randomId } from "@/common/helpers";
+import type { CreateMessageProps, IMessage, IQuestion } from "../Prompt/Types/chat";
+import type {
+  ExecutionMessage,
+  IMessageResult,
+  InputMessage,
+  SuggestionsMessage,
+  TemplateMessage,
+} from "@/core/api/dto/chats";
+import { setSelectedTemplate } from "@/core/store/chatSlice";
 
 interface SendMessageResponse {
   output?: string;
@@ -87,6 +95,7 @@ export const createMessage = ({
   text,
   executionId,
   templates = [],
+  template,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -100,4 +109,5 @@ export const createMessage = ({
   questionInputName,
   executionId,
   templates,
+  template,
 });

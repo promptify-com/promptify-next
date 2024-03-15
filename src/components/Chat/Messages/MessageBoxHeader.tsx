@@ -3,9 +3,11 @@ import Image from "@/components/design-system/Image";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+
 import { useAppSelector } from "@/hooks/useStore";
-import RunButton from "../RunButton";
+import RunButton from "@/components/Chat/RunButton";
 import TemplateActions from "@/components/Chat/TemplateActions";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   onExpand?: () => void;
@@ -13,14 +15,15 @@ interface Props {
   variant: "FORM" | "EXECUTION";
   showRunButton?: boolean;
   onScrollToBottom?: () => void;
+  template: Templates;
 }
 
-function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScrollToBottom }: Props) {
+function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScrollToBottom, template }: Props) {
   const { selectedChatOption, selectedTemplate, answers, inputs, params } = useAppSelector(state => state.chat);
 
   const showHeaderActions = Boolean(selectedChatOption === "FORM" && variant === "FORM");
-
   const totalQuestions = inputs.length + params.length;
+  const templateShown = template || selectedTemplate;
 
   return (
     <Stack
@@ -52,7 +55,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
           }}
         >
           <Image
-            src={selectedTemplate?.thumbnail!}
+            src={templateShown?.thumbnail!}
             alt={"Image 1"}
             priority={true}
             fill
@@ -69,7 +72,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
             flex: 1,
           }}
         >
-          {selectedTemplate?.title}
+          {templateShown?.title}
         </Typography>
       </Stack>
       <Stack
@@ -102,9 +105,9 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
             />
           </>
         )}
-        {selectedTemplate && (
+        {templateShown && (
           <TemplateActions
-            template={selectedTemplate}
+            template={templateShown}
             onScrollToBottom={onScrollToBottom}
             onlyNew
           />

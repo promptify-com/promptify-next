@@ -12,8 +12,8 @@ export type MessageType =
   | "spark"
   | "html"
   | "credentials"
-  | "suggestedTemplates"
-  | "headerWithText"
+  | "suggestion"
+  | "template"
   | "questionInput"
   | "questionParam"
   | "readyMessage";
@@ -25,6 +25,8 @@ export interface IMessage {
   fromUser: boolean;
   type: MessageType;
   spark?: TemplatesExecutions;
+  template?: Templates;
+  isLatestSpark?: boolean;
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
@@ -75,4 +77,5 @@ export interface CreateMessageProps {
   questionInputName?: string;
   templates?: Templates[];
   executionId?: number;
+  template?: Templates;
 }

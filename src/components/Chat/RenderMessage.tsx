@@ -6,11 +6,11 @@ import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import TemplateSuggestions from "./Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
 import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox";
-import HeaderWithTextMessage from "@/components/Chat/Messages/HeaderWithTextMessage";
+import TemplateMessage from "@/components/Chat/Messages/templateMessage";
 import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
-import type { IMessage } from "../Prompt/Types/chat";
 import ReadyMessage from "./Messages/ReadyMessage";
+import type { IMessage } from "../Prompt/Types/chat";
 
 interface Props {
   message: IMessage;
@@ -31,7 +31,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
         />
       )}
 
-      {message.type === "suggestedTemplates" && !!message.templates?.length && (
+      {message.type === "suggestion" && !!message.templates?.length && (
         <Fade
           in={true}
           unmountOnExit
@@ -64,7 +64,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           </Stack>
         </Fade>
       )}
-      {message.type === "headerWithText" && (
+      {message.type === "template" && (
         <Fade
           in={true}
           unmountOnExit
@@ -72,7 +72,8 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            <HeaderWithTextMessage
+            <TemplateMessage
+              template={message.template!}
               content={message.text}
               onScrollToBottom={onScrollToBottom}
             />
@@ -99,7 +100,12 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            <ExecutionMessageBox onAbort={onAbort} />
+            <ExecutionMessageBox
+              onAbort={onAbort}
+              executionData={message.spark}
+              allowGenerate={message.isLatestSpark}
+              template={message.template!}
+            />
           </Stack>
         </Fade>
       )}

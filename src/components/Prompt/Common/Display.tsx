@@ -1,18 +1,19 @@
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
 import { ExecutionCard } from "./ExecutionCard";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import ExecutionFooter from "./ExecutionFooter";
-import type { Templates } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { PromptLiveResponse } from "@/common/types/prompt";
 
 interface Props {
   templateData: Templates;
+  execution: TemplatesExecutions | PromptLiveResponse;
 }
 
-export const Display: React.FC<Props> = ({ templateData }) => {
+export const Display: React.FC<Props> = ({ templateData, execution }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
@@ -20,16 +21,6 @@ export const Display: React.FC<Props> = ({ templateData }) => {
 
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
-
-  const currentGeneratedPrompt = useMemo(() => {
-    if (generatedExecution?.data?.length) {
-      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
-      const prompt = templateData.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) return prompt;
-    }
-
-    return null;
-  }, [generatedExecution]);
 
   return (
     <Grid
@@ -68,7 +59,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
             </Typography>
           ) : (
             <ExecutionCard
-              execution={generatedExecution ?? selectedExecution}
+              execution={execution}
               promptsData={templateData.prompts}
             />
           )}

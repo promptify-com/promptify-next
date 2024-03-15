@@ -12,14 +12,16 @@ export interface IChat {
 
 export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
 
+type Sender = "system" | "user";
+
 export interface ISaveChatInput {
   chat: number;
   type: "text" | "question";
   text: string;
-  sender: "system" | "user";
+  sender: Sender;
 }
 
-interface IMessageResult {
+export interface IMessageResult {
   id: number;
   updated_at: string;
   created_at: string;
@@ -27,38 +29,42 @@ interface IMessageResult {
   message_object: InputMessage | SuggestionsMessage | ExecutionMessage | TemplateMessage;
 }
 
-interface InputMessage {
+export interface InputMessage {
   id: number;
   created_at: string;
   updated_at: string;
+  sender: Sender;
   text: string;
   type: string;
 }
 
-interface SuggestionsMessage {
+export interface SuggestionsMessage {
   id: number;
   created_at: string;
   updated_at: string;
+  sender: Sender;
   templates: Templates[];
 }
 
-interface ExecutionMessage {
+export interface ExecutionMessage {
   id: number;
   created_at: string;
   updated_at: string;
+  sender: Sender;
   execution: TemplatesExecutions;
 }
 
-interface TemplateMessage {
+export interface TemplateMessage {
   id: number;
   created_at: string;
   updated_at: string;
+  sender: Sender;
   text: string;
   template: Templates;
 }
 
-export interface IMessageList {
-  next: string;
-  previous: string;
+export interface IMessagesList {
+  next: string | null;
+  previous: string | null;
   results: IMessageResult[];
 }

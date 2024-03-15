@@ -79,7 +79,11 @@ const useMessageManager = () => {
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
     } else {
       dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
-      const headerWithTextMessage = createMessage({ type: "headerWithText", text: welcomeMessage.text });
+      const headerWithTextMessage = createMessage({
+        type: "template",
+        text: welcomeMessage.text,
+        template: selectedTemplate,
+      });
       setQueueSavedMessages(newMessages => newMessages.concat(headerWithTextMessage));
 
       const questionMessage = createMessage({
@@ -184,7 +188,7 @@ const useMessageManager = () => {
 
               const pluralTemplates = templates.length > 1;
               const suggestionsMessage = createMessage({
-                type: "suggestedTemplates",
+                type: "suggestion",
                 text: `I found ${pluralTemplates ? "these" : "this"} prompt${
                   pluralTemplates ? "s" : ""
                 }, following your request:`,

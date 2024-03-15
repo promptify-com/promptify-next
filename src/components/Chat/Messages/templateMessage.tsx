@@ -1,14 +1,16 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import React from "react";
+
 import MessageBoxHeader from "./MessageBoxHeader";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   content: string;
+  template: Templates;
   onScrollToBottom(): void;
 }
 
-function HeaderWithTextMessage({ content, onScrollToBottom }: Props) {
+function TemplateMessage({ content, onScrollToBottom, template }: Props) {
   return (
     <Stack
       direction={"column"}
@@ -16,6 +18,7 @@ function HeaderWithTextMessage({ content, onScrollToBottom }: Props) {
     >
       <MessageBoxHeader
         variant="FORM"
+        template={template}
         onScrollToBottom={onScrollToBottom}
       />
       <Typography
@@ -33,4 +36,4 @@ function HeaderWithTextMessage({ content, onScrollToBottom }: Props) {
   );
 }
 
-export default HeaderWithTextMessage;
+export default TemplateMessage;

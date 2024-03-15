@@ -19,28 +19,31 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { setChatMode, setInitialChat } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
-import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
+import { IMessage } from "@/components/Prompt/Types/chat";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
-    state => state.chat,
-  );
+  const [palette, setPalette] = useState(theme.palette);
+  const [offset, setOffset] = useState(0);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-
+  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
+    state => state.chat,
+  );
   const [createChat] = useCreateChatMutation();
   const [updateChat] = useUpdateChatMutation();
+  const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
 
-  const { processQueuedMessages, prepareSavedMessages } = useSaveChatInteractions();
-
+  const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();
   const {
     messages,
     setMessages,
@@ -58,18 +61,6 @@ function Chat() {
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template: selectedTemplate,
   });
-
-  const handleGenerateExecution = () => {
-    generateExecutionHandler((executionId: number) => {
-      const executionMessage = createMessage({ type: "spark", text: "", executionId });
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
-      setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
-    });
-    dispatch(setChatMode("automation"));
-    if (selectedChatOption === "QA") {
-      setIsInputDisabled(false);
-    }
-  };
 
   const handleDynamicColors = () => {
     if (!selectedTemplate?.thumbnail) {
@@ -112,6 +103,18 @@ function Chat() {
     };
   }, []);
 
+  const prepareSavedMessages = async (chatId: number) => {
+    const limit = 20;
+    const response = await getMessages({ chat: chatId, offset, limit }).unwrap();
+
+    console.log(response);
+
+    const mappedMessages: IMessage[] = response.results.map(mapApiMessageToIMessage);
+    setMessages(prevMessages => [...mappedMessages.toReversed(), ...prevMessages]);
+    setOffset(prevOffset => prevOffset + response.results.length);
+    setHasMoreMessages(!!response.next);
+  };
+
   useEffect(() => {
     if (!initialChat) {
       setMessages([]);
@@ -121,8 +124,9 @@ function Chat() {
       setIsValidatingAnswer(false);
       dispatch(setChatMode("automation"));
     }
-    if (selectedChat?.id) {
+    if (selectedChat?.id && !selectedTemplate) {
       prepareSavedMessages(selectedChat.id);
+      console.log(messages);
     }
   }, [selectedChat]);
 
@@ -184,6 +188,18 @@ function Chat() {
   };
   const dynamicTheme = createTheme({ ...theme, palette });
 
+  const handleGenerateExecution = () => {
+    generateExecutionHandler((executionId: number) => {
+      const executionMessage = createMessage({ type: "spark", text: "", executionId, template: selectedTemplate });
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
+      setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
+    });
+    dispatch(setChatMode("automation"));
+    if (selectedChatOption === "QA") {
+      setIsInputDisabled(false);
+    }
+  };
+
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
       const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
@@ -199,6 +215,19 @@ function Chat() {
     if (generatedExecution?.id) {
       try {
         const _newExecution = await getExecutionById(generatedExecution.id);
+
+        setMessages(prevMessages => {
+          let hasUpdated = false;
+          return prevMessages.map(message => {
+            if (message.type === "spark" && message.isLatestSpark) {
+              hasUpdated = true;
+              return { ...message, spark: _newExecution, isLatestSpark: true };
+            } else if (message.type === "spark" && !hasUpdated) {
+              return { ...message, isLatestSpark: false };
+            }
+            return message;
+          });
+        });
         dispatch(setSelectedExecution(_newExecution));
       } catch {
         window.location.reload();

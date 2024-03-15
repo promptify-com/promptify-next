@@ -5,13 +5,20 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Display } from "@/components/Prompt/Common/Display";
 import ExecutionMessageFooter from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageFooter";
 import ExecutionMessageActions from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageActions";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   onAbort: () => void;
+  executionData?: TemplatesExecutions;
+  allowGenerate?: boolean;
+  template?: Templates;
 }
 
-function ExecutionMessageBox({ onAbort }: Props) {
+function ExecutionMessageBox({ onAbort, executionData, allowGenerate, template }: Props) {
   const { selectedTemplate } = useAppSelector(state => state.chat);
+  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+
+  const executionToShow = allowGenerate ? generatedExecution : executionData || selectedExecution;
 
   if (!selectedTemplate) {
     return;
@@ -25,7 +32,10 @@ function ExecutionMessageBox({ onAbort }: Props) {
         bgcolor={"surface.2"}
         borderRadius={"24px"}
       >
-        <MessageBoxHeader variant="EXECUTION" />
+        <MessageBoxHeader
+          template={template!}
+          variant="EXECUTION"
+        />
 
         <Stack
           position={"relative"}
@@ -35,7 +45,10 @@ function ExecutionMessageBox({ onAbort }: Props) {
           direction={"column"}
           gap={2}
         >
-          <Display templateData={selectedTemplate} />
+          <Display
+            templateData={selectedTemplate}
+            execution={executionToShow!}
+          />
         </Stack>
         <ExecutionMessageFooter onAbort={onAbort} />
       </Stack>
