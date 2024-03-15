@@ -75,7 +75,7 @@ function TemplatePage({ template, popup }: Props) {
           id: template.id,
           is_favorite: template.is_favorite,
           is_liked: template.is_liked,
-          likes: template.favorites_count,
+          favorites_count: template.favorites_count,
         }),
       );
     }

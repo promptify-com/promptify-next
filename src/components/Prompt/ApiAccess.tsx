@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormControl, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { SelectChangeEvent } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import js from "react-syntax-highlighter/dist/cjs/languages/hljs/javascript";
-import { ExpandMore } from "@mui/icons-material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import HTTPSnippet from "httpsnippet";
 import { Templates } from "@/core/api/dto/templates";
@@ -27,6 +32,7 @@ const getExecutionSnippet = (token: string) =>
       { name: "Content-Type", value: "application/json" },
     ],
   });
+
 const snippetProps = {
   language: "javascript",
   customStyle: {

@@ -5,7 +5,11 @@ import { useEffect, useState } from "react";
 import { TemplatesProps, updateCurrentFavorite, updateCurrentLike } from "@/core/store/templatesSlice";
 import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import { useAppSelector } from "./useStore";
-import { useAddTemplateLikeMutation, useRemoveTemplateLikeMutation } from "@/core/api/templates";
+import {
+  useAddTemplateLikeMutation,
+  useGetTemplateByIdQuery,
+  useRemoveTemplateLikeMutation,
+} from "@/core/api/templates";
 import { Templates } from "@/core/api/dto/templates";
 
 const useSaveFavoriteTemplate = (template?: Templates) => {
@@ -15,6 +19,10 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
   const isValidUser = useAppSelector(isValidUserFn);
   const favoriteCollectionId = useAppSelector(state => state.user.currentUser?.favorite_collection_id);
   const selectedTemplate = useAppSelector(state => state.template);
+
+  const { data: fetchedTemplate } = useGetTemplateByIdQuery(selectedTemplate.id, {
+    skip: Boolean(template || !selectedTemplate.id),
+  });
   const [templateData, setTemplateData] = useState<Templates | TemplatesProps>(selectedTemplate);
 
   const [addToCollection] = useAddToCollectionMutation();
@@ -23,9 +31,8 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
   const [removeTemplateLike] = useRemoveTemplateLikeMutation();
 
   useEffect(() => {
-    if (template) setTemplateData(template);
-    else setTemplateData(selectedTemplate);
-  }, [template, selectedTemplate]);
+    setTemplateData(fetchedTemplate ?? template ?? selectedTemplate);
+  }, [template, fetchedTemplate]);
 
   const saveFavorite = async (isVote?: boolean) => {
     if (!isValidUser) {
@@ -50,13 +57,19 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
   };
 
   const like = async () => {
-    setTemplateData(prev => ({ ...prev, is_liked: !templateData.is_liked }));
+    const newStatus = !templateData.is_liked;
+    const currentLikes = templateData.favorites_count;
+    setTemplateData(prev => ({
+      ...prev,
+      is_liked: newStatus,
+      favorites_count: newStatus ? currentLikes + 1 : currentLikes - 1,
+    }));
     if (!template) {
-      dispatch(updateCurrentLike(!templateData.is_liked));
+      dispatch(updateCurrentLike(newStatus));
     }
 
     try {
-      if (!templateData.is_liked) {
+      if (newStatus) {
         await likeTemplate(templateData.id);
       } else {
         await removeTemplateLike(templateData.id);

@@ -30,7 +30,7 @@ const LikeButton: React.FC<Props> = ({ style = { sx: {} } }) => {
         ...style?.sx,
       }}
     >
-      {templateData.likes}
+      {templateData.favorites_count}
     </Button>
   );
 };
