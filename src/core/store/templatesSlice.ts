@@ -52,10 +52,6 @@ export const templatesSlice = createSlice({
     updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
       state.is_favorite = action.payload;
     },
-    updateCurrentLike: (state, action: PayloadAction<boolean>) => {
-      state.is_liked = action.payload;
-      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
-    },
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
@@ -79,7 +75,6 @@ export const templatesSlice = createSlice({
 
 export const {
   updateCurrentFavorite,
-  updateCurrentLike,
   updateTemplateData,
   updateExecutionData,
   updatePopupTemplate,

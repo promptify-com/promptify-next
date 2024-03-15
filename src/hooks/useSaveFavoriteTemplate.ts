@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useEffect, useState } from "react";
-import { TemplatesProps, updateCurrentFavorite, updateCurrentLike } from "@/core/store/templatesSlice";
+import { TemplatesProps, updateCurrentFavorite } from "@/core/store/templatesSlice";
 import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import { useAppSelector } from "./useStore";
 import {
@@ -64,9 +64,6 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
       is_liked: newStatus,
       likes: newStatus ? currentLikes + 1 : currentLikes - 1,
     }));
-    if (!template) {
-      dispatch(updateCurrentLike(newStatus));
-    }
 
     try {
       if (newStatus) {
