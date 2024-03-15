@@ -67,6 +67,7 @@ function CardTemplate({
         flex: isDesktop ? 1 : "none",
         width: isDesktop ? "auto" : "100%",
         textDecoration: "none",
+        position: "relative",
       }}
     >
       <Card
@@ -77,8 +78,15 @@ function CardTemplate({
           cursor: "pointer",
           p: isDesktop && vertical ? "16px 16px 8px" : "8px",
           bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
+          ".tags": {
+            display: "none",
+          },
           "&:hover": {
-            bgcolor: "action.hover",
+            bgcolor: "surface.2",
+            borderRadius: "16px 16px 0 0",
+            ".tags": {
+              display: "flex",
+            },
           },
         }}
         elevation={0}
@@ -256,6 +264,47 @@ function CardTemplate({
               )}
             </Stack>
           </Stack>
+
+          {vertical && (
+            <Stack
+              sx={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                zIndex: 9999,
+                p: "8px",
+                bgcolor: "surface.2",
+                borderRadius: "0 0 16px 16px",
+                alignItems: "flex-start",
+                alignContent: "flex-start",
+                flexDirection: "row",
+                gap: "8px var(--1, 8px)",
+                flexWrap: "wrap",
+                transition: "background-color 0.3s ease",
+              }}
+              className="tags"
+            >
+              {template.tags.map(tag => (
+                <Chip
+                  onClick={e => {
+                    e.preventDefault();
+                    dispatch(setSelectedTag(tag));
+                    router.push("/explore");
+                  }}
+                  size="small"
+                  label={tag.name}
+                  key={tag.id}
+                  sx={{
+                    fontSize: { xs: 11, md: 13 },
+                    fontWeight: 400,
+                    bgcolor: "white",
+                    color: "onSurface",
+                  }}
+                />
+              ))}
+            </Stack>
+          )}
         </Stack>
       </Card>
     </Link>
