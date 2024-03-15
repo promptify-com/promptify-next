@@ -33,6 +33,11 @@ function CategoryCarousel({
   explore,
 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
+  const {
+    containerRef: carouselScrollRef,
+    scrollNext: carouselScrollNext,
+    scrollPrev: carouselScrollPrev,
+  } = useCarousel(autoPlay);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -131,13 +136,13 @@ function CategoryCarousel({
           }}
         >
           <CarouselButtons
-            scrollPrev={scrollPrev}
-            scrollNext={scrollNext}
+            scrollPrev={carouselScrollPrev}
+            scrollNext={carouselScrollNext}
             canScrollNext={true}
             canScrollPrev={true}
           >
             <Stack
-              ref={carouselRef}
+              ref={carouselScrollRef}
               overflow={"hidden"}
               m={"8px 16px"}
             >
@@ -145,19 +150,19 @@ function CategoryCarousel({
                 ref={containerRef}
                 direction={"row"}
                 m={"8px"}
-                gap={"8px"}
               >
                 {categories.map(category => (
                   <Link
                     key={category.id}
                     href={`/explore/${category.slug}`}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: "none", margin: "0 4px" }}
                   >
                     <Stack
                       direction={"row"}
                       alignItems={"center"}
                       gap={1}
                       sx={{
+                        width: "224px",
                         bgcolor: "surfaceContainerLowest",
                         border: `1px solid ${theme.palette.surfaceContainer}`,
                         borderRadius: "999px",
