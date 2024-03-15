@@ -139,19 +139,19 @@ export default function Page({ category }: { category: Category }) {
             direction={{ xs: "column", md: "row" }}
             justifyContent="space-between"
             alignItems="center"
-            gap="16px"
-            p={"24px 16px 40px"}
+            gap={3}
+            p={{ xs: "24px 16px 40px", md: "24px 24px 40px" }}
           >
             <Image
               src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
               alt={category.name}
-              style={{ objectFit: "cover", width: "20%", height: "auto", borderRadius: "50%" }}
+              style={{ objectFit: "cover", minWidth: 168, height: "auto", borderRadius: "50%" }}
               priority={true}
             />
             <Stack
               sx={{
                 display: "flex",
-                p: "var(--none, 0px) var(--2, 16px)",
+                px: { xs: 0, md: "16px" },
                 flexDirection: "column",
                 gap: "24px",
                 alignSelf: "stretch",

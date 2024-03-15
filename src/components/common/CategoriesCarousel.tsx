@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useAppSelector } from "@/hooks/useStore";
 import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 import { theme } from "@/theme";
+import Slide from "@mui/material/Slide";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -32,15 +33,14 @@ function CategoryCarousel({
   explore,
 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const observer = useIntersectionObserver(containerRef, {
-    threshold: 0.5,
-  });
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <Stack
+      ref={carouselContainerRef}
       gap={gap}
       sx={{
         pt: { md: "48px" },
@@ -92,27 +92,29 @@ function CategoryCarousel({
         m={"8px 16px"}
       >
         <Stack
-          ref={containerRef}
+          ref={carouselContainerRef}
           direction={"row"}
         >
-          {observer?.isIntersecting &&
-            categories.map(category => (
-              <Box key={category.id}>
-                {explore ? (
-                  <ExploreCardCategory category={category} />
-                ) : (
-                  <CategoryCard
-                    category={category}
-                    priority={false}
-                    href={`/explore/${category.slug}`}
-                    min
-                  />
-                )}
-              </Box>
-            ))}
+          {categories.map(category => (
+            <Box key={category.id}>
+              {explore ? (
+                <ExploreCardCategory category={category} />
+              ) : (
+                <CategoryCard
+                  category={category}
+                  priority={false}
+                  href={`/explore/${category.slug}`}
+                  min
+                />
+              )}
+            </Box>
+          ))}
         </Stack>
       </Stack>
-      {userScrolled && (
+      <Slide
+        in={userScrolled}
+        container={containerRef.current}
+      >
         <Box
           sx={{
             position: "fixed",
@@ -183,7 +185,7 @@ function CategoryCarousel({
             </Stack>
           </CarouselButtons>
         </Box>
-      )}
+      </Slide>
     </Stack>
   );
 }
