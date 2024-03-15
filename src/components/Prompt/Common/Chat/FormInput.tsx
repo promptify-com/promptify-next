@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setAnswers } from "@/core/store/chatSlice";
 import Storage from "@/common/storage";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
@@ -23,10 +22,8 @@ interface Props {
 }
 
 function FormInput({ input }: Props) {
-  const { isVariantB } = useVariant();
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const dispatch = useAppDispatch();
-  const { dispatchNewExecutionData } = useApiAccess();
 
   const { fullName, required, type, name: inputName, question, prompt } = input;
   const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
@@ -74,7 +71,6 @@ function FormInput({ input }: Props) {
     }
 
     dispatch(setAnswers(_answers));
-    dispatchNewExecutionData();
   };
 
   return (

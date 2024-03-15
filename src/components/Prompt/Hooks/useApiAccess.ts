@@ -1,46 +1,43 @@
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { ResPrompt } from "@/core/api/dto/prompts";
-import { updateExecutionData } from "@/core/store/templatesSlice";
+import { Templates } from "@/core/api/dto/templates";
+import useChatBox from "./useChatBox";
 
-const useApiAccess = () => {
-  const dispatch = useAppDispatch();
-  const inputs = useAppSelector(state => state.chat.inputs);
-  const answers = useAppSelector(state => state.chat.answers);
+const useApiAccess = (template: Templates) => {
+  const { prepareAndRemoveDuplicateInputs } = useChatBox();
+  const { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
 
-  const dispatchNewExecutionData = () => {
+  const prepareExecutionData = () => {
     const promptsData: Record<number, ResPrompt> = {};
-    const _answers = [...answers];
-    const _inputs = [...inputs];
 
-    _inputs.forEach(_input => {
+    inputs.forEach(_input => {
       const _promptId = _input.prompt!;
 
-      if (promptsData[_promptId]) {
-        promptsData[_promptId].prompt_params = { ...promptsData[_promptId].prompt_params, [_input.name]: "" };
-      } else {
-        promptsData[_promptId] = {
-          prompt: _promptId,
-          contextual_overrides: [],
-          prompt_params: { [_input.name]: "" },
-        };
-      }
-    });
-
-    _answers.forEach(_answer => {
-      if (!promptsData[_answer.prompt]?.prompt_params) {
-        return;
-      }
-
-      promptsData[_answer.prompt].prompt_params = {
-        ...promptsData[_answer.prompt].prompt_params,
-        [_answer.inputName]: _answer.answer,
+      promptsData[_promptId] = {
+        prompt: _promptId,
+        prompt_params: { ...promptsData[_promptId]?.prompt_params, [_input.name]: "" },
+        contextual_overrides: [],
       };
     });
 
-    dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
+    params.forEach(_param => {
+      const _promptId = _param.prompt;
+
+      promptsData[_promptId] = {
+        prompt: _promptId,
+        prompt_params: { ...promptsData[_promptId]?.prompt_params },
+        contextual_overrides: [
+          {
+            parameter: _param.parameter.id,
+            score: _param.score,
+          },
+        ],
+      };
+    });
+
+    return JSON.stringify(Object.values(promptsData));
   };
 
-  return { dispatchNewExecutionData };
+  return { prepareExecutionData };
 };
 
 export default useApiAccess;

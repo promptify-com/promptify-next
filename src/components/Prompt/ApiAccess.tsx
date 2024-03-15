@@ -9,6 +9,7 @@ import { Templates } from "@/core/api/dto/templates";
 import { RootState } from "@/core/store";
 import { useSelector } from "react-redux";
 import useToken from "@/hooks/useToken";
+import useApiAccess from "./Hooks/useApiAccess";
 
 interface Props {
   template: Templates;
@@ -34,6 +35,7 @@ const snippetProps = {
     color: "white",
     margin: 0,
     padding: "16px 16px 16px 24px",
+    "word-break": "break-word",
     ".linenumber": {
       minWidth: "auto",
     },
@@ -115,6 +117,7 @@ export default function ApiAccess({ template }: Props) {
   const [copy, result] = useCopyToClipboard();
   const token = useToken();
   const executionData = useSelector((state: RootState) => state.template.executionData);
+  const { prepareExecutionData } = useApiAccess(template);
 
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value);
@@ -130,7 +133,7 @@ export default function ApiAccess({ template }: Props) {
           { name: "Accept", value: "application/json" },
           { name: "Content-Type", value: "application/json" },
         ],
-        postData: { text: executionData },
+        postData: { text: prepareExecutionData() },
       }),
     );
   }, [template, executionData]);
