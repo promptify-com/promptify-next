@@ -144,7 +144,7 @@ function CategoryCarousel({
             <Stack
               ref={carouselScrollRef}
               overflow={"hidden"}
-              m={"8px 16px"}
+              py={"8px"}
             >
               <Stack
                 ref={containerRef}
@@ -162,7 +162,7 @@ function CategoryCarousel({
                       alignItems={"center"}
                       gap={1}
                       sx={{
-                        width: "224px",
+                        minWidth: "224px",
                         bgcolor: "surfaceContainerLowest",
                         border: `1px solid ${theme.palette.surfaceContainer}`,
                         borderRadius: "999px",

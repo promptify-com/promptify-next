@@ -23,26 +23,31 @@ export const CarouselButtons: React.FC<Props> = ({
     <Stack
       direction={"row"}
       alignItems={"center"}
-      gap={1}
+      sx={{
+        ".nav-btn": {
+          opacity: 0,
+        },
+        ":hover": {
+          ".nav-btn": {
+            opacity: 1,
+          },
+        },
+      }}
     >
       <IconButton
-        sx={{
-          ...btnStyle,
-          mr: children ? "-31px" : "0",
-        }}
         disabled={!canScrollPrev}
         onClick={scrollPrev}
+        className="nav-btn"
+        sx={btnStyle}
       >
         <ArrowBackIosNew />
       </IconButton>
       {children}
       <IconButton
-        sx={{
-          ...btnStyle,
-          ml: children ? "-31px" : "0",
-        }}
         disabled={!canScrollNext}
         onClick={scrollNext}
+        className="nav-btn"
+        sx={btnStyle}
       >
         <ArrowForwardIos />
       </IconButton>
@@ -54,6 +59,7 @@ const btnStyle = {
   border: "none",
   color: "#1C1B1F80",
   bgcolor: "transparent",
+  p: "8px",
   "&.Mui-disabled": {
     opacity: 0.6,
   },

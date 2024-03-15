@@ -44,6 +44,7 @@ function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "
         <Typography
           fontSize={{ xs: 19, md: 32 }}
           fontWeight={400}
+          color={"onSurface"}
         >
           {title}
         </Typography>
