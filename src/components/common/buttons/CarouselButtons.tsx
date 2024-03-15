@@ -26,7 +26,7 @@ export const CarouselButtons: React.FC<Props> = ({
       direction={"row"}
       sx={{
         ".nav-btn": {
-          opacity: children ? 0 : 1,
+          opacity: !children ? 1 : 0,
         },
         ":hover": {
           ".nav-btn": {
@@ -41,6 +41,7 @@ export const CarouselButtons: React.FC<Props> = ({
         className="nav-btn"
         sx={{
           ...btnStyle,
+          position: children ? "absolute" : "relative",
           left: 0,
         }}
       >
@@ -53,6 +54,7 @@ export const CarouselButtons: React.FC<Props> = ({
         className="nav-btn"
         sx={{
           ...btnStyle,
+          position: children ? "absolute" : "relative",
           right: 0,
         }}
       >
@@ -63,7 +65,6 @@ export const CarouselButtons: React.FC<Props> = ({
 };
 
 const btnStyle = {
-  position: "absolute",
   zIndex: 999,
   height: "100%",
   border: "none",
