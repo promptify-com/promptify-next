@@ -122,16 +122,11 @@ function CategoryCarousel({
       >
         <Box
           sx={{
+            width: `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
             position: "fixed",
-            top: { sm: " 58px" },
-            margin: "0 auto",
+            top: theme.custom.headerHeight.md,
+            left: theme.custom.leftClosedSidebarWidth,
             zIndex: 1000,
-            maxWidth: {
-              md: `${isPromptsFiltersSticky ? 540 : 880}px`,
-              lg: `${isPromptsFiltersSticky ? 955 : 1120}px`,
-              xl: "1120px",
-            },
-            width: "100%",
             bgcolor: "surfaceContainerLowest",
           }}
         >

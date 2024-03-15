@@ -59,7 +59,7 @@ const btnStyle = {
   border: "none",
   color: "#1C1B1F80",
   bgcolor: "transparent",
-  p: "8px",
+  p: "8px 16px",
   "&.Mui-disabled": {
     opacity: 0.6,
   },
