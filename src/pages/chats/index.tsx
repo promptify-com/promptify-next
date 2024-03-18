@@ -21,7 +21,6 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
 function Chat() {

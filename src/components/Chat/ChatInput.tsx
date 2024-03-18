@@ -3,8 +3,14 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import { keyframes } from "@mui/material";
 
 import MessageSender from "../Prompt/Common/Chat/MessageSender";
+
+const fadeOut = keyframes`
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+`;
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -21,6 +27,10 @@ const ChatInput = ({ onSubmit, disabled, isValidating }: ChatInputProps) => {
       gap={"8px"}
       px={{ xs: "8px", md: 0 }}
       pb={{ xs: "20px", md: 0 }}
+      sx={{
+        opacity: 0,
+        animation: `${fadeOut} 0.5s ease-in 1.6s forwards`,
+      }}
     >
       {isValidating && (
         <Stack

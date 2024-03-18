@@ -1,9 +1,14 @@
 import Stack from "@mui/material/Stack";
 import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import Typography from "@mui/material/Typography";
-
 import { useAppDispatch } from "@/hooks/useStore";
 import { setMessageSenderValue } from "@/core/store/chatSlice";
+import { keyframes } from "@mui/system";
+
+const fadeOut = keyframes`
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+`;
 
 function SuggestedPrompts() {
   const dispatch = useAppDispatch();
@@ -12,12 +17,17 @@ function SuggestedPrompts() {
     "What is difference between LLM models?",
     "How to plan my exercise schedule?",
   ];
+
   return (
     <Stack
-      direction={{ xs: "column", md: "row" }}
-      justifyContent={"space-between"}
-      gap={{ xs: "8px", md: "24px" }}
-      m={{ xs: "8px", md: 0 }}
+      sx={{
+        opacity: 0,
+        animation: `${fadeOut} 0.5s ease-in 1.6s forwards`,
+        flexDirection: { xs: "column", md: "row" },
+        justifyContent: "space-between",
+        gap: { xs: "8px", md: "24px" },
+        m: { xs: "8px", md: 0 },
+      }}
     >
       {prompts.map((prompt, index) => (
         <Stack
