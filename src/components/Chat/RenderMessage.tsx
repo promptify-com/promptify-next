@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Fade from "@mui/material/Fade";
 
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import TemplateSuggestions from "./Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
@@ -10,7 +10,7 @@ import TemplateMessage from "@/components/Chat/Messages/templateMessage";
 import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
 import ReadyMessage from "./Messages/ReadyMessage";
-import type { IMessage } from "../Prompt/Types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   message: IMessage;
@@ -21,7 +21,6 @@ interface Props {
 
 function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props) {
   const dispatch = useAppDispatch();
-  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
   return (
     <>
       {message.type === "text" && (
@@ -40,7 +39,6 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
         >
           <Stack>
             <TemplateSuggestions
-              content={message.text}
               templates={message.templates}
               scrollToBottom={onScrollToBottom}
             />
@@ -57,7 +55,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           <Stack>
             <FormMessageBox
               content={message.text}
-              template={selectedTemplate!}
+              template={message.template!}
               onGenerate={onGenerate}
               onScrollToBottom={onScrollToBottom}
             />
@@ -105,7 +103,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
               executionId={message.executionId!}
               executionData={message.spark}
               isLastExecution={message.isLatestExecution}
-              template={message.template || selectedTemplate}
+              template={message.template}
             />
           </Stack>
         </Fade>

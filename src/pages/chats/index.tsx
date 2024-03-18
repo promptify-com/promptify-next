@@ -4,7 +4,9 @@ import { createTheme, ThemeProvider, type Palette } from "@mui/material/styles";
 import mix from "polished/lib/color/mix";
 import Stack from "@mui/material/Stack";
 import materialDynamicColors from "material-dynamic-colors";
+import CircularProgress from "@mui/material/CircularProgress";
 
+import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { theme } from "@/theme";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
@@ -17,13 +19,10 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { setChatMode, setInitialChat, setSelectedChatOption } from "@/core/store/chatSlice";
-import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
-import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
-import { IMessage } from "@/components/Prompt/Types/chat";
-import { CircularProgress } from "@mui/material";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
 function Chat() {
   const router = useRouter();
@@ -31,8 +30,8 @@ function Chat() {
 
   const [palette, setPalette] = useState(theme.palette);
   const [offset, setOffset] = useState(0);
-  const [loadingMessages, setLoadingMessages] = useState(false);
-  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [loadingInitialMessages, setLoadingInitialMessages] = useState(false);
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -52,12 +51,12 @@ function Chat() {
     createMessage,
     handleSubmitInput,
     isValidatingAnswer,
-    setIsValidatingAnswer,
     showGenerateButton,
     isInputDisabled,
     setIsInputDisabled,
     queueSavedMessages,
     setQueueSavedMessages,
+    resetStates,
   } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
@@ -105,46 +104,47 @@ function Chat() {
     };
   }, []);
 
-  const prepareSavedMessages = async (chatId: number) => {
-    setLoadingMessages(true);
-    const limit = 10;
+  const loadInitialMessages = async () => {
+    setLoadingInitialMessages(true);
     try {
-      const messagesData = await getMessages({ chat: chatId, offset, limit }).unwrap();
-      setOffset(prevOffset => (!!messagesData.next ? prevOffset + messagesData.results.length : prevOffset));
-
-      const mappedMessages: IMessage[] = messagesData.results.map(mapApiMessageToIMessage);
-
-      if (mappedMessages.find(msg => msg.type === "template" || msg.type === "questionInput")) {
-        // template/questionInput message type only exists on QA mode
-        dispatch(setSelectedChatOption("QA"));
-      } else {
-        dispatch(setSelectedChatOption("FORM"));
-      }
-      setMessages(prevMessages => [...mappedMessages.toReversed(), ...prevMessages]);
+      // Assume offset is initially 0
+      const messagesData = await getMessages({ chat: selectedChat?.id!, offset: 0, limit: 10 }).unwrap();
+      const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
+      setMessages(newMappedMessages.toReversed());
+      setOffset(messagesData.results.length);
     } catch (error) {
-      console.error(error);
+      console.error("Error loading initial messages:", error);
     } finally {
-      setLoadingMessages(false);
+      setLoadingInitialMessages(false);
+    }
+  };
+
+  const loadMoreMessages = async () => {
+    if (loadingMoreMessages) return;
+    setLoadingMoreMessages(true);
+    try {
+      const messagesData = await getMessages({ chat: selectedChat?.id!, offset, limit: 10 }).unwrap();
+      const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
+      if (newMappedMessages.length > 0) {
+        setMessages(prevMessages => [...newMappedMessages.toReversed(), ...prevMessages]);
+        setOffset(prevOffset => prevOffset + newMappedMessages.length);
+      }
+    } catch (error) {
+      console.error("Error loading more messages:", error);
+    } finally {
+      setLoadingMoreMessages(false);
     }
   };
 
   useEffect(() => {
     if (!initialChat) {
-      setMessages([]);
-      dispatch(setAnswers([]));
-      dispatch(setInputs([]));
-      dispatch(setSelectedTemplate(undefined));
-      setIsValidatingAnswer(false);
-      dispatch(setChatMode("automation"));
-      if (selectedChat?.id) {
-        prepareSavedMessages(selectedChat.id);
-      }
+      resetStates();
+      loadInitialMessages();
     }
   }, [selectedChat]);
 
   useEffect(() => {
     handleDynamicColors();
-
     if (selectedChat && selectedTemplate?.title) {
       handleTitleChat();
     } else {
@@ -166,7 +166,7 @@ function Chat() {
 
   const fetchDynamicColors = () => {
     //@ts-expect-error unfound-new-type
-    materialDynamicColors(selectedTemplate.thumbnail)
+    materialDynamicColors(selectedTemplate.thumbnail || selectedChat?.thumbnail)
       .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
           ...theme.palette,
@@ -262,10 +262,12 @@ function Chat() {
   const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
+  console.log(offset);
+
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        {loadingMessages ? (
+        {loadingInitialMessages ? (
           <Stack
             direction={"row"}
             justifyContent={"center"}
@@ -300,6 +302,8 @@ function Chat() {
                 }}
               >
                 <ChatInterface
+                  fetchMoreMessages={loadMoreMessages}
+                  loadingMessages={loadingMoreMessages}
                   messages={messages}
                   showGenerateButton={showGenerateButton}
                   onAbort={abortConnection}

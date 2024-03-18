@@ -6,13 +6,14 @@ import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestio
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
-  content: string;
   templates: Templates[];
   scrollToBottom: () => void;
 }
 
-function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
+function TemplateSuggestions({ templates, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
+
+  const pluralTemplates = templates.length > 1;
 
   return (
     <Stack>
@@ -25,7 +26,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
         alignItems={"center"}
         color={"onSurface"}
       >
-        {content}
+        {`I found ${pluralTemplates ? "these" : "this"} prompt${pluralTemplates ? "s" : ""}, following your request:`}
       </Typography>
       <Stack
         bgcolor={"surfaceContainerLow"}

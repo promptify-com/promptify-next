@@ -17,6 +17,7 @@ import {
   setParams,
   setParamsValues,
   clearParameterSelection,
+  setSelectedTemplate,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
@@ -93,7 +94,12 @@ const useMessageManager = () => {
     setQueueSavedMessages(newMessages => newMessages.concat(runMessage));
 
     if (selectedChatOption === "FORM") {
-      const formMessage = createMessage({ type: "form", noHeader: true, text: welcomeMessage.text });
+      const formMessage = createMessage({
+        type: "form",
+        noHeader: true,
+        text: welcomeMessage.text,
+        template: selectedTemplate,
+      });
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
     } else {
       dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
@@ -203,14 +209,10 @@ const useMessageManager = () => {
           } else {
             if (!!templateIDs.length) {
               const templates = await fetchData(templateIDs);
-
-              const pluralTemplates = templates.length > 1;
               const suggestionsMessage = createMessage({
                 type: "suggestion",
-                text: `I found ${pluralTemplates ? "these" : "this"} prompt${
-                  pluralTemplates ? "s" : ""
-                }, following your request:`,
                 templates,
+                text: "",
               });
               saveChatSuggestions(templateIDs, chatId);
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
@@ -303,6 +305,15 @@ const useMessageManager = () => {
     !isSimulationStreaming &&
     (allRequiredInputsAnswered() || Boolean(!inputs.length || !inputs[0]?.required));
 
+  const resetStates = () => {
+    setMessages([]);
+    dispatch(setAnswers([]));
+    dispatch(setInputs([]));
+    dispatch(setSelectedTemplate(undefined));
+    setIsValidatingAnswer(false);
+    dispatch(setChatMode("automation"));
+  };
+
   return {
     messages,
     setMessages,
@@ -316,6 +327,7 @@ const useMessageManager = () => {
     setIsInputDisabled,
     queueSavedMessages,
     setQueueSavedMessages,
+    resetStates,
   };
 };
 

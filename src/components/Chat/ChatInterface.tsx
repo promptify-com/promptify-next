@@ -1,4 +1,4 @@
-import { Fragment, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 
 import { useAppSelector } from "@/hooks/useStore";
@@ -8,15 +8,25 @@ import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
   showGenerateButton: boolean;
   onAbort: () => void;
+  fetchMoreMessages: () => void;
+  loadingMessages: boolean;
 }
 
-const ChatInterface = ({ messages, onGenerate, showGenerateButton, onAbort }: Props) => {
+const ChatInterface = ({
+  messages,
+  onGenerate,
+  showGenerateButton,
+  onAbort,
+  fetchMoreMessages,
+  loadingMessages,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
@@ -25,7 +35,21 @@ const ChatInterface = ({ messages, onGenerate, showGenerateButton, onAbort }: Pr
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
+    skipScroll: !loadingMessages,
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (messagesContainerRef.current?.scrollTop === 0) {
+        fetchMoreMessages();
+      }
+    };
+
+    const currentRef = messagesContainerRef.current;
+    currentRef?.addEventListener("scroll", handleScroll);
+
+    return () => currentRef?.removeEventListener("scroll", handleScroll);
+  }, [fetchMoreMessages]);
 
   const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
   const showRunButton = showGenerateButton && selectedChatOption === "QA";
@@ -41,12 +65,30 @@ const ChatInterface = ({ messages, onGenerate, showGenerateButton, onAbort }: Pr
       <Stack
         direction={"column"}
         gap={3}
+        position={"relative"}
       >
         {!!selectedChat && (
           <ChatHeading
             title={selectedChat.title}
             thumbnail={selectedChat.thumbnail}
           />
+        )}
+
+        {loadingMessages && (
+          <Stack
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{
+              position: "absolute",
+              top: "140px",
+              left: "50%",
+              transform: "translate(30%, -50%)",
+              zIndex: 2,
+            }}
+          >
+            <CircularProgress size={30} />
+          </Stack>
         )}
 
         <Stack
