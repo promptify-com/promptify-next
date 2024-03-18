@@ -20,7 +20,7 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Executions"],
       }),
-      getTemplatesExecutionsByMe: builder.query<TemplatesExecutionsByMeResponse, number | undefined>({
+      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], number | undefined>({
         query: limit => ({
           url: `/api/meta/template-executions/me/${limit ? `?limit=${limit}` : ""}`,
           method: "get",

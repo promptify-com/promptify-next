@@ -132,7 +132,7 @@ export default function ExplorePage({ categories = [] }: Props) {
               <CategoryCarousel
                 categories={categories}
                 userScrolled={hasUserScrolled}
-                onClick={() => setSeeAll(true)}
+                onSeeAll={() => setSeeAll(true)}
                 gap={1}
                 explore
               />
@@ -178,9 +178,7 @@ export default function ExplorePage({ categories = [] }: Props) {
                       >
                         <CardTemplate
                           template={template as Templates}
-                          bgColor={"surfaceContainerLow"}
                           vertical
-                          showTagsOnHover
                         />
                       </Grid>
                     ))}
