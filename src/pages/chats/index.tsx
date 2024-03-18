@@ -189,7 +189,6 @@ function Chat() {
       <Layout>
         <Stack
           sx={{
-            // mx: { md: "auto" },
             height: { xs: "100vh", md: "calc(100vh - 100px)" },
             display: "flex",
             flexDirection: "column",
