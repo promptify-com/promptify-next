@@ -35,7 +35,6 @@ const ChatInterface = ({
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
-    skipScroll: !loadingMessages,
   });
 
   useEffect(() => {
