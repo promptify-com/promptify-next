@@ -44,9 +44,9 @@ const useMessageManager = () => {
     chatMode,
     initialChat,
     parameterSelected,
+    currentExecutionDetails,
   } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
-
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -62,6 +62,23 @@ const useMessageManager = () => {
     questionAnswerSubmitMessage(parameterSelected, true);
     dispatch(clearParameterSelection());
   }, [parameterSelected]);
+
+  useEffect(() => {
+    if (!currentExecutionDetails.id) {
+      return;
+    }
+    const updatedMessages = messages.map(message => {
+      if (message.type === "spark" && message.spark?.id === currentExecutionDetails.id) {
+        const updatedSpark = {
+          ...message.spark,
+          is_favorite: currentExecutionDetails.isFavorite,
+        };
+        return { ...message, spark: updatedSpark };
+      }
+      return message;
+    });
+    setMessages(updatedMessages);
+  }, [currentExecutionDetails]);
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
     dispatch(setChatMode("messages"));

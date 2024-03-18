@@ -104,7 +104,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
               onAbort={onAbort}
               executionId={message.executionId!}
               executionData={message.spark}
-              isLastExecution={message.isLatestExecution!}
+              isLastExecution={message.isLatestExecution}
               template={message.template || selectedTemplate}
             />
           </Stack>

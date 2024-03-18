@@ -31,7 +31,7 @@ function ExecutionMessageBox({ onAbort, executionData, isLastExecution, template
         borderRadius={"24px"}
       >
         <MessageBoxHeader
-          template={template!}
+          template={template}
           variant="EXECUTION"
         />
 
@@ -62,7 +62,10 @@ function ExecutionMessageBox({ onAbort, executionData, isLastExecution, template
           isLastExecution={isLastExecution}
         />
       </Stack>
-      <ExecutionMessageActions template={template} />
+      <ExecutionMessageActions
+        template={template}
+        execution={executionData}
+      />
     </Stack>
   );
 }
