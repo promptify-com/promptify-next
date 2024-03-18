@@ -102,9 +102,10 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           <Stack>
             <ExecutionMessageBox
               onAbort={onAbort}
+              executionId={message.executionId!}
               executionData={message.spark}
-              allowGenerate={message.isLatestSpark}
-              template={message.template!}
+              isLastExecution={message.isLatestExecution!}
+              template={message.template || selectedTemplate}
             />
           </Stack>
         </Fade>

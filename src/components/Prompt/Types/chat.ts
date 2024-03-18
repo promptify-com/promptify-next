@@ -26,7 +26,7 @@ export interface IMessage {
   type: MessageType;
   spark?: TemplatesExecutions;
   template?: Templates;
-  isLatestSpark?: boolean;
+  isLatestExecution?: boolean;
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
@@ -78,4 +78,5 @@ export interface CreateMessageProps {
   templates?: Templates[];
   executionId?: number;
   template?: Templates;
+  isLatestExecution?: boolean;
 }

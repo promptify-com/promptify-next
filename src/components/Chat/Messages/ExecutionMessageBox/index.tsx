@@ -10,17 +10,15 @@ import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 interface Props {
   onAbort: () => void;
   executionData?: TemplatesExecutions;
-  allowGenerate?: boolean;
+  isLastExecution?: boolean;
   template?: Templates;
+  executionId: number;
 }
 
-function ExecutionMessageBox({ onAbort, executionData, allowGenerate, template }: Props) {
-  const { selectedTemplate } = useAppSelector(state => state.chat);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+function ExecutionMessageBox({ onAbort, executionData, isLastExecution, template, executionId }: Props) {
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
-  const executionToShow = allowGenerate ? generatedExecution : executionData || selectedExecution;
-
-  if (!selectedTemplate) {
+  if (!template) {
     return;
   }
   return (
@@ -45,14 +43,26 @@ function ExecutionMessageBox({ onAbort, executionData, allowGenerate, template }
           direction={"column"}
           gap={2}
         >
-          <Display
-            templateData={selectedTemplate}
-            execution={executionToShow!}
-          />
+          {isLastExecution ? (
+            <Display
+              isLastExecution={true}
+              templateData={template}
+              execution={generatedExecution!}
+            />
+          ) : (
+            <Display
+              isLastExecution={false}
+              templateData={template}
+              execution={executionData!}
+            />
+          )}
         </Stack>
-        <ExecutionMessageFooter onAbort={onAbort} />
+        <ExecutionMessageFooter
+          onAbort={onAbort}
+          isLastExecution={isLastExecution}
+        />
       </Stack>
-      <ExecutionMessageActions template={selectedTemplate} />
+      <ExecutionMessageActions template={template} />
     </Stack>
   );
 }

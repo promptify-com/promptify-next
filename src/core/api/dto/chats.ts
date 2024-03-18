@@ -26,7 +26,7 @@ export interface IMessageResult {
   updated_at: string;
   created_at: string;
   message_type: "message" | "suggestion" | "execution" | "template";
-  message_object: InputMessage | SuggestionsMessage | ExecutionMessage | TemplateMessage;
+  message_object: InputMessage | SuggestionsMessage | TemplatesExecutions | TemplateMessage;
 }
 
 export interface InputMessage {
@@ -46,13 +46,13 @@ export interface SuggestionsMessage {
   templates: Templates[];
 }
 
-export interface ExecutionMessage {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  sender: Sender;
-  execution: TemplatesExecutions;
-}
+// export interface ExecutionMessage {
+//   id: number;
+//   created_at: string;
+//   updated_at: string;
+//   sender: Sender;
+//   execution: TemplatesExecutions;
+// }
 
 export interface TemplateMessage {
   id: number;

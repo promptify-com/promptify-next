@@ -28,8 +28,7 @@ const ChatInterface = ({ messages, onGenerate, showGenerateButton, onAbort }: Pr
   });
 
   const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
-  const showRunButton =
-    showGenerateButton && selectedChatOption === "QA" && messages[messages.length - 1]?.type !== "readyMessage";
+  const showRunButton = showGenerateButton && selectedChatOption === "QA";
 
   return (
     <Stack

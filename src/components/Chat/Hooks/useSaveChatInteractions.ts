@@ -4,16 +4,11 @@ import {
   useSaveChatSuggestionsMutation,
   useSaveChatTemplateMutation,
 } from "@/core/api/chats";
-import type { IMessage } from "@/components/Prompt/Types/chat";
-import {
-  ExecutionMessage,
-  IMessageResult,
-  InputMessage,
-  SuggestionsMessage,
-  TemplateMessage,
-} from "@/core/api/dto/chats";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedTemplate } from "@/core/store/chatSlice";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
+import type { IMessageResult, InputMessage, SuggestionsMessage, TemplateMessage } from "@/core/api/dto/chats";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 const useSaveChatInteractions = () => {
   const dispatch = useAppDispatch();
@@ -58,7 +53,10 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatTemplate = async (templateId: number, text: string, chatId: number) => {
+  const saveChatTemplate = async (templateId?: number, text?: string, chatId?: number) => {
+    if (!templateId || !text || !chatId) {
+      return;
+    }
     try {
       await saveTemplate({
         chat: chatId,
@@ -108,10 +106,11 @@ const useSaveChatInteractions = () => {
     const inputMessage = apiMessage.message_object as InputMessage;
     const suggestionMessage = apiMessage.message_object as SuggestionsMessage;
     const templateMessage = apiMessage.message_object as TemplateMessage;
-    const executionMessage = apiMessage.message_object as ExecutionMessage;
+    const executionMessage = apiMessage.message_object as TemplatesExecutions;
     const baseMessage: IMessage = {
       id: apiMessage.id,
       createdAt: apiMessage.created_at,
+      //@ts-ignore
       fromUser: apiMessage.message_object.sender === "user",
       text: "",
       type: "text",
@@ -127,7 +126,7 @@ const useSaveChatInteractions = () => {
               ? "text"
               : inputMessage.text.includes("ready to run")
               ? "readyMessage"
-              : "questionInput", // Assuming direct mapping; adjust if needed
+              : "questionInput",
         };
       case "suggestion":
         return {
@@ -147,10 +146,10 @@ const useSaveChatInteractions = () => {
       case "execution":
         return {
           ...baseMessage,
-          spark: executionMessage.execution,
+          spark: executionMessage,
+          isLatestExecution: false,
           type: "spark",
         };
-      // Add other cases as necessary
       default:
         return baseMessage;
     }

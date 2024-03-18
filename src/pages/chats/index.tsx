@@ -17,19 +17,21 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { setChatMode, setInitialChat } from "@/core/store/chatSlice";
+import { setChatMode, setInitialChat, setSelectedChatOption } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import { IMessage } from "@/components/Prompt/Types/chat";
+import { CircularProgress } from "@mui/material";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   const [palette, setPalette] = useState(theme.palette);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(10);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -104,15 +106,26 @@ function Chat() {
   }, []);
 
   const prepareSavedMessages = async (chatId: number) => {
-    const limit = 20;
-    const response = await getMessages({ chat: chatId, offset, limit }).unwrap();
+    setLoadingMessages(true);
+    const limit = 10;
+    try {
+      const messagesData = await getMessages({ chat: chatId, offset: 0, limit }).unwrap();
+      setOffset(prevOffset => (!!messagesData.next ? prevOffset + messagesData.results.length : prevOffset));
 
-    console.log(response);
+      const mappedMessages: IMessage[] = messagesData.results.map(mapApiMessageToIMessage);
 
-    const mappedMessages: IMessage[] = response.results.map(mapApiMessageToIMessage);
-    setMessages(prevMessages => [...mappedMessages.toReversed(), ...prevMessages]);
-    setOffset(prevOffset => prevOffset + response.results.length);
-    setHasMoreMessages(!!response.next);
+      // if (mappedMessages.find(msg => msg.type === "questionInput")) {
+      //   // questionInput message only exists on QA mode
+      //   dispatch(setSelectedChatOption("QA"));
+      // } else {
+      //   dispatch(setSelectedChatOption("FORM"));
+      // }
+      setMessages(prevMessages => [...mappedMessages.toReversed(), ...prevMessages]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingMessages(false);
+    }
   };
 
   useEffect(() => {
@@ -123,18 +136,20 @@ function Chat() {
       dispatch(setSelectedTemplate(undefined));
       setIsValidatingAnswer(false);
       dispatch(setChatMode("automation"));
-    }
-    if (selectedChat?.id && !selectedTemplate) {
-      prepareSavedMessages(selectedChat.id);
-      console.log(messages);
+      if (selectedChat?.id) {
+        prepareSavedMessages(selectedChat.id);
+      }
     }
   }, [selectedChat]);
 
   useEffect(() => {
     handleDynamicColors();
 
-    if (selectedChat && selectedTemplate?.title) handleTitleChat();
-    else handleCreateChat();
+    if (selectedChat && selectedTemplate?.title) {
+      handleTitleChat();
+    } else {
+      handleCreateChat();
+    }
   }, [selectedTemplate]);
 
   useEffect(() => {
@@ -142,10 +157,10 @@ function Chat() {
       return;
     }
     const lastMessage = queueSavedMessages[queueSavedMessages.length - 1];
-    if (lastMessage.type !== "spark" && !lastMessage.executionId) {
+    if (lastMessage.type !== "spark" || !lastMessage.executionId || !selectedChat || !selectedTemplate) {
       return;
     }
-    processQueuedMessages(queueSavedMessages, selectedChat?.id!, lastMessage?.executionId!, selectedTemplate?.id!);
+    processQueuedMessages(queueSavedMessages, selectedChat?.id, lastMessage?.executionId, selectedTemplate?.id);
     setQueueSavedMessages([]);
   }, [queueSavedMessages]);
 
@@ -190,7 +205,13 @@ function Chat() {
 
   const handleGenerateExecution = () => {
     generateExecutionHandler((executionId: number) => {
-      const executionMessage = createMessage({ type: "spark", text: "", executionId, template: selectedTemplate });
+      const executionMessage = createMessage({
+        type: "spark",
+        text: "",
+        executionId,
+        template: selectedTemplate,
+        isLatestExecution: true,
+      });
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
       setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
     });
@@ -217,18 +238,21 @@ function Chat() {
         const _newExecution = await getExecutionById(generatedExecution.id);
 
         setMessages(prevMessages => {
-          let hasUpdated = false;
-          return prevMessages.map(message => {
-            if (message.type === "spark" && message.isLatestSpark) {
-              hasUpdated = true;
-              return { ...message, spark: _newExecution, isLatestSpark: true };
-            } else if (message.type === "spark" && !hasUpdated) {
-              return { ...message, isLatestSpark: false };
+          const messagesWithUpdatedFlags = prevMessages.map(message =>
+            message.type === "spark" ? { ...message, isLatestExecution: false } : message,
+          );
+
+          const updatedMessages = messagesWithUpdatedFlags.map(message => {
+            if (message.type === "spark" && message.executionId === generatedExecution.id) {
+              return { ...message, spark: _newExecution };
             }
             return message;
           });
+
+          return updatedMessages;
         });
-        dispatch(setSelectedExecution(_newExecution));
+
+        dispatch(setSelectedExecution(_newExecution)); //
       } catch {
         window.location.reload();
       }
@@ -241,63 +265,74 @@ function Chat() {
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        <Stack
-          sx={{
-            // mx: { md: "auto" },
-            height: { xs: "100vh", md: "calc(100vh - 100px)" },
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            gap: 1,
-          }}
-        >
-          {showLanding ? (
-            <Landing />
-          ) : (
-            <Stack
-              sx={{
-                height: {
-                  xs: showChatInput ? "calc(100% - 120px)" : "calc(100% - 60px)",
-                  md: showChatInput ? "calc(100% - 90px)" : "100%",
-                },
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-              }}
-            >
-              <ChatInterface
-                messages={messages}
-                showGenerateButton={showGenerateButton}
-                onAbort={abortConnection}
-                onGenerate={() => handleGenerateExecution()}
-              />
-            </Stack>
-          )}
-          <Stack px={{ md: isChatHistorySticky ? "80px" : "300px" }}>
-            {currentUser?.id ? (
-              <>
-                {showChatInput && (
-                  <ChatInput
-                    onSubmit={handleSubmitInput}
-                    disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
-                    isValidating={isValidatingAnswer}
-                  />
-                )}
-              </>
+        {loadingMessages ? (
+          <Stack
+            direction={"row"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            height={{ xs: "100vh", md: "calc(100vh - 100px)" }}
+          >
+            <CircularProgress />
+          </Stack>
+        ) : (
+          <Stack
+            sx={{
+              // mx: { md: "auto" },
+              height: { xs: "100vh", md: "calc(100vh - 100px)" },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              gap: 1,
+            }}
+          >
+            {showLanding ? (
+              <Landing />
             ) : (
               <Stack
-                direction={"column"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                gap={1}
-                width={{ md: "100%" }}
-                p={{ md: "16px 8px 16px 16px" }}
+                sx={{
+                  height: {
+                    xs: showChatInput ? "calc(100% - 120px)" : "calc(100% - 60px)",
+                    md: showChatInput ? "calc(100% - 90px)" : "100%",
+                  },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                }}
               >
-                <SigninButton onClick={() => router.push("/signin")} />
+                <ChatInterface
+                  messages={messages}
+                  showGenerateButton={showGenerateButton}
+                  onAbort={abortConnection}
+                  onGenerate={() => handleGenerateExecution()}
+                />
               </Stack>
             )}
+            <Stack px={{ md: isChatHistorySticky ? "80px" : "300px" }}>
+              {currentUser?.id ? (
+                <>
+                  {showChatInput && (
+                    <ChatInput
+                      onSubmit={handleSubmitInput}
+                      disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
+                      isValidating={isValidatingAnswer}
+                    />
+                  )}
+                </>
+              ) : (
+                <Stack
+                  direction={"column"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  gap={1}
+                  width={{ md: "100%" }}
+                  p={{ md: "16px 8px 16px 16px" }}
+                >
+                  <SigninButton onClick={() => router.push("/signin")} />
+                </Stack>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
+        )}
       </Layout>
     </ThemeProvider>
   );

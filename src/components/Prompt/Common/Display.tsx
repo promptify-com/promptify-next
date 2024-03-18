@@ -11,16 +11,17 @@ import type { PromptLiveResponse } from "@/common/types/prompt";
 interface Props {
   templateData: Templates;
   execution: TemplatesExecutions | PromptLiveResponse;
+  isLastExecution?: boolean;
 }
 
-export const Display: React.FC<Props> = ({ templateData, execution }) => {
+export const Display: React.FC<Props> = ({ templateData, execution, isLastExecution }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isFetching = useAppSelector(state => state.executions.isFetching);
 
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
-  const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
+  const executionIsLoading = (isFetching || isGeneratedExecutionEmpty) && isLastExecution;
 
   return (
     <Grid

@@ -21,7 +21,6 @@ import {
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import useSaveChatInteractions from "./useSaveChatInteractions";
@@ -74,6 +73,8 @@ const useMessageManager = () => {
       text: `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`,
     });
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedTemplate?.title}"` });
+    setQueueSavedMessages(newMessages => newMessages.concat(runMessage));
+
     if (selectedChatOption === "FORM") {
       const formMessage = createMessage({ type: "form", noHeader: true, text: welcomeMessage.text });
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));

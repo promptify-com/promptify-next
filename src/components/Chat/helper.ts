@@ -4,15 +4,7 @@ import { randomId } from "@/common/helpers";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
-import type { CreateMessageProps, IMessage, IQuestion } from "../Prompt/Types/chat";
-import type {
-  ExecutionMessage,
-  IMessageResult,
-  InputMessage,
-  SuggestionsMessage,
-  TemplateMessage,
-} from "@/core/api/dto/chats";
-import { setSelectedTemplate } from "@/core/store/chatSlice";
+import type { CreateMessageProps, IQuestion } from "../Prompt/Types/chat";
 
 interface SendMessageResponse {
   output?: string;
@@ -96,6 +88,7 @@ export const createMessage = ({
   executionId,
   templates = [],
   template,
+  isLatestExecution,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -110,4 +103,5 @@ export const createMessage = ({
   executionId,
   templates,
   template,
+  isLatestExecution,
 });
