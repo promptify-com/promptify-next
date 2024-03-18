@@ -30,7 +30,7 @@ function Chat() {
   const dispatch = useAppDispatch();
 
   const [palette, setPalette] = useState(theme.palette);
-  const [offset, setOffset] = useState(10);
+  const [offset, setOffset] = useState(0);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
 
@@ -109,17 +109,17 @@ function Chat() {
     setLoadingMessages(true);
     const limit = 10;
     try {
-      const messagesData = await getMessages({ chat: chatId, offset: 0, limit }).unwrap();
+      const messagesData = await getMessages({ chat: chatId, offset, limit }).unwrap();
       setOffset(prevOffset => (!!messagesData.next ? prevOffset + messagesData.results.length : prevOffset));
 
       const mappedMessages: IMessage[] = messagesData.results.map(mapApiMessageToIMessage);
 
-      // if (mappedMessages.find(msg => msg.type === "questionInput")) {
-      //   // questionInput message only exists on QA mode
-      //   dispatch(setSelectedChatOption("QA"));
-      // } else {
-      //   dispatch(setSelectedChatOption("FORM"));
-      // }
+      if (mappedMessages.find(msg => msg.type === "template" || msg.type === "questionInput")) {
+        // template/questionInput message type only exists on QA mode
+        dispatch(setSelectedChatOption("QA"));
+      } else {
+        dispatch(setSelectedChatOption("FORM"));
+      }
       setMessages(prevMessages => [...mappedMessages.toReversed(), ...prevMessages]);
     } catch (error) {
       console.error(error);
