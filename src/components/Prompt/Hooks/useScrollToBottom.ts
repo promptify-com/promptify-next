@@ -2,7 +2,15 @@ import { useAppSelector } from "@/hooks/useStore";
 import { useState, useEffect, RefObject } from "react";
 import { IMessage } from "@/components/Prompt/Types/chat";
 
-const useScrollToBottom = ({ ref, content }: { ref: RefObject<HTMLDivElement>; content?: IMessage[] | string }) => {
+const useScrollToBottom = ({
+  ref,
+  content,
+  skipScroll = false,
+}: {
+  ref: RefObject<HTMLDivElement>;
+  content?: IMessage[] | string;
+  skipScroll?: boolean;
+}) => {
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
@@ -19,7 +27,7 @@ const useScrollToBottom = ({ ref, content }: { ref: RefObject<HTMLDivElement>; c
 
   const scrollToBottom = () => {
     const container = ref.current;
-    if (!container) return;
+    if (!container || skipScroll) return;
 
     container.scrollTop = container.scrollHeight;
     setTimeout(handleUserScroll, 200);

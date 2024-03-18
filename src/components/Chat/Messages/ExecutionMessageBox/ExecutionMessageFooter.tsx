@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 
 interface Props {
   onAbort: () => void;
+  isLastExecution?: boolean;
 }
 
 interface GenerationTiming {
@@ -16,7 +17,7 @@ interface GenerationTiming {
   duration: number | null;
 }
 
-function ExecutionMessageFooter({ onAbort }: Props) {
+function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [timing, setTiming] = useState<GenerationTiming>({ startTime: null, endTime: null, duration: null });
@@ -33,7 +34,7 @@ function ExecutionMessageFooter({ onAbort }: Props) {
 
   return (
     <>
-      {isGenerating ? (
+      {isGenerating && isLastExecution ? (
         <Stack
           p={"16px 24px"}
           direction={"row"}

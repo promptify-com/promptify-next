@@ -5,15 +5,20 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Display } from "@/components/Prompt/Common/Display";
 import ExecutionMessageFooter from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageFooter";
 import ExecutionMessageActions from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageActions";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   onAbort: () => void;
+  executionData?: TemplatesExecutions;
+  isLastExecution?: boolean;
+  template?: Templates;
+  executionId: number;
 }
 
-function ExecutionMessageBox({ onAbort }: Props) {
-  const { selectedTemplate } = useAppSelector(state => state.chat);
+function ExecutionMessageBox({ onAbort, executionData, isLastExecution, template, executionId }: Props) {
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
-  if (!selectedTemplate) {
+  if (!template) {
     return;
   }
   return (
@@ -25,7 +30,10 @@ function ExecutionMessageBox({ onAbort }: Props) {
         bgcolor={"surface.2"}
         borderRadius={"24px"}
       >
-        <MessageBoxHeader variant="EXECUTION" />
+        <MessageBoxHeader
+          template={template}
+          variant="EXECUTION"
+        />
 
         <Stack
           position={"relative"}
@@ -35,11 +43,29 @@ function ExecutionMessageBox({ onAbort }: Props) {
           direction={"column"}
           gap={2}
         >
-          <Display templateData={selectedTemplate} />
+          {isLastExecution ? (
+            <Display
+              isLastExecution={true}
+              templateData={template}
+              execution={generatedExecution!}
+            />
+          ) : (
+            <Display
+              isLastExecution={false}
+              templateData={template}
+              execution={executionData!}
+            />
+          )}
         </Stack>
-        <ExecutionMessageFooter onAbort={onAbort} />
+        <ExecutionMessageFooter
+          onAbort={onAbort}
+          isLastExecution={isLastExecution}
+        />
       </Stack>
-      <ExecutionMessageActions template={selectedTemplate} />
+      <ExecutionMessageActions
+        template={template}
+        execution={executionData}
+      />
     </Stack>
   );
 }

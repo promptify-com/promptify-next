@@ -24,6 +24,7 @@ export interface ExecutionsProps {
   chatMode: ChatMode;
   initialChat: boolean;
   parameterSelected: string | null;
+  currentExecutionDetails: { id: number | null; isFavorite: boolean };
 }
 
 const initialState: ExecutionsProps = {
@@ -42,6 +43,7 @@ const initialState: ExecutionsProps = {
   chatMode: "automation",
   initialChat: true,
   parameterSelected: null,
+  currentExecutionDetails: { id: null, isFavorite: false },
 };
 
 export const chatSlice = createSlice({
@@ -99,6 +101,9 @@ export const chatSlice = createSlice({
     clearParameterSelection: state => {
       state.parameterSelected = null;
     },
+    setCurrentExecutionDetails: (state, action) => {
+      state.currentExecutionDetails = action.payload;
+    },
   },
 });
 
@@ -120,6 +125,7 @@ export const {
   setInitialChat,
   updateParameterSelection,
   clearParameterSelection,
+  setCurrentExecutionDetails,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

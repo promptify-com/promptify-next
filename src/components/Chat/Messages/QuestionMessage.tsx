@@ -16,6 +16,17 @@ function QuestionMessage({ message, variant }: Props) {
   const { questionIndex, questionInputName, text, isRequired } = message;
   const totalQuestions = inputs.length + params.length;
 
+  let questionCounterText = `Question ${questionIndex} of ${totalQuestions}`;
+  let mainQuestionText = text;
+  let additionalInfoText = variant === "input" ? `This question is ${isRequired ? "Required" : "Optional"}` : "";
+
+  if (text.includes("##/")) {
+    const textParts = text.split("##/");
+    questionCounterText = textParts[0];
+    mainQuestionText = textParts[1];
+    additionalInfoText = textParts.length > 2 ? textParts[2] : "";
+  }
+
   const param = params.find(param => param.parameter.name === questionInputName);
 
   return (
@@ -30,7 +41,7 @@ function QuestionMessage({ message, variant }: Props) {
         lineHeight={"25.4px"}
         letterSpacing={"0.17px"}
       >
-        Question {questionIndex} of {totalQuestions}
+        {questionCounterText}
       </Typography>
 
       <Stack gap={2}>
@@ -40,7 +51,7 @@ function QuestionMessage({ message, variant }: Props) {
           lineHeight={"38px"}
           letterSpacing={"0.17px"}
         >
-          {text}
+          {mainQuestionText}
         </Typography>
 
         <Typography
@@ -50,7 +61,7 @@ function QuestionMessage({ message, variant }: Props) {
           lineHeight={"22.4px"}
           letterSpacing={"0.17px"}
         >
-          {variant === "input" ? <>This question is {isRequired ? "Required" : "Optional"}</> : "Choose option:"}
+          {additionalInfoText}
         </Typography>
 
         {param && variant === "param" && (

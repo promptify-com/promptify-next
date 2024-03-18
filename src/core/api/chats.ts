@@ -1,6 +1,5 @@
-import { randomId } from "../../common/helpers";
 import { baseApi } from "./api";
-import { IChat, IChatPartial } from "./dto/chats";
+import { IChat, IChatPartial, IMessagesList, ISaveChatInput } from "./dto/chats";
 
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -97,6 +96,56 @@ export const chatsApi = baseApi.injectEndpoints({
           } catch {}
         },
       }),
+      saveChatInput: builder.mutation<void, ISaveChatInput>({
+        query: ({ chat, text, type, sender }) => ({
+          url: "/api/chat/inputs/",
+          method: "POST",
+          data: {
+            chat,
+            text,
+            type,
+            sender,
+          },
+        }),
+      }),
+      saveChatSuggestions: builder.mutation<void, { chat: number; templates: number[] }>({
+        query: ({ chat, templates }) => ({
+          url: "/api/chat/suggestions/",
+          method: "POST",
+          data: {
+            chat,
+            templates,
+          },
+        }),
+      }),
+      saveChatExecutions: builder.mutation<void, { chat: number; execution: number }>({
+        query: ({ chat, execution }) => ({
+          url: "/api/chat/executions/",
+          method: "POST",
+          data: {
+            chat,
+            execution,
+          },
+        }),
+      }),
+
+      saveChatTemplate: builder.mutation<void, { chat: number; text: string; template: number }>({
+        query: ({ chat, text, template }) => ({
+          url: "/api/chat/templates/",
+          method: "POST",
+          data: {
+            chat,
+            text,
+            template,
+          },
+        }),
+      }),
+      getChatMessages: builder.query<IMessagesList, { chat: number; limit: number; offset: number }>({
+        query: ({ chat, limit, offset }) => ({
+          url: `/api/chat/chats/${chat}/messages?limit=${limit}&offset=${offset}`,
+          method: "GET",
+        }),
+      }),
     };
   },
 });
@@ -108,4 +157,9 @@ export const {
   useDeleteChatMutation,
   useUpdateChatMutation,
   useDuplicateChatMutation,
+  useSaveChatInputMutation,
+  useSaveChatSuggestionsMutation,
+  useSaveChatExecutionsMutation,
+  useSaveChatTemplateMutation,
+  useGetChatMessagesQuery,
 } = chatsApi;
