@@ -14,7 +14,8 @@ import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { Templates } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { PromptLiveResponse } from "@/common/types/prompt";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -119,7 +120,10 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                           padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
                           position={"relative"}
                         >
-                          <Display templateData={template} />
+                          <Display
+                            templateData={template}
+                            execution={{} as TemplatesExecutions | PromptLiveResponse}
+                          />
                         </Stack>
                       )}
                       {msg.type === "form" && <Form messageType={"form"} />}
