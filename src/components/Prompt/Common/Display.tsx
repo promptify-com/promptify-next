@@ -10,7 +10,7 @@ import type { PromptLiveResponse } from "@/common/types/prompt";
 
 interface Props {
   templateData: Templates;
-  execution: TemplatesExecutions | PromptLiveResponse;
+  execution?: TemplatesExecutions | PromptLiveResponse;
   isLastExecution?: boolean;
 }
 
@@ -59,10 +59,12 @@ export const Display: React.FC<Props> = ({ templateData, execution, isLastExecut
               No spark found
             </Typography>
           ) : (
-            <ExecutionCard
-              execution={execution}
-              promptsData={templateData.prompts}
-            />
+            execution && (
+              <ExecutionCard
+                execution={execution}
+                promptsData={templateData.prompts}
+              />
+            )
           )}
         </Box>
       </Box>

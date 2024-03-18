@@ -109,7 +109,9 @@ function Chat() {
       // Assume offset is initially 0
       const messagesData = await getMessages({ chat: selectedChat?.id!, offset: 0, limit: 10 }).unwrap();
       const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
-      setMessages(newMappedMessages.toReversed());
+      // TODO: see why error thrown here -> Type error: Property 'toReversed' does not exist on type 'IMessage[]'. Did you mean 'reverse'?
+      // setMessages(newMappedMessages.toReversed());
+      setMessages(newMappedMessages.reverse());
       setOffset(messagesData.results.length);
     } catch (error) {
       console.error("Error loading initial messages:", error);
@@ -125,7 +127,9 @@ function Chat() {
       const messagesData = await getMessages({ chat: selectedChat?.id!, offset, limit: 10 }).unwrap();
       const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
       if (newMappedMessages.length > 0) {
-        setMessages(prevMessages => [...newMappedMessages.toReversed(), ...prevMessages]);
+        // TODO: Type error: Property 'toReversed' does not exist on type 'IMessage[]'. Did you mean 'reverse'?
+        // setMessages(prevMessages => [...newMappedMessages.toReversed(), ...prevMessages]);
+        setMessages(prevMessages => [...newMappedMessages.reverse(), ...prevMessages]);
         setOffset(prevOffset => prevOffset + newMappedMessages.length);
       }
     } catch (error) {
