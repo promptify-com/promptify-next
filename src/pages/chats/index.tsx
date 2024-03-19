@@ -322,6 +322,7 @@ function Chat() {
                       onSubmit={handleSubmitInput}
                       disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
                       isValidating={isValidatingAnswer}
+                      fadeIn={showLanding}
                     />
                   )}
                 </>

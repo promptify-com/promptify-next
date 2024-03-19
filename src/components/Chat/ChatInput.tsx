@@ -16,8 +16,9 @@ interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
+  fadeIn?: boolean;
 }
-const ChatInput = ({ onSubmit, disabled, isValidating }: ChatInputProps) => {
+const ChatInput = ({ onSubmit, disabled, isValidating, fadeIn }: ChatInputProps) => {
   return (
     <Grid
       position={"relative"}
@@ -28,8 +29,8 @@ const ChatInput = ({ onSubmit, disabled, isValidating }: ChatInputProps) => {
       px={{ xs: "8px", md: 0 }}
       pb={{ xs: "20px", md: 0 }}
       sx={{
-        opacity: 0,
-        animation: `${fadeOut} 0.5s ease-in 1.6s forwards`,
+        opacity: fadeIn ? 0 : 1,
+        animation: fadeIn ? `${fadeOut} 0.5s ease-in 1.6s forwards` : "none",
       }}
     >
       {isValidating && (
