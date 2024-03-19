@@ -17,6 +17,7 @@ interface Props {
   onAbort: () => void;
   fetchMoreMessages: () => void;
   loadingMessages: boolean;
+  stopScrollingToBottom: boolean;
 }
 
 const ChatInterface = ({
@@ -26,15 +27,16 @@ const ChatInterface = ({
   onAbort,
   fetchMoreMessages,
   loadingMessages,
+  stopScrollingToBottom,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
   const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
+    skipScroll: stopScrollingToBottom,
   });
 
   useEffect(() => {

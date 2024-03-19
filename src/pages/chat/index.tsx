@@ -29,6 +29,7 @@ function Chat() {
 
   const [palette, setPalette] = useState(theme.palette);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [stopScrollingToBottom, setStopScrollingToBottom] = useState<boolean>(false);
   const [loadingInitialMessages, setLoadingInitialMessages] = useState(false);
   const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
 
@@ -112,8 +113,9 @@ function Chat() {
     try {
       const messagesData = await getMessages({ chat: selectedChat.id }).unwrap();
       const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
+      const _nextCursor = messagesData.next ? messagesData.next.split("cursor=")[1] : null;
 
-      setNextCursor(messagesData.next ? messagesData.next.split("cursor=")[1] : null);
+      setNextCursor(_nextCursor);
       setMessages(newMappedMessages);
     } catch (error) {
       console.error("Error loading initial messages:", error);
@@ -132,12 +134,16 @@ function Chat() {
       const messagesData = await getMessages({ chat: selectedChat.id, cursor: nextCursor }).unwrap();
       const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
 
+      setStopScrollingToBottom(!!messagesData.previous);
+
       if (!newMappedMessages.length) {
         setNextCursor(null);
         return;
       }
 
-      setNextCursor(messagesData.next ? messagesData.next.split("?cursor=")[1] : null);
+      const _nextCursor = messagesData.next ? messagesData.next.split("cursor=")[1] : null;
+
+      setNextCursor(_nextCursor);
       setMessages(prevMessages => newMappedMessages.concat(prevMessages));
     } catch (error) {
       console.error("Error loading more messages:", error);
@@ -147,6 +153,8 @@ function Chat() {
   };
 
   useEffect(() => {
+    setStopScrollingToBottom(false);
+
     if (!initialChat) {
       resetStates();
       loadInitialMessages();
@@ -316,6 +324,7 @@ function Chat() {
                   showGenerateButton={showGenerateButton}
                   onAbort={abortConnection}
                   onGenerate={() => handleGenerateExecution()}
+                  stopScrollingToBottom={stopScrollingToBottom}
                 />
               </Stack>
             )}
@@ -324,7 +333,10 @@ function Chat() {
                 <>
                   {showChatInput && (
                     <ChatInput
-                      onSubmit={handleSubmitInput}
+                      onSubmit={(value: string) => {
+                        handleSubmitInput(value);
+                        setStopScrollingToBottom(false);
+                      }}
                       disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
                       isValidating={isValidatingAnswer}
                       isFadeIn={showLanding}
