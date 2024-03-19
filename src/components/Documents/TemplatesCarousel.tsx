@@ -3,20 +3,23 @@ import Stack from "@mui/material/Stack";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import useCarousel from "@/hooks/useCarousel";
 import Link from "next/link";
-import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
+import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
-export default function TemplatesCarousel() {
+interface Props {
+  templates: TemplateExecutionsDisplay[] | undefined;
+  isLoading: boolean;
+}
+
+export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
-  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
-    useGetTemplatesExecutionsByMeQuery(undefined);
 
-  const isEmpty = !isExecutedTemplatesLoading && !executedTemplates?.length;
+  const isEmpty = !isLoading && !templates?.length;
 
   if (isEmpty) return;
 
   return (
-    <Box>
+    <Stack gap={3}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -56,16 +59,15 @@ export default function TemplatesCarousel() {
       <Stack
         ref={carouselRef}
         overflow={"hidden"}
-        m={"8px 16px"}
       >
         <Stack direction={"row"}>
-          {executedTemplates?.map(template => (
+          {templates?.map(template => (
             <Box key={template.id}>
               <CardDocumentTemplate template={template} />
             </Box>
           ))}
         </Stack>
       </Stack>
-    </Box>
+    </Stack>
   );
 }

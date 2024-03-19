@@ -132,7 +132,7 @@ export default function ExplorePage({ categories = [] }: Props) {
               <CategoryCarousel
                 categories={categories}
                 userScrolled={hasUserScrolled}
-                onSeeAll={() => setSeeAll(true)}
+                onClick={() => setSeeAll(true)}
                 gap={1}
                 explore
               />
