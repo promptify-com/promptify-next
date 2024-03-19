@@ -59,12 +59,10 @@ export const Display: React.FC<Props> = ({ templateData, execution, isLastExecut
               No spark found
             </Typography>
           ) : (
-            !!Object.values(execution).length && (
-              <ExecutionCard
-                execution={execution}
-                promptsData={templateData.prompts}
-              />
-            )
+            <ExecutionCard
+              execution={execution}
+              promptsData={templateData.prompts}
+            />
           )}
         </Box>
       </Box>

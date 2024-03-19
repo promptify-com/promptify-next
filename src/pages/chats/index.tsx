@@ -28,7 +28,7 @@ function Chat() {
   const dispatch = useAppDispatch();
 
   const [palette, setPalette] = useState(theme.palette);
-  const [offset, setOffset] = useState(0);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loadingInitialMessages, setLoadingInitialMessages] = useState(false);
   const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
 
@@ -104,15 +104,17 @@ function Chat() {
   }, []);
 
   const loadInitialMessages = async () => {
+    if (!selectedChat?.id) {
+      return;
+    }
+
     setLoadingInitialMessages(true);
     try {
-      // Assume offset is initially 0
-      const messagesData = await getMessages({ chat: selectedChat?.id!, offset: 0, limit: 10 }).unwrap();
+      const messagesData = await getMessages({ chat: selectedChat.id }).unwrap();
       const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
-      // TODO: see why error thrown here -> Type error: Property 'toReversed' does not exist on type 'IMessage[]'. Did you mean 'reverse'?
-      // setMessages(newMappedMessages.toReversed());
-      setMessages(newMappedMessages.reverse());
-      setOffset(messagesData.results.length);
+
+      setNextCursor(messagesData.next ? messagesData.next.split("cursor=")[1] : null);
+      setMessages(newMappedMessages);
     } catch (error) {
       console.error("Error loading initial messages:", error);
     } finally {
@@ -121,17 +123,22 @@ function Chat() {
   };
 
   const loadMoreMessages = async () => {
-    if (loadingMoreMessages) return;
+    if (!selectedChat?.id || loadingMoreMessages || !nextCursor) {
+      return;
+    }
+
     setLoadingMoreMessages(true);
     try {
-      const messagesData = await getMessages({ chat: selectedChat?.id!, offset, limit: 10 }).unwrap();
+      const messagesData = await getMessages({ chat: selectedChat.id, cursor: nextCursor }).unwrap();
       const newMappedMessages = messagesData.results.map(mapApiMessageToIMessage);
-      if (newMappedMessages.length > 0) {
-        // TODO: Type error: Property 'toReversed' does not exist on type 'IMessage[]'. Did you mean 'reverse'?
-        // setMessages(prevMessages => [...newMappedMessages.toReversed(), ...prevMessages]);
-        setMessages(prevMessages => [...newMappedMessages.reverse(), ...prevMessages]);
-        setOffset(prevOffset => prevOffset + newMappedMessages.length);
+
+      if (!newMappedMessages.length) {
+        setNextCursor(null);
+        return;
       }
+
+      setNextCursor(messagesData.next ? messagesData.next.split("?cursor=")[1] : null);
+      setMessages(prevMessages => newMappedMessages.concat(prevMessages));
     } catch (error) {
       console.error("Error loading more messages:", error);
     } finally {

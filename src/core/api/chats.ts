@@ -140,9 +140,9 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      getChatMessages: builder.query<IMessagesList, { chat: number; limit: number; offset: number }>({
-        query: ({ chat, limit, offset }) => ({
-          url: `/api/chat/chats/${chat}/messages?limit=${limit}&offset=${offset}`,
+      getChatMessages: builder.query<IMessagesList, { chat: number; cursor?: null | string }>({
+        query: ({ chat, cursor = null }) => ({
+          url: `/api/chat/chats/${chat}/messages${cursor ? `?cursor=${cursor}` : ""}`,
           method: "GET",
         }),
       }),
