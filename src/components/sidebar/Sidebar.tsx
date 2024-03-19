@@ -32,7 +32,7 @@ function Sidebar() {
   const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isChatPage = pathname.split("/")[1] === "chats";
+  const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -55,8 +55,8 @@ function Sidebar() {
     {
       name: "Chats",
       icon: <TryRounded />,
-      href: "/chats",
-      active: pathname === "/chats",
+      href: "/chat",
+      active: pathname === "/chat",
       external: false,
       reload: false,
     },

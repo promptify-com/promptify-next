@@ -237,7 +237,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isChatPage = pathname.split("/")[1] === "chats";
+  const isChatPage = pathname.split("/")[1] === "chat";
 
   const sidebarExpanded = (isPromptsPage && isPromptsFiltersSticky) || (isChatPage && isChatHistorySticky);
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
