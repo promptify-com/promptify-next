@@ -9,6 +9,8 @@ import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
 import { TemplatesFilter } from "./TemplatesFilter";
 import { Close, FilterList } from "@mui/icons-material";
 import { useState, forwardRef } from "react";
+import { useAppSelector } from "@/hooks/useStore";
+import ExploreCardTemplate from "@/components/common/cards/ExploreCardTemplate";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -22,6 +24,8 @@ interface TemplatesSectionProps {
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onPrevPage?: () => void;
+  bgColor?: string;
+  explore?: boolean;
 }
 
 function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "type">) {
@@ -35,8 +39,15 @@ function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "
         justifyContent={"space-between"}
         alignItems={"center"}
         gap={1}
+        p={"8px 16px"}
       >
-        <Typography fontSize={19}>{title}</Typography>
+        <Typography
+          fontSize={{ xs: 19, md: 32 }}
+          fontWeight={400}
+          color={"onSurface"}
+        >
+          {title}
+        </Typography>
         {filtersAllowed && (
           <IconButton
             onClick={e => setOpenFilters(!openFilters)}
@@ -85,25 +96,41 @@ function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">
   );
 }
 
-function PopularTemplates({ templates }: Pick<TemplatesSectionProps, "templates">) {
+function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "templates" | "bgColor">) {
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+
   if (!templates?.length) {
     return null;
   }
 
   return (
-    <Stack
-      direction={"row"}
-      flexWrap={"wrap"}
-      rowGap={3}
+    <Grid
+      container
+      spacing={1}
+      alignItems={"flex-start"}
+      sx={{
+        overflow: { xs: "auto", md: "initial" },
+        WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+      }}
     >
-      {templates.map((template: TemplateExecutionsDisplay | Templates) => (
-        <CardTemplate
-          key={template.id}
-          template={template as Templates}
-          vertical
-        />
+      {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={isPromptsFiltersSticky ? 5 : 4}
+          lg={3}
+          key={`${template.id}_${index}`}
+        >
+          <ExploreCardTemplate
+            template={template as Templates}
+            bgColor={bgColor}
+            vertical
+            showTagsOnHover
+          />
+        </Grid>
       ))}
-    </Stack>
+    </Grid>
   );
 }
 
@@ -158,6 +185,8 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
     isInfiniteScrolling = true,
     hasPrev,
     onPrevPage = () => {},
+    bgColor = "surface.2",
+    explore,
   },
   ref,
 ) {
@@ -214,17 +243,36 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
           {isLatestTemplates ? (
             <LatestTemplates templates={templates} />
           ) : isPopularTemplates ? (
-            <PopularTemplates templates={templates} />
+            <PopularTemplates
+              templates={templates}
+              bgColor={bgColor}
+            />
+          ) : explore ? (
+            <PopularTemplates
+              templates={templates}
+              bgColor={bgColor}
+            />
           ) : (
-            <TemplatePagination
-              isLoading={isLoading}
-              onNextPage={onNextPage}
+            <TemplatesInfiniteScroll
+              loading={isLoading}
+              onLoadMore={onNextPage}
               hasMore={hasMore}
               isInfiniteScrolling={isInfiniteScrolling}
               hasPrev={hasPrev}
-              onPrevPage={onPrevPage}
-              templates={templates}
-            />
+              onLoadLess={onPrevPage}
+            >
+              {!!templates?.length &&
+                templates.map((template: TemplateExecutionsDisplay | Templates) => {
+                  return (
+                    <Grid key={template.id}>
+                      <CardTemplate
+                        key={template.id}
+                        template={template as Templates}
+                      />
+                    </Grid>
+                  );
+                })}
+            </TemplatesInfiniteScroll>
           )}
 
           {type !== "myLatestExecutions" && !isLoading && !templates?.length && (

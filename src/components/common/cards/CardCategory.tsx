@@ -21,7 +21,6 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
   const token = useToken();
   const { isMobile } = useBrowser();
   const shouldPrioritizeImage = priority ?? token ? false : isMobile ? index === 0 || index === 1 : true;
-
   return (
     <Link
       href={href}
@@ -36,14 +35,19 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
           bgcolor: "transparent",
           borderRadius: "27px",
           overflow: "hidden",
-          "&:hover": {
-            bgcolor: "white",
-          },
+          mx: "8px",
         }}
       >
         <CardActionArea
           sx={{
             position: "relative",
+            "&:hover": {
+              backgroundColor: "transparent",
+              boxShadow: "none",
+            },
+            "&:hover .MuiCardActionArea-focusHighlight": {
+              opacity: 0,
+            },
           }}
         >
           <CardMedia

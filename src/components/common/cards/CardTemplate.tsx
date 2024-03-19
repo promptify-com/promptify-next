@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
-import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
@@ -13,19 +13,28 @@ import useTruncate from "@/hooks/useTruncate";
 import { isDesktopViewPort, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
-import Link from "next/link";
 import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
 import { Bolt } from "@mui/icons-material";
+import Link from "next/link";
 
 type CardTemplateProps = {
-  template: Templates | TemplateExecutionsDisplay;
+  template: Templates;
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
+  bgColor?: string;
+  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps) {
+function CardTemplate({
+  template,
+  query,
+  asResult,
+  vertical,
+  bgColor = "surface.2",
+  showTagsOnHover = false,
+}: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -56,21 +65,28 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
       href={`/prompt/${template.slug}`}
       style={{
         flex: isDesktop ? 1 : "none",
-        textDecoration: "none",
         width: isDesktop ? "auto" : "100%",
+        textDecoration: "none",
+        position: "relative",
       }}
     >
       <Card
         sx={{
-          width: "auto",
           minWidth: isDesktop && vertical ? "210px" : "auto",
           height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
           p: isDesktop && vertical ? "16px 16px 8px" : "8px",
           bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
+          ".tags": {
+            display: "none",
+          },
           "&:hover": {
-            bgcolor: "action.hover",
+            bgcolor: "surface.2",
+            borderRadius: "16px 16px 0 0",
+            ".tags": {
+              display: "flex",
+            },
           },
         }}
         elevation={0}
@@ -207,9 +223,7 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                       }}
                       onClick={e => {
                         e.stopPropagation();
-
                         dispatch(setSelectedTag(tag));
-
                         router.push("/explore");
                       }}
                     />
@@ -250,6 +264,47 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
               )}
             </Stack>
           </Stack>
+
+          {vertical && (
+            <Stack
+              sx={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                zIndex: 9999,
+                p: "8px",
+                bgcolor: "surface.2",
+                borderRadius: "0 0 16px 16px",
+                alignItems: "flex-start",
+                alignContent: "flex-start",
+                flexDirection: "row",
+                gap: "8px var(--1, 8px)",
+                flexWrap: "wrap",
+                transition: "background-color 0.3s ease",
+              }}
+              className="tags"
+            >
+              {template.tags.map(tag => (
+                <Chip
+                  onClick={e => {
+                    e.preventDefault();
+                    dispatch(setSelectedTag(tag));
+                    router.push("/explore");
+                  }}
+                  size="small"
+                  label={tag.name}
+                  key={tag.id}
+                  sx={{
+                    fontSize: { xs: 11, md: 13 },
+                    fontWeight: 400,
+                    bgcolor: "white",
+                    color: "onSurface",
+                  }}
+                />
+              ))}
+            </Stack>
+          )}
         </Stack>
       </Card>
     </Link>

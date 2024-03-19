@@ -40,7 +40,7 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGe
       position={"relative"}
       display={"flex"}
       width={"100%"}
-      px={{ xs: "8px", md: isExecutionShown && isVariantA ? "16px" : "40px" }}
+      px={{ xs: "8px", md: isExecutionShown && isVariantA ? "16px" : "0px" }}
       pb={isVariantA ? "25px" : 0}
       flexDirection={"column"}
       gap={"8px"}
@@ -120,9 +120,6 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGe
           <MessageSender
             onSubmit={onSubmit}
             disabled={disabled}
-            mode={"chat"}
-            onGenerate={onGenerate}
-            showGenerate={showGenerate}
           />
         </Box>
       </Stack>

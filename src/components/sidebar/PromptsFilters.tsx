@@ -18,6 +18,8 @@ import {
 } from "@/core/store/filtersSlice";
 import type { Engine, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
+import Box from "@mui/material/Box";
 
 const contentTypeItems: Item[] = [
   { name: "Text", id: 1, type: "engineType" },
@@ -39,7 +41,7 @@ function MyFavorites() {
   return (
     <Stack
       sx={{
-        bgcolor: "#EEEEE8",
+        bgcolor: "surfaceContainerHigh",
         borderRadius: "16px",
         mb: "20px",
         mt: "20px",
@@ -70,6 +72,7 @@ function PromptsFilters() {
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
   const { tag, engine, engineType } = useAppSelector(state => state.filters);
+  const isValidUser = useAppSelector(isValidUserFn);
 
   useEffect(() => {
     const storedEngine = Storage.get("engineFilter") || null;
@@ -145,8 +148,14 @@ function PromptsFilters() {
   };
 
   return (
-    <>
-      <MyFavorites />
+    <Box
+      sx={{
+        ...(!isValidUser && {
+          my: "20px",
+        }),
+      }}
+    >
+      {isValidUser && <MyFavorites />}
       <Collapsible
         title="Content type"
         items={contentTypeItems}
@@ -169,7 +178,7 @@ function PromptsFilters() {
         isSelected={isSelected}
         isTags
       />
-    </>
+    </Box>
   );
 }
 

@@ -9,13 +9,12 @@ import Box from "@mui/material/Box";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
+import PromptContent from "./PromptContent";
+import { isImageOutput } from "../Utils";
+import ImagePopup from "@/components/dialog/ImagePopup";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
-import PromptContent from "./PromptContent";
-import FeedbackThumbs from "./FeedbackThumbs";
-import { isImageOutput } from "../Utils";
-import ImagePopup from "@/components/dialog/ImagePopup";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -26,7 +25,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const showPreview = useAppSelector(state => state.template.showPromptsView);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
@@ -109,6 +107,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   return (
     <Stack
       gap={1}
+      p={{ xs: "16px", md: "24px" }}
       sx={{
         width: { md: "90%" },
       }}
@@ -236,41 +235,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                               }}
                             />
                           </Stack>
-
-                          <Stack
-                            flex={1}
-                            mt={{ md: -7 }}
-                            sx={{
-                              width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
-                              height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
-                              maxHeight: { md: showPreview ? elementHeights[index] : 0 },
-                              py: 2,
-                              pl: showPreview ? "10px" : 0,
-                              borderLeft: showPreview ? "2px solid #ECECF4" : "none",
-                              overflow: "auto",
-                              animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
-                              "&::-webkit-scrollbar": {
-                                width: "6px",
-                                p: 1,
-                                bgcolor: "surface.1",
-                              },
-                              "&::-webkit-scrollbar-track": {
-                                webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                              },
-                              "&::-webkit-scrollbar-thumb": {
-                                bgcolor: "surface.1",
-                                outline: "1px solid surface.1",
-                                borderRadius: "10px",
-                              },
-                            }}
-                          >
-                            <PromptContent
-                              id={index + 1}
-                              content={prompt?.content ?? ""}
-                              engineName={prompt?.engine?.name ?? ""}
-                              execution={execution as TemplatesExecutions}
-                            />
-                          </Stack>
                         </Stack>
                       )}
                       {/* is Image Output and Next item is not text */}
@@ -311,24 +275,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
               <Typography>We could not display the selected execution as it's missing some information!</Typography>
             )}
           </Stack>
-          {selectedExecution && "title" in selectedExecution && (
-            <Box
-              sx={{
-                height: "fit-content",
-                display: { md: "none" },
-                position: "sticky",
-                top: "50px",
-                mr: { md: "-50px" },
-                ml: { md: "20px" },
-              }}
-            >
-              <FeedbackThumbs
-                variant="icon"
-                execution={selectedExecution}
-                vertical
-              />
-            </Box>
-          )}
         </Stack>
       )}
     </Stack>

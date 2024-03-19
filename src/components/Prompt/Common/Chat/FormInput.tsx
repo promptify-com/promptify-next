@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setAnswers } from "@/core/store/chatSlice";
 import Storage from "@/common/storage";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
@@ -23,12 +22,8 @@ interface Props {
 }
 
 function FormInput({ input }: Props) {
-  const { isVariantB } = useVariant();
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const dispatch = useAppDispatch();
-  const labelRef = useRef<HTMLDivElement | null>(null);
-  const [labelWidth, setLabelWidth] = useState(0);
-  const { dispatchNewExecutionData } = useApiAccess();
 
   const { fullName, required, type, name: inputName, question, prompt } = input;
   const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
@@ -50,13 +45,6 @@ function FormInput({ input }: Props) {
       Storage.remove("answers");
     }
   }, []);
-
-  useEffect(() => {
-    if (isVariantB) return;
-    if (labelRef.current) {
-      setLabelWidth(labelRef.current.offsetWidth);
-    }
-  }, [fullName, isVariantB]);
 
   const onChange = (value: PromptInputType) => {
     if (isSimulationStreaming) return;
@@ -83,34 +71,29 @@ function FormInput({ input }: Props) {
     }
 
     dispatch(setAnswers(_answers));
-    dispatchNewExecutionData();
   };
 
   return (
     <Stack
       direction={"row"}
-      p={isVariantB ? "6px" : 0}
       alignItems={"center"}
       gap={1}
-      borderBottom={isVariantB ? "1px solid #ECECF4" : "none"}
+      px={{ xs: "16px", md: "24px" }}
+      sx={{
+        "&:hover": {
+          bgcolor: "surface.1",
+        },
+      }}
     >
-      {isVariantB && (
-        <Radio
-          size="small"
-          checked={!!value}
-          value="a"
-          name="radio-buttons"
-        />
-      )}
-      <Box ref={labelRef}>
+      <Box>
         <InputLabel
           sx={{
-            fontSize: { xs: 12, md: 15 },
+            fontSize: { xs: 14, md: 15 },
             fontWeight: 500,
             color: "primary.main",
           }}
         >
-          {fullName} {required && isVariantB && <span>*</span>} :
+          {fullName} {required && <span>*</span>} :
         </InputLabel>
       </Box>
 
@@ -120,7 +103,6 @@ function FormInput({ input }: Props) {
         position={"relative"}
         flex={1}
         width={"100%"}
-        maxWidth={`calc(100% - ${labelWidth}px)`}
       >
         <RenderInputType
           input={input}
@@ -128,46 +110,32 @@ function FormInput({ input }: Props) {
           onChange={onChange}
         />
       </Stack>
-      {isVariantB && (
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          gap={"8px"}
-        >
-          {required && (
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={"8px"}
+      >
+        <CustomTooltip
+          title={
             <Typography
-              sx={{
-                fontSize: { xs: 12, md: 15 },
-                fontWeight: 400,
-                lineHeight: "100%",
-                opacity: 0.3,
-              }}
+              color={"white"}
+              textTransform={"capitalize"}
+              fontSize={11}
             >
-              Required
+              {type}
             </Typography>
-          )}
-          <CustomTooltip
-            title={
-              <Typography
-                color={"white"}
-                textTransform={"capitalize"}
-                fontSize={11}
-              >
-                {type}
-              </Typography>
-            }
+          }
+        >
+          <IconButton
+            sx={{
+              opacity: 0.3,
+              border: "none",
+            }}
           >
-            <IconButton
-              sx={{
-                opacity: 0.3,
-                border: "none",
-              }}
-            >
-              <HelpOutline />
-            </IconButton>
-          </CustomTooltip>
-        </Stack>
-      )}
+            <HelpOutline />
+          </IconButton>
+        </CustomTooltip>
+      </Stack>
     </Stack>
   );
 }

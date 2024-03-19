@@ -4,14 +4,16 @@ import { IMessage } from "@/components/Prompt/Types/chat";
 
 const useScrollToBottom = ({
   ref,
-  isGenerating,
   content,
+  skipScroll = false,
 }: {
   ref: RefObject<HTMLDivElement>;
-  isGenerating: boolean;
   content?: IMessage[] | string;
+  skipScroll?: boolean;
 }) => {
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [showScrollDown, setShowScrollDown] = useState<boolean>(false);
 
   const handleUserScroll = () => {
@@ -25,7 +27,7 @@ const useScrollToBottom = ({
 
   const scrollToBottom = () => {
     const container = ref.current;
-    if (!container) return;
+    if (!container || skipScroll) return;
 
     container.scrollTop = container.scrollHeight;
     setTimeout(handleUserScroll, 200);

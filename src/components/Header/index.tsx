@@ -230,23 +230,29 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
   );
 };
 
-export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
+export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "", setKeyWord }) => {
+  const router = useRouter();
+  const pathname = router.pathname;
   const { isMobile, clientLoaded } = useBrowser();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isChatPage = pathname.split("/")[1] === "chats";
+
+  const sidebarExpanded = (isPromptsPage && isPromptsFiltersSticky) || (isChatPage && isChatHistorySticky);
+  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 
   if (!clientLoaded) return <HeaderPlaceholder />;
 
   return (
     <Box
       sx={{
-        ...(isPromptsFiltersSticky
-          ? {
-              width: "calc(100% - 75px - 300px)",
-              marginLeft: "auto",
-            }
-          : { width: "100%" }),
+        width: {
+          xs: "100%",
+          md: `calc(100% - (${containerWidth}))`,
+        },
         background: transparent ? "transparent" : "surface.1",
-        position: { xs: "fixed", md: fixed ? "fixed" : "relative" },
+        position: "fixed",
         zIndex: 1000,
         top: 0,
         display: "flex",

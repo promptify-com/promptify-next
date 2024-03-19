@@ -6,7 +6,6 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
@@ -25,7 +24,7 @@ interface IStreamExecution {
 
 interface Props {
   template?: Templates;
-  messageAnswersForm: (message: string) => void;
+  messageAnswersForm?: (message: string) => void;
 }
 const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const token = useToken();
@@ -46,10 +45,9 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const abortController = useRef(new AbortController());
 
   const { preparePromptsData } = useChatBox();
-  const { dispatchNewExecutionData } = useApiAccess();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
-  const generateExecutionHandler = async () => {
+  const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
     if (!template) return;
 
     if (!token) {
@@ -66,7 +64,10 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
         .filter(answers => answers.error)
         .map(answer => inputs.find(input => input.name === answer.inputName)?.fullName);
 
-      messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
+      if (typeof messageAnswersForm === "function") {
+        messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
+      }
+
       return;
     }
 
@@ -78,7 +79,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     uploadedFiles.current.clear();
 
     const endpoint = `/api/meta/templates/${template.id}/execute/`;
-    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData) });
+    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData), onGenerateExecution });
   };
 
   const streamExecutionHandler = async (response: string) => {
@@ -97,11 +98,13 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     method,
     body,
     streamExecution,
+    onGenerateExecution,
   }: {
     endpoint: string;
     method: string;
     body?: string;
     streamExecution?: IStreamExecution;
+    onGenerateExecution?: (executionId: number) => void;
   }) => {
     fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
       method,
@@ -139,6 +142,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (executionId) {
             setNewExecutionId(executionId);
+            onGenerateExecution?.(executionId);
             setGeneratingResponse(prevState => ({
               ...prevState,
               id: executionId,
@@ -150,6 +154,18 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (message.includes("[ERROR]")) {
             dispatch(setToast(EXECUTE_ERROR_TOAST));
+            setGeneratingResponse(prevState => {
+              const newState = { ...prevState, data: [...prevState.data] };
+              const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
+              if (activePromptIndex !== -1) {
+                newState.data[activePromptIndex] = {
+                  ...newState.data[activePromptIndex],
+                  isLoading: false,
+                  isCompleted: true,
+                };
+              }
+              return newState;
+            });
             return;
           }
 
@@ -225,6 +241,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
+    dispatch(setGeneratingStatus(false));
   };
 
   useEffect(() => {
@@ -232,10 +249,6 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       dispatch(setGeneratedExecution(generatingResponse));
     }
   }, [generatingResponse]);
-
-  useEffect(() => {
-    dispatchNewExecutionData();
-  }, [template]);
 
   return { generateExecutionHandler, streamExecutionHandler, disableChatInput, abortConnection };
 };

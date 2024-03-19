@@ -1,28 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { AnsweredInputType } from "@/common/types/prompt";
-import type { TempalteApiStatusState } from "./../api/dto/templates";
+import type { PopupTemplates, TempalteApiStatusState } from "@/core/api/dto/templates";
 import type { Link } from "@/components/Prompt/Types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface TemplatesProps {
   is_favorite: boolean;
+  is_liked: boolean;
   id: number;
   likes: number;
-  executionData: string;
   isGenerating: boolean;
   answeredInputs: AnsweredInputType[];
   activeSideBarLink: Link | null;
   showPromptsView: boolean;
   templateApiStatus: TempalteApiStatusState;
+  popupTemplate: PopupTemplates;
 }
 
-type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
+type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "is_liked" | "id" | "likes">;
 
 const initialState: TemplatesProps = {
   is_favorite: false,
+  is_liked: false,
   id: 0,
   likes: 0,
-  executionData: "[]",
   isGenerating: false,
   activeSideBarLink: null,
   answeredInputs: [],
@@ -30,6 +31,9 @@ const initialState: TemplatesProps = {
   templateApiStatus: {
     data: null,
     isLoading: true,
+  },
+  popupTemplate: {
+    template: null,
   },
 };
 
@@ -39,26 +43,22 @@ export const templatesSlice = createSlice({
   reducers: {
     updateTemplateData: (state, action: PayloadAction<UpdateTemplateDataPayload>) => {
       state.is_favorite = action.payload.is_favorite;
+      state.is_liked = action.payload.is_liked;
       state.id = action.payload.id;
       state.likes = action.payload.likes;
     },
     updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
       state.is_favorite = action.payload;
-      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
     },
-
-    updateExecutionData: (state, action: PayloadAction<string>) => {
-      state.executionData = action.payload;
+    updatePopupTemplate: (state, action: PayloadAction<PopupTemplates>) => {
+      state.popupTemplate = action.payload;
     },
-
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
     },
-
     setShowPromptsView: (state, action: PayloadAction<boolean>) => {
       state.showPromptsView = action.payload;
     },
@@ -71,7 +71,7 @@ export const templatesSlice = createSlice({
 export const {
   updateCurrentFavorite,
   updateTemplateData,
-  updateExecutionData,
+  updatePopupTemplate,
   setGeneratingStatus,
   setActiveToolbarLink,
   setShowPromptsView,

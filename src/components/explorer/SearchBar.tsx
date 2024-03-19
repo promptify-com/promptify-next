@@ -7,19 +7,10 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 interface Props {
   keyWord: string;
   setKeyWord?: React.Dispatch<React.SetStateAction<string>>;
-  selectedTag?: Tag[] | [];
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  setSelectedTag?: Function;
-  from?: string;
   onClick: () => void;
 }
-const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag, setSelectedTag, from }) => {
+const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord }) => {
   const { palette } = useTheme();
-
-  const handleRemoveTag = (tag: Tag) => {
-    const removeTag = !!selectedTag && selectedTag.filter(el => el.id !== tag.id);
-    if (setSelectedTag) setSelectedTag(removeTag);
-  };
 
   return (
     <Box
@@ -30,7 +21,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag,
         bgcolor: "surface.3",
         borderRadius: "99px",
         height: "48px",
-        minWidth: "95%",
+        width: "100%",
         cursor: "pointer",
       }}
     >
@@ -66,47 +57,8 @@ const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag,
           >
             <SearchIcon />
           </IconButton>
-          {!!selectedTag &&
-            selectedTag.length > 0 &&
-            selectedTag.map(el => (
-              <Typography
-                onClick={() => handleRemoveTag(el)}
-                key={el.id}
-                sx={{
-                  bgcolor: "white",
-                  color: "black",
-                  borderRadius: "20px",
-                  minWidth: "fit-content",
-                  padding: "2px 1em",
-                  height: "26px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  fontSize: "12px",
-                }}
-              >
-                {el.name}
-              </Typography>
-            ))}
 
-          {from === "middle" ? (
-            <InputBase
-              onChange={e => {
-                if (typeof setKeyWord === "function") {
-                  setKeyWord(e.target.value);
-                }
-              }}
-              placeholder={!!selectedTag && !selectedTag.length ? "Search prompt templates..." : ""}
-              fullWidth
-              sx={{
-                fontSize: "13px",
-                padding: "0px",
-                fontFamily: "Poppins",
-              }}
-              value={keyWord}
-            />
-          ) : keyWord ? (
+          {keyWord ? (
             <Typography>{keyWord}</Typography>
           ) : (
             <Typography
@@ -120,55 +72,6 @@ const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag,
             </Typography>
           )}
         </Grid>
-
-        {from === "middle" ? (
-          <Grid
-            sx={{
-              display: { xs: "none", sm: "flex" },
-              marginRight: "0.2em",
-            }}
-          >
-            <Typography
-              sx={{
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                borderRadius: "20px",
-                width: "75px",
-                padding: "1px",
-                height: "26px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                marginRight: "-15px",
-                fontSize: "12px",
-                zIndex: 1,
-              }}
-            >
-              Prompts
-            </Typography>
-            <Typography
-              sx={{
-                bgcolor: "surface.5",
-                color: "onSurface",
-                borderRadius: "20px",
-                fontSize: "12px",
-                height: "26px",
-                width: "92px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "1px",
-                paddingLeft: "10px",
-                cursor: "pointer",
-              }}
-            >
-              Collections
-            </Typography>
-          </Grid>
-        ) : (
-          <LogoApp width={18} />
-        )}
       </Grid>
     </Box>
   );

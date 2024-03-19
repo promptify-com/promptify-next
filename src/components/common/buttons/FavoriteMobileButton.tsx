@@ -4,7 +4,7 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import useSaveFavoriteTemplate from "@/hooks/useSaveFavoriteTemplate";
 
 export const FavoriteMobileButton = () => {
-  const [saveFavoriteTemplate, { templateData }] = useSaveFavoriteTemplate();
+  const { saveFavorite, templateData } = useSaveFavoriteTemplate();
   const { palette } = useTheme();
 
   return (
@@ -22,7 +22,7 @@ export const FavoriteMobileButton = () => {
         },
       }}
       variant={"outlined"}
-      onClick={saveFavoriteTemplate}
+      onClick={() => saveFavorite()}
     >
       {templateData.is_favorite ? "Favorite " : "Add To Favorite "}
       {templateData.is_favorite ? (

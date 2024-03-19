@@ -1,6 +1,6 @@
-import React, { FC, ReactNode, useEffect } from "react";
+import React, { FC, ReactNode } from "react";
 import { Button, Grid } from "@mui/material";
-import { ArrowLeft, ArrowRight } from "@mui/icons-material";
+import ArrowLeft from "@mui/icons-material/ArrowLeft";
 
 interface TemplatesPaginatedListProps {
   children: ReactNode;
@@ -8,8 +8,11 @@ interface TemplatesPaginatedListProps {
   hasPrev?: boolean;
   loading: boolean;
   onNextPage: () => void;
-  onPrevPage: () => void;
+  onPrevPage?: () => void;
   canBeShown?: boolean;
+  buttonText?: string;
+  endIcon?: React.ReactNode;
+  variant?: "text" | "contained" | "outlined";
 }
 
 const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
@@ -20,6 +23,9 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
   children,
   loading,
   canBeShown = true,
+  buttonText = "Next",
+  endIcon,
+  variant = "text",
 }) => {
   return (
     <Grid
@@ -47,13 +53,13 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
         )}
         {hasNext && (
           <Button
-            variant="text"
+            variant={variant}
             disabled={loading}
             color="primary"
             onClick={onNextPage}
+            endIcon={endIcon}
           >
-            Next
-            <ArrowRight />
+            {buttonText}
           </Button>
         )}
       </Grid>

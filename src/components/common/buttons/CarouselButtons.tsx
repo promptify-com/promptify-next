@@ -3,32 +3,60 @@ import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
+import { alpha } from "@mui/material";
+import { theme } from "@/theme";
 
 interface Props {
   scrollPrev(): void;
   scrollNext(): void;
   canScrollNext: boolean;
   canScrollPrev: boolean;
+  children?: React.ReactNode;
 }
 
-export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext, canScrollNext, canScrollPrev }) => {
+export const CarouselButtons: React.FC<Props> = ({
+  scrollPrev,
+  scrollNext,
+  canScrollNext,
+  canScrollPrev,
+  children,
+}) => {
   return (
     <Stack
       direction={"row"}
-      alignItems={"center"}
-      gap={1}
+      sx={{
+        ".nav-btn": {
+          opacity: !children ? 1 : 0,
+        },
+        ":hover": {
+          ".nav-btn": {
+            opacity: 1,
+          },
+        },
+      }}
     >
       <IconButton
-        sx={btnStyle}
         disabled={!canScrollPrev}
         onClick={scrollPrev}
+        className="nav-btn"
+        sx={{
+          ...btnStyle,
+          position: children ? "absolute" : "relative",
+          left: 0,
+        }}
       >
         <ArrowBackIosNew />
       </IconButton>
+      {children}
       <IconButton
-        sx={btnStyle}
         disabled={!canScrollNext}
         onClick={scrollNext}
+        className="nav-btn"
+        sx={{
+          ...btnStyle,
+          position: children ? "absolute" : "relative",
+          right: 0,
+        }}
       >
         <ArrowForwardIos />
       </IconButton>
@@ -37,8 +65,16 @@ export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext, canSc
 };
 
 const btnStyle = {
+  zIndex: 999,
+  height: "100%",
   border: "none",
-  color: "#67677C",
+  borderRadius: 0,
+  color: "#1C1B1F80",
+  bgcolor: alpha(theme.palette.surfaceContainerLowest, 0.9),
+  p: "8px 16px",
+  ":hover": {
+    bgcolor: "surfaceContainerLowest",
+  },
   "&.Mui-disabled": {
     opacity: 0.6,
   },

@@ -37,7 +37,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
-    isGenerating,
   });
 
   const hasInputs = inputs.length > 0;

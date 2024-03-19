@@ -6,8 +6,8 @@ import useTruncate from "@/hooks/useTruncate";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import ShareIcon from "@/assets/icons/ShareIcon";
-import { redirectToPath } from "@/common/helpers";
 import Image from "./design-system/Image";
+import { useRouter } from "next/router";
 
 export default function SparksLayoutDesktop({
   execution,
@@ -18,6 +18,7 @@ export default function SparksLayoutDesktop({
   onOpenExport,
 }: SparksLayoutProps) {
   const { truncate } = useTruncate();
+  const router = useRouter();
   const { convertedTimestamp } = useTimestampConverter();
 
   const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,9 +46,7 @@ export default function SparksLayoutDesktop({
         {execution.is_favorite ? <SavedSpark /> : <DraftSpark />}
       </Grid>
       <Grid
-        onClick={() => {
-          redirectToPath(`/prompt/${template.slug}`, { hash: `${execution.hash}` });
-        }}
+        onClick={() => router.push({ pathname: `prompt/${template.slug}`, query: { hash: execution.hash } })}
         item
         md={5}
         display={"flex"}
@@ -82,9 +81,7 @@ export default function SparksLayoutDesktop({
       </Grid>
 
       <Grid
-        onClick={() => {
-          redirectToPath(`prompt/${template.slug}`);
-        }}
+        onClick={() => router.push(`prompt/${template.slug}`)}
         item
         md={3}
         padding={"16px"}

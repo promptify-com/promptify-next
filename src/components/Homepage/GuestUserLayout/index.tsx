@@ -1,7 +1,7 @@
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
-import CategoryCarousel from "./CategoriesCarousel";
+import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import Services from "./Services";
 import Learn from "./Learn";
 import Testimonials from "./Testimonials";
@@ -11,8 +11,10 @@ import Typography from "@mui/material/Typography";
 import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Box } from "@mui/material";
+import { useRouter } from "next/router";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
+  const router = useRouter();
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +44,11 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   return (
     <Stack>
       <Landing />
-      <CategoryCarousel categories={_categories} />
+      <CategoryCarousel
+        categories={_categories}
+        onClick={() => router.push("/explore")}
+        autoPlay
+      />
       <Services />
       <Stack
         ref={templateContainerRef}

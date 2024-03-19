@@ -30,6 +30,12 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
           display={"flex"}
           alignItems={"center"}
           gap={2}
+          sx={{
+            p: {
+              xs: "20px",
+              md: "0 16px",
+            },
+          }}
         >
           {engine && (
             <Chip

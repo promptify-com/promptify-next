@@ -4,7 +4,8 @@ import { Done } from "@mui/icons-material";
 import { theme } from "@/theme";
 
 interface Props {
-  label: string;
+  label?: string;
+  placeholder?: string;
   initialValue: string | undefined;
   onChange?: (value: string) => void;
   onSave: (value: string) => void;
@@ -14,6 +15,7 @@ interface Props {
 
 export const RenameForm: React.FC<Props> = ({
   label,
+  placeholder,
   initialValue,
   onChange = () => {},
   onSave,
@@ -32,7 +34,8 @@ export const RenameForm: React.FC<Props> = ({
         <TextField
           variant="standard"
           fullWidth
-          label={`Rename ${label}`}
+          label={label ? `Rename ${label}` : ""}
+          placeholder={placeholder}
           value={value}
           onChange={e => {
             setValue(e.target.value);

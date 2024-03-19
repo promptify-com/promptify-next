@@ -10,6 +10,7 @@ interface SurfaceVariants {
 
 interface CustomPalette {
   onPrimary: string;
+  onSecondary: string;
   primaryContainer: string;
   secondaryContainer: string;
   tertiary: string;
@@ -25,6 +26,11 @@ interface CustomPalette {
   outline: string;
   inverseOnSurface: string;
   inverseSurface: string;
+  surfaceContainerHigh: string;
+  surfaceContainerLow: string;
+  surfaceContainerHighest: string;
+  surfaceContainerLowest: string;
+  surfaceContainer: string;
 }
 
 interface CustomTheme {
@@ -73,6 +79,7 @@ export let theme: Theme = createTheme({
       main: "#BA1B1B",
     },
     onPrimary: "#FFFFFF",
+    onSecondary: "#FFFFFF",
     primaryContainer: "#D8E2FF",
     secondaryContainer: "#DCE2F9",
     tertiary: "#725472",
@@ -81,6 +88,10 @@ export let theme: Theme = createTheme({
     errorContainer: "#FFDAD4",
     onError: "#FFFFFF",
     onErrorContainer: "#410001",
+    surfaceContainerHigh: "#E9E7EC",
+    surfaceContainerLow: "#F5F3F7",
+    surfaceContainerHighest: "#E3E2E6",
+    surfaceContainerLowest: "#FFFFFF",
     surface: {
       1: "#FDFBFF",
       2: "#F5F4FA",
@@ -94,13 +105,14 @@ export let theme: Theme = createTheme({
     outline: "#FFC5C9",
     inverseOnSurface: "#F2F0F4",
     inverseSurface: "#303033",
+    surfaceContainer: "#EFEDF1",
   },
   custom: {
     defaultSidebarWidth: "230px",
     leftClosedSidebarWidth: "88px",
     headerHeight: {
       xs: "58px",
-      md: "90px",
+      md: "72px",
     },
     promptBuilder: {
       headerHeight: "75px",

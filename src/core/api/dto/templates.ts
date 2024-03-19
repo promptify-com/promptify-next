@@ -139,7 +139,7 @@ export interface Templates {
   executions_count: number;
   last_run: Date;
   views: number;
-  likes?: number;
+  likes: number;
   favorites_count: number;
   is_liked: boolean;
   is_favorite: boolean;
@@ -288,6 +288,12 @@ export interface TemplateApiStatus {
 export interface TempalteApiStatusState {
   data: TemplateApiStatus | null;
   isLoading: boolean;
+}
+
+export interface PopupTemplates {
+  template: Templates | null;
+  previous?: Templates | null;
+  next?: Templates | null;
 }
 
 export interface IFeedback {
