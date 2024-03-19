@@ -178,7 +178,9 @@ export default function ExplorePage({ categories = [] }: Props) {
                       >
                         <CardTemplate
                           template={template as Templates}
+                          bgColor={"surfaceContainerLow"}
                           vertical
+                          showTagsOnHover
                         />
                       </Grid>
                     ))}

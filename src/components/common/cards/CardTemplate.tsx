@@ -23,9 +23,18 @@ type CardTemplateProps = {
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
+  bgColor?: string;
+  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps) {
+function CardTemplate({
+  template,
+  query,
+  asResult,
+  vertical,
+  bgColor = "surface.2",
+  showTagsOnHover = false,
+}: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
