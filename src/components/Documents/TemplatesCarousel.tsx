@@ -15,6 +15,8 @@ interface Props {
 export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
 
+  const sortedTemplates = templates?.slice().sort((tempA, tempB) => tempB.executions.length - tempA.executions.length);
+
   const isEmpty = !isLoading && !templates?.length;
 
   if (isEmpty) return;
@@ -68,7 +70,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           {isLoading ? (
             <CardDocumentTemplatePlaceholder count={5} />
           ) : (
-            templates?.map(template => (
+            sortedTemplates?.map(template => (
               <Box key={template.id}>
                 <CardDocumentTemplate template={template} />
               </Box>
