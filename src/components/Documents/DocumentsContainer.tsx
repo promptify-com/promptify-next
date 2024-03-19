@@ -3,12 +3,15 @@ import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
 import { Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
+import SparksTemplatePlaceholder from "../placeholders/SparksTemplatePlaceholder";
+import CardDocumentTemplatePlaceholder from "../placeholders/CardDocumentTemplatePlaceholder";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
+  isLoading: boolean;
 }
 
-export default function DocumentsContainer({ templates }: Props) {
+export default function DocumentsContainer({ templates, isLoading }: Props) {
   const executions = useMemo(() => {
     // Calculate all executions from templates and add template information
     const allExecutions: ExecutionWithTemplate[] = [];
@@ -51,12 +54,23 @@ export default function DocumentsContainer({ templates }: Props) {
         flexWrap={"wrap"}
         rowGap={3}
       >
-        {executions.map(execution => (
-          <CardDocument
-            key={execution.id}
-            execution={execution}
+        {isLoading ? (
+          <CardDocumentTemplatePlaceholder
+            count={5}
+            sx={{
+              height: "315px",
+              width: "368px",
+              mx: "8px",
+            }}
           />
-        ))}
+        ) : (
+          executions.map(execution => (
+            <CardDocument
+              key={execution.id}
+              execution={execution}
+            />
+          ))
+        )}
       </Stack>
     </Stack>
   );

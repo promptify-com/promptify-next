@@ -23,7 +23,10 @@ export default function DocumentsPage() {
               templates={executedTemplates}
               isLoading={isExecutedTemplatesLoading}
             />
-            <DocumentsContainer templates={executedTemplates} />
+            <DocumentsContainer
+              templates={executedTemplates}
+              isLoading={isExecutedTemplatesLoading}
+            />
           </Stack>
         </Protected>
       </Layout>

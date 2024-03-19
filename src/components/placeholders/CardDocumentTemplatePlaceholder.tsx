@@ -1,13 +1,19 @@
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton, Stack, SxProps } from "@mui/material";
 
-export default function CardDocumentTemplatePlaceholder({ count = 12 }) {
+interface Props {
+  count?: number;
+  sx?: SxProps;
+}
+
+export default function CardDocumentTemplatePlaceholder({ count = 12, sx }: Props) {
   return Array.from({ length: count }).map((_, idx) => (
     <Stack
       key={idx}
       gap={2}
       sx={{
         minWidth: "256px",
-        height: "calc(100% - 24px)",
+        height: "100%",
+        ...sx,
       }}
     >
       <Skeleton
