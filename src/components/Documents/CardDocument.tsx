@@ -5,7 +5,9 @@ import Link from "next/link";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import CloudOutlined from "@mui/icons-material/CloudOutlined";
@@ -13,8 +15,11 @@ import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { CloudOffOutlined } from "@mui/icons-material";
+import CloudDone from "@mui/icons-material/CloudDone";
+import CloudOffOutlined from "@mui/icons-material/CloudOffOutlined";
+import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
+import { timeLeft } from "@/common/helpers/timeManipulation";
 
 interface Props {
   execution: ExecutionWithTemplate;
@@ -45,6 +50,11 @@ export default function CardDocument({ execution }: Props) {
   };
 
   const actionsOpened = Boolean(menuAnchor);
+  const deleteDeadline = new Date(
+    new Date(execution.created_at).setDate(new Date(execution.created_at).getDate() + 30),
+  );
+  const daysLeft = timeLeft(deleteDeadline);
+  const autoDeleteDate = daysLeft !== "0" ? `${daysLeft} left` : "Soon";
 
   return (
     <Card
@@ -54,20 +64,25 @@ export default function CardDocument({ execution }: Props) {
       elevation={0}
       sx={{
         position: "relative",
-        width: "368px",
         height: "315px",
+        width: "368px",
         flexGrow: 1,
+        maxWidth: "430px",
         p: "8px",
         borderRadius: "16px",
         textDecoration: "none",
         bgcolor: "surfaceContainerLowest",
         transition: "background-color 0.3s ease",
-        ".actions-btn": {
+        ".actions-btn, .delete-time": {
           opacity: actionsOpened ? 1 : 0,
+          transition: "opacity .2s ease",
         },
         ":hover": {
           bgcolor: "surfaceContainerLow",
-          ".actions-btn": {
+          ".delete-time-container": {
+            bgcolor: "surfaceContainerLowest",
+          },
+          ".actions-btn, .delete-time": {
             opacity: 1,
           },
         },
@@ -138,6 +153,48 @@ export default function CardDocument({ execution }: Props) {
           {convertedTimestamp(execution.created_at)}
         </Typography>
       </Box>
+      <Stack
+        className="delete-time-container"
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        gap={"2px"}
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: 14,
+          zIndex: 999,
+          p: "2px",
+          borderRadius: "99px",
+          overflow: "hidden",
+          fontSize: 12,
+          fontWeight: 400,
+          color: "secondary.light",
+          transition: "background-color .2s ease",
+          svg: {
+            p: "2px",
+            bgcolor: "surfaceContainerLowest",
+            borderRadius: "99px",
+          },
+        }}
+      >
+        {isFavorite ? (
+          <CloudDone color="primary" />
+        ) : (
+          <>
+            <ScheduleOutlined sx={{ color: "secondary.light" }} />
+            <Box
+              component={"span"}
+              className="delete-time"
+              sx={{
+                pr: "6px",
+              }}
+            >
+              {autoDeleteDate}
+            </Box>
+          </>
+        )}
+      </Stack>
       <IconButton
         onClick={e => {
           e.preventDefault();
@@ -150,7 +207,6 @@ export default function CardDocument({ execution }: Props) {
           right: 12,
           zIndex: 999,
           border: "none",
-          transition: "opacity 0.3s ease",
           "&:hover": {
             bgcolor: "surface.2",
           },

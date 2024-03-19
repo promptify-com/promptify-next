@@ -31,17 +31,18 @@ export function timeAgo(input: Date | string) {
 
 export function timeLeft(input: Date | string): string {
   const date = input instanceof Date ? input : new Date(input);
+
+  const now = new Date();
+  const timeLeft = date.getTime() - now.getTime();
+
+  if (timeLeft < 0) {
+    return "0";
+  }
+
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
-  const end = new Date(new Date(date).setHours(24 * 30)).getTime();
-  const now = new Date().getTime();
-  const timeLeft = end - now;
-
-  if (timeLeft < -1) {
-    return "0";
-  }
 
   const days = Math.floor(timeLeft / day);
   const hours = Math.floor((timeLeft % day) / hour);
@@ -49,9 +50,9 @@ export function timeLeft(input: Date | string): string {
 
   return days > 0
     ? `${days} ${days === 1 ? "day" : "days"}`
-    : hours
+    : hours > 0
     ? `${hours} ${hours === 1 ? "hour" : "hours"}`
-    : minutes
+    : minutes > 0
     ? `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
     : " couple of seconds";
 }

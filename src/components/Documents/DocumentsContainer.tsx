@@ -25,7 +25,11 @@ export default function DocumentsContainer({ templates }: Props) {
       allExecutions.push(...executionsWithTemplate);
     });
 
-    return allExecutions;
+    return allExecutions.sort((execA, execB) => {
+      const aTimestamp = new Date(execA.created_at).getTime();
+      const bTimestamp = new Date(execB.created_at).getTime();
+      return bTimestamp - aTimestamp;
+    });
   }, [templates]);
 
   return (
