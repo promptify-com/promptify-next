@@ -3,11 +3,8 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import { useRouter } from "next/router";
 import Image from "@/components/design-system/Image";
-import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, stripTags } from "@/common/helpers";
-import { useAppDispatch } from "@/hooks/useStore";
+import { isDesktopViewPort } from "@/common/helpers";
 import Link from "next/link";
 
 type CardDocumentTemplateProps = {

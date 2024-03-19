@@ -5,6 +5,7 @@ import useCarousel from "@/hooks/useCarousel";
 import Link from "next/link";
 import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -60,12 +61,19 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
         ref={carouselRef}
         overflow={"hidden"}
       >
-        <Stack direction={"row"}>
-          {templates?.map(template => (
-            <Box key={template.id}>
-              <CardDocumentTemplate template={template} />
-            </Box>
-          ))}
+        <Stack
+          direction={"row"}
+          gap={isLoading ? 3 : 0}
+        >
+          {isLoading ? (
+            <CardDocumentTemplatePlaceholder count={5} />
+          ) : (
+            templates?.map(template => (
+              <Box key={template.id}>
+                <CardDocumentTemplate template={template} />
+              </Box>
+            ))
+          )}
         </Stack>
       </Stack>
     </Stack>
