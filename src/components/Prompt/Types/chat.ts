@@ -1,4 +1,4 @@
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
 import { IParameters } from "@/common/types";
 
@@ -12,8 +12,8 @@ export type MessageType =
   | "spark"
   | "html"
   | "credentials"
-  | "suggestedTemplates"
-  | "headerWithText"
+  | "suggestion"
+  | "template"
   | "questionInput"
   | "questionParam"
   | "readyMessage";
@@ -25,6 +25,8 @@ export interface IMessage {
   fromUser: boolean;
   type: MessageType;
   spark?: TemplatesExecutions;
+  template?: Templates;
+  isLatestExecution?: boolean;
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
@@ -33,6 +35,8 @@ export interface IMessage {
   isEditable?: boolean;
   questionIndex?: number;
   questionInputName?: string;
+  templates?: Templates[];
+  executionId?: number;
 }
 
 export interface IAnswer {
@@ -59,4 +63,20 @@ export interface IQuestion {
   choices?: string[];
   fileExtensions?: string[];
   // New property to distinguish between inputs and params
+}
+
+export interface CreateMessageProps {
+  type: MessageType;
+  text: string;
+  fromUser?: boolean;
+  noHeader?: boolean;
+  timestamp?: string;
+  isEditable?: boolean;
+  isRequired?: boolean;
+  questionIndex?: number;
+  questionInputName?: string;
+  templates?: Templates[];
+  executionId?: number;
+  template?: Templates;
+  isLatestExecution?: boolean;
 }

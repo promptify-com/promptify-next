@@ -1,4 +1,4 @@
-import { Fragment, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 
 import { useAppSelector } from "@/hooks/useStore";
@@ -7,18 +7,26 @@ import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
-import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
   messages: IMessage[];
-  templates: Templates[];
   onGenerate: () => void;
   showGenerateButton: boolean;
   onAbort: () => void;
+  fetchMoreMessages: () => void;
+  loadingMessages: boolean;
 }
 
-const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, onAbort }: Props) => {
+const ChatInterface = ({
+  messages,
+  onGenerate,
+  showGenerateButton,
+  onAbort,
+  fetchMoreMessages,
+  loadingMessages,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
@@ -29,9 +37,21 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
     content: messages,
   });
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (messagesContainerRef.current?.scrollTop === 0) {
+        fetchMoreMessages();
+      }
+    };
+
+    const currentRef = messagesContainerRef.current;
+    currentRef?.addEventListener("scroll", handleScroll);
+
+    return () => currentRef?.removeEventListener("scroll", handleScroll);
+  }, [fetchMoreMessages]);
+
   const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
-  const showRunButton =
-    showGenerateButton && selectedChatOption === "QA" && messages[messages.length - 1]?.type !== "readyMessage";
+  const showRunButton = showGenerateButton && selectedChatOption === "QA";
 
   return (
     <Stack
@@ -44,12 +64,30 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
       <Stack
         direction={"column"}
         gap={3}
+        position={"relative"}
       >
         {!!selectedChat && (
           <ChatHeading
             title={selectedChat.title}
             thumbnail={selectedChat.thumbnail}
           />
+        )}
+
+        {loadingMessages && (
+          <Stack
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{
+              position: "absolute",
+              top: "140px",
+              left: "50%",
+              transform: "translate(30%, -50%)",
+              zIndex: 2,
+            }}
+          >
+            <CircularProgress size={30} />
+          </Stack>
         )}
 
         <Stack
@@ -60,7 +98,6 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
             <Fragment key={msg.id}>
               <RenderMessage
                 message={msg}
-                templates={templates}
                 onScrollToBottom={scrollToBottom}
                 onGenerate={onGenerate}
                 onAbort={onAbort}

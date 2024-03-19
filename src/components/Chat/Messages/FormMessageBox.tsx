@@ -71,6 +71,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
         >
           <AccordionSummary sx={{ p: 0, m: 0 }}>
             <MessageBoxHeader
+              template={template}
               variant="FORM"
               onExpand={() => {
                 setExpanded(true);

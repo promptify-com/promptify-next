@@ -25,7 +25,6 @@ function ReadyMessage({ content, onGenerate }: Props) {
       >
         {content}
       </Typography>
-      <RunButton onClick={onGenerate} />
     </Stack>
   );
 }

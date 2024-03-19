@@ -10,6 +10,7 @@ import Sidebar from "@/components/Prompt/Common/Sidebar";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
 import CommonChat from "@/components/Prompt/Common/Chat";
+import { PromptLiveResponse } from "@/common/types/prompt";
 
 interface TemplateLayoutProps {
   template: Templates;

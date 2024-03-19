@@ -12,52 +12,55 @@ function ChatHeading({ title, thumbnail }: Props) {
   return (
     <Stack
       p={1}
-      direction={"row"}
-      alignItems={"center"}
-      gap={2}
-      pb={"130px"}
+      height={"230px"}
     >
-      <Box
-        sx={{
-          zIndex: 0,
-          position: "relative",
-          minWidth: "40px",
-          height: "40px",
-          borderRadius: "40px",
-          overflow: "hidden",
-        }}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={2}
       >
-        <Image
-          src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-          alt={"Image 1"}
-          priority={true}
-          fill
-          style={{
-            objectFit: "cover",
-          }}
-        />
-      </Box>
-      <Box>
-        <Typography
-          fontSize={16}
-          fontWeight={400}
-          lineHeight={"18px"}
-          letterSpacing={"0.2px"}
+        <Box
           sx={{
-            opacity: 0.6,
+            zIndex: 0,
+            position: "relative",
+            minWidth: "40px",
+            height: "40px",
+            borderRadius: "40px",
+            overflow: "hidden",
           }}
         >
-          Chat:
-        </Typography>
-        <Typography
-          fontSize={{ xs: 19, md: 24 }}
-          fontWeight={400}
-          lineHeight={{ md: "38.4px" }}
-          letterSpacing={"0.17px"}
-        >
-          {title}
-        </Typography>
-      </Box>
+          <Image
+            src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            alt={"Image 1"}
+            priority={true}
+            fill
+            style={{
+              objectFit: "cover",
+            }}
+          />
+        </Box>
+        <Box>
+          <Typography
+            fontSize={16}
+            fontWeight={400}
+            lineHeight={"18px"}
+            letterSpacing={"0.2px"}
+            sx={{
+              opacity: 0.6,
+            }}
+          >
+            Chat:
+          </Typography>
+          <Typography
+            fontSize={{ xs: 19, md: 24 }}
+            fontWeight={400}
+            lineHeight={{ md: "38.4px" }}
+            letterSpacing={"0.17px"}
+          >
+            {title}
+          </Typography>
+        </Box>
+      </Stack>
     </Stack>
   );
 }

@@ -1,9 +1,10 @@
 import { n8nClient as ApiClient } from "@/common/axios";
 import { getTemplateById } from "@/hooks/api/templates";
+import { randomId } from "@/common/helpers";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IQuestion } from "@/components/Prompt/Types/chat";
+import type { CreateMessageProps, IQuestion } from "../Prompt/Types/chat";
 
 interface SendMessageResponse {
   output?: string;
@@ -73,3 +74,34 @@ export function prepareQuestions(inputs: IPromptInput[], params: PromptParams[])
 
   return [...inputQuestions, ...paramQuestions];
 }
+
+export const createMessage = ({
+  type,
+  timestamp = new Date().toISOString(),
+  fromUser = false,
+  noHeader = false,
+  isEditable = false,
+  isRequired = false,
+  questionIndex,
+  questionInputName,
+  text,
+  executionId,
+  templates = [],
+  template,
+  isLatestExecution,
+}: CreateMessageProps) => ({
+  id: randomId(),
+  text,
+  type,
+  createdAt: timestamp,
+  fromUser,
+  noHeader,
+  isEditable,
+  isRequired,
+  questionIndex,
+  questionInputName,
+  executionId,
+  templates,
+  template,
+  isLatestExecution,
+});

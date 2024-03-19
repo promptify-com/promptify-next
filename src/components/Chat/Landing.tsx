@@ -1,40 +1,39 @@
-import React, { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import SuggestedPrompts from "@/components/Chat/SuggestedPrompts";
 import { useAppSelector } from "@/hooks/useStore";
+import {
+  slideUpWithMargin,
+  slideToWithTransform,
+  fadeIn,
+  slideToWithTransformAndOpacity,
+  slideUpWithTop,
+} from "@/theme/animations";
+import { useEffect, useRef } from "react";
 
 function Landing() {
-  const [showImages, setShowImages] = useState(false);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const bottomElemRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const showImagesAndScroll = () => {
-      setShowImages(true);
-      setTimeout(() => {
-        scrollRef.current?.scrollIntoView({
-          block: "end",
-          behavior: "smooth",
-        });
-      }, 1000);
-    };
+    const timeoutId = setTimeout(() => {
+      bottomElemRef.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }, 1500);
 
-    const timer = setTimeout(showImagesAndScroll, 100);
-
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return (
     <Stack
-      height={"calc(100% - 48px)"}
       overflow={"auto"}
       gap={4}
       sx={{
         pt: "32px",
-        pb: "16px",
         px: { xs: "8px", md: isChatHistorySticky ? "80px" : "300px" },
         position: "relative",
         "&::-webkit-scrollbar": {
@@ -49,18 +48,10 @@ function Landing() {
         gap={1}
         width={"300px"}
         sx={{
-          mt: "auto",
+          top: 0,
           mx: "auto",
           position: "relative",
-          "& > *": {
-            transition: "transform 1s ease",
-          },
-          "& > :nth-of-type(1)": {
-            transform: showImages ? "translateX(-100%)" : "translateX(0)",
-          },
-          "& > :nth-of-type(3)": {
-            transform: showImages ? "translateX(100%)" : "translateX(0)",
-          },
+          animation: `${slideUpWithTop()} 0.5s ease-in 1.6s forwards`,
         }}
       >
         <Box
@@ -72,11 +63,16 @@ function Landing() {
             borderRadius: "140px",
             overflow: "hidden",
             left: { xs: 60, md: 20 },
+            transform: "translateX(20%)",
+            animation: `${slideToWithTransform({
+              from: "translateX(20%)",
+              to: "translateX(-95%)",
+            })} 0.5s ease-in 1.1s forwards`,
           }}
         >
           <Image
             src={require("@/pages/chats/images/image_1.png")}
-            alt={"Image 1"}
+            alt={"left"}
             priority={true}
             fill
             style={{
@@ -97,7 +93,7 @@ function Landing() {
         >
           <Image
             src={require("@/pages/chats/images/image_2.png")}
-            alt={"Image 2"}
+            alt={"middle"}
             priority={true}
             fill
             style={{
@@ -109,17 +105,22 @@ function Landing() {
         <Box
           sx={{
             position: "absolute",
-            zIndex: 0,
+            zIndex: 2,
             width: { xs: "70px", md: "150px" },
             height: { xs: "120px", md: "293px" },
             borderRadius: "140px",
             overflow: "hidden",
             right: { xs: 60, md: 20 },
+            transform: "translateX(-20%)",
+            animation: `${slideToWithTransform({
+              from: "translateX(-20%)",
+              to: "translateX(95%)",
+            })} 0.5s ease-in 1.1s forwards`,
           }}
         >
           <Image
             src={require("@/pages/chats/images/image_3.png")}
-            alt={"Image 3"}
+            alt={"right"}
             priority={true}
             fill
             style={{
@@ -129,28 +130,41 @@ function Landing() {
         </Box>
       </Stack>
       <Stack
-        textAlign={"center"}
-        gap={4}
+        sx={{
+          animation: `${slideUpWithMargin()} 0.5s ease-in 1.6s forwards`,
+          gap: 3,
+          mt: 0,
+          textAlign: "center",
+          mb: "40px",
+        }}
       >
         <Typography
-          fontSize={{ xs: "30px", md: "48px" }}
-          fontWeight={300}
-          lineHeight={"57.6px"}
-          letterSpacing={"0.17px"}
+          sx={{
+            fontSize: { xs: "30px", md: "48px" },
+            opacity: 0,
+            fontWeight: 300,
+            lineHeight: "57.6px",
+            letterSpacing: "0.17px",
+            animation: `${fadeIn} 0.5s ease-in 1s forwards`,
+          }}
         >
           Let’s start new chat!
         </Typography>
         <Typography
-          fontSize={{ xs: "14px", md: "16px" }}
-          fontWeight={"400"}
-          lineHeight={"25.6px"}
+          sx={{
+            opacity: 0,
+            animation: `${slideToWithTransformAndOpacity} 0.5s ease-in 1.6s forwards`,
+            fontSize: { xs: "14px", md: "16px" },
+            fontWeight: "400",
+            lineHeight: "25.6px",
+          }}
         >
           I can help you with your requests like any other AI, moreover I can run different models, also, you can look
           at my pre-designed prompts for different cases!
         </Typography>
       </Stack>
       <SuggestedPrompts />
-      <div ref={scrollRef}></div>
+      <div ref={bottomElemRef} />
     </Stack>
   );
 }

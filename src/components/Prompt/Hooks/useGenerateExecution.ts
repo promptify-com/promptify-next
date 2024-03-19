@@ -47,7 +47,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { preparePromptsData } = useChatBox();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
-  const generateExecutionHandler = async () => {
+  const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
     if (!template) return;
 
     if (!token) {
@@ -79,7 +79,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     uploadedFiles.current.clear();
 
     const endpoint = `/api/meta/templates/${template.id}/execute/`;
-    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData) });
+    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData), onGenerateExecution });
   };
 
   const streamExecutionHandler = async (response: string) => {
@@ -98,11 +98,13 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     method,
     body,
     streamExecution,
+    onGenerateExecution,
   }: {
     endpoint: string;
     method: string;
     body?: string;
     streamExecution?: IStreamExecution;
+    onGenerateExecution?: (executionId: number) => void;
   }) => {
     fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
       method,
@@ -140,6 +142,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (executionId) {
             setNewExecutionId(executionId);
+            onGenerateExecution?.(executionId);
             setGeneratingResponse(prevState => ({
               ...prevState,
               id: executionId,
@@ -151,23 +154,18 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (message.includes("[ERROR]")) {
             dispatch(setToast(EXECUTE_ERROR_TOAST));
-            if (message.includes("[ERROR]")) {
-              dispatch(setToast(EXECUTE_ERROR_TOAST));
-              setGeneratingResponse(prevState => {
-                const newState = { ...prevState, data: [...prevState.data] };
-                const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
-                if (activePromptIndex !== -1) {
-                  newState.data[activePromptIndex] = {
-                    ...newState.data[activePromptIndex],
-                    isLoading: false,
-                    isCompleted: true,
-                  };
-                }
-                return newState;
-              });
-              return;
-            }
-
+            setGeneratingResponse(prevState => {
+              const newState = { ...prevState, data: [...prevState.data] };
+              const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
+              if (activePromptIndex !== -1) {
+                newState.data[activePromptIndex] = {
+                  ...newState.data[activePromptIndex],
+                  isLoading: false,
+                  isCompleted: true,
+                };
+              }
+              return newState;
+            });
             return;
           }
 
