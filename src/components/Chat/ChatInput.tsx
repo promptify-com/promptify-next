@@ -3,22 +3,16 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { keyframes } from "@mui/material";
-
-import MessageSender from "../Prompt/Common/Chat/MessageSender";
-
-const fadeOut = keyframes`
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
-`;
+import MessageSender from "@/components/Prompt/Common/Chat/MessageSender";
+import { fadeIn } from "@/theme/animations";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
-  fadeIn?: boolean;
+  isFadeIn?: boolean;
 }
-const ChatInput = ({ onSubmit, disabled, isValidating, fadeIn }: ChatInputProps) => {
+const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProps) => {
   return (
     <Grid
       position={"relative"}
@@ -29,8 +23,8 @@ const ChatInput = ({ onSubmit, disabled, isValidating, fadeIn }: ChatInputProps)
       px={{ xs: "8px", md: 0 }}
       pb={{ xs: "20px", md: 0 }}
       sx={{
-        opacity: fadeIn ? 0 : 1,
-        animation: fadeIn ? `${fadeOut} 0.5s ease-in 1.6s forwards` : "none",
+        opacity: isFadeIn ? 0 : 1,
+        animation: isFadeIn ? `${fadeIn} 0.5s ease-in 1.6s forwards` : "none",
       }}
     >
       {isValidating && (

@@ -265,8 +265,6 @@ function Chat() {
   const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
-  console.log(offset);
-
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
@@ -322,7 +320,7 @@ function Chat() {
                       onSubmit={handleSubmitInput}
                       disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
                       isValidating={isValidatingAnswer}
-                      fadeIn={showLanding}
+                      isFadeIn={showLanding}
                     />
                   )}
                 </>

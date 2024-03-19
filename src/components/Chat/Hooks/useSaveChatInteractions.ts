@@ -103,7 +103,6 @@ const useSaveChatInteractions = () => {
     const inputMessage = apiMessage.message_object as InputMessage;
     const suggestionMessage = apiMessage.message_object as SuggestionsMessage;
     const templateMessage = apiMessage.message_object as TemplateMessage;
-    console.log(suggestionMessage);
     const executionMessage = apiMessage.message_object as TemplatesExecutions;
     const baseMessage: IMessage = {
       id: apiMessage.id,

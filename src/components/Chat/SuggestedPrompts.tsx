@@ -3,12 +3,7 @@ import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import Typography from "@mui/material/Typography";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setMessageSenderValue } from "@/core/store/chatSlice";
-import { keyframes } from "@mui/system";
-
-const fadeOut = keyframes`
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
-`;
+import { fadeIn } from "@/theme/animations";
 
 function SuggestedPrompts() {
   const dispatch = useAppDispatch();
@@ -22,7 +17,7 @@ function SuggestedPrompts() {
     <Stack
       sx={{
         opacity: 0,
-        animation: `${fadeOut} 0.5s ease-in 1.6s forwards`,
+        animation: `${fadeIn} 0.5s ease-in 1.6s forwards`,
         flexDirection: { xs: "column", md: "row" },
         justifyContent: "space-between",
         gap: { xs: "8px", md: "24px" },
