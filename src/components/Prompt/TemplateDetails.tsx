@@ -68,7 +68,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
     }
 
     dispatch(setSelectedTemplate(template));
-    router.push("/chats");
+    router.push("/chat");
     dispatch(
       updatePopupTemplate({
         template: null,

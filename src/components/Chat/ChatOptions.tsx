@@ -22,14 +22,14 @@ function ChatOptions() {
   const [isChecked, setIsChecked] = useState(false);
   const options: Option[] = [
     {
-      imagePath: "@/pages/chats/images/QA.png",
+      imagePath: "@/pages/chat/images/QA.png",
       label: "Complete questionary",
       hint: "Easy for new users",
       type: "QA",
     },
 
     {
-      imagePath: "@/pages/chats/images/fill_prompt.png",
+      imagePath: "@/pages/chat/images/fill_prompt.png",
       label: "Fill prompt instructions",
       hint: "Better for advanced users",
       type: "FORM",
@@ -118,8 +118,8 @@ function ChatOptions() {
                   <Image
                     src={
                       option.type === "QA"
-                        ? require("@/pages/chats/images/QA.png")
-                        : require("@/pages/chats/images/fill_prompt.png")
+                        ? require("@/pages/chat/images/QA.png")
+                        : require("@/pages/chat/images/fill_prompt.png")
                     }
                     alt={option.label}
                     priority={true}
