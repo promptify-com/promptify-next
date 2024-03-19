@@ -10,6 +10,7 @@ import type {
 
 type TemplatesExecutionsByMeResponse = TemplatesExecutionsByMePaginationResponse | TemplateExecutionsDisplay[];
 
+// TODO: Optimistic updates for invalidatesTags: ["Executions"] very heavy request
 export const executionsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
