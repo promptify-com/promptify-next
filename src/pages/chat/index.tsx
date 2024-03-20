@@ -116,7 +116,7 @@ function Chat() {
       const _nextCursor = messagesData.next ? messagesData.next.split("cursor=")[1] : null;
 
       setNextCursor(_nextCursor);
-      setMessages(newMappedMessages);
+      setMessages(prevMessages => newMappedMessages.concat(prevMessages));
     } catch (error) {
       console.error("Error loading initial messages:", error);
     } finally {
@@ -163,6 +163,7 @@ function Chat() {
 
   useEffect(() => {
     handleDynamicColors();
+
     if (selectedChat && selectedTemplate?.title) {
       handleTitleChat();
     } else {
@@ -270,7 +271,7 @@ function Chat() {
           return updatedMessages;
         });
 
-        dispatch(setSelectedExecution(_newExecution)); //
+        dispatch(setSelectedExecution(_newExecution));
       } catch {
         window.location.reload();
       }
