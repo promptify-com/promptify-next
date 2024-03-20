@@ -1,11 +1,9 @@
-import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Engine } from "@/core/api/dto/templates";
 import Search from "@mui/icons-material/Search";
@@ -52,9 +50,14 @@ interface Props {
   onSelect: (engine: Engine | null) => void;
 }
 
-function EnginesSelect({ value, onSelect }: Props) {
+function EnginesSelect({ value: initValue, onSelect }: Props) {
   let { data: allEngines } = useGetEnginesQuery();
   const [search, setSearch] = useState("");
+  const [value, setValue] = useState(initValue?.name);
+
+  const handleSelect = (event: SelectChangeEvent<string>) => {
+    setValue(event.target.value);
+  };
 
   if (!allEngines) return;
 
@@ -62,10 +65,12 @@ function EnginesSelect({ value, onSelect }: Props) {
 
   return (
     <Select
-      value={value?.name ?? "All engines"}
+      value={value}
+      onChange={handleSelect}
       sx={{
-        bgcolor: "surfaceContainerHigh",
         mx: "8px",
+        bgcolor: "surfaceContainerHigh",
+        borderRadius: "8px",
         ":hover": {
           bgcolor: "surfaceContainerHighest",
         },
@@ -80,6 +85,7 @@ function EnginesSelect({ value, onSelect }: Props) {
         },
       }}
       MenuProps={{
+        disableScrollLock: true,
         sx: {
           ".MuiList-root": {
             p: 0,
@@ -110,11 +116,11 @@ function EnginesSelect({ value, onSelect }: Props) {
             },
           }}
         >
-          <MenuItem onClick={() => onSelect(null)}>All Engines</MenuItem>
+          <MenuItem value={""}>All Engines</MenuItem>
           {engines.map(engine => (
             <MenuItem
               key={engine.id}
-              onClick={() => onSelect(engine)}
+              value={engine.name}
             >
               <Image
                 src={engine.icon}
