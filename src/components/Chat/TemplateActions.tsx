@@ -23,7 +23,7 @@ import { setAnswers, setInitialChat, setSelectedChat, setSelectedTemplate } from
 
 interface Props {
   template: Templates;
-  onScrollToBottom?: () => void;
+  onScrollToBottom?: (force?: boolean) => void;
   onlyNew?: boolean;
 }
 
@@ -43,14 +43,19 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
     setActionsOpened(false);
 
     if (newChat) {
-      await handleCreateChat(template);
+      const _newChat = await handleCreateChat(template);
+      dispatch(setSelectedChat(_newChat));
+      dispatch(setInitialChat(false));
     }
 
-    dispatch(setSelectedTemplate(template));
-    dispatch(setAnswers([]));
-    if (onScrollToBottom) {
+    setTimeout(() => {
+      // useMEssageManage.resetStates sets undefined template as resetting which override it here (ordering issue)
+      dispatch(setSelectedTemplate(template));
+    }, 100);
+
+    if (typeof onScrollToBottom === "function") {
       setTimeout(() => {
-        onScrollToBottom();
+        onScrollToBottom(true);
       }, 100);
     }
   };
@@ -61,11 +66,11 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
         title: template.title ?? "Welcome",
         thumbnail: template.thumbnail,
       }).unwrap();
-      dispatch(setSelectedChat(newChat));
-      dispatch(setAnswers([]));
-      dispatch(setInitialChat(true));
+
+      return newChat;
     } catch (err) {
       console.error("Error creating a new chat: ", err);
+      throw err;
     }
   };
 

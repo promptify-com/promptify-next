@@ -118,13 +118,14 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      saveChatExecutions: builder.mutation<void, { chat: number; execution: number }>({
-        query: ({ chat, execution }) => ({
+      saveChatExecutions: builder.mutation<void, { chat: number; execution: number; type: "qa" | "form" }>({
+        query: ({ chat, execution, type }) => ({
           url: "/api/chat/executions/",
           method: "POST",
           data: {
             chat,
             execution,
+            type,
           },
         }),
       }),

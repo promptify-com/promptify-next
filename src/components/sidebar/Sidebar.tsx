@@ -59,8 +59,8 @@ function Sidebar() {
     {
       name: "Chats",
       icon: <TryRounded />,
-      href: "/chats",
-      active: pathname === "/chats",
+      href: "/chat",
+      active: pathname === "/chat",
       external: false,
       reload: false,
     },
