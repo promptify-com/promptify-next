@@ -13,6 +13,7 @@ export interface Item {
   name: string;
   id: number;
   icon?: ReactNode;
+  type?: string;
 }
 
 interface Props {

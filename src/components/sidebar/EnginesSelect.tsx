@@ -50,13 +50,12 @@ interface Props {
   onSelect: (engine: Engine | null) => void;
 }
 
-function EnginesSelect({ value: initValue, onSelect }: Props) {
+function EnginesSelect({ value, onSelect }: Props) {
   let { data: allEngines } = useGetEnginesQuery();
   const [search, setSearch] = useState("");
-  const [value, setValue] = useState(initValue?.name);
 
-  const handleSelect = (event: SelectChangeEvent<string>) => {
-    setValue(event.target.value);
+  const handleSelect = (engineName: string) => {
+    onSelect(engines.find(eng => eng.name === engineName) ?? null);
   };
 
   if (!allEngines) return;
@@ -65,9 +64,10 @@ function EnginesSelect({ value: initValue, onSelect }: Props) {
 
   return (
     <Select
-      value={value}
-      onChange={handleSelect}
+      value={value?.name}
+      onChange={e => handleSelect(e.target.value)}
       sx={{
+        width: "calc(100% - 16px)",
         mx: "8px",
         bgcolor: "surfaceContainerHigh",
         borderRadius: "8px",

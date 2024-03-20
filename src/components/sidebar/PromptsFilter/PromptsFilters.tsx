@@ -4,7 +4,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Collapsible from "@/components/sidebar/Collapsible";
 import Storage from "@/common/storage";
-
 import type { Item } from "@/components/sidebar/Collapsible";
 import { useEffect } from "react";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
@@ -20,13 +19,8 @@ import type { Engine, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import Box from "@mui/material/Box";
-
-const contentTypeItems: Item[] = [
-  { name: "Text", id: 1, type: "engineType" },
-  { name: "Image", id: 2, type: "engineType" },
-  { name: "Video", id: 3, type: "engineType" },
-  { name: "Audio", id: 4, type: "engineType" },
-];
+import { contentTypeItems } from "../Constants";
+import EnginesSelect from "../EnginesSelect";
 
 function MyFavorites() {
   const dispatch = useAppDispatch();
@@ -94,12 +88,8 @@ function PromptsFilters() {
     }
   }, []);
 
-  const handleEngineSelect = (selectedEngine: Engine) => {
-    if (selectedEngine.id === engine?.id) {
-      dispatch(setSelectedEngine(null));
-    } else {
-      dispatch(setSelectedEngine(selectedEngine));
-    }
+  const handleEngineSelect = (selectedEngine: Engine | null) => {
+    dispatch(setSelectedEngine(selectedEngine));
   };
 
   const handleTagSelect = (selectedTag: Tag) => {
@@ -120,20 +110,6 @@ function PromptsFilters() {
     }
   };
 
-  const handleItemSelect = (item: Item) => {
-    switch (item.type) {
-      case "engine":
-        handleEngineSelect(item as Engine);
-        break;
-      case "tag":
-        handleTagSelect(item as Tag);
-        break;
-      case "engineType":
-        handleEngineTypeSelect(item.name);
-        break;
-    }
-  };
-
   const isSelected = (item: Item) => {
     switch (item.type) {
       case "engine":
@@ -148,37 +124,30 @@ function PromptsFilters() {
   };
 
   return (
-    <Box
-      sx={{
-        ...(!isValidUser && {
-          my: "20px",
-        }),
-      }}
+    <Stack
+      gap={2}
+      py={"16px"}
     >
       {isValidUser && <MyFavorites />}
       <Collapsible
         title="Content type"
         items={contentTypeItems}
         key="contentType"
-        onSelect={handleItemSelect}
+        onSelect={item => handleEngineTypeSelect(item.name)}
         isSelected={isSelected}
       />
-      <Collapsible
-        title="Engines"
-        items={engines || []}
-        key="engines"
-        onSelect={handleItemSelect}
-        isSelected={isSelected}
+      <EnginesSelect
+        value={engine}
+        onSelect={handleEngineSelect}
       />
       <Collapsible
         title="Popular tags"
         items={tags || []}
         key="popularTags"
-        onSelect={handleItemSelect}
+        onSelect={item => handleTagSelect(item as Tag)}
         isSelected={isSelected}
-        isTags
       />
-    </Box>
+    </Stack>
   );
 }
 

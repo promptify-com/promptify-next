@@ -7,18 +7,8 @@ import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { setDocumentsContentType, setDocumentsEngine, setDocumentsStatus } from "@/core/store/documentsSlice";
-import Bolt from "@mui/icons-material/Bolt";
-import Campaign from "@mui/icons-material/Campaign";
-import FilterHdr from "@mui/icons-material/FilterHdr";
-import Videocam from "@mui/icons-material/Videocam";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
-
-const contentTypeItems: Item[] = [
-  { id: 1, name: "Text", icon: <Bolt /> },
-  { id: 2, name: "Image", icon: <FilterHdr /> },
-  { id: 3, name: "Video", icon: <Videocam /> },
-  { id: 4, name: "Audio", icon: <Campaign /> },
-];
+import { contentTypeItems } from "../Constants";
 
 function StatusFilter() {
   const dispatch = useAppDispatch();
