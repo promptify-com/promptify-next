@@ -1,22 +1,17 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Collapsible from "@/components/sidebar/Collapsible";
-import Storage from "@/common/storage";
 import type { Item } from "@/components/sidebar/Collapsible";
-import { useEffect } from "react";
-import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useGetEnginesQuery } from "@/core/api/engines";
-import { setSelectedEngine, setSelectedTag, deleteSelectedTag, setSelectedEngineType } from "@/core/store/filtersSlice";
-import type { Engine, Tag } from "@/core/api/dto/templates";
+import type { Engine, EngineOutput, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { setDocumentsStatus } from "@/core/store/documentsSlice";
+import { setDocumentsContentType, setDocumentsEngine, setDocumentsStatus } from "@/core/store/documentsSlice";
 import Bolt from "@mui/icons-material/Bolt";
 import Campaign from "@mui/icons-material/Campaign";
 import FilterHdr from "@mui/icons-material/FilterHdr";
 import Videocam from "@mui/icons-material/Videocam";
+import EnginesSelect from "@/components/sidebar/EnginesSelect";
 
 const contentTypeItems: Item[] = [
   { id: 1, name: "Text", icon: <Bolt /> },
@@ -27,7 +22,6 @@ const contentTypeItems: Item[] = [
 
 function StatusFilter() {
   const dispatch = useAppDispatch();
-
   const status = useAppSelector(state => state.documents.status);
 
   return (
@@ -85,53 +79,17 @@ function StatusFilter() {
 
 function DocumentsFilters() {
   const dispatch = useAppDispatch();
-  const { data: tags } = useGetTagsPopularQuery();
-  const { data: engines } = useGetEnginesQuery();
-  const { tag, engine, engineType } = useAppSelector(state => state.filters);
+  const { engine, contentType } = useAppSelector(state => state.documents);
 
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") || null;
-    const storedTags = Storage.get("tagFilter") || [];
-    const storedEngineType = Storage.get("engineTypeFilter") || "";
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-  }, []);
-
-  const handleEngineSelect = (selectedEngine: Engine) => {
-    if (selectedEngine.id === engine?.id) {
-      dispatch(setSelectedEngine(null));
-    } else {
-      dispatch(setSelectedEngine(selectedEngine));
-    }
-  };
-
-  const handleTagSelect = (selectedTag: Tag) => {
-    const tagExists = tag.some(tagItem => tagItem.id === selectedTag.id);
-
-    if (tagExists) {
-      dispatch(deleteSelectedTag(selectedTag.id));
-    } else {
-      dispatch(setSelectedTag(selectedTag));
-    }
+  const handleEngineSelect = (selectedEngine: Engine | null) => {
+    dispatch(setDocumentsEngine(selectedEngine));
   };
 
   const handleEngineTypeSelect = (item: Item) => {
-    dispatch(setSelectedEngineType(item.name));
+    dispatch(setDocumentsContentType(item.name as EngineOutput));
   };
 
-  const isSelected = (item: Item) => item.name === engineType;
+  const isSelected = (item: Item) => item.name === contentType;
 
   return (
     <Stack
@@ -144,6 +102,10 @@ function DocumentsFilters() {
         items={contentTypeItems}
         onSelect={handleEngineTypeSelect}
         isSelected={isSelected}
+      />
+      <EnginesSelect
+        value={engine}
+        onSelect={handleEngineSelect}
       />
     </Stack>
   );

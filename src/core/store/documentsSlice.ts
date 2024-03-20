@@ -1,16 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EngineOutput } from "@/core/api/dto/templates";
+import { Engine, EngineOutput } from "@/core/api/dto/templates";
 
 type StatusType = "draft" | "saved" | null;
 
 interface IState {
   status: StatusType;
   contentType: EngineOutput | null;
+  engine: Engine | null;
 }
 
 const initialState: IState = {
   status: null,
   contentType: null,
+  engine: null,
 };
 
 const documentsSlice = createSlice({
@@ -23,9 +25,12 @@ const documentsSlice = createSlice({
     setDocumentsContentType: (state, action: PayloadAction<EngineOutput | null>) => {
       state.contentType = action.payload;
     },
+    setDocumentsEngine: (state, action: PayloadAction<Engine | null>) => {
+      state.engine = action.payload;
+    },
   },
 });
 
-export const { setDocumentsStatus, setDocumentsContentType } = documentsSlice.actions;
+export const { setDocumentsStatus, setDocumentsContentType, setDocumentsEngine } = documentsSlice.actions;
 
 export default documentsSlice.reducer;
