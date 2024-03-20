@@ -19,13 +19,13 @@ import useBrowser from "@/hooks/useBrowser";
 import { BLOG_URL } from "@/common/constants";
 import type { NavItem } from "@/common/types/sidebar";
 
-const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
+const FiltersDrawerLazy = lazy(() => import("./PromptsFilter/FiltersDrawer"), {
   ssr: false,
 });
-const ChatsDrawerLazy = lazy(() => import("./ChatsDrawer"), {
+const ChatsDrawerLazy = lazy(() => import("./ChatsHistory/ChatsDrawer"), {
   ssr: false,
 });
-const DocumentsDrawerLazy = lazy(() => import("./DocumentsDrawer"), {
+const DocumentsDrawerLazy = lazy(() => import("./DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
 });
 

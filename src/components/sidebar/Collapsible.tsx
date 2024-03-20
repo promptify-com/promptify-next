@@ -24,10 +24,7 @@ interface Props {
 }
 
 function Collapsible({ title, items, onSelect, isSelected, isTags }: Props) {
-  if (!items?.length || !title) return;
-
   const [open, setOpen] = useState(true);
-
   const [showAll, setShowAll] = useState<boolean>(false);
 
   const onClickHandler = () => {
@@ -37,6 +34,8 @@ function Collapsible({ title, items, onSelect, isSelected, isTags }: Props) {
   const toggleShowAll = () => {
     setShowAll(!showAll);
   };
+
+  if (!items?.length || !title) return;
 
   const displayedItems = showAll ? items : items.slice(0, 5);
 
