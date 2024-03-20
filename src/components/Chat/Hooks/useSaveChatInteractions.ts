@@ -5,7 +5,13 @@ import {
   useSaveChatTemplateMutation,
 } from "@/core/api/chats";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import type { IMessageResult, InputMessage, SuggestionsMessage, TemplateMessage } from "@/core/api/dto/chats";
+import type {
+  ExecutionMessage,
+  IMessageResult,
+  InputMessage,
+  SuggestionsMessage,
+  TemplateMessage,
+} from "@/core/api/dto/chats";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import { useAppSelector } from "@/hooks/useStore";
 
@@ -106,7 +112,7 @@ const useSaveChatInteractions = () => {
     const inputMessage = apiMessage.message_object as InputMessage;
     const suggestionMessage = apiMessage.message_object as SuggestionsMessage;
     const templateMessage = apiMessage.message_object as TemplateMessage;
-    const executionMessage = apiMessage.message_object as TemplatesExecutions;
+    const executionMessage = apiMessage.message_object as ExecutionMessage;
     const baseMessage: IMessage = {
       id: apiMessage.id,
       createdAt: apiMessage.created_at,
@@ -145,8 +151,8 @@ const useSaveChatInteractions = () => {
       case "execution":
         return {
           ...baseMessage,
-          spark: executionMessage,
-          template: executionMessage.template as unknown as Templates,
+          spark: executionMessage.execution,
+          template: executionMessage.execution.template as unknown as Templates,
           isLatestExecution: false,
           type: "spark",
         };
