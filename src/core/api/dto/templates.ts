@@ -64,7 +64,7 @@ export interface TemplateIds {
   tagId: number;
 }
 
-export type EngineOutput = "TEXT" | "IMAGE";
+export type EngineOutput = "TEXT" | "IMAGE" | "VIDEO" | "AUDIO";
 export interface Engine {
   icon: string;
   id: number;

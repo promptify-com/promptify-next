@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DocumentsContainer({ templates, isLoading }: Props) {
-  const { status } = useAppSelector(state => state.documents);
+  const { status, contentType } = useAppSelector(state => state.documents);
 
   const allExecutions = useMemo(() => {
     const allExecutions: ExecutionWithTemplate[] = [];
@@ -36,11 +36,16 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
 
   const executions = useMemo(() => {
     return allExecutions.filter(exec => {
-      if (status === "draft") return !exec.is_favorite;
-      else if (status === "saved") return exec.is_favorite;
-      else return true;
+      let selected = true;
+
+      if (status === "draft") selected = !exec.is_favorite;
+      else if (status === "saved") selected = exec.is_favorite;
+
+      // selected = exec.engine.output_type === contentType;
+
+      return selected;
     });
-  }, [allExecutions, status]);
+  }, [allExecutions, status, contentType]);
 
   return (
     <Stack gap={3}>
