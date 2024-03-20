@@ -7,12 +7,14 @@ import {
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IMessageResult, InputMessage, SuggestionsMessage, TemplateMessage } from "@/core/api/dto/chats";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import { useAppSelector } from "@/hooks/useStore";
 
 const useSaveChatInteractions = () => {
   const [saveChatInput] = useSaveChatInputMutation();
   const [saveSuggestions] = useSaveChatSuggestionsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
+  const chatOption = useAppSelector(state => state.chat.selectedChatOption);
 
   const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
@@ -44,6 +46,7 @@ const useSaveChatInteractions = () => {
       await saveExecutions({
         chat: chatId,
         execution: executionId,
+        type: chatOption === "QA" ? "qa" : "form",
       });
     } catch (error) {
       console.error(error);

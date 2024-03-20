@@ -25,9 +25,10 @@ const useScrollToBottom = ({
     setShowScrollDown(!isAtBottom);
   };
 
-  const scrollToBottom = () => {
-    const container = ref.current;
-    if (!container || skipScroll) return;
+  const scrollToBottom = (force?: boolean) => {
+    const container = ref.current!;
+
+    if (!force && (!container || skipScroll)) return;
 
     container.scrollTop = container.scrollHeight;
     setTimeout(handleUserScroll, 200);
