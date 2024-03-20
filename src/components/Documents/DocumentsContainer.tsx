@@ -3,8 +3,8 @@ import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
 import { Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
-import SparksTemplatePlaceholder from "../placeholders/SparksTemplatePlaceholder";
 import CardDocumentTemplatePlaceholder from "../placeholders/CardDocumentTemplatePlaceholder";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -12,8 +12,9 @@ interface Props {
 }
 
 export default function DocumentsContainer({ templates, isLoading }: Props) {
-  const executions = useMemo(() => {
-    // Calculate all executions from templates and add template information
+  const { status } = useAppSelector(state => state.documents);
+
+  const allExecutions = useMemo(() => {
     const allExecutions: ExecutionWithTemplate[] = [];
     templates?.forEach(template => {
       const templateInfo = {
@@ -32,6 +33,14 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
       (execA, execB) => new Date(execB.created_at).getTime() - new Date(execA.created_at).getTime(),
     );
   }, [templates]);
+
+  const executions = useMemo(() => {
+    return allExecutions.filter(exec => {
+      if (status === "draft") return !exec.is_favorite;
+      else if (status === "saved") return exec.is_favorite;
+      else return true;
+    });
+  }, [allExecutions, status]);
 
   return (
     <Stack gap={3}>

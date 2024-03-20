@@ -1,25 +1,18 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Collapsible from "./Collapsible";
 import Storage from "@/common/storage";
-
 import type { Item } from "./Collapsible";
 import { useEffect } from "react";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
-import {
-  setSelectedEngine,
-  setSelectedTag,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  setMyFavoritesChecked,
-} from "@/core/store/filtersSlice";
+import { setSelectedEngine, setSelectedTag, deleteSelectedTag, setSelectedEngineType } from "@/core/store/filtersSlice";
 import type { Engine, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { setDocumentsStatus } from "@/core/store/documentsSlice";
 
 const contentTypeItems: Item[] = [
   { name: "Text", id: 1, type: "engineType" },
@@ -28,42 +21,61 @@ const contentTypeItems: Item[] = [
   { name: "Audio", id: 4, type: "engineType" },
 ];
 
-function MyFavorites() {
+function StatusFilter() {
   const dispatch = useAppDispatch();
 
-  const { isFavourite } = useAppSelector(state => state.filters);
-
-  useEffect(() => {
-    const storedFavourite = Storage.get("myFavoritesChecked") || false;
-    dispatch(setMyFavoritesChecked(storedFavourite));
-  }, []);
+  const status = useAppSelector(state => state.documents.status);
 
   return (
-    <Stack
-      sx={{
-        bgcolor: "surfaceContainerHigh",
-        borderRadius: "16px",
-        mb: "20px",
-        mt: "20px",
-        p: "8px 8px 8px 16px",
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    >
-      <Typography width={"50%"}>My favorites:</Typography>
-      <FormControlLabel
-        control={<Switch color="primary" />}
-        label={""}
-        checked={isFavourite}
-        name="my_favorites"
-        value={""}
-        onChange={(_, _checked) => dispatch(setMyFavoritesChecked(_checked))}
-        sx={{
-          width: "50%",
-          justifyContent: "flex-end",
-        }}
-      />
-    </Stack>
+    <Box>
+      <Typography
+        fontSize={14}
+        fontWeight={500}
+        color={"onSurface"}
+        p={"16px 8px"}
+      >
+        Status
+      </Typography>
+      <Box px={"8px"}>
+        <Stack
+          direction={"row"}
+          gap={1}
+          sx={{
+            p: "4px",
+            bgcolor: "surfaceContainerHigh",
+            borderRadius: "999px",
+          }}
+        >
+          <Button
+            onClick={() => dispatch(setDocumentsStatus(null))}
+            sx={{
+              ...navBtnStyle,
+              ...(!status && { bgcolor: "secondary.main", color: "onSecondary" }),
+            }}
+          >
+            All
+          </Button>
+          <Button
+            onClick={() => dispatch(setDocumentsStatus("draft"))}
+            sx={{
+              ...navBtnStyle,
+              ...(status === "draft" && { bgcolor: "secondary.main", color: "onSecondary" }),
+            }}
+          >
+            Drafts
+          </Button>
+          <Button
+            onClick={() => dispatch(setDocumentsStatus("saved"))}
+            sx={{
+              ...navBtnStyle,
+              ...(status === "saved" && { bgcolor: "secondary.main", color: "onSecondary" }),
+            }}
+          >
+            Saved
+          </Button>
+        </Stack>
+      </Box>
+    </Box>
   );
 }
 
@@ -148,14 +160,11 @@ function DocumentsFilters() {
   };
 
   return (
-    <Box
-      sx={{
-        ...(!isValidUser && {
-          my: "20px",
-        }),
-      }}
+    <Stack
+      gap={2}
+      py={"16px"}
     >
-      {isValidUser && <MyFavorites />}
+      <StatusFilter />
       <Collapsible
         title="Content type"
         items={contentTypeItems}
@@ -178,8 +187,19 @@ function DocumentsFilters() {
         isSelected={isSelected}
         isTags
       />
-    </Box>
+    </Stack>
   );
 }
 
 export default DocumentsFilters;
+
+const navBtnStyle = {
+  flex: 1,
+  borderRadius: "99px",
+  p: "8xp 16px",
+  color: "onSurface",
+  ":hover": {
+    bgcolor: "action.hover",
+    color: "onSurface",
+  },
+};
