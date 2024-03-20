@@ -12,17 +12,18 @@ import { Engine, Tag } from "@/core/api/dto/templates";
 export interface Item {
   name: string;
   id: number;
-  icon?: ReactNode;
+  type?: string;
 }
 
 interface Props {
   title: string;
-  items: Item[];
+  items: ReactNode[];
   onSelect: (item: Item) => void;
   isSelected: (item: Item) => boolean;
+  isTags?: boolean;
 }
 
-function Collapsible({ title, items, onSelect, isSelected }: Props) {
+function Collapsible({ title, items, onSelect, isSelected, isTags }: Props) {
   const [open, setOpen] = useState(true);
   const [showAll, setShowAll] = useState<boolean>(false);
 
@@ -73,10 +74,19 @@ function Collapsible({ title, items, onSelect, isSelected }: Props) {
                 fontSize: 16,
                 fontWeight: 500,
                 gap: 2,
-                svg: { fontSize: 16 },
               }}
             >
-              {item.icon}
+              {!isTags && (
+                <Checkbox
+                  icon={<RadioButtonUncheckedIcon />}
+                  checkedIcon={<CircleIcon />}
+                  checked={isSelected(item)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    onSelect(item);
+                  }}
+                />
+              )}
               {item.name}
             </ListItemButton>
           ))}

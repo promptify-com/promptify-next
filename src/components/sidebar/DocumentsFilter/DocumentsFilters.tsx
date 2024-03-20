@@ -13,12 +13,16 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { setDocumentsStatus } from "@/core/store/documentsSlice";
+import Bolt from "@mui/icons-material/Bolt";
+import Campaign from "@mui/icons-material/Campaign";
+import FilterHdr from "@mui/icons-material/FilterHdr";
+import Videocam from "@mui/icons-material/Videocam";
 
 const contentTypeItems: Item[] = [
-  { name: "Text", id: 1, type: "engineType" },
-  { name: "Image", id: 2, type: "engineType" },
-  { name: "Video", id: 3, type: "engineType" },
-  { name: "Audio", id: 4, type: "engineType" },
+  { id: 1, name: "Text", icon: <Bolt /> },
+  { id: 2, name: "Image", icon: <FilterHdr /> },
+  { id: 3, name: "Video", icon: <Videocam /> },
+  { id: 4, name: "Audio", icon: <Campaign /> },
 ];
 
 function StatusFilter() {
@@ -84,7 +88,6 @@ function DocumentsFilters() {
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
   const { tag, engine, engineType } = useAppSelector(state => state.filters);
-  const isValidUser = useAppSelector(isValidUserFn);
 
   useEffect(() => {
     const storedEngine = Storage.get("engineFilter") || null;
@@ -124,40 +127,11 @@ function DocumentsFilters() {
     }
   };
 
-  const handleEngineTypeSelect = (type: string) => {
-    if (type === engineType) {
-      dispatch(setSelectedEngineType(""));
-    } else {
-      dispatch(setSelectedEngineType(type));
-    }
+  const handleEngineTypeSelect = (item: Item) => {
+    dispatch(setSelectedEngineType(item.name));
   };
 
-  const handleItemSelect = (item: Item) => {
-    switch (item.type) {
-      case "engine":
-        handleEngineSelect(item as Engine);
-        break;
-      case "tag":
-        handleTagSelect(item as Tag);
-        break;
-      case "engineType":
-        handleEngineTypeSelect(item.name);
-        break;
-    }
-  };
-
-  const isSelected = (item: Item) => {
-    switch (item.type) {
-      case "engine":
-        return item.id === engine?.id;
-      case "tag":
-        return tag.some(tagItem => tagItem.id === item.id);
-      case "engineType":
-        return item.name === engineType;
-      default:
-        return false;
-    }
-  };
+  const isSelected = (item: Item) => item.name === engineType;
 
   return (
     <Stack
@@ -168,24 +142,8 @@ function DocumentsFilters() {
       <Collapsible
         title="Content type"
         items={contentTypeItems}
-        key="contentType"
-        onSelect={handleItemSelect}
+        onSelect={handleEngineTypeSelect}
         isSelected={isSelected}
-      />
-      <Collapsible
-        title="Engines"
-        items={engines || []}
-        key="engines"
-        onSelect={handleItemSelect}
-        isSelected={isSelected}
-      />
-      <Collapsible
-        title="Popular tags"
-        items={tags || []}
-        key="popularTags"
-        onSelect={handleItemSelect}
-        isSelected={isSelected}
-        isTags
       />
     </Stack>
   );
