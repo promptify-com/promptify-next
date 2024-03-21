@@ -60,7 +60,7 @@ function EnginesSelect({ value, onSelect }: Props) {
   const debouncedSearch = useDebounce(search, 300);
 
   const handleSelect = (engineName: string) => {
-    onSelect(engines.find(eng => eng.name === engineName) ?? null);
+    onSelect(allEngines?.find(eng => eng.name === engineName) ?? null);
   };
 
   if (!allEngines) return;

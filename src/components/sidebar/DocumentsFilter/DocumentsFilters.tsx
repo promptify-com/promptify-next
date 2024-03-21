@@ -78,8 +78,8 @@ function DocumentsFilters() {
   const isSelected = (item: Item) => item.name === contentType;
 
   const handleEngineTypeSelect = (item: Item) => {
-    if (isSelected(item)) dispatch(setDocumentsContentType(null));
-    else dispatch(setDocumentsContentType(item.name as EngineOutput));
+    const type = isSelected(item) ? null : (item.name as EngineOutput);
+    dispatch(setDocumentsContentType(type));
   };
 
   return (
