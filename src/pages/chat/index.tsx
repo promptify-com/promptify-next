@@ -175,18 +175,24 @@ function Chat() {
     if (!queueSavedMessages.length) {
       return;
     }
+
     const lastMessage = queueSavedMessages[queueSavedMessages.length - 1];
+
     if (lastMessage.type !== "spark" || !lastMessage.executionId || !selectedChat || !selectedTemplate) {
       return;
     }
+
     processQueuedMessages(queueSavedMessages, selectedChat?.id, lastMessage?.executionId, selectedTemplate?.id);
     setQueueSavedMessages([]);
   }, [queueSavedMessages]);
 
   const fetchDynamicColors = () => {
-    //@ts-expect-error unfound-new-type
-    materialDynamicColors(selectedTemplate.thumbnail || selectedChat?.thumbnail)
-      .then((imgPalette: IMUDynamicColorsThemeColor) => {
+    if (!selectedTemplate?.thumbnail || !selectedChat?.thumbnail) {
+      return;
+    }
+
+    materialDynamicColors(selectedTemplate.thumbnail ?? selectedChat.thumbnail)
+      .then(imgPalette => {
         const newPalette: Palette = {
           ...theme.palette,
           ...imgPalette.light,
