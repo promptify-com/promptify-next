@@ -4,15 +4,15 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
-import { isDesktopViewPort } from "@/common/helpers";
 import Link from "next/link";
+import useBrowser from "@/hooks/useBrowser";
 
 type CardDocumentTemplateProps = {
   template: TemplateExecutionsDisplay;
 };
 
 function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
-  const isDesktop = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   return (
     <Link
@@ -23,12 +23,12 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
     >
       <Card
         sx={{
-          minWidth: isDesktop ? "256px" : "auto",
-          height: isDesktop ? "calc(100% - 24px)" : "calc(100% - 16px)",
+          minWidth: isMobile ? "auto" : "256px",
+          height: isMobile ? "calc(100% - 16px)" : "calc(100% - 24px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: isDesktop ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop ? "transparent" : "surface.2",
+          p: isMobile ? "8px" : "16px 16px 8px",
+          bgcolor: isMobile ? "surface.2" : "transparent",
           "&:hover": {
             bgcolor: "surface.2",
           },
@@ -36,7 +36,7 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
         elevation={0}
       >
         <Stack
-          direction={isDesktop ? "column" : "row"}
+          direction={isMobile ? "row" : "column"}
           justifyContent={{ xs: "flex-start", md: "space-between" }}
           alignItems={"flex-start"}
           gap={2}
@@ -64,6 +64,12 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
               fontSize={16}
               fontWeight={500}
               color={"onSurface"}
+              sx={{
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 2,
+                overflow: "hidden",
+              }}
             >
               {template.title}
             </Typography>
