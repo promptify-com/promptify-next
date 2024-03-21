@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useCreateChatMutation, useGetChatsQuery } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { setInitialChat, setLoadedChats, setSelectedChat } from "@/core/store/chatSlice";
@@ -18,10 +18,23 @@ export default function ChatsHistory({}: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { selectedChat, loadedChats } = useAppSelector(state => state.chat);
+  const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [search, setSearch] = useState("");
-
   const { data: chats, isLoading: loadingChats } = useGetChatsQuery();
+  const loadedChats = useMemo(() => {
+    if (!chats?.length) {
+      return {} as Record<number, IChat>;
+    }
+
+    return chats.reduce(
+      (acc, chat) => {
+        acc[chat.id] = chat;
+
+        return acc;
+      },
+      {} as Record<number, IChat>,
+    );
+  }, [chats]);
 
   const [createChat] = useCreateChatMutation();
 
@@ -48,37 +61,22 @@ export default function ChatsHistory({}: Props) {
   };
 
   useEffect(() => {
-    if (!chats?.length) {
+    if (!router.query.ci) {
       return;
     }
 
-    const normalizedChats = chats.reduce(
-      (acc, chat) => {
-        acc[chat.id] = chat;
+    const chatId = Number(router.query.ci);
 
-        return acc;
-      },
-      {} as Record<number, IChat>,
-    );
-
-    dispatch(setLoadedChats(normalizedChats));
-  }, [chats]);
-
-  useEffect(() => {
-    if (router.query.ci) {
-      const chatId = Number(router.query.ci);
-
-      if (loadedChats[chatId]) {
-        handleClickChat(loadedChats[chatId]);
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: undefined,
-          },
-          undefined,
-          { scroll: false, shallow: true },
-        );
-      }
+    if (loadedChats[chatId]) {
+      handleClickChat(loadedChats[chatId]);
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: undefined,
+        },
+        undefined,
+        { scroll: false, shallow: true },
+      );
     }
   }, [router, loadedChats]);
 

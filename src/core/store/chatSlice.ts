@@ -21,7 +21,6 @@ export interface ExecutionsProps {
   selectedTemplate?: Templates;
   selectedChatOption?: ChatOption;
   selectedChat?: IChat;
-  loadedChats: Record<number, IChat>;
   chatMode: ChatMode;
   initialChat: boolean;
   parameterSelected: string | null;
@@ -41,7 +40,6 @@ const initialState: ExecutionsProps = {
   selectedTemplate: undefined,
   selectedChatOption: Storage.get("chatOption"),
   selectedChat: undefined,
-  loadedChats: {},
   chatMode: "automation",
   initialChat: true,
   parameterSelected: null,
@@ -106,9 +104,6 @@ export const chatSlice = createSlice({
     setCurrentExecutionDetails: (state, action) => {
       state.currentExecutionDetails = action.payload;
     },
-    setLoadedChats: (state, action: PayloadAction<Record<number, IChat>>) => {
-      state.loadedChats = action.payload;
-    },
   },
 });
 
@@ -131,7 +126,6 @@ export const {
   updateParameterSelection,
   clearParameterSelection,
   setCurrentExecutionDetails,
-  setLoadedChats,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
