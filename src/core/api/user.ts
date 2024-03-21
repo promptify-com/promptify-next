@@ -1,8 +1,9 @@
-import { User, UpdateUserData } from "./dto/user";
+import { User, UpdateUserData, UserProfile } from "./dto/user";
 import { baseApi } from "./api";
+import { Templates } from "./dto/templates";
 
 export const userApi = baseApi.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getCurrentUser: builder.query<User, any>({
         query: (token: string) => ({
@@ -13,22 +14,37 @@ export const userApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      updateUserProfile: builder.mutation<User, { data: UpdateUserData, token: string }>({
-        query: ({
-          data,
-          token,
-        }) => ({
+      updateUserProfile: builder.mutation<User, { data: UpdateUserData; token: string }>({
+        query: ({ data, token }) => ({
           url: "/api/me/",
           method: "put",
           headers: {
             Authorization: `Token ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          data
+          data,
+        }),
+      }),
+
+      getUserDetails: builder.query<UserProfile, any>({
+        query: (username: string) => ({
+          url: `/api/meta/users/${username}/`,
+          method: "get",
+        }),
+      }),
+      getUserTemplates: builder.query<Templates[], any>({
+        query: (username: string) => ({
+          url: `/api/meta/users/${username}/templates/`,
+          method: "get",
         }),
       }),
     };
   },
 });
 
-export const { useGetCurrentUserQuery, useUpdateUserProfileMutation } = userApi;
+export const {
+  useGetCurrentUserQuery,
+  useUpdateUserProfileMutation,
+  useGetUserDetailsQuery,
+  useGetUserTemplatesQuery,
+} = userApi;
