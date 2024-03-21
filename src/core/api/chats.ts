@@ -1,5 +1,14 @@
 import { baseApi } from "./api";
-import { IChat, IChatPartial, IMessagesList, ISaveChatInput } from "./dto/chats";
+import {
+  BatchingRequest,
+  IChat,
+  IChatPartial,
+  IMessagesList,
+  ISaveChatExecutions,
+  ISaveChatInput,
+  ISaveChatSuggestions,
+  ISaveChatTemplate,
+} from "./dto/chats";
 
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -84,7 +93,7 @@ export const chatsApi = baseApi.injectEndpoints({
           url: `/api/chat/chats/${id}/duplicate`,
           method: "post",
         }),
-        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        async onQueryStarted(_id, { dispatch, queryFulfilled }) {
           try {
             const newChat = await queryFulfilled;
             dispatch(
@@ -108,7 +117,7 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      saveChatSuggestions: builder.mutation<void, { chat: number; templates: number[] }>({
+      saveChatSuggestions: builder.mutation<void, ISaveChatSuggestions>({
         query: ({ chat, templates }) => ({
           url: "/api/chat/suggestions/",
           method: "POST",
@@ -118,18 +127,18 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      saveChatExecutions: builder.mutation<void, { chat: number; execution: number }>({
-        query: ({ chat, execution }) => ({
+      saveChatExecutions: builder.mutation<void, ISaveChatExecutions>({
+        query: ({ chat, execution, type }) => ({
           url: "/api/chat/executions/",
           method: "POST",
           data: {
             chat,
             execution,
+            type,
           },
         }),
       }),
-
-      saveChatTemplate: builder.mutation<void, { chat: number; text: string; template: number }>({
+      saveChatTemplate: builder.mutation<void, ISaveChatTemplate>({
         query: ({ chat, text, template }) => ({
           url: "/api/chat/templates/",
           method: "POST",
@@ -138,6 +147,13 @@ export const chatsApi = baseApi.injectEndpoints({
             text,
             template,
           },
+        }),
+      }),
+      batchingMessages: builder.mutation<void, BatchingRequest>({
+        query: data => ({
+          url: "/api/chat/chats/batching/",
+          method: "POST",
+          data: JSON.stringify(data),
         }),
       }),
       getChatMessages: builder.query<IMessagesList, { chat: number; cursor?: null | string }>({
@@ -161,5 +177,6 @@ export const {
   useSaveChatSuggestionsMutation,
   useSaveChatExecutionsMutation,
   useSaveChatTemplateMutation,
+  useBatchingMessagesMutation,
   useGetChatMessagesQuery,
 } = chatsApi;

@@ -14,19 +14,37 @@ export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
 
 type Sender = "system" | "user";
 
-export interface ISaveChatInput {
+interface ISaveChatMessage {
   chat: number;
+  message_type?: IMessageResult["message_type"];
+}
+
+export interface ISaveChatInput extends ISaveChatMessage {
   type: "text" | "question";
   text: string;
   sender: Sender;
 }
+export interface ISaveChatTemplate extends ISaveChatMessage {
+  text: string;
+  template: number;
+}
+export interface ISaveChatSuggestions extends ISaveChatMessage {
+  templates: number[];
+}
+export interface ISaveChatExecutions extends ISaveChatMessage {
+  execution: number;
+  type: "qa" | "form";
+}
+
+export type BatchingMessages = ISaveChatTemplate | ISaveChatExecutions | ISaveChatInput;
+export type BatchingRequest = Array<BatchingMessages>;
 
 export interface IMessageResult {
   id: number;
   updated_at: string;
   created_at: string;
   message_type: "message" | "suggestion" | "execution" | "template";
-  message_object: InputMessage | SuggestionsMessage | TemplatesExecutions | TemplateMessage;
+  message_object: InputMessage | SuggestionsMessage | ExecutionMessage | TemplateMessage;
 }
 
 export interface InputMessage {
@@ -46,14 +64,6 @@ export interface SuggestionsMessage {
   templates: Templates[];
 }
 
-// export interface ExecutionMessage {
-//   id: number;
-//   created_at: string;
-//   updated_at: string;
-//   sender: Sender;
-//   execution: TemplatesExecutions;
-// }
-
 export interface TemplateMessage {
   id: number;
   created_at: string;
@@ -61,6 +71,14 @@ export interface TemplateMessage {
   sender: Sender;
   text: string;
   template: Templates;
+}
+
+export interface ExecutionMessage {
+  created_at: string;
+  updated_at: string;
+  id: number;
+  execution: TemplatesExecutions;
+  type: "qa" | "form";
 }
 
 export interface IMessagesList {

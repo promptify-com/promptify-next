@@ -14,7 +14,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   message: IMessage;
-  onScrollToBottom: () => void;
+  onScrollToBottom: (force?: boolean) => void;
   onGenerate: () => void;
   onAbort: () => void;
 }
