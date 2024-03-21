@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import useCarousel from "@/hooks/useCarousel";
 import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
-import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import TemplatesMenuSection from "./TemplatesMenu";
 import { useState } from "react";

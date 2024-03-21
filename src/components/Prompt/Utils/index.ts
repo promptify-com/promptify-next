@@ -1,4 +1,4 @@
-import { EngineOutput } from "@/core/api/dto/templates";
+import type { EngineOutput } from "@/core/api/dto/templates";
 
 export const isImageOutput = (output: string, engineType: EngineOutput): boolean => {
   try {

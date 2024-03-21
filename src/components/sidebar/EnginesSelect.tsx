@@ -1,11 +1,10 @@
 import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
 import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useGetEnginesQuery } from "@/core/api/engines";
-import { Engine } from "@/core/api/dto/templates";
+import type { Engine } from "@/core/api/dto/templates";
 import Search from "@mui/icons-material/Search";
 import Image from "@/components/design-system/Image";
 import { useState } from "react";
@@ -58,7 +57,7 @@ interface Props {
 function EnginesSelect({ value, onSelect }: Props) {
   let { data: allEngines } = useGetEnginesQuery();
   const [search, setSearch] = useState("");
-  const deboundedSearch = useDebounce(search, 300);
+  const debouncedSearch = useDebounce(search, 300);
 
   const handleSelect = (engineName: string) => {
     onSelect(engines.find(eng => eng.name === engineName) ?? null);
@@ -66,7 +65,7 @@ function EnginesSelect({ value, onSelect }: Props) {
 
   if (!allEngines) return;
 
-  const engines = allEngines?.filter(engine => engine.name.toLowerCase().indexOf(deboundedSearch) > -1);
+  const engines = allEngines?.filter(engine => engine.name.toLowerCase().indexOf(debouncedSearch) > -1);
 
   const selectedEngine = value?.name ?? "";
 
