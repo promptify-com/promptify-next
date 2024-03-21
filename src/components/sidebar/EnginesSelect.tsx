@@ -9,6 +9,7 @@ import { Engine } from "@/core/api/dto/templates";
 import Search from "@mui/icons-material/Search";
 import Image from "@/components/design-system/Image";
 import { useState } from "react";
+import useDebounce from "@/hooks/useDebounce";
 
 interface SearchInputProps {
   onSearch(val: string): void;
@@ -33,6 +34,7 @@ const SearchInput = ({ onSearch }: SearchInputProps) => (
     <TextField
       placeholder="Search..."
       onChange={e => onSearch(e.target.value)}
+      onKeyDown={e => e.stopPropagation()}
       sx={{
         flex: 1,
         input: {
@@ -56,6 +58,7 @@ interface Props {
 function EnginesSelect({ value, onSelect }: Props) {
   let { data: allEngines } = useGetEnginesQuery();
   const [search, setSearch] = useState("");
+  const deboundedSearch = useDebounce(search, 300);
 
   const handleSelect = (engineName: string) => {
     onSelect(engines.find(eng => eng.name === engineName) ?? null);
@@ -63,7 +66,7 @@ function EnginesSelect({ value, onSelect }: Props) {
 
   if (!allEngines) return;
 
-  const engines = allEngines?.filter(engine => engine.name.toLowerCase().indexOf(search) > -1);
+  const engines = allEngines?.filter(engine => engine.name.toLowerCase().indexOf(deboundedSearch) > -1);
 
   const selectedEngine = value?.name ?? "";
 
@@ -71,6 +74,7 @@ function EnginesSelect({ value, onSelect }: Props) {
     <Select
       value={selectedEngine}
       onChange={e => handleSelect(e.target.value)}
+      onClose={_ => setSearch("")}
       displayEmpty
       sx={{
         width: "calc(100% - 16px)",

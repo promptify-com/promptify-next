@@ -88,7 +88,6 @@ function PromptsFilters() {
   }, []);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
-    console.log(selectedEngine);
     dispatch(setSelectedEngine(selectedEngine));
   };
 
