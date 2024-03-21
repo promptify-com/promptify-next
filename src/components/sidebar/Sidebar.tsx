@@ -36,7 +36,7 @@ function Sidebar() {
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "documents";
-  const isChatPage = pathname.split("/")[1] === "chats";
+  const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [

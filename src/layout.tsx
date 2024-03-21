@@ -14,7 +14,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "documents";
-  const isChatPage = pathname.split("/")[1] === "chats";
+  const isChatPage = pathname.split("/")[1] === "chat";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||

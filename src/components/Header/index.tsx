@@ -239,7 +239,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "documents";
-  const isChatPage = pathname.split("/")[1] === "chats";
+  const isChatPage = pathname.split("/")[1] === "chat";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
