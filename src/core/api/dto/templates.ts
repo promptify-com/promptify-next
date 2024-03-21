@@ -6,6 +6,7 @@ export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "
 
 export interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplatePartial;
+  engines: Engine[];
 }
 export interface SparksLayoutProps {
   execution: ExecutionWithTemplate;
@@ -231,6 +232,8 @@ export interface TemplateExecutionsDisplay {
   description: string;
   thumbnail: string;
   created_by: UserPartial;
+  prompts: Prompts[];
+  prompt_executions: PromptExecutions[];
   tags: Tag[];
   slug: string;
   executions: Execution[];
@@ -239,7 +242,7 @@ export interface TemplateExecutionsDisplay {
   executions_count: number;
   is_internal?: boolean;
 }
-export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
+
 export interface SparkExecution {
   id: number;
   title: string;

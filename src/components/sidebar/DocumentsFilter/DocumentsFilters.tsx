@@ -72,15 +72,15 @@ function DocumentsFilters() {
   const { engine, contentType } = useAppSelector(state => state.documents);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
-    console.log(selectedEngine);
     dispatch(setDocumentsEngine(selectedEngine));
   };
 
-  const handleEngineTypeSelect = (item: Item) => {
-    dispatch(setDocumentsContentType(item.name as EngineOutput));
-  };
-
   const isSelected = (item: Item) => item.name === contentType;
+
+  const handleEngineTypeSelect = (item: Item) => {
+    if (isSelected(item)) dispatch(setDocumentsContentType(null));
+    else dispatch(setDocumentsContentType(item.name as EngineOutput));
+  };
 
   return (
     <Stack

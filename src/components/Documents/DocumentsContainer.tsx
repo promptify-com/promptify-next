@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
-import { Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { Engine, Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
 import CardDocumentTemplatePlaceholder from "../placeholders/CardDocumentTemplatePlaceholder";
 import { useAppSelector } from "@/hooks/useStore";
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DocumentsContainer({ templates, isLoading }: Props) {
-  const { status, contentType } = useAppSelector(state => state.documents);
+  const { status, contentType, engine } = useAppSelector(state => state.documents);
 
   const allExecutions = useMemo(() => {
     const allExecutions: ExecutionWithTemplate[] = [];
@@ -22,9 +22,19 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
         thumbnail: template.thumbnail,
         slug: template.slug,
       };
+      const engines = Array.from(
+        template.prompts
+          .reduce((map: Map<string, Engine>, prompt) => {
+            map.set(prompt.engine.name, prompt.engine);
+            return map;
+          }, new Map())
+          .values(),
+      );
+
       const executionsWithTemplate = template.executions.map((execution: Execution) => ({
         ...execution,
         template: templateInfo,
+        engines,
       }));
       allExecutions.push(...executionsWithTemplate);
     });
@@ -36,16 +46,16 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
 
   const executions = useMemo(() => {
     return allExecutions.filter(exec => {
-      let selected = true;
+      const isDraft = status === "draft" && !exec.is_favorite;
+      const isSaved = status === "saved" && exec.is_favorite;
+      const statusMatch = !status || isDraft || isSaved;
 
-      if (status === "draft") selected = !exec.is_favorite;
-      else if (status === "saved") selected = exec.is_favorite;
+      const engineMatch = !engine || exec.engines.some(eng => eng.name === engine?.name);
+      const contentTypeMatch = !contentType || exec.engines.some(eng => eng.output_type === contentType.toUpperCase());
 
-      // selected = exec.engine.output_type === contentType;
-
-      return selected;
+      return statusMatch && engineMatch && contentTypeMatch;
     });
-  }, [allExecutions, status, contentType]);
+  }, [allExecutions, status, contentType, engine]);
 
   return (
     <Stack gap={3}>
@@ -77,13 +87,28 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
               mx: "8px",
             }}
           />
-        ) : (
+        ) : executions.length ? (
           executions.map(execution => (
             <CardDocument
               key={execution.id}
               execution={execution}
             />
           ))
+        ) : (
+          <Stack
+            alignItems={"center"}
+            justifyContent={"center"}
+            sx={{
+              mt: "120px",
+              width: "100%",
+              opacity: 0.7,
+              fontSize: 14,
+              fontWeight: 400,
+              color: "onSurface",
+            }}
+          >
+            No document found
+          </Stack>
         )}
       </Stack>
     </Stack>

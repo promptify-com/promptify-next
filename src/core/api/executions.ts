@@ -5,10 +5,7 @@ import type {
   TemplateExecutionsDisplay,
   Templates,
   TemplatesExecutions,
-  TemplatesExecutionsByMePaginationResponse,
 } from "./dto/templates";
-
-type TemplatesExecutionsByMeResponse = TemplatesExecutionsByMePaginationResponse | TemplateExecutionsDisplay[];
 
 // TODO: Optimistic updates for invalidatesTags: ["Executions"] very heavy request
 export const executionsApi = baseApi.injectEndpoints({
