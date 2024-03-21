@@ -112,6 +112,7 @@ export default function SparksContainer({ templates }: SparksContainerProps) {
       const executionsWithTemplate = template.executions.map((execution: Execution) => ({
         ...execution,
         template: templateInfo,
+        engines: [],
       }));
       allExecutions.push(...executionsWithTemplate);
     });

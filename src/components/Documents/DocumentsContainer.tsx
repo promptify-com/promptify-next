@@ -99,7 +99,7 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
             alignItems={"center"}
             justifyContent={"center"}
             sx={{
-              mt: "120px",
+              m: "80px 0",
               width: "100%",
               opacity: 0.7,
               fontSize: 14,
