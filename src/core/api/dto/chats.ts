@@ -14,12 +14,30 @@ export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
 
 type Sender = "system" | "user";
 
-export interface ISaveChatInput {
+interface ISaveChatMessage {
   chat: number;
+  message_type?: IMessageResult["message_type"];
+}
+
+export interface ISaveChatInput extends ISaveChatMessage {
   type: "text" | "question";
   text: string;
   sender: Sender;
 }
+export interface ISaveChatTemplate extends ISaveChatMessage {
+  text: string;
+  template: number;
+}
+export interface ISaveChatSuggestions extends ISaveChatMessage {
+  templates: number[];
+}
+export interface ISaveChatExecutions extends ISaveChatMessage {
+  execution: number;
+  type: "qa" | "form";
+}
+
+export type BatchingMessages = ISaveChatTemplate | ISaveChatExecutions | ISaveChatInput;
+export type BatchingRequest = Array<BatchingMessages>;
 
 export interface IMessageResult {
   id: number;
