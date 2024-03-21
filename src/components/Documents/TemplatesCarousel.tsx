@@ -1,11 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Menu, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import useCarousel from "@/hooks/useCarousel";
-import Link from "next/link";
 import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
+import TemplatesMenuSection from "./TemplatesMenu";
+import { useState } from "react";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -14,6 +15,7 @@ interface Props {
 
 export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const sortedTemplates = templates?.slice().sort((tempA, tempB) => tempB.executions.length - tempA.executions.length);
 
@@ -44,10 +46,9 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           sx={{ display: { xs: "none", md: "flex" } }}
         >
           <Button
-            LinkComponent={Link}
-            href="/explore"
+            onClick={e => setAnchorEl(e.currentTarget)}
             variant="outlined"
-            sx={{ color: "#67677C" }}
+            sx={{ color: "#67677C", visibility: isLoading ? "hidden" : "visible" }}
           >
             See all
           </Button>
@@ -78,6 +79,15 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           )}
         </Stack>
       </Stack>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        disableScrollLock
+      >
+        <TemplatesMenuSection templates={sortedTemplates || []} />
+      </Menu>
     </Stack>
   );
 }

@@ -3,20 +3,15 @@ import { CardMedia, ListItemButton, Typography, Chip, Grid, List, Divider, Box }
 import useTruncate from "@/hooks/useTruncate";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import Image from "../design-system/Image";
+import { useRouter } from "next/router";
 
 interface TemplatesMenuSectionProps {
   templates: TemplateExecutionsDisplay[];
-  selectedTemplate: TemplateExecutionsDisplay | null;
-  onTemplateSelect: (template: TemplateExecutionsDisplay) => void;
   onClose?: () => void;
 }
 
-const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({
-  templates,
-  selectedTemplate,
-  onTemplateSelect,
-  onClose,
-}) => {
+const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({ templates, onClose }) => {
+  const router = useRouter();
   const { truncate } = useTruncate();
 
   return (
@@ -60,12 +55,9 @@ const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({
           <ListItemButton
             sx={{ p: 0 }}
             key={template.id}
-            selected={selectedTemplate?.title === template.title}
             onClick={() => {
-              onTemplateSelect(template);
-              if (onClose) {
-                onClose();
-              }
+              router.push(`prompt/${template.slug}`);
+              onClose?.();
             }}
           >
             <Grid
