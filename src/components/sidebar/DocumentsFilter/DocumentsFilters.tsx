@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { setDocumentsContentType, setDocumentsEngine, setDocumentsStatus } from "@/core/store/documentsSlice";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
-import { contentTypeItems } from "../Constants";
+import { contentTypeItems } from "@/components/sidebar/Constants";
 
 function StatusFilter() {
   const dispatch = useAppDispatch();
@@ -72,6 +72,7 @@ function DocumentsFilters() {
   const { engine, contentType } = useAppSelector(state => state.documents);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
+    console.log(selectedEngine);
     dispatch(setDocumentsEngine(selectedEngine));
   };
 

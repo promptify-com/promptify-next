@@ -20,6 +20,9 @@ const SearchInput = ({ onSearch }: SearchInputProps) => (
     sx={{
       bgcolor: "surfaceContainerLowest",
       p: "12px 8px 12px 16px",
+      position: "sticky",
+      top: 0,
+      zIndex: 999,
     }}
   >
     <Search />
@@ -62,10 +65,13 @@ function EnginesSelect({ value, onSelect }: Props) {
 
   const engines = allEngines?.filter(engine => engine.name.toLowerCase().indexOf(search) > -1);
 
+  const selectedEngine = value?.name ?? "";
+
   return (
     <Select
-      value={value?.name}
+      value={selectedEngine}
       onChange={e => handleSelect(e.target.value)}
+      displayEmpty
       sx={{
         width: "calc(100% - 16px)",
         mx: "8px",
@@ -75,7 +81,10 @@ function EnginesSelect({ value, onSelect }: Props) {
           bgcolor: "surfaceContainerHighest",
         },
         ".MuiSelect-select": {
-          p: "16px 8px",
+          p: "16px",
+          display: "flex",
+          gap: 2,
+          mr: "32px",
         },
         input: {
           p: 0,
@@ -87,10 +96,18 @@ function EnginesSelect({ value, onSelect }: Props) {
       MenuProps={{
         disableScrollLock: true,
         sx: {
+          ".MuiPaper-root": {
+            borderRadius: "0 0 16px 16px",
+          },
           ".MuiList-root": {
             p: 0,
-            borderRadius: "0 0 16px 16px",
             bgcolor: "transparent",
+            height: 276,
+            overflow: "auto",
+            overscrollBehavior: "contain",
+            "&::-webkit-scrollbar": {
+              width: 0,
+            },
           },
           ".MuiMenuItem-root": {
             bgcolor: "surfaceContainerLowest",
@@ -105,37 +122,26 @@ function EnginesSelect({ value, onSelect }: Props) {
     >
       <SearchInput onSearch={val => setSearch(val)} />
       <Divider />
+      <MenuItem value="">All Engines</MenuItem>
       {engines.length ? (
-        <List
-          sx={{
-            height: 276,
-            overflow: "auto",
-            overscrollBehavior: "contain",
-            "&::-webkit-scrollbar": {
-              width: 0,
-            },
-          }}
-        >
-          <MenuItem value={""}>All Engines</MenuItem>
-          {engines.map(engine => (
-            <MenuItem
-              key={engine.id}
-              value={engine.name}
-            >
-              <Image
-                src={engine.icon}
-                alt={engine.name}
-                loading="lazy"
-                style={{
-                  width: "24px",
-                  height: "24px",
-                  borderRadius: "50%",
-                }}
-              />
-              {engine.name}
-            </MenuItem>
-          ))}
-        </List>
+        engines.map(engine => (
+          <MenuItem
+            key={engine.id}
+            value={engine.name}
+          >
+            <Image
+              src={engine.icon}
+              alt={engine.name}
+              loading="lazy"
+              style={{
+                width: "24px",
+                height: "24px",
+                borderRadius: "50%",
+              }}
+            />
+            {engine.name}
+          </MenuItem>
+        ))
       ) : (
         <Stack
           alignItems={"center"}

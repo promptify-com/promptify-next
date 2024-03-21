@@ -7,8 +7,8 @@ import DocumentsContainer from "@/components/Documents/DocumentsContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 
 export default function DocumentsPage() {
-  // const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
-  //   useGetTemplatesExecutionsByMeQuery(undefined);
+  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
+    useGetTemplatesExecutionsByMeQuery(undefined);
 
   return (
     <>
@@ -19,14 +19,14 @@ export default function DocumentsPage() {
             gap={3}
             p={"40px 72px"}
           >
-            {/* <TemplatesCarousel
+            <TemplatesCarousel
               templates={executedTemplates}
               isLoading={isExecutedTemplatesLoading}
             />
             <DocumentsContainer
               templates={executedTemplates}
               isLoading={isExecutedTemplatesLoading}
-            /> */}
+            />
           </Stack>
         </Protected>
       </Layout>

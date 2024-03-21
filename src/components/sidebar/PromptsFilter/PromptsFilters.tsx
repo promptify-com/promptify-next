@@ -18,9 +18,8 @@ import {
 import type { Engine, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import Box from "@mui/material/Box";
-import { contentTypeItems } from "../Constants";
-import EnginesSelect from "../EnginesSelect";
+import { contentTypeItems } from "@/components/sidebar/Constants";
+import EnginesSelect from "@/components/sidebar/EnginesSelect";
 
 function MyFavorites() {
   const dispatch = useAppDispatch();
@@ -89,6 +88,7 @@ function PromptsFilters() {
   }, []);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
+    console.log(selectedEngine);
     dispatch(setSelectedEngine(selectedEngine));
   };
 

@@ -235,11 +235,16 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const pathname = router.pathname;
   const { isMobile, clientLoaded } = useBrowser();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isChatPage = pathname.split("/")[1] === "chat";
+  const isDocumentsPage = pathname.split("/")[1] === "documents";
+  const isChatPage = pathname.split("/")[1] === "chats";
 
-  const sidebarExpanded = (isPromptsPage && isPromptsFiltersSticky) || (isChatPage && isChatHistorySticky);
+  const sidebarExpanded =
+    (isPromptsPage && isPromptsFiltersSticky) ||
+    (isChatPage && isChatHistorySticky) ||
+    (isDocumentsPage && isDocumentsFiltersSticky);
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 
   if (!clientLoaded) return <HeaderPlaceholder />;
