@@ -1,13 +1,18 @@
 import {
+  useBatchingMessagesMutation,
   useSaveChatExecutionsMutation,
   useSaveChatInputMutation,
   useSaveChatSuggestionsMutation,
   useSaveChatTemplateMutation,
 } from "@/core/api/chats";
-import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import type {
+  BatchingMessages,
   ExecutionMessage,
   IMessageResult,
+  ISaveChatExecutions,
+  ISaveChatInput,
+  ISaveChatTemplate,
   InputMessage,
   SuggestionsMessage,
   TemplateMessage,
@@ -20,6 +25,7 @@ const useSaveChatInteractions = () => {
   const [saveSuggestions] = useSaveChatSuggestionsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
+  const [saveBatchingMessages] = useBatchingMessagesMutation();
   const chatOption = useAppSelector(state => state.chat.selectedChatOption);
 
   const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
@@ -47,7 +53,7 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatExecutions = async (executionId: number, chatId: number) => {
+  const _saveChatExecutions = async (executionId: number, chatId: number) => {
     try {
       await saveExecutions({
         chat: chatId,
@@ -59,7 +65,7 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatTemplate = async (templateId?: number, text?: string, chatId?: number) => {
+  const _saveChatTemplate = async (templateId?: number, text?: string, chatId?: number) => {
     if (!templateId || !text || !chatId) {
       return;
     }
@@ -80,32 +86,46 @@ const useSaveChatInteractions = () => {
     executionId: number,
     templateId: number,
   ) => {
-    for (const message of queueSavedMessages) {
-      try {
+    saveBatchingMessages(
+      queueSavedMessages.map(message => {
+        let _message: BatchingMessages;
+
         switch (message.type) {
+          case "text":
           case "questionInput":
-            await saveTextAndQuestionMessage(message, chatId);
-            break;
-
           case "questionParam":
-            await saveTextAndQuestionMessage(message, chatId);
+          case "readyMessage":
+            _message = {
+              chat: chatId,
+              text: message.text,
+              type: message.type === "text" ? "text" : "question",
+              sender: message.fromUser ? "user" : "system",
+              message_type: "message",
+            } satisfies ISaveChatInput;
             break;
-
-          case "spark":
-            await saveChatExecutions(executionId, chatId);
-            break;
-
           case "template":
-            await saveChatTemplate(templateId, message.text, chatId);
+            _message = {
+              chat: chatId,
+              template: templateId,
+              text: message.text,
+              message_type: "template",
+            } satisfies ISaveChatTemplate;
             break;
-
-          default: // case "text"
-            await saveTextAndQuestionMessage(message, chatId);
+          case "spark":
+            _message = {
+              chat: chatId,
+              execution: executionId,
+              type: chatOption === "QA" ? "qa" : "form",
+              message_type: "execution",
+            } satisfies ISaveChatExecutions;
+            break;
+          default:
+            throw Error(`Provided type "${message.type}" is not supported!`);
         }
-      } catch (error) {
-        console.error(`Error processing message ${message.text}:`, error);
-      }
-    }
+
+        return _message;
+      }),
+    );
   };
 
   function mapApiMessageToIMessage(apiMessage: IMessageResult): IMessage {
