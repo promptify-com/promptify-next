@@ -1,28 +1,35 @@
-import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import { Category } from "@/core/api/dto/templates";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import { AxiosResponse } from "axios";
+
 import ClientOnly from "@/components/base/ClientOnly";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch } from "@/hooks/useStore";
 import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { userApi } from "@/core/api/user";
-import { AxiosResponse } from "axios";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
 import { updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
 import { client } from "@/common/axios";
-import { CategoriesSection } from "@/components/explorer/CategoriesSection";
+import CategoryCarousel from "@/components/common/CategoriesCarousel";
+import Learn from "@/components/Homepage/GuestUserLayout/Learn";
+import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
+import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
+import type { Category } from "@/core/api/dto/templates";
+import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import { TemplatesSection } from "../explorer/TemplatesSection";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
   const path = getPathURL();
   const dispatch = useAppDispatch();
-  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const router = useRouter();
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
+
   const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } =
     useGetLatestExecutedTemplatesQuery(undefined);
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined);
@@ -75,44 +82,31 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         display={"flex"}
         gap={"56px"}
       >
-        <Grid
-          sx={{
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Poppins",
-              fontStyle: "normal",
-              fontWeight: 500,
-              fontSize: { xs: "30px", sm: "48px" },
-              lineHeight: { xs: "30px", md: "56px" },
-              color: "#1D2028",
-              marginLeft: { xs: "0px", sm: "0px" },
-            }}
-          >
-            Welcome, {currentUser?.username}
-          </Typography>
-        </Grid>
+        <Stack p={"8px 16px"}>
+          <SuggestionsSection
+            templates={myLatestExecutions!}
+            isLoading={isMyLatestExecutionsLoading}
+          />
+        </Stack>
 
-        <TemplatesSection
-          templateLoading={isMyLatestExecutionsLoading}
-          templates={myLatestExecutions}
-          title="Your Latest Templates:"
-          type="myLatestExecutions"
-        />
-        <TemplatesSection
-          templateLoading={isSuggestedTemplateLoading}
-          templates={suggestedTemplates}
-          title=" You may like these prompt templates:"
-          type="suggestedTemplates"
-        />
-        <CategoriesSection
+        <Stack p={"8px 16px"}>
+          <TemplatesSection
+            templateLoading={isSuggestedTemplateLoading}
+            templates={suggestedTemplates}
+            title=" You may like these prompt templates:"
+            type="popularTemplates"
+          />
+        </Stack>
+
+        <CategoryCarousel
           categories={categories}
-          isLoading={false}
-          displayTitle
+          userScrolled={false}
+          onClick={() => router.push("/explore")}
+          gap={1}
+          explore
         />
+        <Learn />
+        <Testimonials />
       </Grid>
     </ClientOnly>
   );
