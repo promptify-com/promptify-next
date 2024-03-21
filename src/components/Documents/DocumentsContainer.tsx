@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
 import { Engine, Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
-import CardDocumentTemplatePlaceholder from "../placeholders/CardDocumentTemplatePlaceholder";
+import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
@@ -31,11 +31,15 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
           .values(),
       );
 
-      const executionsWithTemplate = template.executions.map((execution: Execution) => ({
-        ...execution,
-        template: templateInfo,
-        engines,
-      }));
+      const executionsWithTemplate = template.executions.map((execution: Execution) => {
+        const output = execution.prompt_executions?.map(promptExec => promptExec.output).join() || "";
+        return {
+          ...execution,
+          template: templateInfo,
+          engines,
+          output,
+        };
+      });
       allExecutions.push(...executionsWithTemplate);
     });
 

@@ -120,10 +120,7 @@ export default function CardDocument({ execution }: Props) {
             fontWeight={300}
             color={"onSurface"}
           >
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iusto iste exercitationem impedit, fugiat atque at
-            blanditiis mollitia placeat eius expedita rem consequatur officiis itaque. Ducimus odit culpa porro vero,
-            error excepturi dolores est aliquam sapiente minus voluptatibus natus dolorem amet eos! Id nulla, nesciunt
-            consequatur adipisci deleniti numquam neque quasi.
+            {execution.output}
           </Typography>
         </Stack>
       </Box>

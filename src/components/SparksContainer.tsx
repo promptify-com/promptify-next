@@ -113,6 +113,7 @@ export default function SparksContainer({ templates }: SparksContainerProps) {
         ...execution,
         template: templateInfo,
         engines: [],
+        output: "",
       }));
       allExecutions.push(...executionsWithTemplate);
     });
