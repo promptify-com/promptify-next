@@ -7,7 +7,7 @@ import SearchField from "@/components/common/forms/SearchField";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
-import { setInitialChat, setLoadedChats, setSelectedChat } from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
