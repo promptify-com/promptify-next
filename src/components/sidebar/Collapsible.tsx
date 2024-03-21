@@ -5,10 +5,7 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import Checkbox from "@mui/material/Checkbox";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import CircleIcon from "@mui/icons-material/Circle";
-import { Engine, Tag } from "@/core/api/dto/templates";
+
 export interface Item {
   name: string;
   id: number;

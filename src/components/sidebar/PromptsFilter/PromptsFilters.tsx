@@ -63,7 +63,6 @@ function MyFavorites() {
 function PromptsFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { data: engines } = useGetEnginesQuery();
   const { tag, engine, engineType } = useAppSelector(state => state.filters);
   const isValidUser = useAppSelector(isValidUserFn);
 
@@ -115,7 +114,7 @@ function PromptsFilters() {
         return item.id === engine?.id;
       case "tag":
         return tag.some(tagItem => tagItem.id === item.id);
-      case "engineType":
+      case "EngineType":
         return item.name === engineType;
       default:
         return false;
