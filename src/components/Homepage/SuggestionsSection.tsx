@@ -46,7 +46,7 @@ function SuggestionsSection({ templates, isLoading }: Props) {
       {isLoading ? (
         <Stack
           direction={"row"}
-          gap={2}
+          gap={1}
           alignItems={"center"}
           flexWrap={"wrap"}
           justifyContent={"space-between"}
