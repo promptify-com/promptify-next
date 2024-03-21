@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import CloudOutlined from "@mui/icons-material/CloudOutlined";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
@@ -31,6 +31,15 @@ export default function CardDocument({ execution }: Props) {
   const [exportPopup, setExportPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
   const [isFavorite, setIsFavorite] = useState(execution.is_favorite);
+  const [content, setContent] = useState(execution.output);
+
+  useEffect(() => {
+    if (execution.output) {
+      import("@/common/helpers/htmlHelper").then(({ markdownToHTML, sanitizeHTML }) => {
+        markdownToHTML(execution.output).then(res => setContent(sanitizeHTML(res)));
+      });
+    }
+  }, [execution.output]);
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -115,13 +124,42 @@ export default function CardDocument({ execution }: Props) {
           >
             {execution.title}
           </Typography>
-          <Typography
-            fontSize={10}
-            fontWeight={300}
-            color={"onSurface"}
-          >
-            {execution.output}
-          </Typography>
+          <Box
+            sx={{
+              fontSize: 10,
+              fontWeight: 30,
+              lineHeight: "14px",
+              color: "onSurface",
+              wordWrap: "break-word",
+              pre: {
+                m: "10px 0",
+                borderRadius: "8px",
+                overflow: "hidden",
+                code: {
+                  borderRadius: 0,
+                  m: 0,
+                },
+              },
+              code: {
+                display: "block",
+                bgcolor: "#282a35",
+                color: "common.white",
+                borderRadius: "8px",
+                p: "16px 24px",
+                mb: "10px",
+                overflow: "auto",
+              },
+              ".language-label": {
+                p: "8px 24px",
+                bgcolor: "#4d5562",
+                color: "#ffffff",
+                fontSize: 8,
+              },
+            }}
+            dangerouslySetInnerHTML={{
+              __html: content,
+            }}
+          />
         </Stack>
       </Box>
       <Box p={"8px"}>
