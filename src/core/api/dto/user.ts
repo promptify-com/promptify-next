@@ -1,4 +1,4 @@
-import { IInterest, IEditProfile } from "@/common/types";
+import type { IInterest, IEditProfile } from "@/common/types";
 
 export interface User {
   id: number;
@@ -17,19 +17,6 @@ export interface User {
   favorite_collection_id: number;
   is_admin: boolean;
 }
-
-// first_name
-// :
-// "mohamedd"
-// id
-// :
-// 48
-// last_name
-// :
-// "charafii"
-// username
-// :
-// "nannuflay"
 
 export interface UserProfile {
   id: number;

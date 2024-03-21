@@ -1,6 +1,6 @@
-import { User, UpdateUserData, UserProfile } from "./dto/user";
-import { baseApi } from "./api";
-import { Templates } from "./dto/templates";
+import { baseApi } from "@/core/api/api";
+import type { User, UpdateUserData, UserProfile } from "@/core/api/dto/user";
+import type { Templates } from "@/core/api/dto/templates";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: builder => {
