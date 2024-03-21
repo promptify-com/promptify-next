@@ -6,7 +6,6 @@ import { AxiosResponse } from "axios";
 
 import ClientOnly from "@/components/base/ClientOnly";
 import { useAppDispatch } from "@/hooks/useStore";
-import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { userApi } from "@/core/api/user";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
@@ -30,8 +29,6 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
   const router = useRouter();
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
 
-  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } =
-    useGetLatestExecutedTemplatesQuery(undefined);
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined);
 
   // TODO: move authentication logic to signin page instead
@@ -83,17 +80,14 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         gap={"56px"}
       >
         <Stack p={"8px 16px"}>
-          <SuggestionsSection
-            templates={myLatestExecutions!}
-            isLoading={isMyLatestExecutionsLoading}
-          />
+          <SuggestionsSection />
         </Stack>
 
         <Stack p={"8px 16px"}>
           <TemplatesSection
             templateLoading={isSuggestedTemplateLoading}
             templates={suggestedTemplates}
-            title=" You may like these prompt templates:"
+            title=" You may like this prompts:"
             type="popularTemplates"
           />
         </Stack>
@@ -101,9 +95,8 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         <CategoryCarousel
           categories={categories}
           userScrolled={false}
-          onClick={() => router.push("/explore")}
+          href="/explore"
           gap={1}
-          explore
         />
         <Learn />
         <Testimonials />

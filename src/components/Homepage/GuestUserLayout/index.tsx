@@ -46,7 +46,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       <Landing />
       <CategoryCarousel
         categories={_categories}
-        onClick={() => router.push("/explore")}
+        href="/explore"
         autoPlay
       />
       <Services />

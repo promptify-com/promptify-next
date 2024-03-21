@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -6,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 
 function AdsBox() {
+  const router = useRouter();
   return (
     <Box
       sx={{
@@ -45,6 +47,7 @@ function AdsBox() {
         </Typography>
         <Button
           variant="contained"
+          onClick={() => router.push("/automation")}
           sx={{
             bgcolor: "inverseSurface",
             borderColor: "inverseSurface",
@@ -66,7 +69,7 @@ function AdsBox() {
         src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.png")}
         alt={"Promptify"}
         fill
-        priority
+        priority={false}
       />
     </Box>
   );

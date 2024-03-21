@@ -1,35 +1,31 @@
+import Link from "next/link";
 import { ReactNode } from "react";
 import ArrowForward from "@mui/icons-material/ArrowForward";
-import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Image from "../design-system/Image";
+import Image from "@/components/design-system/Image";
 
 interface Props {
   title: string;
   avatar: ReactNode;
   description: string;
   actionLabel: string;
-  onClick: () => void;
+  href: string;
 }
 
 interface AvatarProps {
-  variant: "chat" | "execution" | "profile";
+  variant: "chat" | "last_chat_entry" | "profile";
   src?: string;
+  children?: ReactNode;
 }
 
-interface AvatarProps {
-  variant: "chat" | "execution" | "profile";
-  src?: string;
-}
-
-export const Avatar = ({ variant, src }: AvatarProps) => {
+export const Avatar = ({ variant, src, children }: AvatarProps) => {
   const isChat = variant === "chat";
   const isProfile = variant === "profile";
-  const isExecution = variant === "execution";
+  const isChatEntry = variant === "last_chat_entry";
   return (
     <>
       {(isChat || isProfile) && (
@@ -42,12 +38,11 @@ export const Avatar = ({ variant, src }: AvatarProps) => {
           borderRadius={"40px"}
           bgcolor={isChat ? "primary.main" : "pink"}
         >
-          {isChat && <ArrowForward sx={{ color: "onPrimary", fontSize: 32 }} />}
-          {isProfile && <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />}
+          {children}
         </Box>
       )}
 
-      {isExecution && (
+      {isChatEntry && (
         <Box
           sx={{
             zIndex: 0,
@@ -75,13 +70,13 @@ export const Avatar = ({ variant, src }: AvatarProps) => {
   );
 };
 
-const SuggestionCard = ({ title, description, avatar, actionLabel, onClick }: Props) => {
+const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props) => {
   return (
     <Stack
       border={"1px solid"}
       borderColor={"surface.3"}
       borderRadius={"16px"}
-      width={"100%"}
+      width={{ xs: "50%", md: "25%", lg: "100%" }}
     >
       <Stack
         direction={"row"}
@@ -142,17 +137,18 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, onClick }: Pr
           >
             {actionLabel}
           </Typography>
-          <IconButton
-            onClick={onClick}
-            sx={{
-              border: "none",
-              ":hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-          >
-            <ArrowForward />
-          </IconButton>
+          <Link href={href}>
+            <IconButton
+              sx={{
+                border: "none",
+                ":hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <ArrowForward />
+            </IconButton>
+          </Link>
         </Stack>
       </Stack>
     </Stack>

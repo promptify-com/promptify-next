@@ -1,27 +1,28 @@
+import Link from "next/link";
 import { useRef } from "react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import useCarousel from "@/hooks/useCarousel";
-import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import Avatar from "@mui/material/Avatar";
-import { CategoryCard } from "@/components/common/cards/CardCategory";
-import type { Category } from "@/core/api/dto/templates";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import Link from "next/link";
-import { useAppSelector } from "@/hooks/useStore";
-import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
-import { theme } from "@/theme";
 import Slide from "@mui/material/Slide";
+import Avatar from "@mui/material/Avatar";
+
+import { theme } from "@/theme";
+import useCarousel from "@/hooks/useCarousel";
+import { useAppSelector } from "@/hooks/useStore";
+import { CategoryCard } from "@/components/common/cards/CardCategory";
+import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
+import CarouselButtons from "@/components/common/buttons/CarouselButtons";
+import type { Category } from "@/core/api/dto/templates";
 
 interface CategoryCarouselProps {
   categories: Category[];
-  onClick: () => void;
+  onClick?: () => void;
   userScrolled?: boolean;
   autoPlay?: boolean;
   gap?: number;
   explore?: boolean;
+  href?: string;
 }
 
 function CategoryCarousel({
@@ -31,6 +32,7 @@ function CategoryCarousel({
   autoPlay = false,
   gap = 5,
   explore,
+  href,
 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
   const {
@@ -76,13 +78,25 @@ function CategoryCarousel({
           gap={1}
           sx={{ display: { xs: "none", md: "flex" } }}
         >
-          <Button
-            variant="outlined"
-            sx={{ color: "#67677C" }}
-            onClick={onClick}
-          >
-            See all
-          </Button>
+          {typeof href === "string" ? (
+            <Link href={href}>
+              <Button
+                variant="outlined"
+                sx={{ color: "#67677C" }}
+              >
+                See all
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              variant="outlined"
+              sx={{ color: "#67677C" }}
+              onClick={onClick}
+            >
+              See all
+            </Button>
+          )}
+
           <CarouselButtons
             scrollPrev={scrollPrev}
             scrollNext={scrollNext}
