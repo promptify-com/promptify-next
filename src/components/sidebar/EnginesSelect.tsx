@@ -16,7 +16,8 @@ interface SearchInputProps {
 const SearchInput = ({ onSearch }: SearchInputProps) => (
   <Stack
     direction={"row"}
-    gap={1}
+    alignItems={"center"}
+    gap={2}
     sx={{
       bgcolor: "surfaceContainerLowest",
       p: "12px 8px 12px 16px",
@@ -26,10 +27,6 @@ const SearchInput = ({ onSearch }: SearchInputProps) => (
     }}
   >
     <Search />
-    <Divider
-      orientation="vertical"
-      sx={{ bgcolor: "onSurface", height: "22px" }}
-    />
     <TextField
       placeholder="Search..."
       onChange={e => onSearch(e.target.value)}
