@@ -1,6 +1,6 @@
 import { baseApi } from "@/core/api/api";
 import type { User, UpdateUserData, UserProfile } from "@/core/api/dto/user";
-import type { Templates } from "@/core/api/dto/templates";
+import type { Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -32,9 +32,9 @@ export const userApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getUserTemplates: builder.query<{ results: Templates[]; count: number }, any>({
-        query: (username: string) => ({
-          url: `/api/meta/users/${username}/templates/?limit=10&offset=0`,
+      getUserTemplates: builder.query<TemplatesWithPagination, { username: string; limit: number; offset: number }>({
+        query: ({ username, offset, limit }) => ({
+          url: `/api/meta/users/${username}/templates/?limit=${limit}&offset=${offset}`,
           method: "get",
         }),
       }),
