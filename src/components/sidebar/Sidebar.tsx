@@ -35,7 +35,7 @@ function Sidebar() {
   const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isDocumentsPage = pathname.split("/")[1] === "documents";
+  const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
@@ -65,7 +65,7 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "My Works",
+      name: "Documents",
       href: isValidUser ? "/sparks" : "/signin",
       icon: <FolderSpecial />,
       active: pathname === "/sparks",
