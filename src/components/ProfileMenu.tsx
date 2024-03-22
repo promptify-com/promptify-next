@@ -26,8 +26,8 @@ export const ProfileMenu = () => {
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   const handleHeaderMenu = (el: MenuType) => {
+    router.push(`${el.href}`);
     setIsMenuShown(!isMenuShown);
-    router.push(el.href);
   };
 
   const handleLogout = async () => {
@@ -153,6 +153,9 @@ export const ProfileMenu = () => {
                           p: "16px 8px 16px 16px",
                           borderRadius: "16px",
                           gap: 1,
+                          ":hover": {
+                            bgcolor: "surfaceContainerHighest",
+                          },
                         }}
                       >
                         {item.icon}
@@ -175,6 +178,9 @@ export const ProfileMenu = () => {
                         p: "16px 8px 16px 16px",
                         borderRadius: "16px",
                         gap: 1,
+                        ":hover": {
+                          bgcolor: "surfaceContainerHighest",
+                        },
                       }}
                     >
                       <LogoutIcon />
