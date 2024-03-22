@@ -187,24 +187,12 @@ export default function CardDocument({ execution }: Props) {
           {formatDate(execution.created_at)}
         </Typography>
       </Box>
-      <Stack
-        className="delete-time-container"
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        gap={"2px"}
+      <Box
         sx={{
           position: "absolute",
           top: 16,
           left: 14,
           zIndex: 999,
-          p: "2px",
-          borderRadius: "99px",
-          overflow: "hidden",
-          fontSize: 12,
-          fontWeight: 400,
-          color: "secondary.light",
-          transition: "background-color .2s ease",
           svg: {
             p: "2px",
             bgcolor: "surfaceContainerLowest",
@@ -215,7 +203,22 @@ export default function CardDocument({ execution }: Props) {
         {isFavorite ? (
           <CloudDone color="primary" />
         ) : (
-          <>
+          <Stack
+            className="delete-time-container"
+            direction={"row"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={"2px"}
+            sx={{
+              p: "2px",
+              borderRadius: "99px",
+              overflow: "hidden",
+              fontSize: 12,
+              fontWeight: 400,
+              color: "secondary.light",
+              transition: "background-color .2s ease",
+            }}
+          >
             <ScheduleOutlined sx={{ color: "secondary.light" }} />
             <Box
               component={"span"}
@@ -226,9 +229,9 @@ export default function CardDocument({ execution }: Props) {
             >
               {autoDeleteDate}
             </Box>
-          </>
+          </Stack>
         )}
-      </Stack>
+      </Box>
       <IconButton
         onClick={e => {
           e.preventDefault();
