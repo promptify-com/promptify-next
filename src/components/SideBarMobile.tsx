@@ -39,7 +39,7 @@ import StickyNote2 from "@mui/icons-material/StickyNote2";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
-import Logout from "@mui/icons-material/Logout";
+import LogoutIcon from "@/assets/icons/LogoutIcon";
 
 type SidebarType = "navigation" | "profile";
 
@@ -481,7 +481,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   },
                 }}
               >
-                <Logout />
+                <LogoutIcon />
                 <Typography
                   sx={{
                     fontFamily: "Poppins",

@@ -9,12 +9,12 @@ import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
-import { DeploymentStatus } from "../types/deployments";
+import { DeploymentStatus } from "@/common/types/deployments";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Link } from "@/components/Prompt/Types";
-import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
-import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import AccountCircleIcon from "@/assets/icons/AccountCircleIcon";
+import AddCircleIcon from "@/assets/icons/AddCircleIcon";
 
 export interface MenuType {
   id: number;
@@ -29,7 +29,7 @@ export const BLOG_URL = "https://blog.promptify.com/";
 export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
-    icon: <AccountCircleOutlined />,
+    icon: <AccountCircleIcon />,
     href: "/profile",
     name: "My account",
     gap: true,
@@ -42,7 +42,7 @@ export const ProfileMenuItems: MenuType[] = [
   },
   {
     id: 3,
-    icon: <AddCircleOutline />,
+    icon: <AddCircleIcon />,
     href: "/chat",
     name: "Add new prompt",
   },

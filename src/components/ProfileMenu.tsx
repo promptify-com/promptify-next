@@ -14,10 +14,9 @@ import { MenuType, ProfileMenuItems } from "@/common/constants";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useRef, useState } from "react";
-import Image from "./design-system/Image";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
-import Logout from "@mui/icons-material/Logout";
-import { theme } from "../theme";
+import { theme } from "@/theme";
+import LogoutIcon from "@/assets/icons/LogoutIcon";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -178,7 +177,7 @@ export const ProfileMenu = () => {
                         gap: 1,
                       }}
                     >
-                      <Logout />
+                      <LogoutIcon />
                       <Typography
                         sx={{
                           fontSize: 14,
