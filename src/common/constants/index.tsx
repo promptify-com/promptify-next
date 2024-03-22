@@ -41,7 +41,7 @@ export const ProfileMenuItems: MenuType[] = [
   {
     id: 3,
     icon: <AddCircleIcon />,
-    href: "/chat",
+    href: "/prompt-builder/create",
     name: "Add new prompt",
   },
 ];
