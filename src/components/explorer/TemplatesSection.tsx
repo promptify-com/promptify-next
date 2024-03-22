@@ -1,16 +1,24 @@
-import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { useState, forwardRef } from "react";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import FilterList from "@mui/icons-material/FilterList";
+import Close from "@mui/icons-material/Close";
+
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import CardTemplateLast from "@/components/common/cards/CardTemplateLast";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
-import { TemplatesFilter } from "./TemplatesFilter";
-import { Close, FilterList } from "@mui/icons-material";
-import { useState, forwardRef } from "react";
+import { TemplatesFilter } from "@/components/explorer/TemplatesFilter";
 import { useAppSelector } from "@/hooks/useStore";
 import ExploreCardTemplate from "@/components/common/cards/ExploreCardTemplate";
+import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
+import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import { useRouter } from "next/router";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -97,11 +105,13 @@ function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">
 }
 
 function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "templates" | "bgColor">) {
+  const router = useRouter();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
 
   if (!templates?.length) {
     return null;
   }
+  const isHomePage = router.pathname === "/";
 
   return (
     <Grid
@@ -113,13 +123,28 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
         WebkitOverflowScrolling: { xs: "touch", md: "initial" },
       }}
     >
+      {isHomePage && (
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={isPromptsFiltersSticky ? 10 : 8}
+          lg={6}
+          xl={4}
+          mb={{ xs: 2, md: 0 }}
+        >
+          <AdsBox />
+        </Grid>
+      )}
+
       {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
         <Grid
           item
           xs={12}
-          sm={6}
-          md={isPromptsFiltersSticky ? 5 : 4}
-          lg={3}
+          sm={4}
+          md={isPromptsFiltersSticky ? 4 : 3}
+          lg={isPromptsFiltersSticky ? 4 : 3}
+          xl={3}
           key={`${template.id}_${index}`}
         >
           <ExploreCardTemplate

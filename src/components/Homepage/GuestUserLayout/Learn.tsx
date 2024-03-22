@@ -1,10 +1,12 @@
+import Link from "next/link";
 import Box from "@mui/material/Box";
 import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Link from "next/link";
-import BlogPostCard from "@/components/Homepage/BlogPostCard";
+import Grid from "@mui/material/Grid";
 import Support from "@mui/icons-material/Support";
+
+import BlogPostCard from "@/components/Homepage/BlogPostCard";
 import { RaisedHand } from "@/assets/icons/RaisedHand";
 import { BlogPosts } from "@/components/Homepage/Constants";
 import { BLOG_URL } from "@/common/constants";
@@ -54,6 +56,7 @@ const LinkCard = ({ link }: { link: ILink }) => (
         fontSize={14}
         fontWeight={400}
         color={"#000000"}
+        minHeight={"50px"}
       >
         {link.description}
       </Typography>
@@ -61,7 +64,7 @@ const LinkCard = ({ link }: { link: ILink }) => (
   </Link>
 );
 
-const Links: ILink[] = [
+const links: ILink[] = [
   {
     icon: <Support />,
     title: "Help Center",
@@ -80,12 +83,9 @@ function Learn() {
   return (
     <Stack
       py={{ xs: "30px", md: "48px" }}
-      gap={4}
+      gap={"32px"}
     >
-      <Stack
-        gap={1}
-        px={"16px"}
-      >
+      <Stack gap={1}>
         <Typography
           fontSize={{ xs: 28, md: 32 }}
           fontWeight={400}
@@ -105,40 +105,72 @@ function Learn() {
         direction={{ md: "row" }}
         gap={{ xs: 2, md: 0 }}
       >
-        <Box
-          px={"16px"}
-          flex={1}
-        >
-          <BlogPostCard post={BlogPosts[0]} />
-        </Box>
-        <Stack
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          gap={1}
-          px={"16px"}
-          flex={1}
-        >
-          <Stack
-            direction={{ md: "row" }}
-            gap={{ xs: 4, md: 6 }}
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            md={6}
           >
-            <BlogPostCard
-              post={BlogPosts[1]}
-              min
-            />
-            <BlogPostCard
-              post={BlogPosts[2]}
-              min
-            />
-          </Stack>
-          <Stack
-            direction={{ md: "row" }}
-            gap={3}
+            <Box flex={1}>
+              <BlogPostCard post={BlogPosts[0]} />
+            </Box>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}
+            pb={2}
           >
-            <LinkCard link={Links[0]} />
-            <LinkCard link={Links[1]} />
-          </Stack>
-        </Stack>
+            <Grid
+              container
+              gap={5}
+              flexWrap={{ md: "nowrap" }}
+              justifyContent={"space-around"}
+              pl={{ md: "40px" }}
+            >
+              <Grid
+                item
+                xs={12}
+                md={6}
+              >
+                <BlogPostCard
+                  post={BlogPosts[1]}
+                  min
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                md={6}
+              >
+                <BlogPostCard
+                  post={BlogPosts[2]}
+                  min
+                />
+              </Grid>
+            </Grid>
+
+            <Grid
+              container
+              gap={5}
+              flexWrap={{ md: "nowrap" }}
+              justifyContent={"space-around"}
+              pl={{ md: "40px" }}
+            >
+              {links.map(link => (
+                <Grid
+                  key={link.title}
+                  item
+                  xs={12}
+                  md={6}
+                >
+                  <LinkCard link={link} />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
       </Stack>
     </Stack>
   );

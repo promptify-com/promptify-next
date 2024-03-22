@@ -1,31 +1,35 @@
-import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import { Category } from "@/core/api/dto/templates";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import Grid from "@mui/material/Grid";
-import ClientOnly from "@/components/base/ClientOnly";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
-import { userApi } from "@/core/api/user";
+import Stack from "@mui/material/Stack";
 import { AxiosResponse } from "axios";
+import Typography from "@mui/material/Typography";
+
+import ClientOnly from "@/components/base/ClientOnly";
+import { useAppDispatch } from "@/hooks/useStore";
+import { userApi } from "@/core/api/user";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
 import { updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
 import { client } from "@/common/axios";
-import { CategoriesSection } from "@/components/explorer/CategoriesSection";
+import CategoryCarousel from "@/components/common/CategoriesCarousel";
+import Learn from "@/components/Homepage/GuestUserLayout/Learn";
+import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
+import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
+import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
+import type { Category } from "@/core/api/dto/templates";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
   const path = getPathURL();
   const dispatch = useAppDispatch();
-  const currentUser = useAppSelector(state => state.user.currentUser);
+
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } =
-    useGetLatestExecutedTemplatesQuery(undefined);
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined);
+
+  const { data: suggestedTemplates } = useGetTemplatesSuggestedQuery(undefined);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -73,46 +77,73 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
       <Grid
         flexDirection="column"
         display={"flex"}
-        gap={"56px"}
+        gap={"80px"}
+        mx={{ md: "50px" }}
       >
-        <Grid
-          sx={{
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Poppins",
-              fontStyle: "normal",
-              fontWeight: 500,
-              fontSize: { xs: "30px", sm: "48px" },
-              lineHeight: { xs: "30px", md: "56px" },
-              color: "#1D2028",
-              marginLeft: { xs: "0px", sm: "0px" },
-            }}
-          >
-            Welcome, {currentUser?.username}
-          </Typography>
-        </Grid>
+        <Stack>
+          <SuggestionsSection />
+        </Stack>
 
-        <TemplatesSection
-          templateLoading={isMyLatestExecutionsLoading}
-          templates={myLatestExecutions}
-          title="Your Latest Templates:"
-          type="myLatestExecutions"
-        />
-        <TemplatesSection
-          templateLoading={isSuggestedTemplateLoading}
-          templates={suggestedTemplates}
-          title=" You may like these prompt templates:"
-          type="suggestedTemplates"
-        />
-        <CategoriesSection
-          categories={categories}
-          isLoading={false}
-          displayTitle
-        />
+        <Stack gap={"32px"}>
+          <Typography
+            fontSize={{ xs: 19, md: 32 }}
+            fontWeight={400}
+            lineHeight={"38.8px"}
+            letterSpacing={"0.17px"}
+            color={"onSurface"}
+          >
+            you may like these prompts:
+          </Typography>
+          <Grid
+            container
+            gap={{ xs: 1, sm: 0 }}
+          >
+            <Grid
+              item
+              ml={{ md: -2 }}
+              xs={12}
+              sm={12}
+              md={8}
+              lg={6}
+              xl={4}
+              mb={{ xs: 2, md: 0 }}
+            >
+              <AdsBox />
+            </Grid>
+            <>
+              {suggestedTemplates?.map(template => (
+                <Grid
+                  key={template.id}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  lg={3}
+                  xl={2}
+                >
+                  <CardTemplate
+                    template={template}
+                    vertical
+                  />
+                </Grid>
+              ))}
+            </>
+          </Grid>
+        </Stack>
+
+        <Stack mr={"16px"}>
+          <CategoryCarousel
+            categories={categories}
+            userScrolled={false}
+            href="/explore"
+            gap={1}
+            explore
+            autoPlay
+          />
+        </Stack>
+
+        <Learn />
+        <Testimonials />
       </Grid>
     </ClientOnly>
   );

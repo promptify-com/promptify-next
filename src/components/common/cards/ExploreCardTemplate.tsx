@@ -179,6 +179,7 @@ function CardTemplate({
                   fontWeight: 400,
                   lineHeight: "140%",
                   opacity: 0.75,
+                  minHeight: "40px",
                 }}
               >
                 {highlightSearchQuery(truncate(stripTags(template.description), { length: 55 }))}

@@ -83,6 +83,7 @@ export default function ExplorePage({ categories = [] }: Props) {
           display={"flex"}
           flexDirection={"column"}
           gap={"36px"}
+          mt={{ xs: 2, md: 0 }}
           sx={{
             padding: { xs: 0, md: "32px" },
           }}
@@ -129,13 +130,15 @@ export default function ExplorePage({ categories = [] }: Props) {
                 </Grid>
               </Stack>
             ) : (
-              <CategoryCarousel
-                categories={categories}
-                userScrolled={hasUserScrolled}
-                onClick={() => setSeeAll(true)}
-                gap={1}
-                explore
-              />
+              <Stack mx={"16px"}>
+                <CategoryCarousel
+                  categories={categories}
+                  userScrolled={hasUserScrolled}
+                  onClick={() => setSeeAll(true)}
+                  gap={1}
+                  explore
+                />
+              </Stack>
             ))}
 
           {!allFilterParamsNull && (

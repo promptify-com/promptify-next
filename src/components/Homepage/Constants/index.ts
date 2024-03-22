@@ -20,7 +20,7 @@ export const BlogPosts: IBlogPost[] = [
   {
     title: "Rise of the Robots: Get Your 'AI Content Generator Free' at Promptify.com",
     image:
-      "https://assets-global.website-files.com/6465f8bcee5ad19ad3069e03/64a2eec38bc0a8ba203d175a_promptify_term_of_use.png",
+      "https://uploads-ssl.webflow.com/6465f8bcee5ad19ad3069e03/64a2eec38bc0a8ba203d175a_promptify_term_of_use.png",
     content:
       'The article positions AI content generation as a "robot uprising" with Promptify.com leading the charge. It playfully blends apocalyptic visions and the real benefits of AI, drawing attention to its implications on labor and potential ethical quandaries. It encourages seeing AI as a beneficial tool, not a threat, with mindful use as a precaution against an undesired dystopian future.',
     link: "https://blog.promptify.com/post/rise-of-the-robots-get-your-ai-content-generator-free-at-promptify-com",

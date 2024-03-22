@@ -60,7 +60,6 @@ function Services() {
       gap={4}
       sx={{
         py: { xs: "30px", md: "48px" },
-        ml: { md: "16px" },
       }}
     >
       {ServicesList.map(service => (

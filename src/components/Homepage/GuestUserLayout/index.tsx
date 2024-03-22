@@ -42,12 +42,13 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   const showTestimonials = observers.learnObserver?.isIntersecting;
 
   return (
-    <Stack>
+    <Stack mx={{ md: "50px" }}>
       <Landing />
       <CategoryCarousel
         categories={_categories}
-        onClick={() => router.push("/explore")}
+        href="/explore"
         autoPlay
+        explore
       />
       <Services />
       <Stack
@@ -55,7 +56,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
         py={{ xs: "30px", md: "48px" }}
         gap={3}
       >
-        <Stack p={"8px 16px"}>
+        <Stack>
           <Typography
             fontSize={{ xs: 28, md: 32 }}
             fontWeight={400}
