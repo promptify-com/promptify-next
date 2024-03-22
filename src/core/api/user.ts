@@ -1,8 +1,9 @@
-import { User, UpdateUserData } from "./dto/user";
-import { baseApi } from "./api";
+import { baseApi } from "@/core/api/api";
+import type { User, UpdateUserData, UserProfile } from "@/core/api/dto/user";
+import type { Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 
 export const userApi = baseApi.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getCurrentUser: builder.query<User, any>({
         query: (token: string) => ({
@@ -13,22 +14,37 @@ export const userApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      updateUserProfile: builder.mutation<User, { data: UpdateUserData, token: string }>({
-        query: ({
-          data,
-          token,
-        }) => ({
+      updateUserProfile: builder.mutation<User, { data: UpdateUserData; token: string }>({
+        query: ({ data, token }) => ({
           url: "/api/me/",
           method: "put",
           headers: {
             Authorization: `Token ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          data
+          data,
+        }),
+      }),
+
+      getUserDetails: builder.query<UserProfile, any>({
+        query: (username: string) => ({
+          url: `/api/meta/users/${username}/`,
+          method: "get",
+        }),
+      }),
+      getUserTemplates: builder.query<TemplatesWithPagination, { username: string; limit: number; offset: number }>({
+        query: ({ username, offset, limit }) => ({
+          url: `/api/meta/users/${username}/templates/?limit=${limit}&offset=${offset}`,
+          method: "get",
         }),
       }),
     };
   },
 });
 
-export const { useGetCurrentUserQuery, useUpdateUserProfileMutation } = userApi;
+export const {
+  useGetCurrentUserQuery,
+  useUpdateUserProfileMutation,
+  useGetUserDetailsQuery,
+  useGetUserTemplatesQuery,
+} = userApi;

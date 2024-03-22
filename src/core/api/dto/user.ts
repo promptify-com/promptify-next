@@ -1,4 +1,4 @@
-import { IInterest, IEditProfile } from "@/common/types";
+import type { IInterest, IEditProfile } from "@/common/types";
 
 export interface User {
   id: number;
@@ -16,6 +16,15 @@ export interface User {
   created?: boolean;
   favorite_collection_id: number;
   is_admin: boolean;
+}
+
+export interface UserProfile {
+  id: number;
+  avatar: string;
+  bio: string;
+  first_name: string;
+  last_name: string;
+  username: string;
 }
 
 export type UserPartial = Pick<User, "id" | "username" | "first_name" | "last_name" | "avatar">;

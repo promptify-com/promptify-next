@@ -22,6 +22,7 @@ import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 import { setSelectedTemplate } from "@/core/store/chatSlice";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import useBrowser from "@/hooks/useBrowser";
+import Link from "next/link";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -135,13 +136,18 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
                 borderRadius: "50%",
               }}
             />
-            <Typography
-              fontSize={13}
-              fontWeight={400}
-              color={"onSurface"}
+            <Link
+              href={`/users/${template.created_by?.username}`}
+              style={{ textDecoration: "none" }}
             >
-              by {template.created_by?.first_name || template.created_by?.username}
-            </Typography>
+              <Typography
+                fontSize={13}
+                fontWeight={400}
+                color={"onSurface"}
+              >
+                by {template.created_by?.first_name || template.created_by?.username}
+              </Typography>
+            </Link>
           </Stack>
           <Stack
             direction={"row"}
