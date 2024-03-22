@@ -23,7 +23,7 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
     >
       <Card
         sx={{
-          minWidth: isMobile ? "auto" : "256px",
+          minWidth: isMobile ? "auto" : "246px",
           height: isMobile ? "calc(100% - 16px)" : "calc(100% - 24px)",
           borderRadius: "16px",
           cursor: "pointer",
@@ -67,7 +67,7 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
               sx={{
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 2,
+                WebkitLineClamp: 1,
                 overflow: "hidden",
               }}
             >

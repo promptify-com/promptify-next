@@ -91,7 +91,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                 xs={12}
                 sm={6}
                 md={isDocumentsFiltersSticky ? 8 : 6}
-                lg={isDocumentsFiltersSticky ? 5 : 3}
+                lg={isDocumentsFiltersSticky ? 4 : 3}
                 xl={2}
               >
                 <CardDocumentTemplate template={template} />

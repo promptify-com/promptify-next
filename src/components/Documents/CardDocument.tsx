@@ -1,4 +1,3 @@
-import useTimestampConverter from "@/hooks/useTimestampConverter";
 import Card from "@mui/material/Card";
 import { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Link from "next/link";
@@ -19,7 +18,7 @@ import CloudDone from "@mui/icons-material/CloudDone";
 import CloudOffOutlined from "@mui/icons-material/CloudOffOutlined";
 import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
-import { timeLeft } from "@/common/helpers/timeManipulation";
+import { formatDate, timeLeft } from "@/common/helpers/timeManipulation";
 
 const EXECUTION_LIFETIME_DAYS = 30;
 
@@ -28,7 +27,6 @@ interface Props {
 }
 
 export default function CardDocument({ execution }: Props) {
-  const { convertedTimestamp } = useTimestampConverter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [exportPopup, setExportPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
@@ -74,10 +72,9 @@ export default function CardDocument({ execution }: Props) {
       href={`/prompt/${execution.template.slug}?hash=${execution.hash}`}
       elevation={0}
       sx={{
+        display: "block",
         position: "relative",
         height: "315px",
-        width: "368px",
-        flexGrow: 1,
         maxWidth: "430px",
         p: "8px",
         borderRadius: "16px",
@@ -187,7 +184,7 @@ export default function CardDocument({ execution }: Props) {
           color={"secondary.light"}
           sx={oneLineStyle}
         >
-          {convertedTimestamp(execution.created_at)}
+          {formatDate(execution.created_at)}
         </Typography>
       </Box>
       <Stack

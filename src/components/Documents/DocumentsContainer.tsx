@@ -5,6 +5,7 @@ import type { Engine, Execution, ExecutionWithTemplate, TemplateExecutionsDispla
 import CardDocument from "./CardDocument";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useAppSelector } from "@/hooks/useStore";
+import Grid from "@mui/material/Grid";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function DocumentsContainer({ templates, isLoading }: Props) {
+  const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const { status, contentType, engine } = useAppSelector(state => state.documents);
 
   const allExecutions = useMemo(() => {
@@ -77,14 +79,13 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
           All documents
         </Typography>
       </Stack>
-      <Stack
-        direction={"row"}
-        flexWrap={"wrap"}
-        rowGap={3}
+      <Grid
+        container
+        rowGap={2}
       >
         {isLoading ? (
           <CardDocumentTemplatePlaceholder
-            count={5}
+            count={2}
             sx={{
               height: "315px",
               width: "368px",
@@ -93,10 +94,17 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
           />
         ) : executions.length ? (
           executions.map(execution => (
-            <CardDocument
+            <Grid
               key={execution.id}
-              execution={execution}
-            />
+              item
+              xs={12}
+              sm={6}
+              md={isDocumentsFiltersSticky ? 8 : 6}
+              lg={isDocumentsFiltersSticky ? 6 : 4}
+              xl={3}
+            >
+              <CardDocument execution={execution} />
+            </Grid>
           ))
         ) : (
           <Stack
@@ -114,7 +122,7 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
             No document found
           </Stack>
         )}
-      </Stack>
+      </Grid>
     </Stack>
   );
 }
