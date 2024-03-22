@@ -92,7 +92,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
             letterSpacing={"0.17px"}
             color={"onSurface"}
           >
-            You may like this prompts:
+            you may like these prompts:
           </Typography>
           <Grid
             container
@@ -115,7 +115,8 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
                 <Grid
                   key={template.id}
                   item
-                  sm={4}
+                  xs={12}
+                  sm={6}
                   md={4}
                   lg={3}
                   xl={2}

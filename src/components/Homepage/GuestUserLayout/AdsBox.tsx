@@ -24,8 +24,8 @@ function AdsBox() {
       <Stack
         direction={"column"}
         position={"absolute"}
-        top={"13%"}
-        left={"10%"}
+        top={"54px"}
+        left={"54px"}
         zIndex={4}
         gap={2}
       >

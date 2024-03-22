@@ -17,7 +17,7 @@ function SuggestionsSection() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(false);
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(true);
 
   return (
     <Stack
@@ -131,7 +131,6 @@ function SuggestionsSection() {
               />
             </Grid>
           </Grid>
-          {/* </Stack> */}
         </Stack>
       )}
     </Stack>
