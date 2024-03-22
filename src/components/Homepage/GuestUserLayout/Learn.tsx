@@ -85,10 +85,7 @@ function Learn() {
       py={{ xs: "30px", md: "48px" }}
       gap={4}
     >
-      <Stack
-        gap={1}
-        px={"16px"}
-      >
+      <Stack gap={1}>
         <Typography
           fontSize={{ xs: 28, md: 32 }}
           fontWeight={400}
@@ -114,10 +111,7 @@ function Learn() {
             xs={12}
             md={6}
           >
-            <Box
-              px={"16px"}
-              flex={1}
-            >
+            <Box flex={1}>
               <BlogPostCard post={BlogPosts[0]} />
             </Box>
           </Grid>
@@ -131,11 +125,14 @@ function Learn() {
             <Grid
               container
               gap={1}
+              flexWrap={{ md: "nowrap" }}
               justifyContent={"space-around"}
+              pl={{ md: "40px" }}
             >
               <Grid
                 item
-                xs={5}
+                xs={12}
+                md={6}
               >
                 <BlogPostCard
                   post={BlogPosts[1]}
@@ -144,7 +141,8 @@ function Learn() {
               </Grid>
               <Grid
                 item
-                xs={5}
+                xs={12}
+                md={6}
               >
                 <BlogPostCard
                   post={BlogPosts[2]}
@@ -156,13 +154,16 @@ function Learn() {
             <Grid
               container
               gap={1}
+              flexWrap={{ md: "nowrap" }}
               justifyContent={"space-around"}
+              pl={{ md: "40px" }}
             >
               {links.map(link => (
                 <Grid
                   key={link.title}
                   item
-                  xs={5}
+                  xs={12}
+                  md={6}
                 >
                   <LinkCard link={link} />
                 </Grid>

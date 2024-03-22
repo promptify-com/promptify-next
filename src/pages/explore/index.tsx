@@ -129,13 +129,15 @@ export default function ExplorePage({ categories = [] }: Props) {
                 </Grid>
               </Stack>
             ) : (
-              <CategoryCarousel
-                categories={categories}
-                userScrolled={hasUserScrolled}
-                onClick={() => setSeeAll(true)}
-                gap={1}
-                explore
-              />
+              <Stack mx={"16px"}>
+                <CategoryCarousel
+                  categories={categories}
+                  userScrolled={hasUserScrolled}
+                  onClick={() => setSeeAll(true)}
+                  gap={1}
+                  explore
+                />
+              </Stack>
             ))}
 
           {!allFilterParamsNull && (

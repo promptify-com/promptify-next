@@ -78,12 +78,13 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         flexDirection="column"
         display={"flex"}
         gap={"56px"}
+        mx={{ md: "50px" }}
       >
-        <Stack p={"8px 16px"}>
+        <Stack>
           <SuggestionsSection />
         </Stack>
 
-        <Stack p={"8px 16px"}>
+        <Stack>
           <Typography
             fontSize={{ xs: 19, md: 32 }}
             fontWeight={400}
@@ -99,7 +100,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           >
             <Grid
               item
-              ml={-2}
+              ml={{ md: -2 }}
               xs={12}
               sm={12}
               md={8}
@@ -127,20 +128,18 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
               ))}
             </>
           </Grid>
-          {/* <TemplatesSection
-            templateLoading={isSuggestedTemplateLoading}
-            templates={suggestedTemplates}
-            title=" You may like this prompts:"
-            type="popularTemplates"
-          /> */}
         </Stack>
 
-        <CategoryCarousel
-          categories={categories}
-          userScrolled={false}
-          href="/explore"
-          gap={1}
-        />
+        <Stack mr={"16px"}>
+          <CategoryCarousel
+            categories={categories}
+            userScrolled={false}
+            href="/explore"
+            gap={1}
+            explore
+          />
+        </Stack>
+
         <Learn />
         <Testimonials />
       </Grid>

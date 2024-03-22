@@ -40,7 +40,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
     }}
   >
     <Stack direction={{ md: "row" }}>
-      <CardContent sx={{ flex: 1, padding: "24px 32px", m: 0 }}>
+      <CardContent sx={{ flex: 1, padding: { xs: "24px 16px", md: "24px 32px" }, m: 0 }}>
         <Stack
           height={"100%"}
           justifyContent={"space-between"}
@@ -106,7 +106,6 @@ function Testimonials() {
         direction={{ md: "row" }}
         alignItems={{ md: "center" }}
         gap={1}
-        px={"16px"}
       >
         <Stack
           flex={1}
@@ -143,7 +142,6 @@ function Testimonials() {
         <Stack
           direction={"row"}
           gap={`${CARDS_GAP}px`}
-          px={"16px"}
         >
           {TestimonialExamples.map((testimonial, idx) => (
             <Box

@@ -56,8 +56,8 @@ function CategoryCarousel({
       <Stack
         direction={{ md: "row" }}
         alignItems={{ md: "center" }}
-        p={"8px 16px"}
         gap={1}
+        mb={2}
       >
         <Typography
           flex={1}
@@ -108,7 +108,6 @@ function CategoryCarousel({
       <Stack
         ref={carouselRef}
         overflow={"hidden"}
-        m={"8px 16px"}
       >
         <Stack
           ref={carouselContainerRef}

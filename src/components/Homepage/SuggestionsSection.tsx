@@ -22,7 +22,7 @@ function SuggestionsSection() {
   return (
     <Stack
       direction={"column"}
-      gap={3}
+      gap={6}
     >
       <Stack
         ref={carouselContainerRef}
@@ -75,7 +75,10 @@ function SuggestionsSection() {
             gap={4}
             flexWrap={"nowrap"}
           >
-            <Grid item>
+            <Grid
+              item
+              xs={12}
+            >
               <SuggestionCard
                 title="Chats"
                 description="Start a new chat"
@@ -93,6 +96,7 @@ function SuggestionsSection() {
                 <Grid
                   key={chat.id}
                   item
+                  xs={12}
                 >
                   <SuggestionCard
                     title="Chats"
@@ -112,6 +116,7 @@ function SuggestionsSection() {
             <Grid
               item
               mr={{ xs: 4 }}
+              xs={12}
             >
               <SuggestionCard
                 title="Profile"
