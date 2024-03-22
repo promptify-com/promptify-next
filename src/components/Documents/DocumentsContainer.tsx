@@ -24,22 +24,22 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
         thumbnail: template.thumbnail,
         slug: template.slug,
       };
-      const engines = Array.from(
-        template.prompts
-          .reduce((map: Map<string, Engine>, prompt) => {
-            map.set(prompt.engine.name, prompt.engine);
-            return map;
-          }, new Map())
-          .values(),
-      );
+      // const engines = Array.from(
+      //   template.prompts
+      //     .reduce((map: Map<string, Engine>, prompt) => {
+      //       map.set(prompt.engine.name, prompt.engine);
+      //       return map;
+      //     }, new Map())
+      //     .values(),
+      // );
 
       const executionsWithTemplate = template.executions.map((execution: Execution) => {
-        const output = execution.prompt_executions?.map(promptExec => promptExec.output).join() || "";
+        // const output = execution.prompt_executions?.map(promptExec => promptExec.output).join() || "";
         return {
           ...execution,
           template: templateInfo,
-          engines,
-          output,
+          // engines,
+          output: ".......",
         };
       });
       allExecutions.push(...executionsWithTemplate);
@@ -56,12 +56,12 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
       const isSaved = status === "saved" && exec.is_favorite;
       const statusMatch = !status || isDraft || isSaved;
 
-      const engineMatch = !engine || exec.engines.some(eng => eng.name === engine?.name);
-      const contentTypeMatch =
-        !contentTypes.length ||
-        exec.engines.some(eng => contentTypes.find(type => type.toUpperCase() === eng.output_type));
+      // const engineMatch = !engine || exec.engines.some(eng => eng.name === engine?.name);
+      // const contentTypeMatch =
+      //   !contentTypes.length ||
+      //   exec.engines.some(eng => contentTypes.find(type => type.toUpperCase() === eng.output_type));
 
-      return statusMatch && engineMatch && contentTypeMatch;
+      return statusMatch;
     });
   }, [allExecutions, status, contentTypes, engine]);
 

@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import CloudOutlined from "@mui/icons-material/CloudOutlined";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
@@ -33,13 +33,13 @@ export default function CardDocument({ execution }: Props) {
   const [isFavorite, setIsFavorite] = useState(execution.is_favorite);
   const [content, setContent] = useState(execution.output);
 
-  useEffect(() => {
-    if (execution.output) {
-      import("@/common/helpers/htmlHelper").then(({ markdownToHTML, sanitizeHTML }) => {
-        markdownToHTML(execution.output).then(res => setContent(sanitizeHTML(res)));
-      });
-    }
-  }, [execution.output]);
+  // useEffect(() => {
+  //   if (execution.output) {
+  //     import("@/common/helpers/htmlHelper").then(({ markdownToHTML, sanitizeHTML }) => {
+  //       markdownToHTML(execution.output).then(res => setContent(sanitizeHTML(res)));
+  //     });
+  //   }
+  // }, [execution.output]);
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
