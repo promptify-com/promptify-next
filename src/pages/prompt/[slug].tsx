@@ -1,15 +1,16 @@
 import { Layout } from "@/layout";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { stripTags } from "@/common/helpers";
 import { GetServerSideProps } from "next/types";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import TemplatePage from "@/components/Prompt";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import { Dialog, IconButton } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import IconButton from "@mui/material/IconButton";
+import Close from "@mui/icons-material/Close";
 import { useState } from "react";
 import { ExecutionCard } from "@/components/Prompt/VariantA/ExecutionCard";
-import Close from "@mui/icons-material/Close";
 
 interface TemplateProps {
   fetchedTemplate: Templates;
@@ -25,51 +26,53 @@ function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
 
   return (
     <Layout>
-      <Dialog
-        open={openExecution}
-        onClose={closeExecution}
-        disableScrollLock
-        sx={{
-          ".MuiPaper-root": {
-            height: "80svh",
-            width: "70svw",
-            maxWidth: "1184px",
-            position: "relative",
-            overscrollBehavior: "contain",
-            scrollBehavior: "smooth",
-            borderRadius: "16px",
-            "&::-webkit-scrollbar": {
-              width: "0px",
-            },
-          },
-        }}
-      >
-        <IconButton
-          aria-label="close"
-          onClick={closeExecution}
+      {hashedExecution && (
+        <Dialog
+          open={openExecution}
+          onClose={closeExecution}
+          disableScrollLock
           sx={{
-            position: "sticky",
-            top: "8px",
-            right: "20px",
-            ml: "auto",
-            zIndex: 999,
-            width: "fit-content",
-            color: "action.active",
-            border: "none",
-            ":hover": {
-              bgcolor: "action.hover",
+            ".MuiPaper-root": {
+              height: "90svh",
+              width: "90svw",
+              maxWidth: "1184px",
+              position: "relative",
+              overscrollBehavior: "contain",
+              scrollBehavior: "smooth",
+              borderRadius: "16px",
+              "&::-webkit-scrollbar": {
+                width: "0px",
+              },
             },
           }}
         >
-          <Close />
-        </IconButton>
-        <ExecutionCard
-          execution={hashedExecution}
-          promptsData={fetchedTemplate.prompts}
-          showPreview={false}
-          noRepeat
-        />
-      </Dialog>
+          <IconButton
+            aria-label="close"
+            onClick={closeExecution}
+            sx={{
+              position: "sticky",
+              top: "8px",
+              right: "20px",
+              ml: "auto",
+              zIndex: 999,
+              width: "fit-content",
+              color: "action.active",
+              border: "none",
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+          >
+            <Close />
+          </IconButton>
+          <ExecutionCard
+            execution={hashedExecution}
+            promptsData={fetchedTemplate.prompts}
+            showPreview={false}
+            noRepeat
+          />
+        </Dialog>
+      )}
       <TemplatePage template={fetchedTemplate} />
     </Layout>
   );
@@ -91,10 +94,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
       fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
       hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
     } else {
-      const [_templatesResponse] = await Promise.allSettled([getTemplateBySlug(params?.slug as string)]);
-      if (_templatesResponse.status === "fulfilled") {
-        fetchedTemplate = _templatesResponse.value;
-      }
+      fetchedTemplate = await getTemplateBySlug(params?.slug as string);
     }
 
     return {
@@ -114,6 +114,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
         title: SEO_TITLE,
         description: SEO_DESCRIPTION,
         fetchedTemplate: {} as Templates,
+        hashedExecution,
       },
     };
   }
