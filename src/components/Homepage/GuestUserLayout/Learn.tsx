@@ -124,7 +124,7 @@ function Learn() {
           >
             <Grid
               container
-              gap={1}
+              gap={5}
               flexWrap={{ md: "nowrap" }}
               justifyContent={"space-around"}
               pl={{ md: "40px" }}
@@ -153,7 +153,7 @@ function Learn() {
 
             <Grid
               container
-              gap={1}
+              gap={5}
               flexWrap={{ md: "nowrap" }}
               justifyContent={"space-around"}
               pl={{ md: "40px" }}
