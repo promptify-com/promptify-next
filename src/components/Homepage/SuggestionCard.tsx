@@ -76,7 +76,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
       border={"1px solid"}
       borderColor={"surface.3"}
       borderRadius={"16px"}
-      width={{ xs: "50%", md: "25%", lg: "100%" }}
+      width={"400px"}
     >
       <Stack
         direction={"row"}

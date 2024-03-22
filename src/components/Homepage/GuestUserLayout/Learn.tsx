@@ -147,7 +147,7 @@ function Learn() {
                 xs={5}
               >
                 <BlogPostCard
-                  post={BlogPosts[1]}
+                  post={BlogPosts[2]}
                   min
                 />
               </Grid>

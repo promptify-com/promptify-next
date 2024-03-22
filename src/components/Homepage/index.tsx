@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { AxiosResponse } from "axios";
+import Typography from "@mui/material/Typography";
 
 import ClientOnly from "@/components/base/ClientOnly";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -16,9 +16,10 @@ import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
-import type { Category } from "@/core/api/dto/templates";
 import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import { TemplatesSection } from "../explorer/TemplatesSection";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
+import type { Category } from "@/core/api/dto/templates";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -26,10 +27,9 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
   const path = getPathURL();
   const dispatch = useAppDispatch();
 
-  const router = useRouter();
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
 
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined);
+  const { data: suggestedTemplates } = useGetTemplatesSuggestedQuery(undefined);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -84,12 +84,55 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         </Stack>
 
         <Stack p={"8px 16px"}>
-          <TemplatesSection
+          <Typography
+            fontSize={{ xs: 19, md: 32 }}
+            fontWeight={400}
+            lineHeight={"38.8px"}
+            letterSpacing={"0.17px"}
+            color={"onSurface"}
+          >
+            You may like this prompts:
+          </Typography>
+          <Grid
+            container
+            gap={{ xs: 1, sm: 0 }}
+          >
+            <Grid
+              item
+              ml={-2}
+              xs={12}
+              sm={12}
+              md={8}
+              lg={6}
+              xl={4}
+              mb={{ xs: 2, md: 0 }}
+            >
+              <AdsBox />
+            </Grid>
+            <>
+              {suggestedTemplates?.map(template => (
+                <Grid
+                  key={template.id}
+                  item
+                  sm={4}
+                  md={4}
+                  lg={3}
+                  xl={2}
+                >
+                  <CardTemplate
+                    template={template}
+                    vertical
+                  />
+                </Grid>
+              ))}
+            </>
+          </Grid>
+          {/* <TemplatesSection
             templateLoading={isSuggestedTemplateLoading}
             templates={suggestedTemplates}
             title=" You may like this prompts:"
             type="popularTemplates"
-          />
+          /> */}
         </Stack>
 
         <CategoryCarousel

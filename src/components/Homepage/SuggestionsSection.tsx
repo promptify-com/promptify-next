@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import ArrowForward from "@mui/icons-material/ArrowForward";
 import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
+import AddCircleOutlineRounded from "@mui/icons-material/AddCircleOutlineRounded";
+import Grid from "@mui/material/Grid";
 
 import { useAppSelector } from "@/hooks/useStore";
 import { useGetChatsQuery } from "@/core/api/chats";
@@ -9,7 +11,6 @@ import useCarousel from "@/hooks/useCarousel";
 import SuggestionCard, { Avatar } from "@/components/Homepage/SuggestionCard";
 import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlaceholder";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import { useRef } from "react";
 
 function SuggestionsSection() {
   const { data: chats, isLoading } = useGetChatsQuery();
@@ -69,54 +70,63 @@ function SuggestionsSection() {
           ref={carouselRef}
           overflow={"hidden"}
         >
-          <Stack
-            ref={carouselContainerRef}
-            direction={"row"}
-            gap={1}
-            alignItems={"center"}
+          <Grid
+            container
+            gap={4}
+            flexWrap={"nowrap"}
           >
-            <SuggestionCard
-              title="Chats"
-              description="Start a new chat"
-              avatar={
-                <Avatar variant="chat">
-                  <ArrowForward sx={{ color: "onPrimary", fontSize: 32 }} />
-                </Avatar>
-              }
-              actionLabel="New chat"
-              href="/chat"
-            />
-
+            <Grid item>
+              <SuggestionCard
+                title="Chats"
+                description="Start a new chat"
+                avatar={
+                  <Avatar variant="chat">
+                    <AddCircleOutlineRounded sx={{ color: "onPrimary", fontSize: 32 }} />
+                  </Avatar>
+                }
+                actionLabel="New chat"
+                href="/chat"
+              />
+            </Grid>
             {chats?.slice(0, 2).map(chat => {
               return (
-                <SuggestionCard
+                <Grid
                   key={chat.id}
-                  title="Chats"
-                  description={chat.last_message!}
-                  actionLabel="Review"
-                  href={`/chat/?ci=${chat.id}`}
-                  avatar={
-                    <Avatar
-                      variant="last_chat_entry"
-                      src={chat.thumbnail}
-                    />
-                  }
-                />
+                  item
+                >
+                  <SuggestionCard
+                    title="Chats"
+                    description={chat.last_message!}
+                    actionLabel="Review"
+                    href={`/chat/?ci=${chat.id}`}
+                    avatar={
+                      <Avatar
+                        variant="last_chat_entry"
+                        src={chat.thumbnail}
+                      />
+                    }
+                  />
+                </Grid>
               );
             })}
-
-            <SuggestionCard
-              title="Profile"
-              description="Set up your public profile"
-              avatar={
-                <Avatar variant="profile">
-                  <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />
-                </Avatar>
-              }
-              actionLabel="User profile"
-              href="/profile"
-            />
-          </Stack>
+            <Grid
+              item
+              mr={{ xs: 4 }}
+            >
+              <SuggestionCard
+                title="Profile"
+                description="Set up your public profile"
+                avatar={
+                  <Avatar variant="profile">
+                    <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />
+                  </Avatar>
+                }
+                actionLabel="User profile"
+                href="/profile"
+              />
+            </Grid>
+          </Grid>
+          {/* </Stack> */}
         </Stack>
       )}
     </Stack>

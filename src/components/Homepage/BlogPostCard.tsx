@@ -95,7 +95,7 @@ function BlogPostCard({ post, min }: Props) {
                 overflow: "hidden",
               }}
             >
-              {truncate(content, { length: 160 })}
+              {truncate(min ? title : content, { length: 160 })}
             </Typography>
           </Stack>
         </CardContent>
