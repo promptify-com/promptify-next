@@ -6,7 +6,7 @@ export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "
 
 export interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplatePartial;
-  engines: Engine[];
+  // engines: Engine[];
   output: string;
 }
 export interface SparksLayoutProps {
