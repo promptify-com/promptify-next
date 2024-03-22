@@ -30,13 +30,20 @@ function ProfilePage() {
     data: templates,
     isLoading: templatesLoading,
     isFetching,
-  } = useGetUserTemplatesQuery({
-    username,
-    offset,
-    limit: PAGINATION_LIMIT,
-  });
+  } = useGetUserTemplatesQuery(
+    {
+      username,
+      offset,
+      limit: PAGINATION_LIMIT,
+    },
+    {
+      skip: !username,
+    },
+  );
 
-  const { data: user } = useGetUserDetailsQuery(username);
+  const { data: user } = useGetUserDetailsQuery(username, {
+    skip: !username,
+  });
 
   useEffect(() => {
     if (templates?.results) {
