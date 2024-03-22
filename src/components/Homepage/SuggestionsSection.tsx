@@ -115,7 +115,7 @@ function SuggestionsSection() {
             })}
             <Grid
               item
-              mr={{ xs: 4 }}
+              mr={1}
               xs={12}
             >
               <SuggestionCard
