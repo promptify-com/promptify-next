@@ -84,14 +84,18 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
         rowGap={2}
       >
         {isLoading ? (
-          <CardDocumentTemplatePlaceholder
-            count={2}
-            sx={{
-              height: "315px",
-              width: "368px",
-              mx: "8px",
-            }}
-          />
+          <Stack
+            direction={"row"}
+            flexWrap={"wrap"}
+            gap={2}
+          >
+            <CardDocumentTemplatePlaceholder
+              count={5}
+              sx={{
+                height: "315px",
+              }}
+            />
+          </Stack>
         ) : executions.length ? (
           executions.map(execution => (
             <Grid

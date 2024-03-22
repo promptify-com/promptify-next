@@ -11,7 +11,7 @@ export default function CardDocumentTemplatePlaceholder({ count = 12, sx }: Prop
       key={idx}
       gap={2}
       sx={{
-        minWidth: "256px",
+        minWidth: "246px",
         height: "100%",
         ...sx,
       }}
