@@ -18,7 +18,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import TabsSection from "./sparks/TabsSection";
 import SelectedFiltersSection from "./sparks/SelectedFiltersSection";
-import TemplatesMenuSection from "./sparks/TemplatesMenu";
+import TemplatesMenuSection from "@/components/Documents/TemplatesMenu";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import BaseButton from "./base/BaseButton";
 
@@ -371,12 +371,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           open={openTemplatesMenu}
           onClose={() => setAnchorEl(null)}
         >
-          {/* Templates Menu Section */}
-          <TemplatesMenuSection
-            templates={filteredTemplates}
-            selectedTemplate={selectedTemplate}
-            onTemplateSelect={handleTemplateSelect}
-          />
+          <TemplatesMenuSection templates={filteredTemplates} />
         </Menu>
 
         {/* mobile sort options menu */}
@@ -442,8 +437,6 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
         >
           <TemplatesMenuSection
             templates={filteredTemplates}
-            selectedTemplate={selectedTemplate}
-            onTemplateSelect={handleTemplateSelect}
             onClose={() => setOpenFilters(false)}
           />
           <DialogActions>

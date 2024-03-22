@@ -19,10 +19,13 @@ import useBrowser from "@/hooks/useBrowser";
 import { BLOG_URL } from "@/common/constants";
 import type { NavItem } from "@/common/types/sidebar";
 
-const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
+const FiltersDrawerLazy = lazy(() => import("./PromptsFilter/FiltersDrawer"), {
   ssr: false,
 });
-const ChatsDrawerLazy = lazy(() => import("./ChatsDrawer"), {
+const ChatsDrawerLazy = lazy(() => import("./ChatsHistory/ChatsDrawer"), {
+  ssr: false,
+});
+const DocumentsDrawerLazy = lazy(() => import("./DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
 });
 
@@ -32,6 +35,7 @@ function Sidebar() {
   const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
@@ -61,7 +65,7 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "My Works",
+      name: "Documents",
       href: isValidUser ? "/sparks" : "/signin",
       icon: <FolderSpecial />,
       active: pathname === "/sparks",
@@ -106,8 +110,9 @@ function Sidebar() {
     return null;
   }
 
-  const filtersExpanded = isPromptsPage && mouseHover;
+  const promptFilterExpanded = isPromptsPage && mouseHover;
   const chatsExpanded = isChatPage && mouseHover;
+  const documentsFilterExpanded = isDocumentsPage && mouseHover;
 
   return (
     <Grid
@@ -151,8 +156,9 @@ function Sidebar() {
           <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
-      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={filtersExpanded} />}
+      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={promptFilterExpanded} />}
       {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
+      {isDocumentsPage && <DocumentsDrawerLazy expandedOnHover={documentsFilterExpanded} />}
     </Grid>
   );
 }

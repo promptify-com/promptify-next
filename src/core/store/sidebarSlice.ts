@@ -5,6 +5,7 @@ const initialState = {
   builderSidebarOpen: false,
   isPromptsFiltersSticky: false,
   isChatHistorySticky: false,
+  isDocumentsFiltersSticky: false,
 };
 
 const sidebarSlice = createSlice({
@@ -23,6 +24,15 @@ const sidebarSlice = createSlice({
         Storage.remove("isPromptsFiltersSticky");
       }
     },
+    setStickyDocumentsFilters: (state, action: PayloadAction<boolean>) => {
+      const sticky = action.payload;
+      state.isDocumentsFiltersSticky = sticky;
+      if (sticky) {
+        Storage.set("isDocumentsFiltersSticky", String(sticky));
+      } else {
+        Storage.remove("isDocumentsFiltersSticky");
+      }
+    },
     setStickyChatHistory: (state, action: PayloadAction<boolean>) => {
       const sticky = action.payload;
       state.isChatHistorySticky = sticky;
@@ -31,6 +41,7 @@ const sidebarSlice = createSlice({
   },
 });
 
-export const { setOpenBuilderSidebar, setStickyPromptsFilters, setStickyChatHistory } = sidebarSlice.actions;
+export const { setOpenBuilderSidebar, setStickyPromptsFilters, setStickyChatHistory, setStickyDocumentsFilters } =
+  sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

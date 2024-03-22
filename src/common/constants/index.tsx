@@ -62,7 +62,7 @@ export const links = [
     external: false,
   },
   {
-    label: "My Sparks",
+    label: "Documents",
     icon: <AutoAwesome />,
     href: "/sparks",
     external: false,

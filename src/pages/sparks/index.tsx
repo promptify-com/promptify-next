@@ -1,89 +1,52 @@
-import React from "react";
-import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
+import Stack from "@mui/material/Stack";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import SparksContainer from "@/components/SparksContainer";
+import TemplatesCarousel from "@/components/Documents/TemplatesCarousel";
+import DocumentsContainer from "@/components/Documents/DocumentsContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
-import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { useAppSelector } from "@/hooks/useStore";
+import { SEO_DESCRIPTION } from "../../common/constants";
 
-import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
-import { SEO_DESCRIPTION } from "@/common/constants";
-
-const Sparks = () => {
+function DocumentsPage() {
   const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
     useGetTemplatesExecutionsByMeQuery(undefined);
+
+  const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   return (
     <Protected>
       <Layout>
-        <Box
-          mt={{ xs: 7, md: 0 }}
-          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        <Stack
+          gap={3}
+          sx={{
+            p: "40px 72px",
+            ...(!isDocumentsFiltersSticky && {
+              maxWidth: "1112px",
+              m: "auto",
+            }),
+          }}
         >
-          <Grid
-            sx={{
-              padding: { xs: "16px", md: "32px" },
-            }}
-          >
-            {isExecutedTemplatesLoading ? (
-              <>
-                <Box
-                  width={{ xs: "40%", md: "20%" }}
-                  mb={1}
-                >
-                  <Skeleton
-                    variant="text"
-                    height={35}
-                    width={"100%"}
-                    animation="wave"
-                  />
-                </Box>
-
-                <Box bgcolor={"surface.1"}>
-                  <SparksTemplatePlaceholder />
-                </Box>
-              </>
-            ) : (
-              <Stack gap={2}>
-                <Typography
-                  fontSize={"24px"}
-                  fontWeight={500}
-                  color={"onSurface"}
-                  lineHeight={"34.32px"}
-                  letterSpacing={"0.17"}
-                >
-                  My works
-                </Typography>
-                {(executedTemplates as unknown as TemplateExecutionsDisplay[])?.length ? (
-                  <SparksContainer templates={executedTemplates as TemplateExecutionsDisplay[]} />
-                ) : (
-                  <Typography
-                    sx={{
-                      color: "onSurface",
-                      opacity: 0.5,
-                      textAlign: "center",
-                      mt: "50px",
-                    }}
-                  >
-                    No works found
-                  </Typography>
-                )}
-              </Stack>
-            )}
-          </Grid>
-        </Box>
+          <TemplatesCarousel
+            templates={executedTemplates}
+            isLoading={isExecutedTemplatesLoading}
+          />
+          <DocumentsContainer
+            templates={executedTemplates}
+            isLoading={isExecutedTemplatesLoading}
+          />
+        </Stack>
       </Layout>
     </Protected>
   );
-};
+}
 
 export async function getServerSideProps({ params }: any) {
   return {
     props: {
-      title: "My Works",
+      title: "Documents",
       description: SEO_DESCRIPTION,
     },
   };
 }
 
-export default Sparks;
+export default DocumentsPage;

@@ -34,12 +34,12 @@ function RenderRow({ child }: { child: RenderRowProps }) {
 
 export default function SearchableInputField({ name, label, setFieldValue, isDeploying, regionValue }: Props) {
   const [searchText, setSearchText] = useState("");
-  const deboundedSearchText = useDebounce(searchText, 300);
+  const debouncedSearchText = useDebounce(searchText, 300);
   const isModelType = name === "model";
   const { fetchNextData, hasNextData, isFetching, data, isRegionEmpty } = useDataFetching(
     regionValue,
     isModelType ? "models" : "instances",
-    deboundedSearchText,
+    debouncedSearchText,
   );
   const ListboxComponent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLElement>>(
     function ListboxComponent(props, ref) {
