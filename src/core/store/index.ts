@@ -11,6 +11,7 @@ import executionsSlice from "./executionsSlice";
 import chatSlice from "./chatSlice";
 import builderSlice from "./builderSlice";
 import toastSlice, { setToast } from "./toastSlice";
+import documentsSlice from "./documentsSlice";
 
 export interface State {
   tick: string;
@@ -29,6 +30,7 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       chat: chatSlice,
       builder: builderSlice,
       toast: toastSlice,
+      documents: documentsSlice,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({

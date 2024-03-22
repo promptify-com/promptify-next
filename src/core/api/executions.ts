@@ -5,11 +5,9 @@ import type {
   TemplateExecutionsDisplay,
   Templates,
   TemplatesExecutions,
-  TemplatesExecutionsByMePaginationResponse,
 } from "./dto/templates";
 
-type TemplatesExecutionsByMeResponse = TemplatesExecutionsByMePaginationResponse | TemplateExecutionsDisplay[];
-
+// TODO: Optimistic updates for invalidatesTags: ["Executions"] very heavy request
 export const executionsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
@@ -20,7 +18,7 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Executions"],
       }),
-      getTemplatesExecutionsByMe: builder.query<TemplatesExecutionsByMeResponse, number | undefined>({
+      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], number | undefined>({
         query: limit => ({
           url: `/api/meta/template-executions/me/${limit ? `?limit=${limit}` : ""}`,
           method: "get",

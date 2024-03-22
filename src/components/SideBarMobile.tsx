@@ -88,7 +88,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       external: false,
     },
     {
-      label: "My Works",
+      label: "Documents",
       icon: <FolderSpecial />,
       href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",

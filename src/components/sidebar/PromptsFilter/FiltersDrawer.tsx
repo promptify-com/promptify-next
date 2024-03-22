@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
 import { useEffect } from "react";
-import DrawerContainer from "./DrawerContainer";
+import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "./PromptsFilters";
 
 interface Props {

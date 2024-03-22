@@ -32,7 +32,7 @@ export const ProfileMenuItems: MenuType[] = [
     id: 1,
     icon: <AutoAwesomeOutlined />,
     href: "/sparks",
-    name: "My works",
+    name: "Documents",
   },
   {
     id: 2,
@@ -68,7 +68,7 @@ export const links = [
     external: false,
   },
   {
-    label: "My Sparks",
+    label: "Documents",
     icon: <AutoAwesome />,
     href: "/sparks",
     external: false,
