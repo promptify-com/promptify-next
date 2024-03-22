@@ -1,23 +1,22 @@
 import { useRouter } from "next/router";
-import {
-  Avatar,
-  Box,
-  ClickAwayListener,
-  Grid,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-  Typography,
-} from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Grow from "@mui/material/Grow";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import useLogout from "@/hooks/useLogout";
 import { MenuType, ProfileMenuItems } from "@/common/constants";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useRef, useState } from "react";
-import Image from "./design-system/Image";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
+import { theme } from "@/theme";
+import LogoutIcon from "@/assets/icons/LogoutIcon";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -27,8 +26,8 @@ export const ProfileMenu = () => {
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   const handleHeaderMenu = (el: MenuType) => {
+    router.push(`${el.href}`);
     setIsMenuShown(!isMenuShown);
-    router.push(el.href);
   };
 
   const handleLogout = async () => {
@@ -36,32 +35,40 @@ export const ProfileMenu = () => {
     await logout();
   };
 
-  const ProfileMenuItemsFiltered = currentUser?.is_admin
-    ? ProfileMenuItems
-    : ProfileMenuItems.filter(item => item.href !== "/deployments");
   return (
     <Box>
-      <Avatar
+      <Box
         ref={menuAnchorRef}
         onClick={() => setIsMenuShown(!isMenuShown)}
-        src={currentUser?.avatar ?? defaultAvatar.src}
-        alt={currentUser?.first_name ?? "Promptify"}
         sx={{
-          ml: "auto",
-          cursor: "pointer",
-          bgcolor: "black",
           borderRadius: { xs: "24px", sm: "36px" },
-          width: { xs: "24px", sm: "40px" },
-          height: { xs: "24px", sm: "40px" },
-          fontStyle: "normal",
-          textAlign: "center",
-          fontWeight: 400,
-          fontSize: { sm: "30px" },
-          textTransform: "capitalize",
-          lineHeight: "20px",
-          letterSpacing: "0.14px",
+          p: "3px",
+          bgcolor: isMenuShown ? "surfaceContainerHigh" : "transparent",
+          ":hover": {
+            bgcolor: "surfaceContainerHigh",
+          },
         }}
-      />
+      >
+        <Avatar
+          src={currentUser?.avatar ?? defaultAvatar.src}
+          alt={currentUser?.first_name ?? "Promptify"}
+          sx={{
+            ml: "auto",
+            cursor: "pointer",
+            bgcolor: "black",
+            borderRadius: { xs: "24px", sm: "36px" },
+            width: { xs: "24px", sm: "40px" },
+            height: { xs: "24px", sm: "40px" },
+            fontStyle: "normal",
+            textAlign: "center",
+            fontWeight: 400,
+            fontSize: { sm: "30px" },
+            textTransform: "capitalize",
+            lineHeight: "20px",
+            letterSpacing: "0.14px",
+          }}
+        />
+      </Box>
       <Popper
         open={isMenuShown}
         anchorEl={menuAnchorRef.current}
@@ -77,140 +84,118 @@ export const ProfileMenu = () => {
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin: "left top",
+              transformOrigin: "right top",
             }}
           >
             <Paper
               sx={{
-                border: "1px solid #E3E3E3",
-                borderRadius: "10px",
-                width: "282px",
-                marginTop: "5px",
+                width: 300,
+                bgcolor: "#794D87",
+                borderRadius: "24px",
                 overflow: "hidden",
+                boxShadow: "0px 0px 24px 8px rgba(0, 0, 0, 0.05), 0px 2px 16px 0px rgba(0, 0, 0, 0.05);",
+                pt: "90px",
+                mt: "15px",
               }}
-              elevation={0}
             >
               <ClickAwayListener onClickAway={() => setIsMenuShown(false)}>
-                <Grid
+                <Box
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    bgcolor: "surfaceContainerLowest",
                   }}
                 >
-                  <Grid
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignContent: "center",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      py: "24px",
-                      gap: "8px",
-                    }}
-                  >
+                  <Stack gap={2}>
+                    <Avatar
+                      src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                      alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                      style={{
+                        width: 120,
+                        height: 120,
+                        borderRadius: "50%",
+                        border: `2px solid ${theme.palette.surfaceContainerLowest}`,
+                        backgroundColor: "black",
+                        color: "white",
+                        fontSize: "40px",
+                        margin: "-60px auto 0",
+                      }}
+                    />
                     <Box
-                      display={"flex"}
-                      justifyContent={"center"}
+                      px={"16px"}
+                      textAlign={"center"}
                     >
-                      <Image
-                        src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                        alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
-                        width={90}
-                        height={90}
-                        style={{
-                          backgroundColor: "black",
-                          color: "white",
-                          fontSize: "40px",
-                          padding: "1px",
-                          fontWeight: 500,
-                          textTransform: "capitalize",
-                          lineHeight: "89px",
-                          textAlign: "center",
-                          letterSpacing: "0.14px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </Box>
-                    <Box textAlign={"center"}>
                       <Typography
-                        sx={{
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          fontSize: "20px",
-                          lineHeight: "160%",
-                          letterSpacing: "0.15px",
-                        }}
+                        fontSize={18}
+                        fontWeight={400}
+                        color={"onSurface"}
                       >
                         {currentUser?.first_name} {currentUser?.last_name}
                       </Typography>
                       <Typography
-                        sx={{
-                          color: "text.secondary",
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 400,
-                          fontSize: "14px",
-                          lineHeight: "143%",
-                          letterSpacing: "0.15px",
-                        }}
+                        fontSize={13}
+                        fontWeight={500}
+                        color={"secondary.light"}
                       >
-                        {currentUser?.username}
+                        @{currentUser?.username}
                       </Typography>
                     </Box>
-                  </Grid>
+                  </Stack>
                   <MenuList
                     autoFocusItem={false}
-                    sx={{ width: "100%" }}
+                    sx={{ p: "16px", gap: 1 }}
                   >
-                    {ProfileMenuItemsFiltered.map(item => (
+                    {ProfileMenuItems.map(item => (
                       <MenuItem
                         key={item.name}
                         onClick={() => handleHeaderMenu(item)}
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          minHeight: "48px",
-                          gap: "15px",
+                          p: "16px 8px 16px 16px",
+                          borderRadius: "16px",
+                          gap: 1,
+                          ":hover": {
+                            bgcolor: "surfaceContainerHighest",
+                          },
                         }}
                       >
                         {item.icon}
                         <Typography
                           sx={{
-                            fontFamily: "Poppins",
-                            fontStyle: "normal",
+                            fontSize: 14,
                             fontWeight: 400,
-                            fontSize: "16px",
-                            lineHeight: "150%",
-                            letterSpacing: "0.15px",
-                            color: "onBackground",
+                            color: "onSurface",
                           }}
                         >
                           {item.name}
                         </Typography>
                       </MenuItem>
                     ))}
+                    <MenuItem
+                      onClick={() => handleLogout()}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        p: "16px 8px 16px 16px",
+                        borderRadius: "16px",
+                        gap: 1,
+                        ":hover": {
+                          bgcolor: "surfaceContainerHighest",
+                        },
+                      }}
+                    >
+                      <LogoutIcon />
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontWeight: 400,
+                          color: "onSurface",
+                        }}
+                      >
+                        Sign out
+                      </Typography>
+                    </MenuItem>
                   </MenuList>
-                  <Grid
-                    onClick={() => handleLogout()}
-                    sx={{
-                      borderTop: "1px solid #00000024",
-                      padding: "0.5em 0.5em 0.5em 1.2em",
-                      display: "flex",
-                      width: "100%",
-                      cursor: "pointer",
-                      "&:hover": {
-                        cursor: "pointer",
-                        background: "#f5f5f5",
-                      },
-                    }}
-                  >
-                    <Typography>Sign Out</Typography>
-                  </Grid>
-                </Grid>
+                </Box>
               </ClickAwayListener>
             </Paper>
           </Grow>

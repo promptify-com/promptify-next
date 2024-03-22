@@ -1,22 +1,20 @@
 import { ReactNode } from "react";
 import Tune from "@mui/icons-material/Tune";
-import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
 import Search from "@mui/icons-material/Search";
-import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import HomeRounded from "@mui/icons-material/HomeRounded";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
-import { Prompt } from "@/assets/icons/Prompt";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
-import { DeploymentStatus } from "../types/deployments";
+import { DeploymentStatus } from "@/common/types/deployments";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Link } from "@/components/Prompt/Types";
+import AccountCircleIcon from "@/assets/icons/AccountCircleIcon";
+import AddCircleIcon from "@/assets/icons/AddCircleIcon";
 
 export interface MenuType {
   id: number;
@@ -30,27 +28,21 @@ export const BLOG_URL = "https://blog.promptify.com/";
 export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
-    icon: <AutoAwesomeOutlined />,
-    href: "/sparks",
-    name: "Documents",
+    icon: <AccountCircleIcon />,
+    href: "/profile",
+    name: "My account",
   },
   {
     id: 2,
-    icon: <Prompt />,
+    icon: <NoteStackIcon />,
     href: "/profile/#my-templates",
-    name: "My Templates",
+    name: "My prompts",
   },
   {
     id: 3,
-    icon: <RocketLaunchOutlined />,
-    href: "/deployments",
-    name: "My Deployments",
-  },
-  {
-    id: 4,
-    icon: <SettingsOutlined />,
-    href: "/profile",
-    name: "Settings",
+    icon: <AddCircleIcon />,
+    href: "/prompt-builder/create",
+    name: "Add new prompt",
   },
 ];
 

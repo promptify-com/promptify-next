@@ -39,6 +39,7 @@ import StickyNote2 from "@mui/icons-material/StickyNote2";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import LogoutIcon from "@/assets/icons/LogoutIcon";
 
 type SidebarType = "navigation" | "profile";
 
@@ -470,7 +471,9 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 sx={{
                   padding: "0 1.2em",
                   display: "flex",
+                  gap: "15px",
                   width: "100%",
+                  ml: 1,
                   cursor: "pointer",
                   "&:hover": {
                     cursor: "pointer",
@@ -478,7 +481,20 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   },
                 }}
               >
-                <Typography>Sign Out</Typography>
+                <LogoutIcon />
+                <Typography
+                  sx={{
+                    fontFamily: "Poppins",
+                    fontStyle: "normal",
+                    fontWeight: 400,
+                    fontSize: "16px",
+                    lineHeight: "150%",
+                    letterSpacing: "0.15px",
+                    color: "onBackground",
+                  }}
+                >
+                  Sign out
+                </Typography>
               </Grid>
             </Grid>
           </Box>
