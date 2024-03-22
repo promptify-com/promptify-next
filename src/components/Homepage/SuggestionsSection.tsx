@@ -22,7 +22,7 @@ function SuggestionsSection() {
   return (
     <Stack
       direction={"column"}
-      gap={6}
+      gap={"32px"}
     >
       <Stack
         ref={carouselContainerRef}

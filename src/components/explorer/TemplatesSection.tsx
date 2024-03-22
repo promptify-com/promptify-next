@@ -130,6 +130,7 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
           sm={12}
           md={isPromptsFiltersSticky ? 10 : 8}
           lg={6}
+          xl={4}
           mb={{ xs: 2, md: 0 }}
         >
           <AdsBox />
@@ -143,6 +144,7 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
           sm={6}
           md={isPromptsFiltersSticky ? 5 : 4}
           lg={3}
+          xl={2}
           key={`${template.id}_${index}`}
         >
           <ExploreCardTemplate

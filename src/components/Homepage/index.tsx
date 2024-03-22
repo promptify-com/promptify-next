@@ -77,14 +77,14 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
       <Grid
         flexDirection="column"
         display={"flex"}
-        gap={"56px"}
+        gap={"80px"}
         mx={{ md: "50px" }}
       >
         <Stack>
           <SuggestionsSection />
         </Stack>
 
-        <Stack>
+        <Stack gap={"32px"}>
           <Typography
             fontSize={{ xs: 19, md: 32 }}
             fontWeight={400}
@@ -137,6 +137,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
             href="/explore"
             gap={1}
             explore
+            autoPlay
           />
         </Stack>
 

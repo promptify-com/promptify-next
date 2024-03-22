@@ -57,7 +57,7 @@ function CategoryCarousel({
         direction={{ md: "row" }}
         alignItems={{ md: "center" }}
         gap={1}
-        mb={2}
+        mb={"32px"}
       >
         <Typography
           flex={1}

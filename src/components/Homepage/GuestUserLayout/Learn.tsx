@@ -83,7 +83,7 @@ function Learn() {
   return (
     <Stack
       py={{ xs: "30px", md: "48px" }}
-      gap={4}
+      gap={"32px"}
     >
       <Stack gap={1}>
         <Typography
