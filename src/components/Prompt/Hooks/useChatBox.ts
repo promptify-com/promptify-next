@@ -20,7 +20,7 @@ export default function useChatBox() {
       }, normalizeQuestions);
     }
 
-    templatePrompts.forEach(prompt => {
+    templatePrompts?.forEach(prompt => {
       if (prompt.content) {
         promptHasContent = true;
       }
@@ -77,7 +77,7 @@ export default function useChatBox() {
     const promptParameterIds = new Map<number, number[]>();
 
     // we need to go through all inputs per prompt if exist, then create new entry for them
-    templatePrompts.forEach(prompt => {
+    templatePrompts?.forEach(prompt => {
       if (!prompt.content) {
         return;
       }

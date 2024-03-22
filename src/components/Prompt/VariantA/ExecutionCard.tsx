@@ -23,9 +23,10 @@ interface Props {
   promptsData: Prompts[];
   answers?: IAnswer[];
   showPreview: boolean;
+  noRepeat?: boolean;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers, showPreview }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers, showPreview, noRepeat }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
@@ -310,7 +311,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                 }
               })
             ) : (
-              <Typography>We could not display the selected execution as it's missing some information!</Typography>
+              <Typography>
+                We could not display the selected execution as it&apos;s missing some information!
+              </Typography>
             )}
           </Stack>
           {"title" in execution && !!sortedPrompts.length && (
@@ -327,6 +330,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                 vertical
                 execution={execution}
                 variant="icon"
+                noRepeat={noRepeat}
               />
             </Box>
           )}
