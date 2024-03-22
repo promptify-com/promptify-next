@@ -141,10 +141,10 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
         <Grid
           item
           xs={12}
-          sm={6}
-          md={isPromptsFiltersSticky ? 5 : 4}
-          lg={3}
-          xl={2}
+          sm={4}
+          md={isPromptsFiltersSticky ? 4 : 3}
+          lg={isPromptsFiltersSticky ? 4 : 3}
+          xl={3}
           key={`${template.id}_${index}`}
         >
           <ExploreCardTemplate
