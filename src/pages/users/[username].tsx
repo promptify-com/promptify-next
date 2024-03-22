@@ -27,7 +27,7 @@ function ProfilePage() {
     copyToClipboard(userLink);
   };
 
-  const hasNoTemplates = Boolean(!templates?.length && !templatesLoading);
+  const hasNoTemplates = Boolean(!templates?.results?.length && !templatesLoading);
 
   return (
     <Layout>
@@ -130,7 +130,7 @@ function ProfilePage() {
                     pr={{ xs: "32px", sm: 0 }}
                   >
                     <>
-                      {templates?.map(template => (
+                      {templates?.results?.map(template => (
                         <Grid
                           key={template.id}
                           item

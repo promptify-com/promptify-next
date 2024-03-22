@@ -32,9 +32,9 @@ export const userApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getUserTemplates: builder.query<Templates[], any>({
+      getUserTemplates: builder.query<{ results: Templates[]; count: number }, any>({
         query: (username: string) => ({
-          url: `/api/meta/users/${username}/templates/`,
+          url: `/api/meta/users/${username}/templates/?limit=10&offset=0`,
           method: "get",
         }),
       }),
