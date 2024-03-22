@@ -17,7 +17,7 @@ function ProfilePage() {
   const { data: user } = useGetUserDetailsQuery(username);
   const { data: templates, isLoading: templatesLoading } = useGetUserTemplatesQuery(username);
 
-  const hasNoTemplates = Boolean(!templates?.length && !templatesLoading);
+  const hasNoTemplates = Boolean(!templates?.results?.length && !templatesLoading);
 
   return (
     <Layout>
@@ -105,7 +105,7 @@ function ProfilePage() {
                     gap={0}
                   >
                     <>
-                      {templates?.map(template => (
+                      {templates?.results?.map(template => (
                         <Grid
                           key={template.id}
                           item
