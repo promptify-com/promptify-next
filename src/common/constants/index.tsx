@@ -21,7 +21,6 @@ export interface MenuType {
   icon: ReactNode;
   name: string;
   href: string;
-  gap?: boolean;
 }
 
 export const BLOG_URL = "https://blog.promptify.com/";
@@ -32,7 +31,6 @@ export const ProfileMenuItems: MenuType[] = [
     icon: <AccountCircleIcon />,
     href: "/profile",
     name: "My account",
-    gap: true,
   },
   {
     id: 2,
