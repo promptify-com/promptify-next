@@ -9,6 +9,7 @@ import {
   MenuList,
   Paper,
   Popper,
+  Stack,
   Typography,
 } from "@mui/material";
 import useLogout from "@/hooks/useLogout";
@@ -18,6 +19,8 @@ import { RootState } from "@/core/store";
 import { useRef, useState } from "react";
 import Image from "./design-system/Image";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
+import Link from "next/link";
+import { Logout } from "@mui/icons-material";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -36,9 +39,6 @@ export const ProfileMenu = () => {
     await logout();
   };
 
-  const ProfileMenuItemsFiltered = currentUser?.is_admin
-    ? ProfileMenuItems
-    : ProfileMenuItems.filter(item => item.href !== "/deployments");
   return (
     <Box>
       <Avatar
@@ -82,136 +82,94 @@ export const ProfileMenu = () => {
           >
             <Paper
               sx={{
-                border: "1px solid #E3E3E3",
-                borderRadius: "10px",
-                width: "282px",
-                marginTop: "5px",
+                width: 300,
+                bgcolor: "#794D87",
+                borderRadius: "24px",
                 overflow: "hidden",
+                boxShadow: "0px 0px 24px 8px rgba(0, 0, 0, 0.05), 0px 2px 16px 0px rgba(0, 0, 0, 0.05);",
               }}
-              elevation={0}
             >
               <ClickAwayListener onClickAway={() => setIsMenuShown(false)}>
-                <Grid
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    p: "16px",
-                    gap: 2,
-                  }}
-                >
-                  <Grid
+                <Box sx={{}}>
+                  <Box
                     sx={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignContent: "center",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      gap: "8px",
+                      bgcolor: "surfaceContainerLowest",
+                      pt: "24px",
                     }}
                   >
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
+                    <Stack gap={2}>
+                      <Box
+                        px={"16px"}
+                        textAlign={"center"}
+                      >
+                        <Typography
+                          fontSize={18}
+                          fontWeight={400}
+                          color={"onSurface"}
+                        >
+                          {currentUser?.first_name} {currentUser?.last_name}
+                        </Typography>
+                        <Typography
+                          fontSize={13}
+                          fontWeight={500}
+                          color={"secondary.light"}
+                        >
+                          @{currentUser?.username}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <MenuList
+                      autoFocusItem={false}
+                      sx={{ p: "16px", gap: 1 }}
                     >
-                      <Image
-                        src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                        alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
-                        width={90}
-                        height={90}
-                        style={{
-                          backgroundColor: "black",
-                          color: "white",
-                          fontSize: "40px",
-                          padding: "1px",
-                          fontWeight: 500,
-                          textTransform: "capitalize",
-                          lineHeight: "89px",
-                          textAlign: "center",
-                          letterSpacing: "0.14px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </Box>
-                    <Box textAlign={"center"}>
-                      <Typography
-                        sx={{
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          fontSize: "20px",
-                          lineHeight: "160%",
-                          letterSpacing: "0.15px",
-                        }}
-                      >
-                        {currentUser?.first_name} {currentUser?.last_name}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "text.secondary",
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 400,
-                          fontSize: "14px",
-                          lineHeight: "143%",
-                          letterSpacing: "0.15px",
-                        }}
-                      >
-                        {currentUser?.username}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <MenuList
-                    autoFocusItem={false}
-                    sx={{ width: "100%", p: 0 }}
-                  >
-                    {ProfileMenuItemsFiltered.map(item => (
+                      {ProfileMenuItems.map(item => (
+                        <MenuItem
+                          key={item.name}
+                          onClick={() => handleHeaderMenu(item)}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            p: "16px 8px 16px 16px",
+                            borderRadius: "16px",
+                            gap: 1,
+                          }}
+                        >
+                          {item.icon}
+                          <Typography
+                            sx={{
+                              fontSize: 14,
+                              fontWeight: 400,
+                              color: "onSurface",
+                            }}
+                          >
+                            {item.name}
+                          </Typography>
+                        </MenuItem>
+                      ))}
                       <MenuItem
-                        key={item.name}
-                        onClick={() => handleHeaderMenu(item)}
+                        onClick={() => handleLogout()}
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          minHeight: "48px",
-                          gap: "15px",
+                          p: "16px 8px 16px 16px",
+                          borderRadius: "16px",
+                          gap: 1,
                         }}
                       >
-                        {item.icon}
+                        <Logout />
                         <Typography
                           sx={{
-                            fontFamily: "Poppins",
-                            fontStyle: "normal",
+                            fontSize: 14,
                             fontWeight: 400,
-                            fontSize: "16px",
-                            lineHeight: "150%",
-                            letterSpacing: "0.15px",
-                            color: "onBackground",
+                            color: "onSurface",
                           }}
                         >
-                          {item.name}
+                          Sign out
                         </Typography>
                       </MenuItem>
-                    ))}
-                  </MenuList>
-                  <Grid
-                    onClick={() => handleLogout()}
-                    sx={{
-                      borderTop: "1px solid #00000024",
-                      padding: "0.5em 0.5em 0.5em 1.2em",
-                      display: "flex",
-                      width: "100%",
-                      cursor: "pointer",
-                      "&:hover": {
-                        cursor: "pointer",
-                        background: "#f5f5f5",
-                      },
-                    }}
-                  >
-                    <Typography>Sign Out</Typography>
-                  </Grid>
-                </Grid>
+                    </MenuList>
+                  </Box>
+                </Box>
               </ClickAwayListener>
             </Paper>
           </Grow>
