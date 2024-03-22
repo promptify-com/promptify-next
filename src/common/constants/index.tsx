@@ -43,7 +43,7 @@ export const ProfileMenuItems: MenuType[] = [
   {
     id: 3,
     icon: <AddCircleOutline />,
-    href: "#",
+    href: "/chat",
     name: "Add new prompt",
   },
 ];
