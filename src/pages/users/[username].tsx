@@ -9,6 +9,8 @@ import { useGetUserDetailsQuery, useGetUserTemplatesQuery } from "@/core/api/use
 import Image from "@/components/design-system/Image";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import FooterPrompt from "@/components/explorer/FooterPrompt";
 
 function ProfilePage() {
   const router = useRouter();
@@ -17,6 +19,14 @@ function ProfilePage() {
   const { data: user } = useGetUserDetailsQuery(username);
   const { data: templates, isLoading: templatesLoading } = useGetUserTemplatesQuery(username);
 
+  const [copyToClipboard] = useCopyToClipboard();
+
+  const userLink = `www.promptify.com/users/${user?.username}`;
+
+  const handleClickCopy = () => {
+    copyToClipboard(userLink);
+  };
+
   const hasNoTemplates = Boolean(!templates?.length && !templatesLoading);
 
   return (
@@ -24,9 +34,11 @@ function ProfilePage() {
       {user && (
         <Stack
           direction={{ xs: "column", md: "row" }}
-          p={{ xs: " 80px 16px", md: "48px" }}
           alignItems={"start"}
+          pt={{ xs: " 80px", md: "48px" }}
+          width={"97%"}
           gap={"90px"}
+          ml={"auto"}
         >
           <Stack gap={"32px"}>
             <Box
@@ -56,7 +68,6 @@ function ProfilePage() {
               >
                 {user.bio}
               </Typography>
-
               <Typography
                 mt={"16px"}
                 fontSize={12}
@@ -64,14 +75,26 @@ function ProfilePage() {
                 lineHeight={"16.8px"}
                 letterSpacing={"0.17px"}
                 color={"primary.main"}
+                onClick={handleClickCopy}
+                sx={{ cursor: "pointer" }}
               >
-                www.promptify.com/users/{user.username}
+                {userLink}
               </Typography>
             </Stack>
           </Stack>
           <Stack
             gap={2}
+            pt={{ xs: "10px", md: "48px" }}
+            height={{ md: "calc(100svh - 320px)" }}
             width={"100%"}
+            overflow={"hidden"}
+            sx={{
+              overflowY: "auto",
+              overflowX: "hidden",
+              "&::-webkit-scrollbar": {
+                width: "0px",
+              },
+            }}
           >
             <Typography
               fontSize={24}
@@ -96,19 +119,22 @@ function ProfilePage() {
                   <Grid
                     container
                     gap={2}
+                    justifyContent={"center"}
                   >
                     <LatestTemplatePlaceholder count={10} />
                   </Grid>
                 ) : (
                   <Grid
                     container
-                    gap={0}
+                    gap={1}
+                    pr={{ xs: "32px", sm: 0 }}
                   >
                     <>
                       {templates?.map(template => (
                         <Grid
                           key={template.id}
                           item
+                          sm={5}
                           md={4}
                           lg={3}
                           xl={2}
@@ -127,6 +153,7 @@ function ProfilePage() {
           </Stack>
         </Stack>
       )}
+      <FooterPrompt />
     </Layout>
   );
 }
