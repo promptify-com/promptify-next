@@ -1,12 +1,14 @@
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useGetUserDetailsQuery, useGetUserTemplatesQuery } from "@/core/api/user";
 
 import { Layout } from "@/layout";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { useGetUserDetailsQuery, useGetUserTemplatesQuery } from "@/core/api/user";
 import Image from "@/components/design-system/Image";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 
 function ProfilePage() {
   const router = useRouter();
@@ -14,6 +16,8 @@ function ProfilePage() {
 
   const { data: user } = useGetUserDetailsQuery(username);
   const { data: templates, isLoading: templatesLoading } = useGetUserTemplatesQuery(username);
+
+  const hasNoTemplates = Boolean(!templates?.length && !templatesLoading);
 
   return (
     <Layout>
@@ -65,13 +69,61 @@ function ProfilePage() {
               </Typography>
             </Stack>
           </Stack>
-          <Stack>
-            <TemplatesSection
-              templates={templates}
-              isLoading={templatesLoading}
-              title={`Prompts by ${user.first_name + " " + user.last_name}`}
-              explore
-            />
+          <Stack
+            gap={2}
+            width={"100%"}
+          >
+            <Typography
+              fontSize={24}
+              fontWeight={400}
+              lineHeight={"28.8px"}
+              letterSpacing={"0.17px"}
+            >
+              {`Prompts by ${user.first_name + " " + user.last_name}`}
+            </Typography>
+            {hasNoTemplates ? (
+              <Stack
+                minHeight={"60svh"}
+                direction={"row"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Typography color={"text.secondary"}>No templates created</Typography>
+              </Stack>
+            ) : (
+              <>
+                {templatesLoading ? (
+                  <Grid
+                    container
+                    gap={2}
+                  >
+                    <LatestTemplatePlaceholder count={10} />
+                  </Grid>
+                ) : (
+                  <Grid
+                    container
+                    gap={0}
+                  >
+                    <>
+                      {templates?.map(template => (
+                        <Grid
+                          key={template.id}
+                          item
+                          md={4}
+                          lg={3}
+                          xl={2}
+                        >
+                          <CardTemplate
+                            template={template}
+                            vertical
+                          />
+                        </Grid>
+                      ))}
+                    </>
+                  </Grid>
+                )}
+              </>
+            )}
           </Stack>
         </Stack>
       )}
