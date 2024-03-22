@@ -2,11 +2,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Collapsible from "@/components/sidebar/Collapsible";
 import type { Item } from "@/components/sidebar/Collapsible";
-import type { Engine, EngineOutput, Tag } from "@/core/api/dto/templates";
+import type { Engine, EngineOutput } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { setDocumentsContentType, setDocumentsEngine, setDocumentsStatus } from "@/core/store/documentsSlice";
+import { setDocumentsContentTypes, setDocumentsEngine, setDocumentsStatus } from "@/core/store/documentsSlice";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 
@@ -69,17 +69,19 @@ function StatusFilter() {
 
 function DocumentsFilters() {
   const dispatch = useAppDispatch();
-  const { engine, contentType } = useAppSelector(state => state.documents);
+  const { engine, contentTypes } = useAppSelector(state => state.documents);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
     dispatch(setDocumentsEngine(selectedEngine));
   };
 
-  const isSelected = (item: Item) => item.name === contentType;
+  const isTypeSelected = (item: Item) => !!contentTypes?.includes(item.name as EngineOutput);
 
   const handleEngineTypeSelect = (item: Item) => {
-    const type = isSelected(item) ? null : (item.name as EngineOutput);
-    dispatch(setDocumentsContentType(type));
+    const types = isTypeSelected(item)
+      ? contentTypes.filter(type => type !== item.name)
+      : contentTypes.concat(item.name as EngineOutput);
+    dispatch(setDocumentsContentTypes(types));
   };
 
   return (
@@ -92,7 +94,7 @@ function DocumentsFilters() {
         title="Content type"
         items={contentTypeItems}
         onSelect={handleEngineTypeSelect}
-        isSelected={isSelected}
+        isSelected={isTypeSelected}
       />
       <EnginesSelect
         value={engine}

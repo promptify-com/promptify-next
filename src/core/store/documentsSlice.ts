@@ -5,13 +5,13 @@ type StatusType = "draft" | "saved" | null;
 
 interface IState {
   status: StatusType;
-  contentType: EngineOutput | null;
+  contentTypes: EngineOutput[];
   engine: Engine | null;
 }
 
 const initialState: IState = {
   status: null,
-  contentType: null,
+  contentTypes: [],
   engine: null,
 };
 
@@ -22,8 +22,8 @@ const documentsSlice = createSlice({
     setDocumentsStatus: (state, action: PayloadAction<StatusType | null>) => {
       state.status = action.payload;
     },
-    setDocumentsContentType: (state, action: PayloadAction<EngineOutput | null>) => {
-      state.contentType = action.payload;
+    setDocumentsContentTypes: (state, action: PayloadAction<EngineOutput[]>) => {
+      state.contentTypes = action.payload;
     },
     setDocumentsEngine: (state, action: PayloadAction<Engine | null>) => {
       state.engine = action.payload;
@@ -31,6 +31,6 @@ const documentsSlice = createSlice({
   },
 });
 
-export const { setDocumentsStatus, setDocumentsContentType, setDocumentsEngine } = documentsSlice.actions;
+export const { setDocumentsStatus, setDocumentsContentTypes, setDocumentsEngine } = documentsSlice.actions;
 
 export default documentsSlice.reducer;
