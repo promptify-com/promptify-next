@@ -89,6 +89,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
         <Stack
           gap={1}
           flex={1}
+          pr={1}
         >
           <Typography
             fontSize={12}
@@ -109,6 +110,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
             lineHeight={"22.4px"}
             letterSpacing={"0.17px"}
             color={"text.secondary"}
+            minHeight={"45px"}
           >
             {description}
           </Typography>

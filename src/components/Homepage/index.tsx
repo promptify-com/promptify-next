@@ -20,6 +20,7 @@ import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
 import type { Category } from "@/core/api/dto/templates";
+import HomepageTemplates from "./HomepageTemplates";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -29,7 +30,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
 
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
 
-  const { data: suggestedTemplates } = useGetTemplatesSuggestedQuery(undefined);
+  const { data: suggestedTemplates, isLoading } = useGetTemplatesSuggestedQuery(undefined);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -84,52 +85,11 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           <SuggestionsSection />
         </Stack>
 
-        <Stack gap={"32px"}>
-          <Typography
-            fontSize={{ xs: 19, md: 32 }}
-            fontWeight={400}
-            lineHeight={"38.8px"}
-            letterSpacing={"0.17px"}
-            color={"onSurface"}
-          >
-            you may like these prompts:
-          </Typography>
-          <Grid
-            container
-            gap={{ xs: 1, sm: 0 }}
-          >
-            <Grid
-              item
-              ml={{ md: -2 }}
-              xs={12}
-              sm={12}
-              md={8}
-              lg={6}
-              xl={4}
-              mb={{ xs: 2, md: 0 }}
-            >
-              <AdsBox />
-            </Grid>
-            <>
-              {suggestedTemplates?.map(template => (
-                <Grid
-                  key={template.id}
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  lg={3}
-                  xl={2}
-                >
-                  <CardTemplate
-                    template={template}
-                    vertical
-                  />
-                </Grid>
-              ))}
-            </>
-          </Grid>
-        </Stack>
+        <HomepageTemplates
+          title="You may like these prompts:"
+          templates={suggestedTemplates || []}
+          templatesLoading={isLoading}
+        />
 
         <Stack mr={"16px"}>
           <CategoryCarousel
