@@ -106,6 +106,7 @@ function ProfilePage() {
             <Image
               src={user.avatar}
               alt={user.username}
+              fallback={require("@/assets/images/default-avatar.jpg")}
               fill
             />
           </Box>

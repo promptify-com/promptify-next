@@ -28,6 +28,7 @@ function PopularTemplates({ catId }: Props) {
     ordering: "-runs",
     isInternal: false,
     categoryId: catId,
+    status: "published",
   };
 
   const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);

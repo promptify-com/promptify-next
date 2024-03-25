@@ -18,14 +18,7 @@ export interface User {
   is_admin: boolean;
 }
 
-export interface UserProfile {
-  id: number;
-  avatar: string;
-  bio: string;
-  first_name: string;
-  last_name: string;
-  username: string;
-}
+export type UserProfile = Pick<User, "id" | "avatar" | "bio" | "first_name" | "last_name" | "username">;
 
 export type UserPartial = Pick<User, "id" | "username" | "first_name" | "last_name" | "avatar">;
 

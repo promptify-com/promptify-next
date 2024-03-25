@@ -26,6 +26,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
     {
       ordering: "-runs",
       limit: 30,
+      status: "published",
     },
     {
       skip: !observers.templatesObserver?.isIntersecting,
