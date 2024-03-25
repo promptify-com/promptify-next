@@ -15,7 +15,7 @@ const ProfilePrompts = () => {
       <Layout>
         <ContentWrapper
           title="My prompts"
-          description=" Here, you can customize your prompt templates"
+          description="Here, you can customize your prompt templates"
         >
           <Stack gap={2}>
             {templates?.map(template => (

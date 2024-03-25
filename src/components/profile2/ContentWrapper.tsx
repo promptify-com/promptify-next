@@ -19,7 +19,7 @@ const ContentWrapper = ({ title, description, children }: Props) => {
       p={"40px 20px"}
       gap={5}
     >
-      <Box>
+      <Box p={"8px 16px"}>
         <Stack gap={2}>
           <Typography
             fontSize={32}
