@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 
 export default function AccountSidebar() {
   const router = useRouter();
-  console.log(router);
 
   return (
     <Box
