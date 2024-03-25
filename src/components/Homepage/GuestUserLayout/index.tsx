@@ -1,20 +1,18 @@
-import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-import { Category } from "@/core/api/dto/templates";
-import Landing from "./Landing";
-import CategoryCarousel from "@/components/common/CategoriesCarousel";
-import Services from "./Services";
-import Learn from "./Learn";
-import Testimonials from "./Testimonials";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import { useRef } from "react";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+
+import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { Box } from "@mui/material";
-import { useRouter } from "next/router";
+import Landing from "@/components/Homepage/GuestUserLayout/Landing";
+import CategoryCarousel from "@/components/common/CategoriesCarousel";
+import Services from "@/components/Homepage/GuestUserLayout/Services";
+import Learn from "@/components/Homepage/GuestUserLayout/Learn";
+import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
+import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
+import type { Category } from "@/core/api/dto/templates";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
-  const router = useRouter();
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -56,19 +54,11 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
         py={{ xs: "30px", md: "48px" }}
         gap={3}
       >
-        <Stack>
-          <Typography
-            fontSize={{ xs: 28, md: 32 }}
-            fontWeight={400}
-            color={"#2A2A3C"}
-          >
-            Most popular templates:
-          </Typography>
-        </Stack>
-        <TemplatesSection
-          templateLoading={isLoading}
-          templates={popularTemplates?.results}
-          type="popularTemplates"
+        <HomepageTemplates
+          title="Most popular:"
+          templates={popularTemplates?.results || []}
+          templatesLoading={isLoading}
+          showAdsBox
         />
       </Stack>
       <Box ref={learnContainerRef}>{showLearn && <Learn />}</Box>

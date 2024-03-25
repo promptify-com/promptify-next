@@ -1,7 +1,6 @@
+import { type ReactNode } from "react";
 import Link from "next/link";
-import { ReactNode } from "react";
 import ArrowForward from "@mui/icons-material/ArrowForward";
-
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
@@ -85,10 +84,12 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
         borderBottom={"1px solid"}
         borderColor={"surface.3"}
         justifyContent={"space-between"}
+        minHeight={"80px"}
       >
         <Stack
           gap={1}
           flex={1}
+          pr={1}
         >
           <Typography
             fontSize={12}
