@@ -1,10 +1,12 @@
 import { ReactNode } from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
 import { useRouter } from "next/router";
+import { AccountSidebarWidth } from "@/components/profile2/Constants";
+import AccountSidebar from "./components/profile2/AccountSidebar";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
@@ -15,6 +17,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
+  const isAccountPage = pathname.split("/")[1] === "profile";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
@@ -25,46 +28,52 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <Box sx={{ bgcolor: "surface.3" }}>
-        <Sidebar />
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          gap={"2px"}
-          sx={{
-            minHeight: "100svh",
-            maxWidth: {
-              xs: "100%",
-              md: `calc(100% - (${containerWidth}))`,
-            },
-            ml: { md: "auto" },
-          }}
-        >
-          <Header transparent />
+      <Stack
+        direction={"row"}
+        sx={{ bgcolor: "surfaceContainerLow" }}
+      >
+        <Box width={{ md: isAccountPage ? `calc(100% -  ${AccountSidebarWidth}px)` : "100%" }}>
+          <Sidebar />
           <Box
-            bgcolor={"surfaceContainerLowest"}
-            minHeight={{
-              xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
-              md: `calc(100svh - ${theme.custom.headerHeight.md})`,
-            }}
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"2px"}
             sx={{
-              borderTopLeftRadius: "16px",
-              borderTopRightRadius: "16px",
-              overflow: "hidden",
-              zIndex: 1,
-              marginTop: { xs: "0", md: `calc(${theme.custom.headerHeight.md} + 2px)` },
+              minHeight: "100svh",
+              maxWidth: {
+                xs: "100%",
+                md: `calc(100% - (${containerWidth}))`,
+              },
+              ml: { md: "auto" },
             }}
           >
-            <Grid
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
+            <Header transparent />
+            <Box
+              bgcolor={"surfaceContainerLowest"}
+              minHeight={{
+                xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
+                md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+              }}
+              sx={{
+                borderTopLeftRadius: "16px",
+                borderTopRightRadius: "16px",
+                overflow: "hidden",
+                zIndex: 1,
+                marginTop: { xs: "0", md: `calc(${theme.custom.headerHeight.md} + 2px)` },
+              }}
             >
-              {children}
-            </Grid>
+              <Grid
+                display={"flex"}
+                flexDirection={"column"}
+                gap={"16px"}
+              >
+                {children}
+              </Grid>
+            </Box>
           </Box>
         </Box>
-      </Box>
+        {isAccountPage && <AccountSidebar />}
+      </Stack>
     </>
   );
 };
