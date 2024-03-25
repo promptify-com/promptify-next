@@ -89,6 +89,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           title="You may like these prompts:"
           templates={suggestedTemplates || []}
           templatesLoading={isLoading}
+          showAdsBox
         />
 
         <Stack mr={"16px"}>

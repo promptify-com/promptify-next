@@ -11,9 +11,10 @@ interface Props {
   title: string;
   templates: Templates[];
   templatesLoading: boolean;
+  showAdsBox?: boolean;
 }
 
-function HomepageTemplates({ title, templates, templatesLoading }: Props) {
+function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: Props) {
   if (!templates.length) {
     return null;
   }
@@ -43,17 +44,20 @@ function HomepageTemplates({ title, templates, templatesLoading }: Props) {
           gap={{ xs: 1, sm: 0 }}
           ml={{ md: -2 }}
         >
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            md={8}
-            lg={6}
-            xl={4}
-            mb={{ xs: 2, md: 0 }}
-          >
-            <AdsBox />
-          </Grid>
+          {showAdsBox && (
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={8}
+              lg={6}
+              xl={4}
+              mb={{ xs: 2, md: 0 }}
+            >
+              <AdsBox />
+            </Grid>
+          )}
+
           <>
             {templates?.map(template => (
               <Grid

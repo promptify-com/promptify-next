@@ -58,6 +58,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
           title="Most popular:"
           templates={popularTemplates?.results || []}
           templatesLoading={isLoading}
+          showAdsBox
         />
       </Stack>
       <Box ref={learnContainerRef}>{showLearn && <Learn />}</Box>
