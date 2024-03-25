@@ -1,7 +1,7 @@
 import { EmblaCarouselType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useState } from "react";
 
 export default function useCarousel(autoplay = false) {
   const [canScrollNext, setCanScrollNext] = useState(true);
@@ -34,7 +34,7 @@ export default function useCarousel(autoplay = false) {
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
   return {
-    containerRef: emblaRef,
+    containerRef: emblaRef as unknown as RefObject<HTMLDivElement>,
     scrollNext,
     scrollPrev,
     canScrollNext,
