@@ -23,6 +23,7 @@ const Profile = () => {
           <Stack
             gap={3}
             py="48px"
+            width={"85%"}
           >
             <Stack
               alignItems={"center"}
@@ -50,7 +51,16 @@ const Profile = () => {
               </Typography>
             </Stack>
 
-            <ChatsSuggestions slice={1} />
+            <Box
+              sx={{
+                p: "16px",
+                ".suggest-card": {
+                  width: "auto !important",
+                },
+              }}
+            >
+              <ChatsSuggestions slice={1} />
+            </Box>
           </Stack>
         </Stack>
       </Layout>

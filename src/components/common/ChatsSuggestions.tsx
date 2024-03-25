@@ -25,7 +25,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
           flexWrap={"wrap"}
           justifyContent={"space-between"}
         >
-          <SuggestionCardPlaceholder />
+          <SuggestionCardPlaceholder count={2 + slice} />
         </Stack>
       ) : (
         <Stack
@@ -89,7 +89,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
                   </Avatar>
                 }
                 actionLabel="User profile"
-                href="/profile"
+                href="/profile/user"
               />
             </Grid>
           </Grid>
