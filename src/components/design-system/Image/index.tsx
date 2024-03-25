@@ -14,6 +14,7 @@ interface NextImageProps {
   onClick?: () => void;
   onError?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
   onLoad?: () => void;
+  fallback?: NodeRequire;
 }
 
 const Image: React.FC<NextImageProps> = ({
@@ -29,10 +30,11 @@ const Image: React.FC<NextImageProps> = ({
   onClick,
   onError,
   onLoad,
+  fallback = require("@/assets/images/default-thumbnail.jpg"),
 }) => {
   return (
     <NextImage
-      src={src ?? require("@/assets/images/default-thumbnail.jpg")}
+      src={src ?? fallback}
       alt={alt}
       width={width}
       height={height}
