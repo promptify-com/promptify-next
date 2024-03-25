@@ -4,7 +4,7 @@ import Protected from "@/components/Protected";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { theme } from "@/theme";
-import ChatsSuggestions from "../../components/common/ChatsSuggestions";
+import ChatsSuggestions from "@/components/common/ChatsSuggestions";
 
 const Profile = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);

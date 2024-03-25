@@ -12,11 +12,12 @@ interface Props {
 
 const ContentWrapper = ({ title, description, children }: Props) => {
   return (
-    <Box
+    <Stack
       maxWidth={"1184px"}
       width={"70%"}
       m={"auto"}
       p={"40px 20px"}
+      gap={5}
     >
       <Box>
         <Stack gap={2}>
@@ -37,7 +38,7 @@ const ContentWrapper = ({ title, description, children }: Props) => {
         </Stack>
       </Box>
       {children}
-    </Box>
+    </Stack>
   );
 };
 

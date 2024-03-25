@@ -11,27 +11,47 @@ import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import Edit from "@mui/icons-material/Edit";
+import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
+import { getBaseUrl } from "@/common/helpers";
+import { useDeleteTemplateMutation } from "@/core/api/templates";
+import { useState } from "react";
 
 interface Props {
   template: Templates;
-  onScrollToBottom: () => void;
+  onScrollToBottom?: () => void;
+  manageActions?: boolean;
 }
 
-function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
+function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
   const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
+  const [confirmDialog, setConfirmDialog] = useState(false);
+
+  const [deleteTemplate] = useDeleteTemplateMutation();
+
+  const confirmDelete = async () => {
+    await deleteTemplate(template.id);
+    setConfirmDialog(false);
+  };
 
   const handleRunPrompt = () => {
     dispatch(setSelectedTemplate(template));
     dispatch(setAnswers([]));
     setTimeout(() => {
-      onScrollToBottom();
+      onScrollToBottom?.();
     }, 100);
   };
 
   return (
     <Stack
-      bgcolor={"surface.1"}
+      bgcolor={"surfaceContainerLowest"}
       p={"16px 0px"}
       px={{ xs: "8px", md: "16px" }}
       borderRadius={"24px"}
@@ -42,7 +62,6 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
     >
       <Stack
         direction={"row"}
-        alignItems={"center"}
         gap={"24px"}
       >
         <Box
@@ -72,8 +91,9 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
         </Box>
         <Stack
           direction={"column"}
-          justifyItems={"flex-start"}
+          justifyContent={"space-between"}
           gap={2}
+          py={"8px"}
         >
           <Stack alignItems={"flex-start"}>
             <Link
@@ -97,6 +117,10 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
               lineHeight={"22.2px"}
               sx={{
                 opacity: 0.75,
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 2,
+                overflow: "hidden",
               }}
             >
               {description}
@@ -151,31 +175,76 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
       <Stack
         direction={"row"}
         alignItems={"center"}
-        px={{ md: "30px" }}
+        gap={1}
+        px={{ md: "16px" }}
         width={{ xs: "100%", md: "fit-content" }}
       >
-        <Button
-          variant="text"
-          startIcon={<PlayArrow />}
-          sx={{
-            color: "onSurface",
-            width: { xs: "100%", md: "fit-content" },
-            bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
-            "&:hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-          onClick={handleRunPrompt}
-        >
-          Run prompt
-        </Button>
-        <TemplateActions
-          template={template}
-          onScrollToBottom={onScrollToBottom}
-        />
+        {manageActions ? (
+          <>
+            <IconButton
+              sx={btnStyle}
+              onClick={() => window.open(`${getBaseUrl}/prompt-builder/${template.slug}`, "_blank")}
+            >
+              <Edit />
+            </IconButton>
+            <IconButton
+              sx={btnStyle}
+              onClick={() => setConfirmDialog(true)}
+            >
+              <DeleteForeverOutlined />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="text"
+              startIcon={<PlayArrow />}
+              sx={btnStyle}
+              onClick={handleRunPrompt}
+            >
+              Run prompt
+            </Button>
+            <TemplateActions
+              template={template}
+              onScrollToBottom={onScrollToBottom}
+            />
+          </>
+        )}
       </Stack>
+
+      {confirmDialog && (
+        <Dialog
+          open={confirmDialog}
+          keepMounted
+          disableScrollLock
+          onClose={() => setConfirmDialog(false)}
+        >
+          <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete <b>{template.title}</b>?
+              <br />
+              Once deleted, it cannot be recovered. Please proceed with caution.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={confirmDelete}>Confirm</Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </Stack>
   );
 }
 
-export default TemplateSuggestionItem;
+export default TemplateCard;
+
+const btnStyle = {
+  width: { xs: "100%", md: "fit-content" },
+  border: "none",
+  color: "onSurface",
+  bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
+  "&:hover": {
+    bgcolor: "action.hover",
+  },
+};
