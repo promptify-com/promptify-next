@@ -1,20 +1,58 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-
-import { Connections, Home, Identity, TemplatesManager } from "@/components/profile";
 import { useAppSelector } from "@/hooks/useStore";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import EditProfile from "@/components/profile/EditProfile";
-import Credentials from "@/components/profile/Credentials";
 import { SEO_DESCRIPTION } from "@/common/constants";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
+import { theme } from "@/theme";
 
 const Profile = () => {
-  const isEditMode = useAppSelector(state => state.profile.showEditMode);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  return <Protected>{isEditMode ? <EditProfile /> : <Layout>Welcome</Layout>}</Protected>;
+  return (
+    <Protected>
+      <Layout>
+        <Stack
+          justifyContent={"center"}
+          alignItems={"center"}
+          minHeight={{
+            xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
+            md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+          }}
+        >
+          <Stack
+            gap={3}
+            py="48px"
+          >
+            <Stack
+              alignItems={"center"}
+              gap={2}
+            >
+              <Avatar
+                src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: "50%",
+                  backgroundColor: "black",
+                  color: "white",
+                  fontSize: "40px",
+                }}
+              />
+              <Typography
+                fontSize={32}
+                fontWeight={400}
+                letterSpacing={"0.17px"}
+                color={"onSurface"}
+              >
+                Welcome, {currentUser?.username}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Layout>
+    </Protected>
+  );
 };
 
 export async function getServerSideProps() {
