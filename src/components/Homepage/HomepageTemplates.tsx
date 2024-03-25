@@ -14,6 +14,9 @@ interface Props {
 }
 
 function HomepageTemplates({ title, templates, templatesLoading }: Props) {
+  if (!templates.length) {
+    return null;
+  }
   return (
     <Stack gap={"32px"}>
       <Typography
