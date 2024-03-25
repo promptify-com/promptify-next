@@ -20,7 +20,7 @@ const Profile = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Your Profile",
+      title: "My Account",
       description: SEO_DESCRIPTION,
     },
   };

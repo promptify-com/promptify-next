@@ -13,6 +13,7 @@ interface CustomPalette {
   onSecondary: string;
   primaryContainer: string;
   secondaryContainer: string;
+  onPrimaryContainer: string;
   tertiary: string;
   tertiaryContainer: string;
   onBackground: string;
@@ -74,6 +75,7 @@ export let theme: Theme = createTheme({
     },
     secondary: {
       main: "#1B1B1E",
+      light: "#575E71",
     },
     error: {
       main: "#BA1B1B",
@@ -82,6 +84,7 @@ export let theme: Theme = createTheme({
     onSecondary: "#FFFFFF",
     primaryContainer: "#D8E2FF",
     secondaryContainer: "#DCE2F9",
+    onPrimaryContainer: "#001A43",
     tertiary: "#725472",
     tertiaryContainer: "#FDD7FA",
     onBackground: "#1B1B1E",
