@@ -223,14 +223,19 @@ function CardTemplate({
                   <Bolt />
                   {template.executions_count || 0}
                 </Stack>
-                <Typography
-                  ml={"auto"}
-                  fontSize={13}
-                  fontWeight={400}
-                  color={alpha(theme.palette.onSurface, 0.75)}
+                <Link
+                  href={`/users/${template.created_by?.username}`}
+                  onClick={e => e.stopPropagation()}
+                  style={{ textDecoration: "none", marginLeft: "auto" }}
                 >
-                  by {template.created_by.first_name || template.created_by.username}
-                </Typography>
+                  <Typography
+                    fontSize={13}
+                    fontWeight={400}
+                    color={alpha(theme.palette.onSurface, 0.75)}
+                  >
+                    by {template.created_by.first_name || template.created_by.username}
+                  </Typography>
+                </Link>
               </Stack>
             )}
           </Stack>

@@ -1,7 +1,6 @@
-import { Category } from "@/core/api/dto/templates";
+import { Category, LowercaseTemplateStatus } from "@/core/api/dto/templates";
 import { IEditPrompts } from "./builder";
 import { ReactNode } from "react";
-import { IUser } from "./user";
 import { UserPartial } from "@/core/api/dto/user";
 
 export type FormType = "create" | "edit";
@@ -35,7 +34,7 @@ export interface IFeedback {
   created_at: string;
   template: number;
   comment: string;
-  status: "draft" | "published";
+  status: LowercaseTemplateStatus;
 }
 export interface IPostFeedback {
   template: number;

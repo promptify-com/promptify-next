@@ -1,4 +1,4 @@
-import { useState, FC, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -23,9 +23,9 @@ import { modalStyle } from "@/components/modals/styles";
 import { TemplateStatusArray } from "@/common/constants";
 import TemplateManagerItem from "./TemplateManagerItem";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
-import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
-import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
-import type { TemplateStatus, Templates } from "@/core/api/dto/templates";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
+import type { LowercaseTemplateStatus, Templates } from "@/core/api/dto/templates";
 import type { FormType } from "@/common/types/template";
 
 export type UserType = "admin" | "user";
@@ -36,7 +36,7 @@ interface TemplateManagerProps {
   id?: string;
 }
 
-export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) => {
+export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
   const isUserAdmin = type === "admin";
 
   const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(undefined, {
@@ -147,11 +147,11 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
                 }}
                 value={status}
                 onChange={event => {
-                  resetOffest(event.target.value as TemplateStatus);
+                  resetOffest(event.target.value as LowercaseTemplateStatus);
                 }}
               >
                 <option value="">All Status</option>
-                {TemplateStatusArray.map((item: TemplateStatus) => (
+                {TemplateStatusArray.map(item => (
                   <option
                     key={item}
                     value={item?.toLowerCase()}
@@ -326,4 +326,4 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
       />
     </Box>
   );
-};
+}

@@ -32,8 +32,21 @@ interface Props {
 const scrollYThreshold = 500;
 
 export default function ExplorePage({ categories = [] }: Props) {
-  const { templates, handleNextPage, hasMore, allFilterParamsNull, isFetching, hasPrev, handlePrevPage } =
-    useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 8, paginatedList: true });
+  const {
+    templates,
+    handleNextPage,
+    hasMore,
+    allFilterParamsNull,
+    isTemplatesLoading,
+    isFetching,
+    hasPrev,
+    handlePrevPage,
+  } = useGetTemplatesByFilter({
+    ordering: "-likes",
+    templateLimit: 8,
+    paginatedList: true,
+    initialStatus: "published",
+  });
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
@@ -46,7 +59,7 @@ export default function ExplorePage({ categories = [] }: Props) {
   const {
     data: suggestedTemplates,
     isLoading: isSuggestedTemplatesLoading,
-    isFetching: isFetchingSuggestios,
+    isFetching: isFetchingSuggestions,
   } = useGetSuggestedTemplatesByCategoryQuery(undefined, { skip: !isValidUser || !observer?.isIntersecting });
 
   const [seeAll, setSeeAll] = useState(false);
@@ -143,7 +156,19 @@ export default function ExplorePage({ categories = [] }: Props) {
 
           {!allFilterParamsNull && (
             <Box sx={{ px: { xs: "20px", md: "0px" } }}>
-              {templates?.length === 0 ? (
+              {isTemplatesLoading ? (
+                <Grid
+                  display={"flex"}
+                  flexDirection={"row"}
+                  gap={"16px"}
+                  alignItems={"flex-start"}
+                  alignContent={"flex-start"}
+                  alignSelf={"stretch"}
+                  flexWrap={{ xs: "nowrap", md: "wrap" }}
+                >
+                  <LatestTemplatePlaceholder count={4} />
+                </Grid>
+              ) : templates?.length === 0 ? (
                 <Typography
                   fontSize={{ xs: 14, md: 18 }}
                   fontWeight={400}
@@ -200,7 +225,7 @@ export default function ExplorePage({ categories = [] }: Props) {
               m: { xs: "0 20px", md: "0px" },
             }}
           >
-            {isFetchingSuggestios && (
+            {isFetchingSuggestions && (
               <Grid
                 display={"flex"}
                 flexDirection={"row"}

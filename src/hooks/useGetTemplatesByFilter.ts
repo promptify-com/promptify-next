@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
+import { FilterParams, LowercaseTemplateStatus, SelectedFilters, TemplateStatus } from "@/core/api/dto/templates";
 import useDebounce from "./useDebounce";
 import { Templates } from "@/core/api/dto/templates";
 
@@ -14,6 +14,7 @@ interface Props {
   admin?: boolean;
   templateLimit?: number;
   paginatedList?: boolean;
+  initialStatus?: LowercaseTemplateStatus;
 }
 
 export function useGetTemplatesByFilter({
@@ -23,6 +24,7 @@ export function useGetTemplatesByFilter({
   admin = false,
   templateLimit,
   paginatedList = false,
+  initialStatus,
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
@@ -32,7 +34,7 @@ export function useGetTemplatesByFilter({
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
 
   const params: FilterParams = {
@@ -54,7 +56,11 @@ export function useGetTemplatesByFilter({
     delete params.isInternal;
   }
 
-  const skipFetchingTemplates = ![catId, subCatId, admin, ordering].some(_param => _param);
+  const allFilterParamsNull = areAllStatesNull(filters);
+  const skipFetchingTemplates =
+    ![catId, subCatId, admin, ordering].some(_param => _param) ||
+    !Object.values(filters)?.length ||
+    (ordering === "-likes" && allFilterParamsNull);
   const {
     data: templates,
     isLoading: isTemplatesLoading,
@@ -83,9 +89,8 @@ export function useGetTemplatesByFilter({
       filters.isFavourite === false
     );
   }
-  const allFilterParamsNull = areAllStatesNull(filters);
 
-  const resetOffest = (status?: string) => {
+  const resetOffest = (status?: LowercaseTemplateStatus) => {
     setOffset(0);
     if (status) setStatus(status);
   };
