@@ -6,9 +6,15 @@ import Box from "@mui/material/Box";
 import { AccountSidebarWidth, NavItems } from "./Constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import useLogout from "@/hooks/useLogout";
 
 export default function AccountSidebar() {
   const router = useRouter();
+  const logout = useLogout();
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <Box
@@ -37,25 +43,26 @@ export default function AccountSidebar() {
         <Stack
           gap={2}
           py={"24px"}
+          sx={{
+            ".item": {
+              textDecoration: "none",
+              padding: "16px 24px",
+              fontSize: 14,
+              fontWeight: 500,
+              color: theme.palette.secondary.main,
+              borderRadius: "8px",
+              cursor: "pointer",
+              "&.active, &:hover": {
+                bgcolor: "surfaceContainerHighest",
+                color: "onPrimaryContainer",
+              },
+            },
+          }}
         >
           {NavItems.map(navItem => (
             <Stack
               key={navItem.label}
               gap={"1px"}
-              sx={{
-                a: {
-                  textDecoration: "none",
-                  padding: "16px 24px",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: theme.palette.secondary.main,
-                  borderRadius: "8px",
-                  "&.active, &:hover": {
-                    bgcolor: "surfaceContainerHighest",
-                    color: "onPrimaryContainer",
-                  },
-                },
-              }}
             >
               {navItem.label && (
                 <Typography
@@ -75,13 +82,19 @@ export default function AccountSidebar() {
                 <Link
                   key={item.title}
                   href={item.link}
-                  className={router.pathname == item.link ? "active" : ""}
+                  className={`item ${router.pathname == item.link ? "active" : ""}`}
                 >
                   {item.title}
                 </Link>
               ))}
             </Stack>
           ))}
+          <Box
+            className={"item"}
+            onClick={handleLogout}
+          >
+            Sign Out
+          </Box>
         </Stack>
       </Box>
     </Box>
