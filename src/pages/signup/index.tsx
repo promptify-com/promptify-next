@@ -31,6 +31,10 @@ const SignUp = () => {
         minHeight: "100vh",
         width: "100vw",
         color: "var(--onSurface, #1B1B1F)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-around",
+        alignItems: "center",
       }}
     >
       <Box

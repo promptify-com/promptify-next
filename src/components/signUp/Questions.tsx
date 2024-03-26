@@ -10,6 +10,7 @@ import { useUpdateAnswers } from "@/hooks/api/user";
 import { IQuestion } from "@/common/types";
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
+import Grid from "@mui/material/Grid";
 
 interface IProps {
   skip: () => void;
@@ -58,97 +59,99 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
   return (
     <Box
       sx={{
-        width: "100vw",
         display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
+        gap: "48px",
+        width: "952px",
       }}
     >
       <Box
         sx={{
           display: "flex",
+          width: "560px",
+          padding: "var(--none, 0px) var(--2, 16px)",
           flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
-          gap: "48px",
-          flex: "1 0 0",
-          height: "822px",
-          width: "952px",
+          gap: "72px",
         }}
       >
+        {step === 1 && (
+          <Typography
+            sx={{
+              color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+              textAlign: "center",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontFamily: "Poppins",
+              fontSize: { xs: "13px", md: "24px" },
+              fontStyle: "normal",
+              fontWeight: "400",
+              lineHeight: "110%",
+              letterSpacing: "0.17px",
+            }}
+          >
+            Please, answer six simple questions to specify your context.
+          </Typography>
+        )}
+
+        <Typography
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "13px",
+            lineHeight: "22px",
+            letterSpacing: "0.46px",
+            color: "#000000",
+          }}
+        >
+          Question {step} of {questions.length}
+        </Typography>
+
+        {questions.length > 0 && (
+          <Typography
+            sx={{
+              color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+              textAlign: "center",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontFamily: "Poppins",
+              fontSize: { xs: "26px", md: "32px" },
+              fontStyle: "normal",
+              fontWeight: "500",
+              lineHeight: "110%",
+              letterSpacing: "0.17px",
+            }}
+          >
+            {questions[step - 1].text}
+          </Typography>
+        )}
+      </Box>
+
+      {questions.length > 0 && (
         <Box
           sx={{
             display: "flex",
-            width: "560px",
-            padding: "var(--none, 0px) var(--2, 16px)",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "var(--3, 24px)",
+            justifyContent: "center",
+            alignItems: "flex-end",
+            flexWrap: "wrap",
+            gap: 2,
           }}
         >
-          {step === 1 && (
-            <Typography
-              sx={{
-                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
-                textAlign: "center",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Poppins",
-                fontSize: "24px",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "110%",
-                letterSpacing: "0.17px",
-              }}
-            >
-              Please, answer six simple questions to specify your context.
-            </Typography>
-          )}
-
-          <div></div>
-          <div></div>
-          <Typography
-            sx={{
-              fontFamily: "Poppins",
-              fontStyle: "normal",
-              fontWeight: 500,
-              fontSize: "13px",
-              lineHeight: "22px",
-              letterSpacing: "0.46px",
-              color: "#000000",
-            }}
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="flex-end"
+            spacing={2}
           >
-            Question {step} of {questions.length}
-          </Typography>
-
-          {questions.length > 0 && (
-            <Typography
-              sx={{
-                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
-                textAlign: "center",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Poppins",
-                fontSize: "32px",
-                fontStyle: "normal",
-                fontWeight: "500",
-                lineHeight: "110%",
-                letterSpacing: "0.17px",
-              }}
-            >
-              {questions[step - 1].text}
-            </Typography>
-          )}
-        </Box>
-
-        {questions.length > 0 && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-end",
-              gap: "var(--2, 16px)",
-            }}
-          >
-            {questions[step - 1].options.map(option => {
-              return (
+            {questions[step - 1].options.map(option => (
+              <Grid
+                item
+                xs={12}
+                sm={5}
+                md={3}
+                key={option.id}
+              >
                 <QuestionCard
                   name={option.text}
                   icon={<BugReport />}
@@ -157,81 +160,81 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
                   selectedOptionId={selectedOptionId}
                   setSelectedOptionId={setSelectedOptionId}
                 />
-              );
-            })}
-          </Box>
-        )}
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      )}
+
+      <Box
+        sx={{
+          display: "flex",
+          width: "560px",
+          padding: "var(--none, 0px) var(--2, 16px)",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <Button
+          disabled={isAnswering || !selectedOptionId}
+          onClick={nextStep}
+          sx={{
+            display: "flex",
+            width: { xs: "400px", md: "528px" },
+            height: "48px",
+            padding: "12px 16px",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "99px",
+            background: !selectedOptionId ? "var(--surfaceContainerHighest, #E3E2E6)" : "var(--onSurface, #1B1B1F)",
+            "&:hover": {
+              background: "var(--onSurface, #1B1B1F)",
+            },
+          }}
+        >
+          {isAnswering ? (
+            <CircularProgress style={{ color: "#fff" }} />
+          ) : (
+            <Typography
+              sx={{
+                color: "var(--onPrimary, var(--onPrimary, #FFF))",
+                fontFamily: "Poppins",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: "500",
+                lineHeight: "150%",
+              }}
+            >
+              Continue
+            </Typography>
+          )}
+        </Button>
 
         <Box
           sx={{
+            mt: { xs: "0.6rem", md: "0.8rem", lg: "1rem" },
             display: "flex",
-            width: "560px",
-            padding: "var(--none, 0px) var(--2, 16px)",
+            justifyContent: "space-between",
+            cursor: "pointer",
+            height: "40px",
+            p: "8px 16px",
             flexDirection: "column",
             alignItems: "center",
-            gap: 2,
           }}
         >
-          <Button
-            disabled={isAnswering || !selectedOptionId}
-            onClick={nextStep}
+          <Typography
+            onClick={() => skip()}
             sx={{
-              display: "flex",
-              width: "528px",
-              height: "48px",
-              padding: "12px 16px",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "99px",
-              background: !selectedOptionId ? "var(--surfaceContainerHighest, #E3E2E6)" : "var(--onSurface, #1B1B1F)",
-              "&:hover": {
-                background: "var(--onSurface, #1B1B1F)",
-              },
+              fontSize: { xs: "0.8rem", md: "0.8rem", lg: "0.8rem" },
+              color: "#1D202",
+              mb: "2rem",
+              fontWeight: 500,
             }}
           >
-            {isAnswering ? (
-              <CircularProgress style={{ color: "#fff" }} />
-            ) : (
-              <Typography
-                sx={{
-                  color: "var(--onPrimary, var(--onPrimary, #FFF))",
-                  fontFamily: "Poppins",
-                  fontSize: "16px",
-                  fontStyle: "normal",
-                  fontWeight: "500",
-                  lineHeight: "150%",
-                }}
-              >
-                Continue
-              </Typography>
-            )}
-          </Button>
-
-          <Box
-            sx={{
-              mt: { xs: "0.6rem", md: "0.8rem", lg: "1rem" },
-              display: "flex",
-              justifyContent: "space-between",
-              cursor: "pointer",
-              height: "40px",
-              p: "8px 16px",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              onClick={() => skip()}
-              sx={{
-                fontSize: { xs: "0.8rem", md: "0.8rem", lg: "0.8rem" },
-                color: "#1D202",
-                mb: "2rem",
-                fontWeight: 500,
-              }}
-            >
-              Skip for now
-            </Typography>
-          </Box>
+            Skip for now
+          </Typography>
         </Box>
       </Box>
     </Box>

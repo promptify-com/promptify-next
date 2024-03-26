@@ -52,6 +52,7 @@ export default function SocialButtons({
       dispatch(updateUser(payload));
       saveToken({ token });
 
+      if (from === "signup") redirectToPath("/signup");
       redirectToPath(path || "/");
       return;
     }

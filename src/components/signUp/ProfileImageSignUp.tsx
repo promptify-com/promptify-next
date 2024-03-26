@@ -4,15 +4,17 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
-import { User } from "@/core/api/dto/user";
-import { useRef, useState } from "react";
-import { useAppDispatch } from "@/hooks/useStore";
-import ReactCrop, { PixelCrop, type Crop } from "react-image-crop";
-import { useUpdateUserProfileMutation } from "@/core/api/user";
-import { updateUser } from "@/core/store/userSlice";
 import Modal from "@mui/material/Modal";
 import CircularProgress from "@mui/material/CircularProgress";
 import "react-image-crop/dist/ReactCrop.css";
+import ReactCrop, { PixelCrop, type Crop } from "react-image-crop";
+
+import type { User } from "@/core/api/dto/user";
+import { useRef, useState } from "react";
+import { useAppDispatch } from "@/hooks/useStore";
+import { useUpdateUserProfileMutation } from "@/core/api/user";
+import { updateUser } from "@/core/store/userSlice";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   user: User | null;
@@ -102,6 +104,41 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
     }
   }
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      const image = new Image();
+      image.onload = () => {
+        if (image.width < 240 || image.height < 240) {
+          dispatch(
+            setToast({
+              message: "Image dimensions should be at least 240x240 pixels.",
+              severity: "error",
+              position: { vertical: "bottom", horizontal: "left" },
+            }),
+          );
+        } else {
+          setSelectedImage(file);
+          setShowCropModal(true);
+        }
+      };
+      image.onerror = () => {
+        dispatch(
+          setToast({
+            message: "Please select a valid image file.",
+            severity: "error",
+            position: { vertical: "bottom", horizontal: "left" },
+          }),
+        );
+      };
+
+      const reader = new FileReader();
+      reader.onload = e => (image.src = e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <>
       <FinishCard title="Profile image:">
@@ -169,13 +206,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
                 ref={fileInputRef}
                 accept="image/*"
                 type="file"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const file = event.target.files?.[0] || null;
-                  setSelectedImage(file);
-                  if (file) {
-                    setShowCropModal(true);
-                  }
-                }}
+                onChange={handleImageChange}
               />
             </Box>
             <Typography

@@ -50,13 +50,17 @@ const QuestionCard = ({ name, id, selectedOptionId, setSelectedOptionId }: ICard
     <Box
       sx={{
         display: "flex",
-        width: "194px",
-        height: "163px",
+        // width: "194px",
+        // height: "163px",
+        maxWidth: "194px",
+        width: { xs: "100%", sm: "194px", md: "194px" },
+        height: "auto",
         padding: "24px 16px",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         gap: "16px",
+        m: "auto",
       }}
       borderRadius="16px"
       border={
