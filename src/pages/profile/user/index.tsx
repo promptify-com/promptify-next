@@ -5,9 +5,11 @@ import ContentWrapper from "@/components/profile2/ContentWrapper";
 import Stack from "@mui/material/Stack";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import { Avatar, Button, Typography } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
 import { ReactNode, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
+import { ProfileImageButton } from "@/components/profile2/ProfileImageButton";
 
 interface SectionWrapperProps {
   title: string;
@@ -107,7 +109,7 @@ const ProfilePrompts = () => {
                   gap={1}
                   alignItems={"flex-end"}
                 >
-                  <Button>Select Image</Button>
+                  <ProfileImageButton />
                   <Typography
                     fontSize={14}
                     fontWeight={400}
