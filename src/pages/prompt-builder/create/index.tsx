@@ -1,11 +1,22 @@
+import { useSearchParams } from "next/navigation";
 import { Layout } from "@/layout";
 import WelcomeScreen from "@/components/builder/WelcomeScreen";
-import { useSearchParams } from "next/navigation";
+import PromptBuilder from "@/components/builder/PromptBuilder";
 
 function CreatePage() {
   const searchParams = useSearchParams();
 
-  return <Layout>{searchParams.has("editor") ? <div>loading...</div> : <WelcomeScreen />}</Layout>;
+  return (
+    <>
+      {searchParams.has("editor") ? (
+        <PromptBuilder isNewTemplate />
+      ) : (
+        <Layout>
+          <WelcomeScreen />
+        </Layout>
+      )}
+    </>
+  );
 }
 
 export default CreatePage;

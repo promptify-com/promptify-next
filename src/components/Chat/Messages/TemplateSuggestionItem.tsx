@@ -47,6 +47,8 @@ function TemplateSuggestionItem({ template, onScrollToBottom, isEditor }: Props)
       dispatch(setToast({ message: "Template was successfully deleted", severity: "success" }));
     } catch (error) {
       console.error(error, `Something went wrong deleting template - ${template.title}`);
+    } finally {
+      setConfirmDelete(false);
     }
   };
 
