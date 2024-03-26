@@ -16,9 +16,7 @@ import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
 import { TemplatesFilter } from "@/components/explorer/TemplatesFilter";
 import { useAppSelector } from "@/hooks/useStore";
 import ExploreCardTemplate from "@/components/common/cards/ExploreCardTemplate";
-import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
 import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
-import { useRouter } from "next/router";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -105,13 +103,11 @@ function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">
 }
 
 function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "templates" | "bgColor">) {
-  const router = useRouter();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
 
   if (!templates?.length) {
     return null;
   }
-  const isHomePage = router.pathname === "/";
 
   return (
     <Grid
@@ -123,20 +119,6 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
         WebkitOverflowScrolling: { xs: "touch", md: "initial" },
       }}
     >
-      {isHomePage && (
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={isPromptsFiltersSticky ? 10 : 8}
-          lg={6}
-          xl={4}
-          mb={{ xs: 2, md: 0 }}
-        >
-          <AdsBox />
-        </Grid>
-      )}
-
       {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
         <Grid
           item

@@ -73,7 +73,7 @@ function BlogPostCard({ post, min }: Props) {
             </Typography>
           </CardMedia>
         </CardActionArea>
-        <CardContent sx={{ padding: "8px", m: 0 }}>
+        <CardContent sx={{ padding: "8px 0px", m: 0 }}>
           <Stack gap={2}>
             {!min && (
               <Typography

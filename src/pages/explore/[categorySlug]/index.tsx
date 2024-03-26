@@ -34,7 +34,13 @@ export default function Page({ category }: { category: Category }) {
     isFetching,
     hasPrev,
     handlePrevPage,
-  } = useGetTemplatesByFilter({ catId: category?.id, ordering: "-likes", templateLimit: 5, paginatedList: true });
+  } = useGetTemplatesByFilter({
+    catId: category?.id,
+    ordering: "-likes",
+    templateLimit: 5,
+    paginatedList: true,
+    initialStatus: "published",
+  });
 
   useEffect(() => {
     if (!category) {

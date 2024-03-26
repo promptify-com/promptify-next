@@ -5,6 +5,9 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
+import { alpha } from "@mui/system";
+import Favorite from "@mui/icons-material/Favorite";
+import Bolt from "@mui/icons-material/Bolt";
 import type { Templates } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
@@ -13,9 +16,6 @@ import useTruncate from "@/hooks/useTruncate";
 import { isDesktopViewPort, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
-import { alpha } from "@mui/material";
-import Favorite from "@mui/icons-material/Favorite";
-import { Bolt } from "@mui/icons-material";
 import Link from "next/link";
 
 type CardTemplateProps = {
@@ -145,7 +145,7 @@ function CardTemplate({
                 {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
               </Typography>
             </Stack>
-            {!vertical && (
+            {!vertical && template.created_by && (
               <Image
                 src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
                 alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
@@ -181,16 +181,23 @@ function CardTemplate({
                   sx={iconTextStyle}
                 >
                   <Bolt />
-                  {template.executions_count || 0}
+                  {template.likes || template.executions_count || 0}
                 </Stack>
-                <Typography
-                  ml={"auto"}
-                  fontSize={13}
-                  fontWeight={400}
-                  color={alpha(theme.palette.onSurface, 0.75)}
-                >
-                  by {template.created_by.first_name || template.created_by.username}
-                </Typography>
+                {template.created_by?.username && (
+                  <Link
+                    href={`/users/${template.created_by?.username}`}
+                    onClick={e => e.stopPropagation()}
+                    style={{ textDecoration: "none", marginLeft: "auto" }}
+                  >
+                    <Typography
+                      fontSize={13}
+                      fontWeight={400}
+                      color={alpha(theme.palette.onSurface, 0.75)}
+                    >
+                      by {template.created_by.first_name || template.created_by.username}
+                    </Typography>
+                  </Link>
+                )}
               </Stack>
             )}
           </Stack>
