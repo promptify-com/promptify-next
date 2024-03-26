@@ -14,6 +14,7 @@ interface Props {
   required: boolean;
   helperText: string | false | undefined;
   error: boolean;
+  rows?: number;
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onClear(): void;
 }
@@ -26,6 +27,7 @@ export default function StackedInput({
   required,
   helperText,
   error,
+  rows,
   onChange,
   onClear,
 }: Props) {
@@ -39,7 +41,7 @@ export default function StackedInput({
         width: "100%",
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
+        alignItems: "flex-start",
         ":not(:last-of-type)": {
           borderBottom: "1px solid",
           borderColor: "surfaceContainerHighest",
@@ -50,7 +52,8 @@ export default function StackedInput({
     >
       <InputLabel
         sx={{
-          flex: 1,
+          flex: 2,
+          minWidth: "fit-content",
           position: "relative",
           transform: "none",
           p: "16px 8px 16px 24px",
@@ -62,14 +65,16 @@ export default function StackedInput({
         {label}
       </InputLabel>
       <Stack
-        flex={3}
+        flex={4}
         direction={"row"}
         alignItems={"center"}
         gap={3}
         sx={{
-          p: "8px 16px",
-          borderBottom: "1px solid",
-          borderColor: isFocused ? "primary.main" : "transparent",
+          p: rows ? "16px" : "8px 16px",
+          ...(!rows && {
+            borderBottom: "1px solid",
+            borderColor: isFocused ? "primary.main" : "transparent",
+          }),
         }}
       >
         <TextField
@@ -82,10 +87,18 @@ export default function StackedInput({
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          {...(rows && {
+            multiline: true,
+            rows,
+          })}
           sx={{
             flex: 1,
             ".MuiInputBase-root": {
               minHeight: "40px",
+              p: 0,
+              "textarea::-webkit-scrollbar": {
+                width: 0,
+              },
             },
             input: {
               p: 0,

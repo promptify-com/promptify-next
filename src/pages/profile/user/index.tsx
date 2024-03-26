@@ -212,6 +212,19 @@ const ProfilePrompts = () => {
                 </Box>
               </Typography>
             </Stack>
+            <SectionWrapper title="About you:">
+              <StackedInput
+                name="bio"
+                label="Short profile description"
+                required
+                value={formik.values.bio}
+                helperText={formik.touched.bio && formik.errors.bio}
+                error={!!formik.touched.bio && Boolean(formik.errors.bio)}
+                onChange={formik.handleChange}
+                onClear={() => formik.setFieldValue("bio", "")}
+                rows={3}
+              />
+            </SectionWrapper>
           </Stack>
         </ContentWrapper>
       </Layout>
