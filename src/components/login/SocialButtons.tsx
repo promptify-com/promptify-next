@@ -43,7 +43,7 @@ export default function SocialButtons({
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse> | null) => {
     if (response?.data) {
-      const { token, created: _ } = response.data;
+      const { token, created } = response.data;
       const path = getPathURL();
       // response.data has corrupted user data, so we need to call this API to get proper user data
       const payload = await getCurrentUser(token).unwrap();
@@ -52,7 +52,10 @@ export default function SocialButtons({
       dispatch(updateUser(payload));
       saveToken({ token });
 
-      if (from === "signup") redirectToPath("/onboarding");
+      if (created) {
+        redirectToPath("/onboarding");
+        return;
+      }
       redirectToPath(path || "/");
       return;
     }

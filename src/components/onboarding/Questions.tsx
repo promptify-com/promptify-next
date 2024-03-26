@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { BugReport } from "@mui/icons-material";
+import { useState } from "react";
+import BugReport from "@mui/icons-material/BugReport";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -7,7 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import QuestionCard from "./QuestionCard";
 
 import { useUpdateAnswers } from "@/hooks/api/user";
-import { IQuestion } from "@/common/types";
+import type { IQuestion } from "@/common/types";
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";

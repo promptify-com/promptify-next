@@ -15,7 +15,7 @@ const SignUp = () => {
   useEffect(() => {
     const handleBeforeUnload = (event: any) => {
       event.preventDefault();
-      event.returnValue = "Etes-vous sur de vouloir quitter la page ?";
+      event.returnValue = "Are you sure you want to leave the page?";
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
