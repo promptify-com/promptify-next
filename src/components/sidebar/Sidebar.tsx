@@ -11,13 +11,14 @@ import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
 import TryRounded from "@mui/icons-material/TryRounded";
+
+import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import SidebarItem from "./SidebarItem";
-import { theme } from "@/theme";
-import useBrowser from "@/hooks/useBrowser";
 import { BLOG_URL } from "@/common/constants";
 import type { NavItem } from "@/common/types/sidebar";
+import useBrowser from "@/hooks/useBrowser";
+import SidebarItem from "@/components/sidebar/SidebarItem";
 
 const FiltersDrawerLazy = lazy(() => import("./PromptsFilter/FiltersDrawer"), {
   ssr: false,
@@ -73,7 +74,7 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "Prompt Builder",
+      name: "Editor",
       href: isValidUser ? `/prompt-builder/create` : "/signin",
       icon: <Inventory2Rounded />,
       active: pathname.includes("/prompt-builder"),

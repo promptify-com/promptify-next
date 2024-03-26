@@ -40,11 +40,13 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getTemplatesByFilter: builder.query<TemplatesWithPagination, FilterParams>({
-        query: (params: FilterParams) => ({
-          url: `/api/meta/templates/?${getSearchParams(params)}`,
-          method: "get",
-        }),
+      getTemplatesByFilter: builder.query<TemplatesWithPagination, { params: FilterParams }>({
+        query: ({ params }) => {
+          return {
+            url: `/api/meta/templates?${getSearchParams(params)}`,
+            method: "get",
+          };
+        },
       }),
       deleteTemplate: builder.mutation({
         query: (id: number) => ({
@@ -96,10 +98,11 @@ export const templatesApi = baseApi.injectEndpoints({
           data,
         }),
       }),
-      getMyTemplates: builder.query<Templates[], void>({
-        query: () => ({
-          url: "/api/meta/templates/me",
+      getMyTemplates: builder.query<Templates[] | TemplatesWithPagination, FilterParams>({
+        query: (params = {}) => ({
+          url: `/api/meta/templates/me${Object.keys(params).length ? `?${getSearchParams(params)}` : ""}`,
           method: "get",
+          refetchOnMountOrArgChange: true,
         }),
         providesTags: ["MyTemplates"],
       }),

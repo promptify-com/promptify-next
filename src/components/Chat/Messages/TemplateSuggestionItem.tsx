@@ -11,27 +11,52 @@ import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
+import { IconButton, Tooltip } from "@mui/material";
+import { DeleteForeverOutlined, ModeEditOutline } from "@mui/icons-material";
+import { useDeleteTemplateMutation } from "@/core/api/templates";
+import { useState } from "react";
+import { DeleteDialog } from "@/components/dialog/DeleteDialog";
+import { setToast } from "@/core/store/toastSlice";
+import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 
 interface Props {
+  variant: "chat" | "editor_builder";
   template: Templates;
-  onScrollToBottom: () => void;
+  onScrollToBottom?: () => void;
 }
 
-function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
+function TemplateSuggestionItem({ template, onScrollToBottom, variant }: Props) {
   const dispatch = useAppDispatch();
-  const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
+  const [deleteTemplate] = useDeleteTemplateMutation();
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const { thumbnail, title, slug, description, executions_count, likes } = template;
 
   const handleRunPrompt = () => {
     dispatch(setSelectedTemplate(template));
     dispatch(setAnswers([]));
     setTimeout(() => {
-      onScrollToBottom();
+      onScrollToBottom?.();
     }, 100);
   };
 
+  const handleDeleteTemplate = async () => {
+    try {
+      await deleteTemplate(template.id);
+      dispatch(setToast({ message: "Template was successfully deleted", severity: "success" }));
+    } catch (error) {
+      console.error(error, `Something went wrong deleting template - ${template.title}`);
+    }
+  };
+
+  const isEditorBuilder = variant === "editor_builder";
+
   return (
     <Stack
-      bgcolor={"surface.1"}
+      bgcolor={isEditorBuilder ? "transparent" : "surface.1"}
+      border={isEditorBuilder ? "1px solid" : "none"}
+      borderColor={"surfaceDim"}
       p={"16px 0px"}
       px={{ xs: "8px", md: "16px" }}
       borderRadius={"24px"}
@@ -39,6 +64,7 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
       gap={"24px"}
       alignItems={"center"}
       justifyContent={"space-between"}
+      width={"100%"}
     >
       <Stack
         direction={"row"}
@@ -122,7 +148,7 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
                 fontWeight={400}
                 lineHeight={"18.2px"}
               >
-                {favorites_count}
+                {likes}
               </Typography>
             </Box>
             <Box
@@ -148,32 +174,88 @@ function TemplateSuggestionItem({ template, onScrollToBottom }: Props) {
         </Stack>
       </Stack>
 
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        px={{ md: "30px" }}
-        width={{ xs: "100%", md: "fit-content" }}
-      >
-        <Button
-          variant="text"
-          startIcon={<PlayArrow />}
-          sx={{
-            color: "onSurface",
-            width: { xs: "100%", md: "fit-content" },
-            bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
-            "&:hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-          onClick={handleRunPrompt}
+      {!isEditorBuilder ? (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          px={{ md: "30px" }}
+          width={{ xs: "100%", md: "fit-content" }}
         >
-          Run prompt
-        </Button>
-        <TemplateActions
-          template={template}
-          onScrollToBottom={onScrollToBottom}
+          <Button
+            variant="text"
+            startIcon={<PlayArrow />}
+            sx={{
+              color: "onSurface",
+              width: { xs: "100%", md: "fit-content" },
+              bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
+              "&:hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            onClick={handleRunPrompt}
+          >
+            Run prompt
+          </Button>
+          <TemplateActions
+            template={template}
+            onScrollToBottom={onScrollToBottom}
+          />
+        </Stack>
+      ) : (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          px={{ md: "20px" }}
+          width={{ xs: "100%", md: "fit-content" }}
+          gap={1}
+        >
+          <Tooltip
+            title="Edit"
+            placement="top"
+            arrow
+          >
+            <Link href={`/prompt-builder/${template.slug}?editor=1`}>
+              <IconButton
+                sx={{
+                  border: "none",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                <ModeEditOutline />
+              </IconButton>
+            </Link>
+          </Tooltip>
+
+          <Tooltip
+            title="Delete"
+            placement="top"
+            arrow
+          >
+            <IconButton
+              onClick={() => setConfirmDelete(true)}
+              sx={{
+                border: "none",
+                ":hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <DeleteForeverOutlined />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      )}
+
+      {confirmDelete && (
+        <DeleteDialog
+          open={true}
+          dialogContentText={`Are you sure you want to remove this template - ${template.title}?`}
+          onClose={() => setConfirmDelete(false)}
+          onSubmit={handleDeleteTemplate}
         />
-      </Stack>
+      )}
     </Stack>
   );
 }

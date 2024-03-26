@@ -24,9 +24,11 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
 
   const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery(
     {
-      ordering: "-runs",
-      limit: 30,
-      status: "published",
+      params: {
+        ordering: "-runs",
+        limit: 30,
+        status: "published",
+      },
     },
     {
       skip: !observers.templatesObserver?.isIntersecting,
