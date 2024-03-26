@@ -31,7 +31,7 @@ function TemplateSuggestionItem({ template, onScrollToBottom, variant }: Props) 
 
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
+  const { thumbnail, title, slug, description, executions_count, likes } = template;
 
   const handleRunPrompt = () => {
     dispatch(setSelectedTemplate(template));
@@ -148,7 +148,7 @@ function TemplateSuggestionItem({ template, onScrollToBottom, variant }: Props) 
                 fontWeight={400}
                 lineHeight={"18.2px"}
               >
-                {favorites_count}
+                {likes}
               </Typography>
             </Box>
             <Box
