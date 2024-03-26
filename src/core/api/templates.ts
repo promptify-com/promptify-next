@@ -40,8 +40,8 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getTemplatesByFilter: builder.query<TemplatesWithPagination, { params: FilterParams }>({
-        query: ({ params }) => {
+      getTemplatesByFilter: builder.query<TemplatesWithPagination, FilterParams>({
+        query: params => {
           return {
             url: `/api/meta/templates?${getSearchParams(params)}`,
             method: "get",

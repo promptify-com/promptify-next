@@ -31,7 +31,7 @@ function PopularTemplates({ catId }: Props) {
     status: "published",
   };
 
-  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery({ params });
+  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);
 
   const handleNextPage = () => {
     if (!!data?.next) {

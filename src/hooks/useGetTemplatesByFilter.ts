@@ -64,7 +64,7 @@ export function useGetTemplatesByFilter({
     data: templates,
     isLoading: isTemplatesLoading,
     isFetching,
-  } = useGetTemplatesByFilterQuery({ params }, { skip: skipFetchingTemplates });
+  } = useGetTemplatesByFilterQuery(params, { skip: skipFetchingTemplates });
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
 
   useEffect(() => {

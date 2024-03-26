@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -6,26 +8,24 @@ import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
 import Image from "@/components/design-system/Image";
-import type { Templates } from "@/core/api/dto/templates";
 import TemplateActions from "@/components/Chat/TemplateActions";
-import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
-import { IconButton, Tooltip } from "@mui/material";
 import { DeleteForeverOutlined, ModeEditOutline } from "@mui/icons-material";
 import { useDeleteTemplateMutation } from "@/core/api/templates";
-import { useState } from "react";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { setToast } from "@/core/store/toastSlice";
-import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
+import type { Templates } from "@/core/api/dto/templates";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 
 interface Props {
-  variant: "chat" | "editor_builder";
   template: Templates;
   onScrollToBottom?: () => void;
+  isEditor?: boolean;
 }
 
-function TemplateSuggestionItem({ template, onScrollToBottom, variant }: Props) {
+function TemplateSuggestionItem({ template, onScrollToBottom, isEditor }: Props) {
   const dispatch = useAppDispatch();
   const [deleteTemplate] = useDeleteTemplateMutation();
 
@@ -50,12 +50,10 @@ function TemplateSuggestionItem({ template, onScrollToBottom, variant }: Props) 
     }
   };
 
-  const isEditorBuilder = variant === "editor_builder";
-
   return (
     <Stack
-      bgcolor={isEditorBuilder ? "transparent" : "surface.1"}
-      border={isEditorBuilder ? "1px solid" : "none"}
+      bgcolor={isEditor ? "transparent" : "surface.1"}
+      border={isEditor ? "1px solid" : "none"}
       borderColor={"surfaceDim"}
       p={"16px 0px"}
       px={{ xs: "8px", md: "16px" }}
@@ -174,7 +172,7 @@ function TemplateSuggestionItem({ template, onScrollToBottom, variant }: Props) 
         </Stack>
       </Stack>
 
-      {!isEditorBuilder ? (
+      {!isEditor ? (
         <Stack
           direction={"row"}
           alignItems={"center"}

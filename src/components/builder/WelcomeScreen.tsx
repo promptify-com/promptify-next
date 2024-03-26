@@ -1,11 +1,12 @@
+import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+
 import CreateBuilderCard from "@/components/builder/CreateBuilderCard";
 import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import TemplateSuggestionPlaceholder from "@/components/placeholders/TemplateSuggestionPlaceholder";
 import { useGetMyTemplatesQuery } from "@/core/api/templates";
-import Link from "next/link";
 import type { TemplatesWithPagination } from "@/core/api/dto/templates";
 import type { ICreateBuilderLink } from "@/components/builder/Types";
 
@@ -109,8 +110,8 @@ export default function WelcomeScreen() {
               Continue editing
             </Typography>
             <TemplateSuggestionItem
-              variant="editor_builder"
               template={(templates as TemplatesWithPagination).results[0]}
+              isEditor
             />
           </Stack>
         )}
