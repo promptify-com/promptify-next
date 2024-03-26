@@ -41,6 +41,7 @@ function TemplateSuggestions({ templates, scrollToBottom }: Props) {
           {templates.slice(0, visibleCount).map(template => (
             <TemplateSuggestionItem
               key={template.id}
+              variant="chats"
               template={template}
               onScrollToBottom={scrollToBottom}
             />

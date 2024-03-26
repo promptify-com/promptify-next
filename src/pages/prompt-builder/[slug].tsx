@@ -6,31 +6,31 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { theme } from "@/theme";
-import Header from "@/components/builder/Header";
-import TemplateForm from "@/components/common/forms/TemplateForm";
-import { isPromptVariableValid } from "@/common/helpers/promptValidator";
-import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
-import { updateTemplate } from "@/hooks/api/templates";
-import { BuilderSidebar } from "@/components/builderSidebar";
-import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
+
 import useToken from "@/hooks/useToken";
-import { useAppSelector } from "@/hooks/useStore";
+import { theme } from "@/theme";
+import { setToast } from "@/core/store/toastSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { isPromptVariableValid } from "@/common/helpers/promptValidator";
+import { useGetEnginesQuery } from "@/core/api/engines";
+import { updateTemplate } from "@/hooks/api/templates";
+import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
+import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
+import { handleInitPrompt } from "@/common/helpers/initPrompt";
+import Header from "@/components/builder/Header";
+import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { BuilderSidebar } from "@/components/builderSidebar";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
-import { useGetEnginesQuery } from "@/core/api/engines";
-import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
-import { useDispatch } from "react-redux";
-import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
-import { setToast } from "@/core/store/toastSlice";
 
 export const PromptBuilder = () => {
   const router = useRouter();
   const token = useToken();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [publishTemplate] = usePublishTemplateMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -247,6 +247,7 @@ export const PromptBuilder = () => {
         prompts={prompts}
         setPrompts={setPrompts}
       />
+
       <Box
         sx={{
           ml: theme.custom.leftClosedSidebarWidth,

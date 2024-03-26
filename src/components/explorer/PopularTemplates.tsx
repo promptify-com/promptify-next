@@ -30,7 +30,7 @@ function PopularTemplates({ catId }: Props) {
     categoryId: catId,
   };
 
-  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);
+  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery({ params });
 
   const handleNextPage = () => {
     if (!!data?.next) {

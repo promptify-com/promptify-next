@@ -1,11 +1,10 @@
 import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { RootState } from "@/core/store";
+
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
-import useDebounce from "./useDebounce";
-import { Templates } from "@/core/api/dto/templates";
+import useDebounce from "@/hooks/useDebounce";
+import { useAppSelector } from "@/hooks/useStore";
+import type { Templates, FilterParams, LowercaseTemplateStatus, SelectedFilters } from "@/core/api/dto/templates";
 
 interface Props {
   catId?: number;
@@ -14,6 +13,8 @@ interface Props {
   admin?: boolean;
   templateLimit?: number;
   paginatedList?: boolean;
+  initialStatus?: LowercaseTemplateStatus;
+  ownerTemplates?: boolean;
 }
 
 export function useGetTemplatesByFilter({
@@ -23,16 +24,18 @@ export function useGetTemplatesByFilter({
   admin = false,
   templateLimit,
   paginatedList = false,
+  initialStatus,
+  ownerTemplates,
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
-  const filters = useSelector((state: RootState) => state.filters);
+  const filters = useAppSelector(state => state.filters);
   const { tag: tags, engine, title, engineType, isFavourite } = filters;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
 
   const params: FilterParams = {
@@ -59,7 +62,7 @@ export function useGetTemplatesByFilter({
     data: templates,
     isLoading: isTemplatesLoading,
     isFetching,
-  } = useGetTemplatesByFilterQuery(params, { skip: skipFetchingTemplates });
+  } = useGetTemplatesByFilterQuery({ params, ownerTemplates }, { skip: skipFetchingTemplates });
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
 
   useEffect(() => {
@@ -87,7 +90,7 @@ export function useGetTemplatesByFilter({
 
   const resetOffest = (status?: string) => {
     setOffset(0);
-    if (status) setStatus(status);
+    if (status) setStatus(status as LowercaseTemplateStatus);
   };
 
   const handleNextPage = () => {
