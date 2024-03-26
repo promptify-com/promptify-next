@@ -105,7 +105,7 @@ export let theme: Theme = createTheme({
     surfaceVariant: "#E1E2EC",
     onSurface: "#1B1B1E",
     onSurfaceVariant: "#FFC5C9",
-    outline: "#FFC5C9",
+    outline: "#757780",
     inverseOnSurface: "#F2F0F4",
     inverseSurface: "#303033",
     surfaceContainer: "#EFEDF1",

@@ -8,8 +8,17 @@ import Switch from "@mui/material/Switch";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { ReactNode, useState } from "react";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ProfileImageButton } from "@/components/profile2/ProfileImageButton";
+import Box from "@mui/material/Box";
+import StackedInput from "@/components/common/forms/StackedInput";
+import { useFormik } from "formik";
+import { IEditProfile } from "@/common/types";
+import { useRouter } from "next/router";
+import { useUpdateUserProfileMutation } from "@/core/api/user";
+import { updateUser } from "@/core/store/userSlice";
+import useToken from "@/hooks/useToken";
+import useLogout from "@/hooks/useLogout";
 
 interface SectionWrapperProps {
   title: string;
@@ -27,13 +36,53 @@ const SectionWrapper = ({ title, children }: SectionWrapperProps) => (
     >
       {title}
     </Typography>
-    {children}
+    <Box
+      sx={{
+        border: "1px solid",
+        borderRadius: "16px",
+        borderColor: "surfaceContainerHighest",
+        overflow: "hidden",
+      }}
+    >
+      {children}
+    </Box>
   </Stack>
 );
 
 const ProfilePrompts = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [isPublic, setIsPublic] = useState(true);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const token = useToken();
+  const logoutUser = useLogout();
+
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+
+  const onSubmit = async (values: IEditProfile) => {
+    if (token || !currentUser?.id) {
+      logoutUser();
+      return;
+    }
+
+    const payload = await updateUserProfile({ token, data: values }).unwrap();
+    dispatch(updateUser(payload));
+
+    router.reload();
+  };
+
+  const formik = useFormik<IEditProfile>({
+    initialValues: {
+      first_name: currentUser?.first_name || "",
+      last_name: currentUser?.last_name || "",
+      username: currentUser?.username || "",
+      gender: currentUser?.gender || "",
+      bio: currentUser?.bio || "",
+      avatar: null, // file expected
+    },
+    enableReinitialize: true,
+    onSubmit,
+  });
 
   return (
     <Protected>
@@ -86,12 +135,7 @@ const ProfilePrompts = () => {
                 direction={"row"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                sx={{
-                  p: "24px",
-                  border: "1px solid",
-                  borderRadius: "16px",
-                  borderColor: "surfaceContainerHighest",
-                }}
+                p={"24px"}
               >
                 <Avatar
                   src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
@@ -120,6 +164,54 @@ const ProfilePrompts = () => {
                 </Stack>
               </Stack>
             </SectionWrapper>
+            <Stack gap={1}>
+              <SectionWrapper title="Basic information:">
+                <StackedInput
+                  name="first_name"
+                  label="First name"
+                  required
+                  value={formik.values.first_name}
+                  helperText={formik.touched.first_name && formik.errors.first_name}
+                  error={!!formik.touched.first_name && Boolean(formik.errors.first_name)}
+                  onChange={formik.handleChange}
+                  onClear={() => formik.setFieldValue("first_name", "")}
+                />
+                <StackedInput
+                  name="last_name"
+                  label="Last name"
+                  required
+                  value={formik.values.last_name}
+                  helperText={formik.touched.last_name && formik.errors.last_name}
+                  error={!!formik.touched.last_name && Boolean(formik.errors.last_name)}
+                  onChange={formik.handleChange}
+                  onClear={() => formik.setFieldValue("last_name", "")}
+                />
+                <StackedInput
+                  name="username"
+                  label="Nickname"
+                  required
+                  value={formik.values.username}
+                  helperText={formik.touched.username && formik.errors.username}
+                  error={!!formik.touched.username && Boolean(formik.errors.username)}
+                  onChange={formik.handleChange}
+                  onClear={() => formik.setFieldValue("username", "")}
+                />
+              </SectionWrapper>
+              <Typography
+                fontSize={14}
+                fontWeight={400}
+                color={"secondary.light"}
+                px={"32px"}
+              >
+                Nickname will be used as link to your profile:{" "}
+                <Box
+                  component={"span"}
+                  color={"primary.main"}
+                >
+                  www.promptify.com/users/batch
+                </Box>
+              </Typography>
+            </Stack>
           </Stack>
         </ContentWrapper>
       </Layout>
