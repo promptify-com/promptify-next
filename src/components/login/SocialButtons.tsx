@@ -52,7 +52,7 @@ export default function SocialButtons({
       dispatch(updateUser(payload));
       saveToken({ token });
 
-      if (from === "signup") redirectToPath("/signup");
+      if (from === "signup") redirectToPath("/onboarding");
       redirectToPath(path || "/");
       return;
     }

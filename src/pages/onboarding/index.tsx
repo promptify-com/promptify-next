@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useQuestions } from "../../hooks/api/questions";
-import Finish from "@/components/signUp/Finish";
-import Questions from "@/components/signUp/Questions";
+import Finish from "@/components/onboarding/Finish";
+import Questions from "@/components/onboarding/Questions";
 import { LogoApp } from "@/assets/icons/LogoApp";
 
 const thisYear = new Date().getFullYear();

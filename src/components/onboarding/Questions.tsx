@@ -95,37 +95,47 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
           </Typography>
         )}
 
-        <Typography
+        <Box
           sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 500,
-            fontSize: "13px",
-            lineHeight: "22px",
-            letterSpacing: "0.46px",
-            color: "#000000",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "24px",
           }}
         >
-          Question {step} of {questions.length}
-        </Typography>
-
-        {questions.length > 0 && (
           <Typography
             sx={{
-              color: "var(--onSurface, var(--onSurface, #1B1B1F))",
-              textAlign: "center",
-              fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Poppins",
-              fontSize: { xs: "26px", md: "32px" },
               fontStyle: "normal",
-              fontWeight: "500",
-              lineHeight: "110%",
-              letterSpacing: "0.17px",
+              fontWeight: 500,
+              fontSize: "13px",
+              lineHeight: "22px",
+              letterSpacing: "0.46px",
+              color: "#000000",
             }}
           >
-            {questions[step - 1].text}
+            Question {step} of {questions.length}
           </Typography>
-        )}
+
+          {questions.length > 0 && (
+            <Typography
+              sx={{
+                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+                textAlign: "center",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Poppins",
+                fontSize: { xs: "26px", md: "32px" },
+                fontStyle: "normal",
+                fontWeight: "500",
+                lineHeight: "110%",
+                letterSpacing: "0.17px",
+              }}
+            >
+              {questions[step - 1].text}
+            </Typography>
+          )}
+        </Box>
       </Box>
 
       {questions.length > 0 && (
