@@ -20,8 +20,12 @@ export default function AccountSidebar() {
     <Box
       width={AccountSidebarWidth}
       height={"100svh"}
-      overflow={"auto"}
       sx={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        overflow: "auto",
+        overscrollBehavior: "contain",
         "&::-webkit-scrollbar": {
           width: 0,
         },

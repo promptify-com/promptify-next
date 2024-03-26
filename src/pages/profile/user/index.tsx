@@ -18,13 +18,14 @@ import { useRouter } from "next/router";
 import { useUpdateUserProfileMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 import useToken from "@/hooks/useToken";
-import useLogout from "@/hooks/useLogout";
+import Button from "@mui/material/Button";
 
 interface SectionWrapperProps {
   title: string;
   children: ReactNode;
+  noBorder?: boolean;
 }
-const SectionWrapper = ({ title, children }: SectionWrapperProps) => (
+const SectionWrapper = ({ title, children, noBorder }: SectionWrapperProps) => (
   <Stack
     gap={2}
     p={"8px 16px"}
@@ -38,10 +39,12 @@ const SectionWrapper = ({ title, children }: SectionWrapperProps) => (
     </Typography>
     <Box
       sx={{
-        border: "1px solid",
-        borderRadius: "16px",
-        borderColor: "surfaceContainerHighest",
-        overflow: "hidden",
+        ...(!noBorder && {
+          border: "1px solid",
+          borderRadius: "16px",
+          borderColor: "surfaceContainerHighest",
+          overflow: "hidden",
+        }),
       }}
     >
       {children}
@@ -55,19 +58,12 @@ const ProfilePrompts = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const token = useToken();
-  const logoutUser = useLogout();
 
   const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
 
   const onSubmit = async (values: IEditProfile) => {
-    if (token || !currentUser?.id) {
-      logoutUser();
-      return;
-    }
-
     const payload = await updateUserProfile({ token, data: values }).unwrap();
     dispatch(updateUser(payload));
-
     router.reload();
   };
 
@@ -78,7 +74,6 @@ const ProfilePrompts = () => {
       username: currentUser?.username || "",
       gender: currentUser?.gender || "",
       bio: currentUser?.bio || "",
-      avatar: null, // file expected
     },
     enableReinitialize: true,
     onSubmit,
@@ -225,6 +220,56 @@ const ProfilePrompts = () => {
                 rows={3}
               />
             </SectionWrapper>
+            <SectionWrapper
+              title="Delete Account"
+              noBorder
+            >
+              <Stack
+                alignItems={"flex-start"}
+                gap={2}
+              >
+                <Typography
+                  fontSize={16}
+                  fontWeight={400}
+                  color={"secondary.light"}
+                >
+                  If you wish to permanently delete your account, please be aware that this action is irreversible and
+                  will result in the loss of all your account data, including chat history and documents.
+                </Typography>
+                <Button
+                  onClick={() => console.log("delete account")}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: "surfaceContainerHigh",
+                    p: "8px 24px",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "onSurface",
+                  }}
+                >
+                  Delete account
+                </Button>
+              </Stack>
+            </SectionWrapper>
+            <Stack
+              direction={"row"}
+              gap={2}
+              p={"8px 16px"}
+            >
+              <Button
+                variant="contained"
+                onClick={formik.submitForm}
+                disabled={isLoading}
+              >
+                Save changes
+              </Button>
+              <Button
+                onClick={() => {}}
+                sx={{ color: "onSurface" }}
+              >
+                Cancel
+              </Button>
+            </Stack>
           </Stack>
         </ContentWrapper>
       </Layout>
