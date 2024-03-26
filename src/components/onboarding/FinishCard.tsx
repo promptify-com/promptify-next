@@ -11,7 +11,7 @@ const FinishCard = ({ children, title }: Props) => {
     <Box
       sx={{
         display: "flex",
-        width: "528px",
+        width: { xs: "90%", sm: "528px" },
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "flex-start",
@@ -23,7 +23,7 @@ const FinishCard = ({ children, title }: Props) => {
           color: "var(--onSurface, var(--onSurface, #1B1B1F))",
           fontFeatureSettings: "'clig' off, 'liga' off",
           fontFamily: "Poppins",
-          fontSize: "20px",
+          fontSize: { xs: "16px", sm: "20px" },
           fontStyle: "normal",
           fontWeight: "400",
           lineHeight: "120%",

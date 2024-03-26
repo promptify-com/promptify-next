@@ -84,7 +84,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               textAlign: "center",
               fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Poppins",
-              fontSize: { xs: "13px", md: "24px" },
+              fontSize: { xs: "12px", md: "24px" },
               fontStyle: "normal",
               fontWeight: "400",
               lineHeight: "110%",
@@ -191,7 +191,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
           onClick={nextStep}
           sx={{
             display: "flex",
-            width: { xs: "400px", md: "528px" },
+            width: { xs: "330px", md: "528px" },
             height: "48px",
             padding: "12px 16px",
             flexDirection: "column",

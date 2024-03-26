@@ -52,7 +52,7 @@ const Finish = () => {
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "100%",
         display: "flex",
         alignItems: "center",
       }}
@@ -66,7 +66,7 @@ const Finish = () => {
           gap: "48px",
           flex: "1 0 0",
           height: "822px",
-          width: "952px",
+          width: { xs: "50%", sm: "952px" },
         }}
       >
         <Box
@@ -85,7 +85,7 @@ const Finish = () => {
               textAlign: "center",
               fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Poppins",
-              fontSize: "32px",
+              fontSize: { xs: "24px", sm: "32px" },
               fontStyle: "normal",
               fontWeight: "500",
               lineHeight: "110%",
@@ -101,7 +101,7 @@ const Finish = () => {
               textAlign: "center",
               fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Poppins",
-              fontSize: "16px",
+              fontSize: { xs: "14px", sm: "16px" },
               fontStyle: "normal",
               fontWeight: "400",
               lineHeight: "160%",
@@ -121,7 +121,7 @@ const Finish = () => {
           <List
             sx={{
               py: 0,
-              width: "574px",
+              width: { xs: "100%", sm: "574px" },
               borderRadius: "24px",
               border: "1px solid",
               borderColor: "divider",
@@ -184,14 +184,14 @@ const Finish = () => {
               height: "48px",
               justifyContent: "center",
               alignItems: "center",
-              padding: "var(--1, 8px) var(--3, 24px)",
+              padding: { xs: 0, sm: "var(--1, 8px) var(--3, 24px)" },
               mt: "48px",
             }}
           >
             <Button
               sx={{
                 display: "flex",
-                width: "100%",
+                width: { xs: "80%", md: "100%" },
                 height: "48px",
                 padding: "12px 16px",
                 flexDirection: "column",

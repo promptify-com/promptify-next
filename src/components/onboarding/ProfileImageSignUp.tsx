@@ -144,14 +144,15 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
       <FinishCard title="Profile image:">
         <Box
           sx={{
-            width: "100%",
-            height: "124px",
+            width: { xs: "85%", sm: "100%" },
+            height: { xs: "200px", sm: "124px" },
             display: "flex",
             padding: "var(--1, 8px) var(--3, 24px)",
             alignItems: "center",
             justifyContent: "space-between",
             borderRadius: "24px",
             border: "1px solid var(--surfaceContainerHigh, #E9E7EC)",
+            flexDirection: { xs: "column", sm: "row" },
           }}
         >
           <Avatar
@@ -169,7 +170,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              alignItems: "flex-end",
+              alignItems: { xs: "center", sm: "flex-end" },
               gap: "var(--1, 8px)",
             }}
           >
