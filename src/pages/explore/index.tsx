@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import { Typography } from "@mui/material";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
 
 import type { GetServerSideProps } from "next";
@@ -85,6 +85,7 @@ export default function ExplorePage({ categories = [] }: Props) {
 
   return (
     <Layout>
+      <img src="https://placehold.oi/640" />
       <Box
         mt={{ xs: 7, md: 0 }}
         position={"relative"}
