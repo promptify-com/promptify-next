@@ -39,9 +39,9 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
     >
       <Grid
         sx={{
-          width: { xs: "100%", sm: "70%" },
+          width: "100%",
           height: { xs: "100%", sm: "auto" },
-          display: { xs: "flex", sm: "none", lg: "flex" },
+          display: "flex",
           justifyContent: "flex-end",
           alignItems: "flex-end",
           position: "relative",
@@ -84,7 +84,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               top: { xs: "50px", sm: "70px" },
               left: "50%",
               transform: "translateX(-50%)",
-              width: { xs: "95%", sm: "50%" },
+              width: { xs: "95%", md: "70%", lg: "50%", xl: "41%" },
             }}
           >
             <Typography
@@ -126,7 +126,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
 
       <Grid
         sx={{
-          width: { xs: "100%", md: "50%" },
+          width: { xs: "100%", md: "60%" },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -135,6 +135,8 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           bgcolor: "onPrimary",
           borderRadius: "24px 24px 0 0",
           bottom: 0,
+          height: { sm: "560px", md: "auto" },
+          padding: { sm: "20px", md: "0 " },
         }}
       >
         <Grid
@@ -161,7 +163,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               fontSize: { xs: "25px", md: "32px" },
               fontStyle: "normal",
               fontWeight: "500",
-              m: { xs: "-10px 0 0 0", md: "-31px 0 0 0" },
+              m: { xs: "-10px 0 0 0", sm: "-20px 0 0 -40px", md: "-31px 0 0 0" },
             }}
           >
             Promptify
