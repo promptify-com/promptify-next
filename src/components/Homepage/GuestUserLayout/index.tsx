@@ -31,7 +31,6 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
         limit: 30,
         status: "published",
       },
-      ownerTemplates: true,
     },
     {
       skip: !observers.templatesObserver?.isIntersecting,

@@ -26,7 +26,6 @@ const getSearchParams = (params: FilterParams) => {
   params.status && searchParams.append("status", String(params.status));
   params.engine_type && searchParams.append("engine_type", String(params.engine_type));
   params.isFavourite && searchParams.append("is_favorite", String(params.isFavourite));
-  params.status && searchParams.append("status", params.status);
   typeof params.isInternal === "boolean" && searchParams.append("is_internal", String(params.isInternal));
 
   return searchParams.toString();
@@ -41,12 +40,10 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getTemplatesByFilter: builder.query<TemplatesWithPagination, { params: FilterParams; ownerTemplates?: boolean }>({
-        query: ({ params, ownerTemplates = false }) => {
-          const basePath = ownerTemplates ? "/api/meta/templates/me" : "/api/meta/templates";
-          const url = `${basePath}?${getSearchParams(params)}`;
+      getTemplatesByFilter: builder.query<TemplatesWithPagination, { params: FilterParams }>({
+        query: ({ params }) => {
           return {
-            url,
+            url: `/api/meta/templates?${getSearchParams(params)}`,
             method: "get",
           };
         },
@@ -101,10 +98,11 @@ export const templatesApi = baseApi.injectEndpoints({
           data,
         }),
       }),
-      getMyTemplates: builder.query<Templates[], void>({
-        query: () => ({
-          url: "/api/meta/templates/me",
+      getMyTemplates: builder.query<Templates[] | TemplatesWithPagination, FilterParams>({
+        query: (params = {}) => ({
+          url: `/api/meta/templates/me${Object.keys(params).length ? `?${getSearchParams(params)}` : ""}`,
           method: "get",
+          refetchOnMountOrArgChange: true,
         }),
         providesTags: ["MyTemplates"],
       }),

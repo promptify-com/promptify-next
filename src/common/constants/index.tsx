@@ -15,7 +15,6 @@ import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Link } from "@/components/Prompt/Types";
 import AccountCircleIcon from "@/assets/icons/AccountCircleIcon";
 import AddCircleIcon from "@/assets/icons/AddCircleIcon";
-import { ICreateBuilderLink } from "@/components/builder/Types";
 
 export interface MenuType {
   id: number;
@@ -186,16 +185,3 @@ export const AUTOMATION_DESCRIPTION =
   "Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.";
 export const BUILDER_DESCRIPTION =
   "Structure your prompts for a productive and more deterministic AI. Your chained prompts will guide AI content creation with focus and intent.";
-
-export const createPageLinks: ICreateBuilderLink[] = [
-  {
-    label: "New chained prompt",
-    href: "",
-    type: "NEW",
-  },
-  {
-    label: "New GPT",
-    href: "",
-    type: "GPT",
-  },
-];

@@ -14,7 +14,6 @@ interface Props {
   templateLimit?: number;
   paginatedList?: boolean;
   initialStatus?: LowercaseTemplateStatus;
-  ownerTemplates?: boolean;
 }
 
 export function useGetTemplatesByFilter({
@@ -25,7 +24,6 @@ export function useGetTemplatesByFilter({
   templateLimit,
   paginatedList = false,
   initialStatus,
-  ownerTemplates,
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
@@ -62,7 +60,7 @@ export function useGetTemplatesByFilter({
     data: templates,
     isLoading: isTemplatesLoading,
     isFetching,
-  } = useGetTemplatesByFilterQuery({ params, ownerTemplates }, { skip: skipFetchingTemplates });
+  } = useGetTemplatesByFilterQuery({ params }, { skip: skipFetchingTemplates });
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
 
   useEffect(() => {
