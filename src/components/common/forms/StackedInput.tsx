@@ -18,7 +18,7 @@ interface Props {
   rows?: number;
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onClear(): void;
-  sx: SxProps;
+  sx?: SxProps;
 }
 
 export default function StackedInput({
