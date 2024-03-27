@@ -1,11 +1,12 @@
-import { setMyFavoritesChecked } from "@/core/store/filtersSlice";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { AutoAwesomeMosaicOutlined, FavoriteBorderOutlined } from "@mui/icons-material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import React from "react";
+import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
+import AutoAwesomeMosaicOutlined from "@mui/icons-material/AutoAwesomeMosaicOutlined";
+
+import { setMyFavoritesChecked } from "@/core/store/filtersSlice";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 function StaticFilterItems() {
   const dispatch = useAppDispatch();
