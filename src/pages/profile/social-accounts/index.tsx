@@ -4,6 +4,10 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import ContentWrapper from "@/components/profile2/ContentWrapper";
 import { Connections } from "@/components/profile2/Connections";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Link from "next/link";
 
 function ProfileSocialAccounts() {
   return (
@@ -15,6 +19,53 @@ function ProfileSocialAccounts() {
         >
           <Box px={"16px"}>
             <Connections />
+          </Box>
+          <Box p={"8px 16px"}>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
+              sx={{
+                p: "24px",
+                border: "1px solid",
+                borderColor: "surfaceContainerHighest",
+                borderRadius: "24px",
+              }}
+            >
+              <Typography
+                fontSize={16}
+                fontWeight={400}
+                color={"onSurface"}
+                sx={{
+                  a: {
+                    textDecoration: "none",
+                    color: "inherit",
+                    fontWeight: 500,
+                  },
+                }}
+              >
+                Visit the <Link href={"#"}>Identity page</Link> to review the data that the app will utilize to generate
+                suggestions.
+              </Typography>
+              <Button
+                onClick={() => console.log("setup identity")}
+                variant="contained"
+                sx={{
+                  minWidth: "auto",
+                  p: "8px 16px",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  borderColor: "inverseSurface",
+                  bgcolor: "inverseSurface",
+                  color: "onPrimary",
+                  ":hover": {
+                    color: "onSurface",
+                  },
+                }}
+              >
+                Set-up Identity
+              </Button>
+            </Stack>
           </Box>
         </ContentWrapper>
       </Layout>

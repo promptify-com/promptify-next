@@ -97,7 +97,7 @@ export const Connections = () => {
               gap={3}
               key={connection.id}
               sx={{
-                width: "100%",
+                width: "calc(100% - 40px)",
                 border: "1px solid ",
                 borderColor: "surfaceContainerHighest",
                 borderRadius: "16px",
