@@ -3,7 +3,13 @@ import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 
-import { setSelectedEngine, setSelectedTag, deleteSelectedTag, setSelectedEngineType } from "@/core/store/filtersSlice";
+import {
+  setSelectedEngine,
+  setSelectedTag,
+  deleteSelectedTag,
+  setSelectedEngineType,
+  deleteSeletedEngineType,
+} from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import Storage from "@/common/storage";
@@ -12,7 +18,8 @@ import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
 import StaticFilterItems from "@/components/sidebar/PromptsFilter/StaticFilterItems";
 import type { Item } from "@/components/sidebar/Collapsible";
-import type { Engine, Tag } from "@/core/api/dto/templates";
+import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
+import Button from "@mui/material/Button";
 
 function PromptsFilters() {
   const dispatch = useAppDispatch();
@@ -53,9 +60,10 @@ function PromptsFilters() {
     }
   };
 
-  const handleEngineTypeSelect = (type: string) => {
-    if (type === engineType) {
-      dispatch(setSelectedEngineType(""));
+  const handleEngineTypeSelect = (type: EngineType) => {
+    const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
+    if (isEngineTypeExisted) {
+      dispatch(deleteSeletedEngineType(type));
     } else {
       dispatch(setSelectedEngineType(type));
     }
@@ -68,7 +76,7 @@ function PromptsFilters() {
       case "tag":
         return tag.some(tagItem => tagItem.id === item.id);
       case "EngineType":
-        return item.name === engineType;
+        return engineType.some(engine => engine.id === item.id);
       default:
         return false;
     }
@@ -84,7 +92,7 @@ function PromptsFilters() {
         title="Content type"
         key="contentType"
         items={contentTypeItems}
-        onSelect={item => handleEngineTypeSelect(item.name)}
+        onSelect={item => handleEngineTypeSelect({ id: item.id, label: item.name })}
         isSelected={isSelected}
       />
       <EnginesSelect
@@ -104,7 +112,7 @@ function PromptsFilters() {
           {tags?.map(tag => (
             <Box
               key={tag.id}
-              onClick={() => handleTagSelect(tag as Tag)}
+              onClick={() => handleTagSelect(tag)}
             >
               <Chip
                 label={tag.name}

@@ -29,7 +29,7 @@ export interface FilterParams {
   limit?: number;
   offset?: number;
   status?: LowercaseTemplateStatus;
-  engine_type?: string;
+  engine_type?: EngineType[];
   isFavourite?: boolean;
   isInternal?: boolean;
 }
@@ -40,9 +40,11 @@ export interface SelectedFilters {
   title: string | null;
   category: Category | null;
   subCategory: Category | null;
-  engineType?: string;
+  engineType: EngineType[];
   isFavourite?: boolean;
 }
+
+export type EngineType = { id: number; label: string };
 
 export class TemplateParam {
   type: string;

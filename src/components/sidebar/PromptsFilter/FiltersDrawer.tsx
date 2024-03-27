@@ -4,6 +4,8 @@ import Storage from "@/common/storage";
 import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "./PromptsFilters";
+import Stack from "@mui/material/Stack";
+import FilterFloatButton from "./FilterFloatButton";
 
 interface Props {
   expandedOnHover: boolean;
@@ -24,14 +26,18 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
     }
   }, []);
 
+  const isExpanded = isPromptsFiltersSticky || expandedOnHover;
   return (
-    <DrawerContainer
-      title="Prompts"
-      expanded={isPromptsFiltersSticky || expandedOnHover}
-      toggleExpand={toggleSidebar}
-      sticky={isPromptsFiltersSticky}
-    >
-      <PromptsFilters />
-    </DrawerContainer>
+    <Stack position={"relative"}>
+      <FilterFloatButton expanded={isExpanded} />
+      <DrawerContainer
+        title="Prompts"
+        expanded={isExpanded}
+        toggleExpand={toggleSidebar}
+        sticky={isPromptsFiltersSticky}
+      >
+        <PromptsFilters />
+      </DrawerContainer>
+    </Stack>
   );
 }

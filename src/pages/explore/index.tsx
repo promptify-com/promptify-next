@@ -86,6 +86,7 @@ export default function ExplorePage({ categories = [] }: Props) {
     <Layout>
       <Box
         mt={{ xs: 7, md: 0 }}
+        position={"relative"}
         sx={{
           maxWidth: "1184px",
           margin: "0 auto",
@@ -97,11 +98,13 @@ export default function ExplorePage({ categories = [] }: Props) {
           flexDirection={"column"}
           gap={"36px"}
           mt={{ xs: 2, md: 0 }}
+          position={"relative"}
           sx={{
             padding: { xs: 0, md: "32px" },
           }}
         >
           <FiltersSelected show={!allFilterParamsNull} />
+
           {allFilterParamsNull &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
