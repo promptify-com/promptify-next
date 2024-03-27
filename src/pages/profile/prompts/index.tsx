@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import TemplateCard from "@/components/common/TemplateCard";
 import { useGetMyTemplatesQuery } from "@/core/api/templates";
 
-const ProfilePrompts = () => {
+function ProfilePrompts() {
   const { data: templates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery();
 
   return (
@@ -38,7 +38,7 @@ const ProfilePrompts = () => {
       </Layout>
     </Protected>
   );
-};
+}
 
 export async function getServerSideProps() {
   return {

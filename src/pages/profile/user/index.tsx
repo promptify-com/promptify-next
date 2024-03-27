@@ -52,7 +52,7 @@ const SectionWrapper = ({ title, children, noBorder }: SectionWrapperProps) => (
   </Stack>
 );
 
-const ProfilePrompts = () => {
+function ProfilePrompts() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [isPublic, setIsPublic] = useState(true);
   const router = useRouter();
@@ -275,7 +275,7 @@ const ProfilePrompts = () => {
       </Layout>
     </Protected>
   );
-};
+}
 
 export async function getServerSideProps() {
   return {
