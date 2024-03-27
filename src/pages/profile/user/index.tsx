@@ -91,6 +91,11 @@ function ProfilePrompts() {
                   flexDirection: "row-reverse",
                   gap: 2,
                   m: 0,
+                  ".MuiFormControlLabel-label": {
+                    fontSize: 16,
+                    fontWeight: 400,
+                    color: "onSurface",
+                  },
                 }}
               />
             </Stack>

@@ -58,6 +58,7 @@ function Credentials() {
       {credentials.map(credential => (
         <Stack
           direction={"row"}
+          justifyContent={"space-between"}
           alignItems={"center"}
           gap={3}
           key={credential.id}

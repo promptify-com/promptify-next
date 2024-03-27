@@ -13,7 +13,6 @@ interface Props {
 const ContentWrapper = ({ title, description, children }: Props) => {
   return (
     <Stack
-      alignItems={"flex-start"}
       maxWidth={"1184px"}
       width={"70%"}
       m={"auto"}
