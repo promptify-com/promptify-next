@@ -19,7 +19,6 @@ import Collapsible from "@/components/sidebar/Collapsible";
 import StaticFilterItems from "@/components/sidebar/PromptsFilter/StaticFilterItems";
 import type { Item } from "@/components/sidebar/Collapsible";
 import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
-import Button from "@mui/material/Button";
 
 function PromptsFilters() {
   const dispatch = useAppDispatch();
@@ -119,7 +118,7 @@ function PromptsFilters() {
                 clickable
                 sx={{
                   borderRadius: "4px",
-                  bgcolor: "surfaceContainer",
+                  bgcolor: isSelected(tag) ? "rgba(55, 92, 169, 0.08)" : "surfaceContainer",
                   fontSize: 14,
                   fontWeight: 500,
                   p: "8px",
