@@ -5,7 +5,7 @@ import ContentWrapper from "@/components/profile2/ContentWrapper";
 import Box from "@mui/material/Box";
 import Credentials from "@/components/profile2/Credentials";
 
-function ProleCredentials() {
+function ProfileCredentials() {
   return (
     <Protected>
       <Layout>
@@ -31,4 +31,4 @@ export async function getServerSideProps() {
   };
 }
 
-export default ProleCredentials;
+export default ProfileCredentials;

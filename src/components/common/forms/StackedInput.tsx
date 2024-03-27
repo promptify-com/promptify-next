@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import BackspaceOutlined from "@mui/icons-material/BackspaceOutlined";
 import { useState } from "react";
+import type { SxProps } from "@mui/material";
 
 interface Props {
   name: string;
@@ -12,11 +13,12 @@ interface Props {
   placeholder?: string;
   value: string | number | undefined;
   required: boolean;
-  helperText: string | false | undefined;
-  error: boolean;
+  helperText?: string | false | undefined;
+  error?: boolean;
   rows?: number;
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onClear(): void;
+  sx: SxProps;
 }
 
 export default function StackedInput({
@@ -30,6 +32,7 @@ export default function StackedInput({
   rows,
   onChange,
   onClear,
+  sx,
 }: Props) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -48,6 +51,7 @@ export default function StackedInput({
         },
         ":hover": { bgcolor: "surfaceContainerLow" },
         ...(isFocused && { bgcolor: "surfaceContainerLow" }),
+        ...sx,
       }}
     >
       <InputLabel
@@ -94,7 +98,6 @@ export default function StackedInput({
           sx={{
             flex: 1,
             ".MuiInputBase-root": {
-              minHeight: "40px",
               p: 0,
               "textarea::-webkit-scrollbar": {
                 width: 0,
