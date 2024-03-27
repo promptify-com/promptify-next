@@ -40,15 +40,8 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
             position: { vertical: "bottom", horizontal: "left" },
           }),
         );
-      } else {
-        dispatch(
-          setToast({
-            message: "Your answer not registred.",
-            severity: "error",
-            position: { vertical: "bottom", horizontal: "left" },
-          }),
-        );
       }
+
       if (step === questions.length) {
         skip();
       } else {
