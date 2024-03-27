@@ -1,70 +1,23 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Collapsible from "@/components/sidebar/Collapsible";
-import Storage from "@/common/storage";
-import type { Item } from "@/components/sidebar/Collapsible";
 import { useEffect } from "react";
+import Stack from "@mui/material/Stack";
+import Chip from "@mui/material/Chip";
+import Box from "@mui/material/Box";
+
+import { setSelectedEngine, setSelectedTag, deleteSelectedTag, setSelectedEngineType } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useGetEnginesQuery } from "@/core/api/engines";
-import {
-  setSelectedEngine,
-  setSelectedTag,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  setMyFavoritesChecked,
-} from "@/core/store/filtersSlice";
-import type { Engine, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
+import Storage from "@/common/storage";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
-
-function MyFavorites() {
-  const dispatch = useAppDispatch();
-
-  const { isFavourite } = useAppSelector(state => state.filters);
-
-  useEffect(() => {
-    const storedFavourite = Storage.get("myFavoritesChecked") || false;
-    dispatch(setMyFavoritesChecked(storedFavourite));
-  }, []);
-
-  return (
-    <Stack
-      sx={{
-        bgcolor: "surfaceContainerHigh",
-        borderRadius: "16px",
-        mb: "20px",
-        mt: "20px",
-        p: "8px 8px 8px 16px",
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    >
-      <Typography width={"50%"}>My favorites:</Typography>
-      <FormControlLabel
-        control={<Switch color="primary" />}
-        label={""}
-        checked={isFavourite}
-        name="my_favorites"
-        value={""}
-        onChange={(_, _checked) => dispatch(setMyFavoritesChecked(_checked))}
-        sx={{
-          width: "50%",
-          justifyContent: "flex-end",
-        }}
-      />
-    </Stack>
-  );
-}
+import Collapsible from "@/components/sidebar/Collapsible";
+import StaticFilterItems from "@/components/sidebar/PromptsFilter/StaticFilterItems";
+import type { Item } from "@/components/sidebar/Collapsible";
+import type { Engine, Tag } from "@/core/api/dto/templates";
 
 function PromptsFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
   const { tag, engine, engineType } = useAppSelector(state => state.filters);
-  const isValidUser = useAppSelector(isValidUserFn);
 
   useEffect(() => {
     const storedEngine = Storage.get("engineFilter") || null;
@@ -126,11 +79,11 @@ function PromptsFilters() {
       gap={2}
       py={"16px"}
     >
-      {isValidUser && <MyFavorites />}
+      <StaticFilterItems />
       <Collapsible
         title="Content type"
-        items={contentTypeItems}
         key="contentType"
+        items={contentTypeItems}
         onSelect={item => handleEngineTypeSelect(item.name)}
         isSelected={isSelected}
       />
@@ -140,11 +93,34 @@ function PromptsFilters() {
       />
       <Collapsible
         title="Popular tags"
-        items={tags || []}
         key="popularTags"
-        onSelect={item => handleTagSelect(item as Tag)}
-        isSelected={isSelected}
-      />
+      >
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={"8px"}
+          flexWrap={"wrap"}
+        >
+          {tags?.map(tag => (
+            <Box
+              key={tag.id}
+              onClick={() => handleTagSelect(tag as Tag)}
+            >
+              <Chip
+                label={tag.name}
+                clickable
+                sx={{
+                  borderRadius: "4px",
+                  bgcolor: "surfaceContainer",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  p: "8px",
+                }}
+              />
+            </Box>
+          ))}
+        </Stack>
+      </Collapsible>
     </Stack>
   );
 }

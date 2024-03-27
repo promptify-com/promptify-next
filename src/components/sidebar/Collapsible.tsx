@@ -15,12 +15,13 @@ export interface Item {
 
 interface Props {
   title: string;
-  items: Item[];
-  onSelect: (item: Item) => void;
-  isSelected: (item: Item) => boolean;
+  items?: Item[];
+  onSelect?: (item: Item) => void;
+  isSelected?: (item: Item) => boolean;
+  children?: ReactNode;
 }
 
-function Collapsible({ title, items, onSelect, isSelected }: Props) {
+function Collapsible({ title, items, onSelect, isSelected, children }: Props) {
   const [open, setOpen] = useState(true);
   const [showAll, setShowAll] = useState<boolean>(false);
 
@@ -32,9 +33,9 @@ function Collapsible({ title, items, onSelect, isSelected }: Props) {
     setShowAll(!showAll);
   };
 
-  if (!items?.length || !title) return;
+  if (!title) return;
 
-  const displayedItems = showAll ? items : items.slice(0, 5);
+  const displayedItems = showAll ? items : items?.slice(0, 5);
 
   return (
     <List sx={{ borderRadius: "16px", overflow: "hidden", p: 0 }}>
@@ -58,28 +59,34 @@ function Collapsible({ title, items, onSelect, isSelected }: Props) {
             gap: 1,
           }}
         >
-          {displayedItems.map(item => (
-            <ListItemButton
-              key={item.name}
-              selected={isSelected(item)}
-              onClick={() => onSelect(item)}
-              sx={{
-                p: "12px 16px",
-                borderRadius: "8px",
-                bgcolor: "surfaceContainer",
-                color: "onSurface",
-                fontSize: 16,
-                fontWeight: 500,
-                gap: 2,
-                svg: { fontSize: 16 },
-              }}
-            >
-              {item.icon}
-              {item.name}
-            </ListItemButton>
-          ))}
+          {children ? (
+            <>{children}</>
+          ) : (
+            <>
+              {displayedItems?.map(item => (
+                <ListItemButton
+                  key={item.name}
+                  selected={isSelected?.(item)}
+                  onClick={() => onSelect?.(item)}
+                  sx={{
+                    p: "12px 16px",
+                    borderRadius: "8px",
+                    bgcolor: "surfaceContainer",
+                    color: "onSurface",
+                    fontSize: 16,
+                    fontWeight: 500,
+                    gap: 2,
+                    svg: { fontSize: 16 },
+                  }}
+                >
+                  {item.icon}
+                  {item.name}
+                </ListItemButton>
+              ))}
+            </>
+          )}
 
-          {items.length > 5 && !showAll && (
+          {!!items && items.length > 5 && !showAll && (
             <ListItemButton onClick={toggleShowAll}>
               <ListItemText
                 primary="More..."
