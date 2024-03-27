@@ -31,8 +31,8 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
 
     const idx = step - 1;
     const currentQuestion = questions[idx];
-    await setUserAnswer(currentQuestion, selectedOptionId).then((res: any) => {
-      if (res?.answer) {
+    await setUserAnswer(currentQuestion, selectedOptionId)
+      .then(() => {
         dispatch(
           setToast({
             message: "Your answer registred successfully.",
@@ -40,14 +40,22 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
             position: { vertical: "bottom", horizontal: "left" },
           }),
         );
-      }
 
-      if (step === questions.length) {
-        skip();
-      } else {
-        setStep(step + 1);
-      }
-    });
+        if (step === questions.length) {
+          skip();
+        } else {
+          setStep(step + 1);
+        }
+      })
+      .catch(() => {
+        dispatch(
+          setToast({
+            message: "An error occurred while saving your answer.",
+            severity: "error",
+            position: { vertical: "bottom", horizontal: "left" },
+          }),
+        );
+      });
   };
 
   return (
