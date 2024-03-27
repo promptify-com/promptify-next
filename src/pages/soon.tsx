@@ -1,14 +1,18 @@
 import { Layout } from "@/layout";
 import { theme } from "@/theme";
-import { Box, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Seo from "@/components/Seo";
+import { useTheme } from "@mui/material/styles";
 
 interface Props {
   backTo?: string;
 }
 
 export default function ComingSoon({ backTo }: Props) {
+  const theme = useTheme();
+
   return (
     <>
       <Seo title="Coming Soon..." />

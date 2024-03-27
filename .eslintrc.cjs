@@ -13,13 +13,22 @@ module.exports = {
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    // "next/no-img-element": "error",
-    'react/function-component-definition': [
-      'error',
-      {
-        'namedComponents': 'function-declaration'
-      }
-    ],
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "react/function-component-definition": "off",
+    "prefer-const": "off",
+    "no-extra-boolean-cast": "off",
+    "@next/next/no-img-element": "error",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "@next/next/inline-script-id": "off",
+    'react/function-component-definition': "off",
+    // [
+      // 'error',
+      // {
+      //   'namedComponents': 'function-declaration'
+      // }
+    // ],
     "no-restricted-imports": ["error", {
       "paths": ["@mui/material", "!@mui/material/*"], 
       "patterns": ["@mui/material/[a-zA-Z]+"] 

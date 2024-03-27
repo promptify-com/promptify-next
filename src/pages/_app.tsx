@@ -5,7 +5,7 @@ import "@fontsource/space-mono/400.css";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/system";
 import Script from "next/script";
 import { Provider } from "react-redux";
 import { wrapper } from "@/core/store";

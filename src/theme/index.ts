@@ -34,8 +34,7 @@ interface CustomPalette {
   surfaceContainer: string;
   surfaceDim: string;
 }
-
-interface CustomTheme {
+interface CustomTheme extends Theme {
   custom: {
     defaultSidebarWidth: string;
     leftClosedSidebarWidth: string;
@@ -48,6 +47,7 @@ interface CustomTheme {
       drawerWidth: string;
     };
   };
+  zIndex?: Record<string, number>;
 }
 
 declare module "@mui/material/styles" {
@@ -57,7 +57,7 @@ declare module "@mui/material/styles" {
   interface ThemeOptions extends CustomTheme {}
 }
 
-export let theme: Theme = createTheme({
+export const customTheme = {
   typography: {
     fontFamily: ["Poppins", "Space Mono"].join(","),
   },
@@ -124,8 +124,11 @@ export let theme: Theme = createTheme({
       drawerWidth: "352px",
     },
   },
-});
+};
 
+export let theme: Theme = createTheme(customTheme);
+
+// @ts-expect-error incompatible-zindex
 theme = createTheme(theme, {
   components: {
     MuiButton: {

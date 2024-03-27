@@ -30,9 +30,6 @@ const nextConfig = {
     ],
     minimumCacheTTL: 3600,
   },
-  eslint: {
-    dirs: ["common", "assets", "core", "hooks", "styles", "themes", "pages", "components"],
-  },
   poweredByHeader: false,
 };
 

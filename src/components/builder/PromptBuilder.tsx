@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
 import useToken from "@/hooks/useToken";
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
@@ -33,6 +33,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const router = useRouter();
   const token = useToken();
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const [publishTemplate] = usePublishTemplateMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
