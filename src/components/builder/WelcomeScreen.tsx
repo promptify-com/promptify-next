@@ -38,17 +38,17 @@ export default function WelcomeScreen() {
       justifyContent={"center"}
       alignItems={"center"}
       width={{ md: "80%" }}
-      mx={{ md: "auto" }}
+      mx={{ xs: "16px", md: "auto" }}
     >
       <Stack
         width={"100%"}
         gap={3}
         justifyContent={"center"}
-        alignItems={"center"}
-        textAlign={"center"}
+        alignItems={{ xs: "start", md: "center" }}
+        textAlign={{ xs: "start", md: "center" }}
       >
         <Typography
-          fontSize={48}
+          fontSize={{ xs: 28, md: 48 }}
           fontWeight={400}
           lineHeight={"57.6px"}
           letterSpacing={"0.17px"}
@@ -77,12 +77,13 @@ export default function WelcomeScreen() {
       </Stack>
       <Stack
         gap={"72px"}
-        width={"80%"}
+        width={{ md: "80%" }}
       >
         <Stack
-          direction={"row"}
-          alignItems={"center"}
+          direction={{ xs: "column", sm: "row" }}
+          alignItems={{ sm: "center" }}
           justifyContent={"center"}
+          mx={{ xs: "32px", sm: 0 }}
           gap={3}
         >
           {createPageLinks.map(link => (

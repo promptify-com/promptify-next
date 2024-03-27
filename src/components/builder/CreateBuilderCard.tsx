@@ -2,9 +2,12 @@ import Link from "next/link";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import ArrowBackIosRounded from "@mui/icons-material/ArrowBackIosRounded";
+import Bolt from "@mui/icons-material/Bolt";
+import ArrowForwardIosRounded from "@mui/icons-material/ArrowForwardIosRounded";
+
+import Group from "@/components/builder/Assets/Group";
 import type { ICreateBuilderLink } from "@/components/builder/Types";
-import Group from "./Assets/Group";
-import { ArrowBackIosRounded, ArrowForwardIosRounded, Bolt } from "@mui/icons-material";
 
 interface Props {
   link: ICreateBuilderLink;
@@ -24,7 +27,7 @@ function CreateBuilderCard({ link }: Props) {
         gap={3}
         overflow={"hidden"}
         sx={{
-          width: "276px",
+          width: { sm: "276px" },
           cursor: type === "NEW" ? "pointer" : "not-allowed",
           ...(type === "NEW" && {
             ":hover": {
