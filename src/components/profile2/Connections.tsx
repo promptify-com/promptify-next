@@ -83,10 +83,7 @@ export const Connections = () => {
   }, []);
 
   return (
-    <Stack
-      alignItems={"center"}
-      gap={2}
-    >
+    <Stack gap={2}>
       {!!connections &&
         connections.map(connection => {
           const customConnection = formatConnection(connection);

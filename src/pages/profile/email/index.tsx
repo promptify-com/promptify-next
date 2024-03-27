@@ -8,6 +8,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import StackedInput from "@/components/common/forms/StackedInput";
 import { useState } from "react";
 import Button from "@mui/material/Button";
+import SectionWrapper from "@/components/profile2/SectionWrapper";
 
 function ProfileEmail() {
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -26,87 +27,73 @@ function ProfileEmail() {
           title="Email"
           description="Here, you can view and manage the email addresses associated with your account."
         >
-          <Stack
-            alignItems={"flex-start"}
-            gap={3}
-            p={"8px 16px"}
+          <SectionWrapper
+            title="Primary Email Address:"
+            description="Your primary email address is used for account-related communications and notifications. You can update
+                it below if necessary."
+            noBorder
           >
             <Stack
               alignItems={"flex-start"}
-              gap={1}
+              gap={3}
             >
-              <Typography
-                fontSize={20}
-                fontWeight={400}
-                color={"onSurface"}
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={2}
+                sx={{
+                  width: "calc(100% - 32px)",
+                  border: "1px solid",
+                  borderColor: "surfaceContainerHighest",
+                  borderRadius: "16px",
+                  p: "16px 8px 16px 24px",
+                }}
               >
-                Primary Email Address:
-              </Typography>
-              <Typography
-                fontSize={16}
-                fontWeight={400}
-                color={"secondary.light"}
+                <Typography
+                  flex={2}
+                  fontSize={14}
+                  fontWeight={500}
+                  color={"secondary.light"}
+                >
+                  Email
+                </Typography>
+                <Typography
+                  flex={4}
+                  fontSize={16}
+                  fontWeight={400}
+                  color={"onSurface"}
+                >
+                  {currentUser?.username}
+                </Typography>
+              </Stack>
+              <StackedInput
+                name="email"
+                label="Communication Email"
+                required
+                value={emailValue}
+                onChange={e => setEmailValue(e.target.value)}
+                onClear={() => setEmailValue("")}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "surfaceContainerHighest",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                }}
+              />
+              <Button
+                variant="contained"
+                onClick={updateEmail}
+                disabled={disableSave}
+                sx={{
+                  ":disabled": {
+                    borderColor: "transparent",
+                  },
+                }}
               >
-                Your primary email address is used for account-related communications and notifications. You can update
-                it below if necessary.
-              </Typography>
+                Save changes
+              </Button>
             </Stack>
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={2}
-              sx={{
-                width: "calc(100% - 32px)",
-                border: "1px solid",
-                borderColor: "surfaceContainerHighest",
-                borderRadius: "16px",
-                p: "16px 8px 16px 24px",
-              }}
-            >
-              <Typography
-                flex={2}
-                fontSize={14}
-                fontWeight={500}
-                color={"secondary.light"}
-              >
-                Email
-              </Typography>
-              <Typography
-                flex={4}
-                fontSize={16}
-                fontWeight={400}
-                color={"onSurface"}
-              >
-                {currentUser?.username}
-              </Typography>
-            </Stack>
-            <StackedInput
-              name="email"
-              label="Communication Email"
-              required
-              value={emailValue}
-              onChange={e => setEmailValue(e.target.value)}
-              onClear={() => setEmailValue("")}
-              sx={{
-                border: "1px solid",
-                borderColor: "surfaceContainerHighest",
-                borderRadius: "16px",
-                overflow: "hidden",
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={updateEmail}
-              disabled={disableSave}
-              sx={{
-                ":disabled": {
-                  borderColor: "transparent",
-                },
-              }}
-            >
-              Save changes
-            </Button>
-          </Stack>
+          </SectionWrapper>
         </ContentWrapper>
       </Layout>
     </Protected>

@@ -17,7 +17,10 @@ function ProfileSocialAccounts() {
           title="My accounts"
           description="Enhance your experience and unlock personalized features by connecting your accounts. By linking your accounts, our app can securely access relevant information to tailor recommendations and provide a more personalized user experience."
         >
-          <Box px={"16px"}>
+          <Box
+            width={"calc(100% - 32px)"}
+            px={"16px"}
+          >
             <Connections />
           </Box>
           <Box p={"8px 16px"}>
@@ -44,8 +47,8 @@ function ProfileSocialAccounts() {
                   },
                 }}
               >
-                Visit the <Link href={"#"}>Identity page</Link> to review the data that the app will utilize to generate
-                suggestions.
+                Visit the <Link href={"/profile/identity"}>Identity page</Link> to review the data that the app will
+                utilize to generate suggestions.
               </Typography>
               <Button
                 onClick={() => console.log("setup identity")}

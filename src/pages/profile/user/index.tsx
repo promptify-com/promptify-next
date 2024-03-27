@@ -7,7 +7,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ProfileImageButton } from "@/components/profile2/ProfileImageButton";
 import Box from "@mui/material/Box";
@@ -19,38 +19,7 @@ import { useUpdateUserProfileMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 import useToken from "@/hooks/useToken";
 import Button from "@mui/material/Button";
-
-interface SectionWrapperProps {
-  title: string;
-  children: ReactNode;
-  noBorder?: boolean;
-}
-const SectionWrapper = ({ title, children, noBorder }: SectionWrapperProps) => (
-  <Stack
-    gap={2}
-    p={"8px 16px"}
-  >
-    <Typography
-      fontSize={20}
-      fontWeight={400}
-      color={"onSurface"}
-    >
-      {title}
-    </Typography>
-    <Box
-      sx={{
-        ...(!noBorder && {
-          border: "1px solid",
-          borderRadius: "16px",
-          borderColor: "surfaceContainerHighest",
-          overflow: "hidden",
-        }),
-      }}
-    >
-      {children}
-    </Box>
-  </Stack>
-);
+import SectionWrapper from "@/components/profile2/SectionWrapper";
 
 function ProfilePrompts() {
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -203,7 +172,7 @@ function ProfilePrompts() {
                   component={"span"}
                   color={"primary.main"}
                 >
-                  www.promptify.com/users/batch
+                  www.promptify.com/users/{currentUser?.username}
                 </Box>
               </Typography>
             </Stack>
@@ -222,34 +191,23 @@ function ProfilePrompts() {
             </SectionWrapper>
             <SectionWrapper
               title="Delete Account"
+              description="If you wish to permanently delete your account, please be aware that this action is irreversible and
+              will result in the loss of all your account data, including chat history and documents."
               noBorder
             >
-              <Stack
-                alignItems={"flex-start"}
-                gap={2}
+              <Button
+                onClick={() => console.log("delete account")}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "surfaceContainerHigh",
+                  p: "8px 24px",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "onSurface",
+                }}
               >
-                <Typography
-                  fontSize={16}
-                  fontWeight={400}
-                  color={"secondary.light"}
-                >
-                  If you wish to permanently delete your account, please be aware that this action is irreversible and
-                  will result in the loss of all your account data, including chat history and documents.
-                </Typography>
-                <Button
-                  onClick={() => console.log("delete account")}
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "surfaceContainerHigh",
-                    p: "8px 24px",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: "onSurface",
-                  }}
-                >
-                  Delete account
-                </Button>
-              </Stack>
+                Delete account
+              </Button>
             </SectionWrapper>
             <Stack
               direction={"row"}
