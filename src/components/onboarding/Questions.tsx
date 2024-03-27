@@ -5,12 +5,13 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import QuestionCard from "./QuestionCard";
+import Grid from "@mui/material/Grid";
 
 import { useUpdateAnswers } from "@/hooks/api/user";
 import type { IQuestion } from "@/common/types";
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
-import Grid from "@mui/material/Grid";
+import { numberToWord } from "@/common/helpers";
 
 interface IProps {
   skip: () => void;
@@ -91,7 +92,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               letterSpacing: "0.17px",
             }}
           >
-            Please, answer six simple questions to specify your context.
+            Please, answer {numberToWord(questions.length)} simple questions to specify your context.
           </Typography>
         )}
 
