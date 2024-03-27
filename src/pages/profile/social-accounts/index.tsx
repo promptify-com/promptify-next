@@ -76,7 +76,7 @@ function ProfileSocialAccounts() {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "My Prompts",
+      title: "My social accounts",
       description: SEO_DESCRIPTION,
     },
   };
