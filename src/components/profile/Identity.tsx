@@ -2,16 +2,14 @@ import { Box, Typography } from "@mui/material";
 import { IOption, IQuestion } from "@/common/types";
 import { useQuestions } from "@/hooks/api/questions";
 import { useUserAnswers } from "@/hooks/api/user";
-import { IdentityItem } from "./IdentityItem";
+import { IdentityItem } from "../profile2/IdentityItem";
 
 export const Identity = () => {
   const [questions] = useQuestions();
   const [answers] = useUserAnswers();
 
-  const getUserAnswer = (question: IQuestion): IOption | null => {
-    const option = answers.find(answer => answer.question.id === question.id)?.option;
-
-    return option || null;
+  const getUserAnswer = (question: IQuestion) => {
+    return answers.find(answer => answer.question.id === question.id)?.option;
   };
 
   return (
@@ -95,7 +93,7 @@ export const Identity = () => {
                 <IdentityItem
                   key={question.id}
                   question={question}
-                  defaultOption={getUserAnswer(question)}
+                  defaultAnswer={getUserAnswer(question)}
                 />
               );
             })}
