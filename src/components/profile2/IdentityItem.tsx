@@ -1,16 +1,11 @@
 import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
-import { IOption, IQuestion } from "@/common/types";
+import type { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "@/components/design-system/Image";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import { SelectChangeEvent } from "@mui/material";
-import Stack from "@mui/material/Stack";
-import { StackedSelect } from "../common/forms/StackedSelect";
+import type { SelectChangeEvent } from "@mui/material";
+import { StackedSelect } from "@/components/common/forms/StackedSelect";
 
 const AVAILABLE_OPTION_IMGS = [
   "Countryside",
@@ -81,10 +76,6 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultAnswer }) => {
           <MenuItem
             key={option.id}
             value={option.text}
-            sx={{
-              borderTop: "1px solid #E3E3E3",
-              gap: 2,
-            }}
           >
             <Image
               src={optionSrc}
@@ -94,13 +85,7 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultAnswer }) => {
               height={40}
               style={{ borderRadius: "50%" }}
             />
-            <Typography
-              fontSize={16}
-              fontWeight={400}
-              color={"onSurface"}
-            >
-              {option.text}
-            </Typography>
+            {option.text}
           </MenuItem>
         );
       })}

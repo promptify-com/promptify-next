@@ -2,17 +2,21 @@ import React, { ReactNode, useState } from "react";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
-import { SelectChangeEvent } from "@mui/material";
+import type { SelectChangeEvent, SxProps } from "@mui/material";
 import Stack from "@mui/material/Stack";
 
 interface IProps {
+  name?: string;
   label: string;
   value: string;
   children: ReactNode[];
   onChange(e: SelectChangeEvent): void;
+  sx?: SxProps;
 }
 
-export const StackedSelect: React.FC<IProps> = ({ label, value, children, onChange }) => {
+export const StackedSelect: React.FC<IProps> = ({ name, label, value, children, onChange, sx }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <FormControl
       sx={{
@@ -25,6 +29,8 @@ export const StackedSelect: React.FC<IProps> = ({ label, value, children, onChan
           borderColor: "surfaceContainerHighest",
         },
         ":hover": { bgcolor: "surfaceContainerLow" },
+        ...(isFocused && { bgcolor: "surfaceContainerLow" }),
+        ...sx,
       }}
     >
       <InputLabel
@@ -51,17 +57,29 @@ export const StackedSelect: React.FC<IProps> = ({ label, value, children, onChan
         gap={3}
         sx={{
           p: "16px",
-          height: "100%",
+          borderBottom: "1px solid",
+          borderColor: isFocused ? "primary.main" : "transparent",
         }}
       >
         <Select
+          name={name}
           value={value}
           onChange={onChange}
+          displayEmpty
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           MenuProps={{
             disableScrollLock: true,
             sx: {
               ".MuiList-root": {
                 p: 0,
+                fontSize: 16,
+                fontWeight: 400,
+                color: "onSurface",
+              },
+              ".MuiMenuItem-root": {
+                borderTop: "1px solid #E3E3E3",
+                gap: 2,
                 fontSize: 16,
                 fontWeight: 400,
                 color: "onSurface",

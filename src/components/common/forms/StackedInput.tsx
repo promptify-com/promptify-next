@@ -8,11 +8,11 @@ import { useState } from "react";
 import type { SxProps } from "@mui/material";
 
 interface Props {
-  name: string;
+  name?: string;
   label: string;
   placeholder?: string;
   value: string | number | undefined;
-  required: boolean;
+  required?: boolean;
   helperText?: string | false | undefined;
   error?: boolean;
   rows?: number;
@@ -83,7 +83,7 @@ export default function StackedInput({
       >
         <TextField
           name={name}
-          placeholder={placeholder}
+          placeholder={placeholder || "Type here..."}
           required={required}
           value={value}
           helperText={helperText}
