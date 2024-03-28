@@ -104,7 +104,6 @@ export interface Category {
 
 export type TemplateStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 export type LowercaseTemplateStatus = Lowercase<TemplateStatus>;
-
 export interface TemplateQuestions {
   [key: string]: {
     question: string;

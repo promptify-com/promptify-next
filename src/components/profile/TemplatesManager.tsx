@@ -39,9 +39,12 @@ interface TemplateManagerProps {
 export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
   const isUserAdmin = type === "admin";
 
-  const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(undefined, {
-    skip: isUserAdmin,
-  });
+  const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(
+    {},
+    {
+      skip: isUserAdmin,
+    },
+  );
 
   const [deleteTemplate] = useDeleteTemplateMutation();
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
@@ -252,7 +255,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
         </Grid>
       ) : (
         <Grid width={"100%"}>
-          {isUserTemplatesFetching && userTemplates?.length === 0 ? (
+          {isUserTemplatesFetching && (userTemplates as Templates[])?.length === 0 ? (
             <Box width={"100%"}>
               <CardTemplatePlaceholder count={4} />
             </Box>
@@ -263,7 +266,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
               gap={"14px"}
               width={"100%"}
             >
-              {userTemplates?.length === 0 ? (
+              {(userTemplates as Templates[])?.length === 0 ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -273,7 +276,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
                   <Typography variant="body1">No templates found.</Typography>
                 </Box>
               ) : (
-                userTemplates?.map((template: Templates) => (
+                (userTemplates as Templates[])?.map((template: Templates) => (
                   <TemplateManagerItem
                     key={template.id}
                     template={template}

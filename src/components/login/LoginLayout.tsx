@@ -1,17 +1,19 @@
 import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useRouter } from "next/router";
-import Image from "../design-system/Image";
 import { isDesktopViewPort } from "@/common/helpers";
 import SocialButtons from "./SocialMediaAuth";
+import Stack from "@mui/material/Stack";
+import backgroundImage from "@/assets/images/signup.webp";
 
 interface IProps {
   preLogin: (isLoading: boolean) => void;
 }
+
+const thisYear = new Date().getFullYear();
 
 export const LoginLayout: FC<IProps> = ({ preLogin }) => {
   const [isChecked, setIsChecked] = useState(false);
@@ -26,122 +28,192 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
 
   return (
     <Box
-      display="flex"
       sx={{
-        height: "100vh",
-        overflowY: { xs: "hidden", sm: "auto" },
         width: "100%",
-        flexDirection: { xs: "column", sm: "row" },
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        position: "relative",
+        height: "100svh",
       }}
     >
-      <Grid
+      <Stack
         sx={{
-          width: { xs: "100%", md: "50%" },
+          display: "flex",
+          padding: "var(--1, 8px)",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          alignSelf: "stretch",
+          flex: 3,
+          background: `url(${backgroundImage.src}) lightgray 50% / cover no-repeat`,
+          pt: { xs: "32px", sm: "32px", md: "48px" },
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: "271", sm: "471px" },
+          }}
+        >
+          <Typography
+            sx={{
+              color: "var(--onPrimary, #FFF)",
+              textAlign: "center",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontFamily: "Poppins",
+              fontSize: { xs: "24px", sm: "32px", md: "48px" },
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "120%",
+              letterSpacing: "0.15px",
+            }}
+          >
+            Unleash your creative potential using Promptify
+          </Typography>
+
+          {desktopView && (
+            <Typography
+              sx={{
+                color: "var(--onPrimary, #FFF)",
+                textAlign: "center",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Poppins",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "150%",
+                letterSpacing: "0.15px",
+              }}
+            >
+              The ultimate ChatGPT and AI-driven content generation and idea inspiration platform
+            </Typography>
+          )}
+        </Box>
+      </Stack>
+
+      <Stack
+        sx={{
+          position: "relative",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          flex: 2,
+          height: { md: "100svh" },
+          overflowY: { md: "auto" },
+          mt: { xs: "-24px", md: 0 },
+          bgcolor: "onPrimary",
+          borderTopRightRadius: { xs: "24px", md: 0 },
+          borderTopLeftRadius: { xs: "24px", md: 0 },
         }}
       >
-        <Grid
-          className="button-style"
+        <Box
           sx={{
-            height: { xs: "100%", sm: "70vh" },
-            width: "100%",
             display: "flex",
+            padding: "var(--3, 24px) var(--none, 0px)",
             justifyContent: "center",
-            alignItems: { xs: "center", sm: "flex-start" },
-            flexDirection: "column",
-            gap: { xs: "1em", sm: "2em" },
-            marginBottom: { xs: "1em", sm: 0 },
+            alignItems: "center",
+            gap: "var(--borderRadius, 4px)",
+            alignSelf: "stretch",
           }}
         >
-          <Grid
+          <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: { xs: "center", sm: "flex-start" },
-              gap: "16px",
-              width: "100%",
-              marginBottom: { xs: 0, sm: "80px" },
+              marginTop: { xs: "20px", md: "0em" },
+              marginBottom: { xs: "10px", md: "0em" },
             }}
           >
-            <Box
-              sx={{
-                marginTop: { xs: "20px", sm: "0em" },
-                marginBottom: { xs: "10px", sm: "0em" },
-              }}
-            >
-              <LogoApp width={54} />
-            </Box>
-            <Typography
-              sx={{
-                display: { xs: "none", sm: "block" },
-                color: "var(--on-surface, #1B1B1E)",
-                textAlign: "center",
-                fontSize: "18px",
-                fontStyle: "normal",
-                fontWeight: 500,
-                lineHeight: "25px",
-                letterSpacing: "0.17px",
-              }}
-            >
-              Promptify
-            </Typography>
-            <Typography
-              sx={{ fontSize: 10 }}
-              mt={0.5}
-              fontWeight={"bold"}
-            >
-              beta
-            </Typography>
-          </Grid>
-          <Grid
+            <LogoApp width={desktopView ? 57 : 37} />
+          </Box>
+          <Typography
             sx={{
-              display: "flex",
-              alignItems: { xs: "center", sm: "flex-start" },
+              color: "#1B1B1F",
+              fontSize: { xs: "25px", md: "32px" },
+              fontStyle: "normal",
+              fontWeight: "500",
+              m: { xs: "-10px 0 0 0", md: "-31px 0 0 0" },
+            }}
+          >
+            Promptify
+          </Typography>
+        </Box>
 
-              width: "100%",
+        <Box
+          sx={{
+            display: "flex",
+            width: { xs: "300px", sm: "360px", md: "560px" },
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: { xs: "18px", md: "48px" },
+            flex: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "var(--none, 0px) var(--2, 16px)",
               flexDirection: "column",
-              gap: "1em",
+              alignItems: "center",
+              gap: "var(--3, 24px)",
+              alignSelf: "stretch",
             }}
           >
-            <Typography
-              sx={{
-                fontStyle: "normal",
-                fontWeight: 500,
-                fontSize: { xs: "24px", sm: "32px" },
-                lineHeight: { xs: "28px", sm: "37px" },
-                color: "#1D2028",
-                textAlign: { xs: "center", sm: "left" },
-              }}
-            >
-              Welcome to Promptify
-            </Typography>
+            {desktopView && (
+              <Typography
+                sx={{
+                  fontStyle: "normal",
+                  fontWeight: 300,
+                  fontSize: { xs: "18px", sm: "28px", m: "38px", lg: "48px" },
+                  lineHeight: { xs: "28px", sm: "52.8px" },
+                  color: "var(--onSurface, #1B1B1F))",
+                  fontFamily: "Poppins",
+                  textAlign: "center",
+                  letterSpacing: "0.17px",
+                }}
+              >
+                Welcome to Promptify
+              </Typography>
+            )}
             <Typography
               sx={{
                 fontStyle: "normal",
                 fontWeight: 400,
-                fontSize: "16px",
-                lineHeight: "24px",
-                letterSpacing: "0.15px",
-                color: "#1D2028",
+                fontSize: { xs: "12px", sm: "16px" },
+                letterSpacing: "0.17px",
+                lineHeight: "25.6px",
+                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
               }}
             >
               Please, register via social network
             </Typography>
-          </Grid>
-          <SocialButtons
-            preLogin={preLogin}
-            isChecked={isChecked}
-            setErrorCheckBox={setErrorCheckBox}
-            from={from}
-          />
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              padding: "var(--none, 0px) var(--2, 16px)",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "var(--2, 16px)",
+              width: { xs: "100%", md: "60%", lg: "70%" },
+            }}
+          >
+            <SocialButtons
+              preLogin={preLogin}
+              isChecked={isChecked}
+              setErrorCheckBox={setErrorCheckBox}
+              from={from}
+            />
+          </Box>
+
           {from === "signup" && (
-            <Grid
+            <Box
               sx={{
                 display: "flex",
+                justifyContent: "center",
                 alignItems: "center",
+                gap: "var(--1, 8px)",
+                alignSelf: "stretch",
               }}
             >
               <Checkbox
@@ -150,20 +222,19 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
                 sx={{
                   color: "#3B4050",
                   "&.Mui-checked": {
-                    color: "#3B4050",
+                    color: "#0059C6",
                   },
                 }}
               />
-
               <Typography
                 sx={{
                   fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: 400,
                   fontSize: "16px",
-                  lineHeight: "24px",
-                  letterSpacing: "0.15px",
-                  color: errorCheckBox ? "#1D2028" : "red",
+                  lineHeight: "25.6px",
+                  letterSpacing: "0.17px",
+                  color: errorCheckBox ? "onSurface" : "red",
                   display: "inline",
                   cursor: "pointer",
                 }}
@@ -176,9 +247,9 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
                     fontStyle: "normal",
                     fontWeight: 400,
                     fontSize: "16px",
-                    lineHeight: "24px",
-                    letterSpacing: "0.15px",
-                    color: errorCheckBox ? "#4733ff" : "red",
+                    lineHeight: "25.6px",
+                    letterSpacing: "0.17px",
+                    color: errorCheckBox ? "#0059C6" : "red",
                     display: "inline",
                     "&:hover": { textDecoration: "underline" },
                   }}
@@ -190,89 +261,35 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
                   Terms or Conditions
                 </Typography>
               </Typography>
-            </Grid>
+            </Box>
           )}
-        </Grid>
-      </Grid>
+        </Box>
 
-      <Grid
-        sx={{
-          width: { xs: "100%", sm: "50%" },
-          display: { xs: "flex", sm: "none", lg: "flex" },
-          justifyContent: "flex-end",
-          alignItems: "flex-end",
-          position: "relative",
-        }}
-      >
-        <Grid
+        <Box
           sx={{
-            width: { xs: "100%", md: "50%" },
             display: "flex",
+            padding: "var(--2, 16px) var(--3, 24px)",
             justifyContent: "center",
             alignItems: "center",
+            gap: "var(--3, 24px)",
+            alignSelf: "stretch",
           }}
         >
-          <Image
-            style={{
-              boxSizing: "border-box",
-              borderRadius: "26px",
-              position: "absolute",
-              top: desktopView ? "5px" : "0px",
-              maxHeight: "99svh",
-              left: "50%",
-              transform: "translateX(-50%)",
-              objectFit: desktopView ? "cover" : "contain",
-              height: "auto",
-              width: desktopView ? "90%" : "100%",
-            }}
-            alt="Signin"
-            src={require("@/assets/images/signup.webp")}
-            loading={"eager"}
-            priority
-          />
-
-          <Box
+          <Typography
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              gap: "34px",
-              position: "absolute",
-              top: { xs: "50px", sm: "70px" },
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: { xs: "80%", sm: "70%" },
+              color: "var(--secondary-light, var(--secondary, #575E71))",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontFamily: "Poppins",
+              fontSize: "14px",
+              fontStyle: "normal",
+              fontWeight: "400",
+              lineHeight: "150%",
             }}
           >
-            <Box
-              sx={{
-                display: { xs: "none", sm: "block" },
-              }}
-            >
-              <LogoApp
-                width={53}
-                color={"#fff"}
-              />
-            </Box>
-
-            <Typography
-              sx={{
-                color: "var(--on-primary, #FFF)",
-                textAlign: "center",
-                fontSize: { xs: "14px", sm: "18px" },
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "27px",
-                letterSpacing: "0.15px",
-              }}
-            >
-              Unleash your creative potential using Promptify, the ultimate ChatGPT and AI-driven content generation and
-              idea inspiration platform
-            </Typography>
-          </Box>
-        </Grid>
-      </Grid>
+            © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
+          </Typography>
+        </Box>
+      </Stack>
     </Box>
   );
 };

@@ -77,3 +77,8 @@ export const isValidEmail = (email: string) => {
   const regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
   return regex.test(email);
 };
+
+export function numberToWord(num: number): string {
+  const numWords = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+  return numWords[num - 1];
+}
