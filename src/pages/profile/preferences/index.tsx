@@ -36,7 +36,7 @@ function ProfilePreferences() {
   };
 
   const isDynamic = currentUser?.preferences.theme === "dynamic";
-  const inputStyle = currentUser?.preferences.input_style;
+  const inputStyle = currentUser?.preferences.input_style.toUpperCase();
 
   return (
     <Protected>
@@ -77,7 +77,7 @@ function ProfilePreferences() {
               </Stack>
               <Select
                 value={inputStyle}
-                onChange={e => handleChangeInputStyle({ input_style: e.target.value as ChatOption })}
+                onChange={e => handleChangeInputStyle({ input_style: e.target.value.toLowerCase() as ChatOption })}
                 displayEmpty
                 MenuProps={{
                   disableScrollLock: true,
