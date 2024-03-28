@@ -72,3 +72,8 @@ export function isDeepEqual(object1: Record<string, any>, object2: Record<string
   }
   return true;
 }
+
+export const isValidEmail = (email: string) => {
+  const regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+  return regex.test(email);
+};

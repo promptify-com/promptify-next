@@ -4,21 +4,42 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import ContentWrapper from "@/components/profile2/ContentWrapper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import StackedInput from "@/components/common/forms/StackedInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import SectionWrapper from "@/components/profile2/SectionWrapper";
+import { useUpdateUserProfileMutation } from "@/core/api/user";
+import useToken from "@/hooks/useToken";
+import { updateUser } from "@/core/store/userSlice";
+import { isValidEmail } from "@/common/helpers";
 
 function ProfileEmail() {
+  const token = useToken();
+  const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [emailValue, setEmailValue] = useState(currentUser?.username);
+  const [communicationEmail, setCommunicationEmail] = useState("");
 
-  const updateEmail = () => {
-    console.log("update email");
+  useEffect(() => {
+    setCommunicationEmail(currentUser?.communication_email ?? currentUser?.email ?? "");
+  }, [currentUser]);
+
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+
+  const updateEmail = async () => {
+    if (!isValidEmail(communicationEmail)) return;
+
+    const user = await updateUserProfile({
+      token,
+      data: { communication_email: communicationEmail },
+    }).unwrap();
+    dispatch(updateUser(user));
   };
 
-  const disableSave = Boolean(!emailValue || emailValue === currentUser?.username);
+  const disableSave =
+    isLoading ||
+    Boolean(!communicationEmail || communicationEmail === currentUser?.communication_email) ||
+    !isValidEmail(communicationEmail);
 
   return (
     <Protected>
@@ -63,16 +84,16 @@ function ProfileEmail() {
                   fontWeight={400}
                   color={"onSurface"}
                 >
-                  {currentUser?.username}
+                  {currentUser?.email}
                 </Typography>
               </Stack>
               <StackedInput
                 name="email"
                 label="Communication Email"
                 required
-                value={emailValue}
-                onChange={e => setEmailValue(e.target.value)}
-                onClear={() => setEmailValue("")}
+                value={communicationEmail}
+                onChange={e => setCommunicationEmail(e.target.value)}
+                onClear={() => setCommunicationEmail("")}
                 sx={{
                   border: "1px solid",
                   borderColor: "surfaceContainerHighest",

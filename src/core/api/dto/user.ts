@@ -3,6 +3,8 @@ import type { IInterest, IEditProfile } from "@/common/types";
 export interface User {
   id: number;
   username: string;
+  email: string;
+  communication_email: string | null;
   role: string;
   first_name: string;
   last_name: string;
