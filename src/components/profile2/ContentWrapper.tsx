@@ -6,11 +6,12 @@ import { type ReactNode } from "react";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
+  actions?: ReactNode;
 }
 
-const ContentWrapper = ({ title, description, children }: Props) => {
+const ContentWrapper = ({ title, description, children, actions }: Props) => {
   return (
     <Stack
       maxWidth={"1184px"}
@@ -19,7 +20,12 @@ const ContentWrapper = ({ title, description, children }: Props) => {
       p={"40px 20px"}
       gap={5}
     >
-      <Box p={"8px 16px"}>
+      <Stack
+        direction={"row"}
+        gap={1}
+        alignItems={"center"}
+        p={"8px 16px"}
+      >
         <Stack gap={2}>
           <Typography
             fontSize={32}
@@ -28,15 +34,18 @@ const ContentWrapper = ({ title, description, children }: Props) => {
           >
             {title}
           </Typography>
-          <Typography
-            fontSize={16}
-            fontWeight={400}
-            color={"onSurface"}
-          >
-            {description}
-          </Typography>
+          {description && (
+            <Typography
+              fontSize={16}
+              fontWeight={400}
+              color={"onSurface"}
+            >
+              {description}
+            </Typography>
+          )}
         </Stack>
-      </Box>
+        {actions}
+      </Stack>
       {children}
     </Stack>
   );

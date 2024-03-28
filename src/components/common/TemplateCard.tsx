@@ -58,16 +58,23 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
 
   return (
     <Stack
-      bgcolor={isEditor ? "transparent" : "surfaceContainerLowest"}
-      border={isEditor ? "1px solid" : "none"}
-      borderColor={"surfaceDim"}
-      width={{ xs: "calc(100% - 16px)", md: "calc(100% - 32px)" }}
-      p={{ xs: "16px 8px", md: "16px" }}
-      borderRadius={"24px"}
       direction={{ xs: "column", md: "row" }}
       gap={"24px"}
-      alignItems={"center"}
-      justifyContent={"space-between"}
+      sx={{
+        bgcolor: isEditor ? "transparent" : "surfaceContainerLowest",
+        border: isEditor ? "1px solid" : "none",
+        borderColor: "surfaceDim",
+        width: { xs: "calc(100% - 16px)", md: "calc(100% - 32px)" },
+        p: { xs: "16px 8px", md: "16px" },
+        borderRadius: "16px",
+        alignItems: "center",
+        justifyContent: "space-between",
+        ...(manageActions && {
+          ":hover": {
+            bgcolor: isEditor ? "transparent" : "surfaceContainerLow",
+          },
+        }),
+      }}
     >
       <Stack
         direction={"row"}

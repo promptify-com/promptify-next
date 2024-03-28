@@ -21,12 +21,7 @@ function ProfilePrompts() {
       <Layout>
         <ContentWrapper
           title="My prompts"
-          description="Here, you can customize your prompt templates"
-        >
-          <Stack
-            alignItems={"flex-start"}
-            gap={2}
-          >
+          actions={
             <Button
               LinkComponent={Link}
               href="/prompt-builder/create?editor=true"
@@ -36,6 +31,13 @@ function ProfilePrompts() {
             >
               New prompt
             </Button>
+          }
+        >
+          <Stack
+            alignItems={"flex-start"}
+            gap={2}
+            px={"16px"}
+          >
             {templates?.map(template => (
               <Box
                 key={template.id}
