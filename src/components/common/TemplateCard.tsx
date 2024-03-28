@@ -11,11 +11,6 @@ import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Edit from "@mui/icons-material/Edit";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
@@ -23,26 +18,24 @@ import { getBaseUrl } from "@/common/helpers";
 import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { useState } from "react";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
-import { useRouter } from "next/router";
+import { setToast } from "@/core/store/toastSlice";
+import { Tooltip } from "@mui/material";
+import { ModeEditOutline } from "@mui/icons-material";
+import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 
 interface Props {
   template: Templates;
   onScrollToBottom?: () => void;
   manageActions?: boolean;
+  isEditor?: boolean;
 }
 
-function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
+function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: Props) {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { thumbnail, title, slug, description, favorites_count, executions_count, status } = template;
-  const [confirmDialog, setConfirmDialog] = useState(false);
+  const { thumbnail, title, slug, description, likes, executions_count, status } = template;
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const [deleteTemplate] = useDeleteTemplateMutation();
-
-  const confirmDelete = async () => {
-    await deleteTemplate(template.id);
-    setConfirmDialog(false);
-  };
 
   const handleRunPrompt = () => {
     dispatch(setSelectedTemplate(template));
@@ -52,11 +45,24 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
     }, 100);
   };
 
+  const handleDeleteTemplate = async () => {
+    try {
+      await deleteTemplate(template.id);
+      dispatch(setToast({ message: "Template was successfully deleted", severity: "success" }));
+    } catch (error) {
+      console.error(error, `Something went wrong deleting template - ${template.title}`);
+    } finally {
+      setConfirmDelete(false);
+    }
+  };
+
   return (
     <Stack
-      bgcolor={"surfaceContainerLowest"}
-      p={"16px 0px"}
-      px={{ xs: "8px", md: "16px" }}
+      bgcolor={isEditor ? "transparent" : "surfaceContainerLowest"}
+      border={isEditor ? "1px solid" : "none"}
+      borderColor={"surfaceDim"}
+      width={{ xs: "calc(100% - 16px)", md: "calc(100% - 32px)" }}
+      p={{ xs: "16px 8px", md: "16px" }}
       borderRadius={"24px"}
       direction={{ xs: "column", md: "row" }}
       gap={"24px"}
@@ -148,7 +154,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
                 fontSize={13}
                 fontWeight={400}
               >
-                {favorites_count}
+                {likes}
               </Typography>
             </Box>
             <Box
@@ -188,7 +194,52 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
         px={{ md: "16px" }}
         width={{ xs: "100%", md: "fit-content" }}
       >
-        {manageActions ? (
+        {isEditor ? (
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            px={{ md: "20px" }}
+            width={{ xs: "100%", md: "fit-content" }}
+            gap={1}
+          >
+            <Tooltip
+              title="Edit"
+              placement="top"
+              arrow
+            >
+              <Link href={`/prompt-builder/${template.slug}?editor=1`}>
+                <IconButton
+                  sx={{
+                    border: "none",
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  <ModeEditOutline />
+                </IconButton>
+              </Link>
+            </Tooltip>
+
+            <Tooltip
+              title="Delete"
+              placement="top"
+              arrow
+            >
+              <IconButton
+                onClick={() => setConfirmDelete(true)}
+                sx={{
+                  border: "none",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                <DeleteForeverOutlined />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        ) : manageActions ? (
           <>
             <Button
               onClick={() => console.log("new chat")}
@@ -215,7 +266,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
             </IconButton>
             <IconButton
               sx={btnStyle}
-              onClick={() => setConfirmDialog(true)}
+              onClick={() => setConfirmDelete(true)}
             >
               <DeleteForeverOutlined />
             </IconButton>
@@ -238,26 +289,13 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
         )}
       </Stack>
 
-      {confirmDialog && (
-        <Dialog
-          open={confirmDialog}
-          keepMounted
-          disableScrollLock
-          onClose={() => setConfirmDialog(false)}
-        >
-          <DialogTitle>{"Confirm Deletion"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to delete <b>{template.title}</b>?
-              <br />
-              Once deleted, it cannot be recovered. Please proceed with caution.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setConfirmDialog(false)}>Cancel</Button>
-            <Button onClick={confirmDelete}>Confirm</Button>
-          </DialogActions>
-        </Dialog>
+      {confirmDelete && (
+        <DeleteDialog
+          open={true}
+          dialogContentText={`Are you sure you want to remove this template - ${template.title}?`}
+          onClose={() => setConfirmDelete(false)}
+          onSubmit={handleDeleteTemplate}
+        />
       )}
     </Stack>
   );

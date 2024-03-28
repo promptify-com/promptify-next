@@ -1,12 +1,14 @@
 import { ReactNode } from "react";
-import { Box, Grid, Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
-import Sidebar from "./components/sidebar/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
 import { useRouter } from "next/router";
 import { AccountSidebarWidth } from "@/components/profile2/Constants";
-import AccountSidebar from "./components/profile2/AccountSidebar";
+import AccountSidebar from "@/components/profile2/AccountSidebar";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();

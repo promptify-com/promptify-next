@@ -2,7 +2,6 @@ export const AccountSidebarWidth = 268;
 
 export const NavItems = [
   {
-    label: "",
     items: [
       { title: "Welcome", link: "/profile" },
       { title: "My prompts", link: "/profile/prompts" },
@@ -29,3 +28,5 @@ export const NavItems = [
     ],
   },
 ];
+
+export const RELATION_TYPES = ["Single", "Engaged", "Married", "Widowed", "Separated", "Divorced"];

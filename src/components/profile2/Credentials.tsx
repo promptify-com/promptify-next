@@ -9,7 +9,7 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import Stack from "@mui/material/Stack";
 import Image from "@/components/design-system/Image";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
 
 function Credentials() {

@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import { useAppSelector } from "@/hooks/useStore";
 import { StackedSelect } from "@/components/common/forms/StackedSelect";
 import MenuItem from "@mui/material/MenuItem";
+import { RELATION_TYPES } from "@/components/profile2/Constants";
 
 function ProfileIdentity() {
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -31,8 +32,6 @@ function ProfileIdentity() {
     },
     onSubmit: () => console.log("Submit"),
   });
-
-  const RelationTypes = ["Single", "Engaged", "Married", "Widowed", "Separated", "Divorced"];
 
   return (
     <Protected>
@@ -88,7 +87,7 @@ function ProfileIdentity() {
               value={formik.values.relationship}
               onChange={formik.handleChange}
             >
-              {RelationTypes.map(option => (
+              {RELATION_TYPES.map(option => (
                 <MenuItem
                   key={option}
                   value={option}

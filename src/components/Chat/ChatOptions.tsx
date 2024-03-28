@@ -10,11 +10,13 @@ import Image from "@/components/design-system/Image";
 import Storage from "@/common/storage";
 import { CHAT_OPTIONS } from "./Constants";
 
+type ChatOption = (typeof CHAT_OPTIONS)[number];
+
 function ChatOptions() {
   const dispatch = useAppDispatch();
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleOptionClick = (option: (typeof CHAT_OPTIONS)[number]) => {
+  const handleOptionClick = (option: ChatOption) => {
     dispatch(setSelectedChatOption(option.type));
     if (isChecked) {
       Storage.set("chatOption", option.type);

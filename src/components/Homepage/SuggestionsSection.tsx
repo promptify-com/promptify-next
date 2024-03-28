@@ -1,20 +1,12 @@
 import { useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
-import AddCircleOutlineRounded from "@mui/icons-material/AddCircleOutlineRounded";
-import Grid from "@mui/material/Grid";
-
 import { useAppSelector } from "@/hooks/useStore";
-import { useGetChatsQuery } from "@/core/api/chats";
 import useCarousel from "@/hooks/useCarousel";
-import SuggestionCard, { Avatar } from "@/components/Homepage/SuggestionCard";
-import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlaceholder";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import ChatsSuggestions from "../common/ChatsSuggestions";
+import ChatsSuggestions from "@/components/common/ChatsSuggestions";
 
 function SuggestionsSection() {
-  const { data: chats, isLoading } = useGetChatsQuery();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 

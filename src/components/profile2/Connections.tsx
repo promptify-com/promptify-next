@@ -11,7 +11,7 @@ import AddConnectionDialog from "@/components/dialog/AddConnectionDialog";
 import DeleteConnectionDialog from "@/components/dialog/DeleteConnectionDialog";
 import { useConnectionss, useDeleteConnection } from "@/hooks/api/connections";
 import useTruncate from "@/hooks/useTruncate";
-import Image from "../design-system/Image";
+import Image from "@/components/design-system/Image";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 

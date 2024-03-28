@@ -63,9 +63,9 @@ export default function AccountSidebar() {
             },
           }}
         >
-          {NavItems.map(navItem => (
+          {NavItems.map((navItem, idx) => (
             <Stack
-              key={navItem.label}
+              key={idx}
               gap={"1px"}
             >
               {navItem.label && (
