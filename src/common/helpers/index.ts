@@ -72,3 +72,8 @@ export function isDeepEqual(object1: Record<string, any>, object2: Record<string
   }
   return true;
 }
+
+export function numberToWord(num: number): string {
+  const numWords = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+  return numWords[num - 1];
+}

@@ -24,3 +24,9 @@ export type ParamValue = {
   parameter: number;
   score: number;
 };
+
+export interface ICreateBuilderLink {
+  label: string;
+  href: string;
+  type: "NEW" | "GPT";
+}

@@ -43,16 +43,19 @@ const useCredentials = () => {
 
   async function extractCredentialsInputFromNodes(nodes: INode[]) {
     await initializeCredentials();
-    const credentialsInput = await extractCredentialsInput(nodes);
-    dispatch(setCredentialsInput(credentialsInput));
-    return credentialsInput;
+    const _credentialsInput = await extractCredentialsInput(nodes);
+    dispatch(setCredentialsInput(_credentialsInput));
+    return _credentialsInput;
   }
 
   const checkAllCredentialsStored = (credentialsInput: ICredentialInput[]) => {
-    if (!credentialsInput.length || !credentials.length) {
+    const _credentials = (Storage.get("credentials") || []) as ICredential[];
+
+    if (!credentialsInput.length || !_credentials.length) {
       return false;
     }
-    return credentialsInput.every(input => credentials.some(credential => credential.type === input.name));
+
+    return credentialsInput.every(input => _credentials.some(credential => credential.type === input.name));
   };
 
   const checkCredentialInserted = (credential: ICredentialInput) => {

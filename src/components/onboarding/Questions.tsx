@@ -5,12 +5,13 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import QuestionCard from "./QuestionCard";
+import Grid from "@mui/material/Grid";
 
 import { useUpdateAnswers } from "@/hooks/api/user";
 import type { IQuestion } from "@/common/types";
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
-import Grid from "@mui/material/Grid";
+import { numberToWord } from "@/common/helpers";
 
 interface IProps {
   skip: () => void;
@@ -30,8 +31,8 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
 
     const idx = step - 1;
     const currentQuestion = questions[idx];
-    await setUserAnswer(currentQuestion, selectedOptionId).then((res: any) => {
-      if (res?.answer) {
+    await setUserAnswer(currentQuestion, selectedOptionId)
+      .then(() => {
         dispatch(
           setToast({
             message: "Your answer registred successfully.",
@@ -39,21 +40,22 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
             position: { vertical: "bottom", horizontal: "left" },
           }),
         );
-      } else {
+
+        if (step === questions.length) {
+          skip();
+        } else {
+          setStep(step + 1);
+        }
+      })
+      .catch(() => {
         dispatch(
           setToast({
-            message: "Your answer not registred.",
+            message: "An error occurred while saving your answer.",
             severity: "error",
             position: { vertical: "bottom", horizontal: "left" },
           }),
         );
-      }
-      if (step === questions.length) {
-        skip();
-      } else {
-        setStep(step + 1);
-      }
-    });
+      });
   };
 
   return (
@@ -91,7 +93,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               letterSpacing: "0.17px",
             }}
           >
-            Please, answer six simple questions to specify your context.
+            Please, answer {numberToWord(questions.length)} simple questions to specify your context.
           </Typography>
         )}
 

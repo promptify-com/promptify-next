@@ -9,14 +9,15 @@ import HelpRounded from "@mui/icons-material/HelpRounded";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
-import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
 import TryRounded from "@mui/icons-material/TryRounded";
-import { useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
-import SidebarItem from "./SidebarItem";
+
 import { theme } from "@/theme";
 import useBrowser from "@/hooks/useBrowser";
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
 import { BLOG_URL } from "@/common/constants";
+import SidebarItem from "@/components/sidebar/SidebarItem";
+import EditorIcon from "@/components/builder/Assets/EditorIcon";
 import type { NavItem } from "@/common/types/sidebar";
 
 const FiltersDrawerLazy = lazy(() => import("./PromptsFilter/FiltersDrawer"), {
@@ -73,9 +74,9 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "Prompt Builder",
+      name: "Editor",
       href: isValidUser ? `/prompt-builder/create` : "/signin",
-      icon: <Inventory2Rounded />,
+      icon: <EditorIcon color={pathname.includes("/prompt-builder") ? "#375CA9" : "#575E71"} />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,
       reload: false,

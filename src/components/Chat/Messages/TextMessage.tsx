@@ -117,6 +117,7 @@ const Message = ({ message, onScrollToBottom }: Props) => {
               opacity: 0.5,
               right: fromUser ? 0 : "",
               left: !fromUser ? 2 : "",
+              ...(!fromUser && { width: "100%" }),
             }}
             fontSize={12}
             variant="caption"
