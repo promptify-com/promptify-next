@@ -6,6 +6,9 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import TemplateCard from "@/components/common/TemplateCard";
 import { useGetMyTemplatesQuery } from "@/core/api/templates";
+import Button from "@mui/material/Button";
+import Add from "@mui/icons-material/Add";
+import Link from "next/link";
 
 function ProfilePrompts() {
   const { data: templates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery();
@@ -17,11 +20,24 @@ function ProfilePrompts() {
           title="My prompts"
           description="Here, you can customize your prompt templates"
         >
-          <Stack gap={2}>
+          <Stack
+            alignItems={"flex-start"}
+            gap={2}
+          >
+            <Button
+              LinkComponent={Link}
+              href="/prompt-builder/create?editor=true"
+              variant="contained"
+              endIcon={<Add />}
+              sx={{ ml: "auto" }}
+            >
+              New prompt
+            </Button>
             {templates?.map(template => (
               <Box
                 key={template.id}
                 sx={{
+                  width: "100%",
                   border: "1px solid",
                   borderColor: "surfaceContainerHighest",
                   borderRadius: "16px",

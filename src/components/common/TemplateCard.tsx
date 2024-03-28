@@ -22,6 +22,8 @@ import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
 import { getBaseUrl } from "@/common/helpers";
 import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { useState } from "react";
+import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
+import { useRouter } from "next/router";
 
 interface Props {
   template: Templates;
@@ -31,7 +33,8 @@ interface Props {
 
 function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
   const dispatch = useAppDispatch();
-  const { thumbnail, title, slug, description, favorites_count, executions_count } = template;
+  const router = useRouter();
+  const { thumbnail, title, slug, description, favorites_count, executions_count, status } = template;
   const [confirmDialog, setConfirmDialog] = useState(false);
 
   const [deleteTemplate] = useDeleteTemplateMutation();
@@ -144,7 +147,6 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
               <Typography
                 fontSize={13}
                 fontWeight={400}
-                lineHeight={"18.2px"}
               >
                 {favorites_count}
               </Typography>
@@ -159,15 +161,22 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
                   mr: "2px",
                 }}
               />
-
               <Typography
                 fontSize={13}
                 fontWeight={400}
-                lineHeight={"18.2px"}
               >
                 {executions_count}
               </Typography>
             </Box>
+            {manageActions && status === "PUBLISHED" && (
+              <Typography
+                fontSize={13}
+                fontWeight={500}
+                color={"primary.main"}
+              >
+                Published
+              </Typography>
+            )}
           </Stack>
         </Stack>
       </Stack>
@@ -181,6 +190,23 @@ function TemplateCard({ template, onScrollToBottom, manageActions }: Props) {
       >
         {manageActions ? (
           <>
+            <Button
+              onClick={() => console.log("new chat")}
+              startIcon={<AddCommentOutlined />}
+              sx={{
+                border: "1px solid",
+                borderColor: "surfaceContainerHigh",
+                p: "8px 16px",
+                fontSize: 14,
+                fontWeight: 500,
+                color: "onSurface",
+                svg: {
+                  transform: "rotateY(180deg)",
+                },
+              }}
+            >
+              New chat
+            </Button>
             <IconButton
               sx={btnStyle}
               onClick={() => window.open(`${getBaseUrl}/prompt-builder/${template.slug}`, "_blank")}
