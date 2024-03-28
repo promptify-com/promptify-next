@@ -15,28 +15,27 @@ import { DynamicThemeIcon } from "@/assets/icons/DynamicThemeIcon";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { alpha } from "@mui/material";
-import type { ThemeType } from "@/core/api/dto/user";
+import type { UpdateUserPreferences } from "@/core/api/dto/user";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 
 function ProfilePreferences() {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [theme, setTheme] = useState<ThemeType>("dynamic");
 
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
 
-  const handleChangeInputStyle = async (option: ChatOption) => {
+  const handleChangeInputStyle = async (data: UpdateUserPreferences) => {
     if (!currentUser || isLoadingPreferences) return;
 
     const preferences = await updateUserPreferences({
       username: currentUser.username,
-      data: { input_style: option },
+      data,
     }).unwrap();
     dispatch(updateUser({ ...currentUser, preferences }));
   };
 
-  const isDynamic = theme === "dynamic";
+  const isDynamic = currentUser?.preferences.theme === "dynamic";
   const inputStyle = currentUser?.preferences.input_style;
 
   return (
@@ -78,7 +77,7 @@ function ProfilePreferences() {
               </Stack>
               <Select
                 value={inputStyle}
-                onChange={e => handleChangeInputStyle(e.target.value as ChatOption)}
+                onChange={e => handleChangeInputStyle({ input_style: e.target.value as ChatOption })}
                 displayEmpty
                 MenuProps={{
                   disableScrollLock: true,
@@ -152,7 +151,7 @@ function ProfilePreferences() {
                 gap={1}
               >
                 <Button
-                  onClick={() => setTheme("dynamic")}
+                  onClick={e => handleChangeInputStyle({ theme: "dynamic" })}
                   sx={themeBtnStyle}
                   className={isDynamic ? "active" : ""}
                 >
@@ -165,7 +164,7 @@ function ProfilePreferences() {
                   Dynamic
                 </Button>
                 <Button
-                  onClick={() => setTheme("blue")}
+                  onClick={e => handleChangeInputStyle({ theme: "blue" })}
                   sx={themeBtnStyle}
                   className={!isDynamic ? "active" : ""}
                 >
