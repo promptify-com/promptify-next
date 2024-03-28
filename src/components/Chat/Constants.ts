@@ -1,4 +1,4 @@
-import { ChatOption } from "@/components/Prompt/Types/chat";
+import { ChatOption } from "@/core/api/dto/chats";
 
 interface ChatOptionData {
   imagePath: string;
@@ -12,13 +12,13 @@ export const CHAT_OPTIONS: ChatOptionData[] = [
     imagePath: "@/pages/chat/images/QA.png",
     label: "Complete questionary",
     hint: "Easy for new users",
-    type: "QA",
+    type: "qa",
   },
 
   {
     imagePath: "@/pages/chat/images/fill_prompt.png",
     label: "Fill prompt instructions",
     hint: "Better for advanced users",
-    type: "FORM",
+    type: "form",
   },
 ];

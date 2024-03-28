@@ -10,6 +10,8 @@ export interface IChat {
   created_by?: number;
 }
 
+export type ChatOption = "qa" | "form";
+
 export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
 
 type Sender = "system" | "user";
@@ -33,7 +35,7 @@ export interface ISaveChatSuggestions extends ISaveChatMessage {
 }
 export interface ISaveChatExecutions extends ISaveChatMessage {
   execution: number;
-  type: "qa" | "form";
+  type: ChatOption;
 }
 
 export type BatchingMessages = ISaveChatTemplate | ISaveChatExecutions | ISaveChatInput;
@@ -78,7 +80,7 @@ export interface ExecutionMessage {
   updated_at: string;
   id: number;
   execution: TemplatesExecutions;
-  type: "qa" | "form";
+  type: ChatOption;
 }
 
 export interface IMessagesList {

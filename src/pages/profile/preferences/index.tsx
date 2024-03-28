@@ -10,27 +10,34 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { CHAT_OPTIONS } from "@/components/Chat/Constants";
-import type { ChatOption } from "@/components/Prompt/Types/chat";
-import { setSelectedChatOption } from "@/core/store/chatSlice";
-import Storage from "@/common/storage";
+import type { ChatOption } from "@/core/api/dto/chats";
 import { DynamicThemeIcon } from "@/assets/icons/DynamicThemeIcon";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { alpha } from "@mui/material";
+import type { ThemeType } from "@/core/api/dto/user";
+import { useUpdateUserPreferencesMutation } from "@/core/api/user";
+import { updateUser } from "@/core/store/userSlice";
 
 function ProfilePreferences() {
   const dispatch = useAppDispatch();
-  const selectedChatOption = useAppSelector(state => state.chat.selectedChatOption);
-  const [inputStyle, setInputStyle] = useState<ChatOption | "">(selectedChatOption ?? "");
-  const [theme, setTheme] = useState<"dynamic" | "blue">("dynamic");
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const [theme, setTheme] = useState<ThemeType>("dynamic");
 
-  const handleChangeInputStyle = (option: ChatOption) => {
-    setInputStyle(option);
-    dispatch(setSelectedChatOption(option));
-    Storage.set("chatOption", option);
+  const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
+
+  const handleChangeInputStyle = async (option: ChatOption) => {
+    if (!currentUser || isLoadingPreferences) return;
+
+    const preferences = await updateUserPreferences({
+      username: currentUser.username,
+      data: { input_style: option },
+    }).unwrap();
+    dispatch(updateUser({ ...currentUser, preferences }));
   };
 
   const isDynamic = theme === "dynamic";
+  const inputStyle = currentUser?.preferences.input_style;
 
   return (
     <Protected>

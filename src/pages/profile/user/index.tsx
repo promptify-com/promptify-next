@@ -30,7 +30,7 @@ function ProfilePrompts() {
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
 
   const handleTogglePublic = async (checked: boolean) => {
-    if (!currentUser) return;
+    if (!currentUser || isLoadingPreferences) return;
 
     const preferences = await updateUserPreferences({
       username: currentUser.username,

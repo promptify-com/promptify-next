@@ -98,7 +98,7 @@ function ChatOptions() {
                 >
                   <Image
                     src={
-                      option.type === "QA"
+                      option.type === "qa"
                         ? require("@/pages/chat/images/QA.png")
                         : require("@/pages/chat/images/fill_prompt.png")
                     }
