@@ -1,6 +1,6 @@
 import { baseApi } from "@/core/api/api";
-import type { User, UpdateUserData, UserProfile } from "@/core/api/dto/user";
-import type { Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
+import type { User, UpdateUserData, UserProfile, UpdateUserPreferences, UserPreferences } from "@/core/api/dto/user";
+import type { TemplatesWithPagination } from "@/core/api/dto/templates";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -25,6 +25,13 @@ export const userApi = baseApi.injectEndpoints({
           data,
         }),
       }),
+      updateUserPreferences: builder.mutation<UserPreferences, { username: String; data: UpdateUserPreferences }>({
+        query: ({ username, data }) => ({
+          url: `/api/meta/users/${username}/preferences`,
+          method: "put",
+          data,
+        }),
+      }),
 
       getUserDetails: builder.query<UserProfile, any>({
         query: (username: string) => ({
@@ -45,6 +52,7 @@ export const userApi = baseApi.injectEndpoints({
 export const {
   useGetCurrentUserQuery,
   useUpdateUserProfileMutation,
+  useUpdateUserPreferencesMutation,
   useGetUserDetailsQuery,
   useGetUserTemplatesQuery,
 } = userApi;

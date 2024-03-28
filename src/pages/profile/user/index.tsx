@@ -7,7 +7,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ProfileImageButton } from "@/components/profile2/ProfileImageButton";
 import Box from "@mui/material/Box";
@@ -15,7 +14,7 @@ import StackedInput from "@/components/common/forms/StackedInput";
 import { useFormik } from "formik";
 import { IEditProfile } from "@/common/types";
 import { useRouter } from "next/router";
-import { useUpdateUserProfileMutation } from "@/core/api/user";
+import { useUpdateUserPreferencesMutation, useUpdateUserProfileMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 import useToken from "@/hooks/useToken";
 import Button from "@mui/material/Button";
@@ -23,12 +22,22 @@ import SectionWrapper from "@/components/profile2/SectionWrapper";
 
 function ProfilePrompts() {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [isPublic, setIsPublic] = useState(true);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const token = useToken();
 
   const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+  const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
+
+  const handleTogglePublic = async (checked: boolean) => {
+    if (!currentUser) return;
+
+    const preferences = await updateUserPreferences({
+      username: currentUser.username,
+      data: { is_public: checked },
+    }).unwrap();
+    dispatch(updateUser({ ...currentUser, preferences }));
+  };
 
   const onSubmit = async (values: IEditProfile) => {
     const payload = await updateUserProfile({ token, data: values }).unwrap();
@@ -47,6 +56,8 @@ function ProfilePrompts() {
     enableReinitialize: true,
     onSubmit,
   });
+
+  const isPublic = currentUser?.preferences.is_public;
 
   return (
     <Protected>
@@ -83,7 +94,7 @@ function ProfilePrompts() {
                 control={
                   <Switch
                     checked={isPublic}
-                    onChange={(_, checked) => setIsPublic(checked)}
+                    onChange={(_, checked) => handleTogglePublic(checked)}
                   />
                 }
                 label={isPublic ? "Yes" : "No"}
