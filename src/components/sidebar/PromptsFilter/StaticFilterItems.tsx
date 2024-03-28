@@ -38,7 +38,7 @@ function StaticFilterItems() {
           fontWeight: 500,
         }}
       >
-        <ListItemIcon>
+        <ListItemIcon sx={{ mr: -1.5 }}>
           <AutoAwesomeMosaicOutlined />
         </ListItemIcon>
         Browse
@@ -58,7 +58,7 @@ function StaticFilterItems() {
           }}
           onClick={() => dispatch(setMyFavoritesChecked(!isFavourite))}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ mr: -1.5 }}>
             <FavoriteBorderOutlined />
           </ListItemIcon>
           My favourites
