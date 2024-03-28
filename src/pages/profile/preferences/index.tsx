@@ -13,17 +13,24 @@ import { CHAT_OPTIONS } from "@/components/Chat/Constants";
 import type { ChatOption } from "@/components/Prompt/Types/chat";
 import { setSelectedChatOption } from "@/core/store/chatSlice";
 import Storage from "@/common/storage";
+import { DynamicThemeIcon } from "@/assets/icons/DynamicThemeIcon";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { alpha } from "@mui/material";
 
 function ProfilePreferences() {
   const dispatch = useAppDispatch();
   const selectedChatOption = useAppSelector(state => state.chat.selectedChatOption);
   const [inputStyle, setInputStyle] = useState<ChatOption | "">(selectedChatOption ?? "");
+  const [theme, setTheme] = useState<"dynamic" | "blue">("dynamic");
 
   const handleChangeInputStyle = (option: ChatOption) => {
     setInputStyle(option);
     dispatch(setSelectedChatOption(option));
     Storage.set("chatOption", option);
   };
+
+  const isDynamic = theme === "dynamic";
 
   return (
     <Protected>
@@ -137,10 +144,41 @@ function ProfilePreferences() {
                 direction={"row"}
                 gap={1}
               >
-                <Stack
-                  gap={1}
-                  px={"8px"}
-                ></Stack>
+                <Button
+                  onClick={() => setTheme("dynamic")}
+                  sx={themeBtnStyle}
+                  className={isDynamic ? "active" : ""}
+                >
+                  <Box
+                    component={"span"}
+                    className="icon"
+                  >
+                    <DynamicThemeIcon />
+                  </Box>
+                  Dynamic
+                </Button>
+                <Button
+                  onClick={() => setTheme("blue")}
+                  sx={themeBtnStyle}
+                  className={!isDynamic ? "active" : ""}
+                >
+                  <Box
+                    component={"span"}
+                    className="icon"
+                  >
+                    <Box
+                      component={"span"}
+                      sx={{
+                        display: "inline-block",
+                        width: 48,
+                        height: 48,
+                        bgcolor: "primary.main",
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </Box>
+                  Blue
+                </Button>
               </Stack>
             </Stack>
           </SectionWrapper>
@@ -160,3 +198,31 @@ export async function getServerSideProps() {
 }
 
 export default ProfilePreferences;
+
+const themeBtnStyle = {
+  flexDirection: "column",
+  gap: 1,
+  px: "8px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: "secondary.light",
+  ".icon": {
+    width: 48,
+    height: 48,
+    p: "8px",
+    borderRadius: "50%",
+    transition: "background-color .3s",
+  },
+  ":hover .icon": {
+    bgcolor: "surfaceContainerLow",
+  },
+  "&.active": {
+    color: "onSurface",
+    ".icon": {
+      bgcolor: "surfaceContainerLow",
+    },
+    ":hover .icon": {
+      bgcolor: alpha("#147EFF", 0.3),
+    },
+  },
+};
