@@ -1,15 +1,14 @@
 import { useRouter } from "next/router";
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Image from "@/components/design-system/Image";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
+import Seo from "@/components/Seo";
+import UserInformation from "@/components/profile/UserInformation";
 
 import { Layout } from "@/layout";
 import { useGetUserDetailsQuery } from "@/core/api/user";
-import Head from "next/head";
 
-const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: undefined, bio: "" };
+const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 
 function PrivateUserProfile() {
   const router = useRouter();
@@ -20,12 +19,7 @@ function PrivateUserProfile() {
 
   return (
     <Layout>
-      <Head>
-        <meta
-          name="robots"
-          content="noindex, nofollow"
-        />
-      </Head>
+      <Seo privateProfile />
       <Stack
         direction={{ xs: "column", md: "row" }}
         alignItems={"start"}
@@ -35,37 +29,11 @@ function PrivateUserProfile() {
         gap={"50px"}
         mx={"auto"}
       >
-        <Stack gap={"32px"}>
-          <Box
-            position={"relative"}
-            width={"152px"}
-            height={"152px"}
-            borderRadius={"999px"}
-            overflow={"hidden"}
-          >
-            <Image
-              src={user.avatar}
-              alt={"anonymous"}
-              fallback={require("@/assets/images/default-avatar.jpg")}
-              fill
-            />
-          </Box>
-          <Stack>
-            <Typography
-              fontSize={24}
-              lineHeight={"28.8px"}
-            >
-              Anonymous
-            </Typography>
-            <Typography
-              fontSize={14}
-              fontWeight={400}
-              lineHeight={"22.4px"}
-            >
-              {user.bio}
-            </Typography>
-          </Stack>
-        </Stack>
+        <UserInformation
+          username={username}
+          user={user}
+          privateProfile
+        />
         <Stack
           gap={2}
           minHeight={"480px"}
@@ -99,6 +67,7 @@ function PrivateUserProfile() {
           </Stack>
         </Stack>
       </Stack>
+
       <FooterPrompt />
     </Layout>
   );
