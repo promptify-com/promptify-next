@@ -46,8 +46,6 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
     },
   );
 
-  const templatesArray = userTemplates as Templates[];
-
   const [deleteTemplate] = useDeleteTemplateMutation();
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates>();
@@ -257,7 +255,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
         </Grid>
       ) : (
         <Grid width={"100%"}>
-          {isUserTemplatesFetching && templatesArray?.length === 0 ? (
+          {isUserTemplatesFetching && (userTemplates as Templates[])?.length === 0 ? (
             <Box width={"100%"}>
               <CardTemplatePlaceholder count={4} />
             </Box>
@@ -268,7 +266,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
               gap={"14px"}
               width={"100%"}
             >
-              {templatesArray?.length === 0 ? (
+              {(userTemplates as Templates[])?.length === 0 ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -278,7 +276,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
                   <Typography variant="body1">No templates found.</Typography>
                 </Box>
               ) : (
-                templatesArray?.map((template: Templates) => (
+                (userTemplates as Templates[])?.map((template: Templates) => (
                   <TemplateManagerItem
                     key={template.id}
                     template={template}
