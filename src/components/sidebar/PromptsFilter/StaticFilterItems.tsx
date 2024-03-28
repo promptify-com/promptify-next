@@ -32,6 +32,10 @@ function StaticFilterItems() {
           padding: "16px 24px",
           flexDirection: "row",
           alignItems: "center",
+          fontSize: "14px",
+          lineHeight: "16.8px",
+          letterSpacing: "0.17px",
+          fontWeight: 500,
         }}
       >
         <ListItemIcon>
@@ -47,6 +51,10 @@ function StaticFilterItems() {
             flexDirection: "row",
             alignItems: "center",
             bgcolor: isFavourite ? "surfaceContainer" : "transparent",
+            fontSize: "14px",
+            lineHeight: "16.8px",
+            letterSpacing: "0.17px",
+            fontWeight: 500,
           }}
           onClick={() => dispatch(setMyFavoritesChecked(!isFavourite))}
         >
