@@ -12,13 +12,13 @@ import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import TryRounded from "@mui/icons-material/TryRounded";
 
 import { theme } from "@/theme";
+import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { BLOG_URL } from "@/common/constants";
-import type { NavItem } from "@/common/types/sidebar";
-import useBrowser from "@/hooks/useBrowser";
 import SidebarItem from "@/components/sidebar/SidebarItem";
-import EditorIcon from "../builder/Assets/EditorIcon";
+import EditorIcon from "@/components/builder/Assets/EditorIcon";
+import type { NavItem } from "@/common/types/sidebar";
 
 const FiltersDrawerLazy = lazy(() => import("./PromptsFilter/FiltersDrawer"), {
   ssr: false,
