@@ -31,6 +31,7 @@ interface CustomPalette {
   surfaceContainerHighest: string;
   surfaceContainerLowest: string;
   surfaceContainer: string;
+  surfaceDim: string;
 }
 
 interface CustomTheme {
@@ -92,6 +93,7 @@ export let theme: Theme = createTheme({
     surfaceContainerLow: "#F5F3F7",
     surfaceContainerHighest: "#E3E2E6",
     surfaceContainerLowest: "#FFFFFF",
+    surfaceDim: "#DBD9DD",
     surface: {
       1: "#FDFBFF",
       2: "#F5F4FA",
