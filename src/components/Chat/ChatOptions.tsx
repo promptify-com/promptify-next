@@ -4,44 +4,23 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import type { ChatOption } from "@/components/Prompt/Types/chat";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedChatOption } from "@/core/store/chatSlice";
-import Image from "../design-system/Image";
+import Image from "@/components/design-system/Image";
 import Storage from "@/common/storage";
-
-interface Option {
-  imagePath: string;
-  label: string;
-  hint: string;
-  type: ChatOption;
-}
+import { CHAT_OPTIONS } from "./Constants";
 
 function ChatOptions() {
   const dispatch = useAppDispatch();
   const [isChecked, setIsChecked] = useState(false);
-  const options: Option[] = [
-    {
-      imagePath: "@/pages/chat/images/QA.png",
-      label: "Complete questionary",
-      hint: "Easy for new users",
-      type: "QA",
-    },
 
-    {
-      imagePath: "@/pages/chat/images/fill_prompt.png",
-      label: "Fill prompt instructions",
-      hint: "Better for advanced users",
-      type: "FORM",
-    },
-  ];
-
-  const handleOptionClick = (option: Option) => {
+  const handleOptionClick = (option: (typeof CHAT_OPTIONS)[number]) => {
     dispatch(setSelectedChatOption(option.type));
     if (isChecked) {
       Storage.set("chatOption", option.type);
     }
   };
+
   return (
     <Box
       sx={{
@@ -83,7 +62,7 @@ function ChatOptions() {
           gap={3}
           py={2}
         >
-          {options.map((option, index) => {
+          {CHAT_OPTIONS.map((option, index) => {
             index++;
             return (
               <Box

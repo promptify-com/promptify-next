@@ -8,9 +8,22 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { CHAT_OPTIONS } from "@/components/Chat/Constants";
+import type { ChatOption } from "@/components/Prompt/Types/chat";
+import { setSelectedChatOption } from "@/core/store/chatSlice";
+import Storage from "@/common/storage";
 
 function ProfilePreferences() {
-  const [inputStyle, setInputStyle] = useState("Input Form");
+  const dispatch = useAppDispatch();
+  const selectedChatOption = useAppSelector(state => state.chat.selectedChatOption);
+  const [inputStyle, setInputStyle] = useState<ChatOption | "">(selectedChatOption ?? "");
+
+  const handleChangeInputStyle = (option: ChatOption) => {
+    setInputStyle(option);
+    dispatch(setSelectedChatOption(option));
+    Storage.set("chatOption", option);
+  };
 
   return (
     <Protected>
@@ -51,7 +64,7 @@ function ProfilePreferences() {
               </Stack>
               <Select
                 value={inputStyle}
-                onChange={e => setInputStyle(e.target.value)}
+                onChange={e => handleChangeInputStyle(e.target.value as ChatOption)}
                 displayEmpty
                 MenuProps={{
                   disableScrollLock: true,
@@ -82,12 +95,12 @@ function ProfilePreferences() {
                   },
                 }}
               >
-                {["Input Form", "Questionary"].map(option => (
+                {CHAT_OPTIONS.map(option => (
                   <MenuItem
-                    key={option}
-                    value={option}
+                    key={option.label}
+                    value={option.type}
                   >
-                    {option}
+                    {option.label}
                   </MenuItem>
                 ))}
               </Select>
