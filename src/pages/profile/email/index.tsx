@@ -13,6 +13,7 @@ import { useUpdateUserProfileMutation } from "@/core/api/user";
 import useToken from "@/hooks/useToken";
 import { updateUser } from "@/core/store/userSlice";
 import { isValidEmail } from "@/common/helpers";
+import { setToast } from "@/core/store/toastSlice";
 
 function ProfileEmail() {
   const token = useToken();
@@ -29,11 +30,18 @@ function ProfileEmail() {
   const updateEmail = async () => {
     if (!isValidEmail(communicationEmail)) return;
 
-    const user = await updateUserProfile({
-      token,
-      data: { communication_email: communicationEmail },
-    }).unwrap();
-    dispatch(updateUser(user));
+    try {
+      const user = await updateUserProfile({
+        token,
+        data: { communication_email: communicationEmail },
+      }).unwrap();
+      dispatch(updateUser(user));
+      dispatch(setToast({ message: "Communication email successfully updated", severity: "success", duration: 6000 }));
+    } catch (_) {
+      dispatch(
+        setToast({ message: "Communication email not updated! Please try again.", severity: "error", duration: 6000 }),
+      );
+    }
   };
 
   const disableSave =
