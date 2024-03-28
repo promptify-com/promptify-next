@@ -9,9 +9,12 @@ import { useGetMyTemplatesQuery } from "@/core/api/templates";
 import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
 import Link from "next/link";
+import type { Templates } from "@/core/api/dto/templates";
 
 function ProfilePrompts() {
-  const { data: templates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery();
+  const { data: fetchedTemplates } = useGetMyTemplatesQuery({});
+
+  const templates = fetchedTemplates as Templates[];
 
   return (
     <Protected>
