@@ -32,6 +32,9 @@ function ProfilePrompts() {
               New prompt
             </Button>
           }
+          sx={{
+            width: "85%",
+          }}
         >
           <Stack
             alignItems={"flex-start"}

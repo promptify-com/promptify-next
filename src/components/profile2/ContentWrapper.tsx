@@ -1,5 +1,5 @@
 import { SEO_DESCRIPTION } from "@/common/constants";
-import Box from "@mui/material/Box";
+import type { SxProps } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { type ReactNode } from "react";
@@ -9,16 +9,20 @@ interface Props {
   description?: string;
   children: ReactNode;
   actions?: ReactNode;
+  sx?: SxProps;
 }
 
-const ContentWrapper = ({ title, description, children, actions }: Props) => {
+const ContentWrapper = ({ title, description, children, actions, sx }: Props) => {
   return (
     <Stack
-      maxWidth={"1184px"}
-      width={"70%"}
-      m={"auto"}
-      p={"40px 20px"}
       gap={5}
+      sx={{
+        maxWidth: "1184px",
+        width: "70%",
+        m: "auto",
+        p: "40px 20px",
+        ...sx,
+      }}
     >
       <Stack
         direction={"row"}
