@@ -6,12 +6,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import type { NavItem } from "@/common/types/sidebar";
+import { useTheme } from "@mui/material";
 
 interface Props {
   navItem: NavItem;
 }
 
 function SidebarItem({ navItem }: Props) {
+  const theme = useTheme();
   return (
     <Link
       href={navItem.href}
@@ -28,11 +30,11 @@ function SidebarItem({ navItem }: Props) {
         sx={{
           ...(navItem.active && {
             ".MuiSvgIcon-root": {
-              fill: "#375CA9",
+              fill: theme.palette.primary.main,
               transform: "scale(1.1)",
             },
             ".MuiTypography-root": {
-              color: "#375CA9",
+              color: "secondary.main",
             },
             ".MuiListItemIcon-root": {
               backgroundColor: "surface.1",
@@ -45,10 +47,10 @@ function SidebarItem({ navItem }: Props) {
             borderRadius: "8px",
             ".MuiSvgIcon-root": {
               transform: "scale(1.1)",
-              fill: "#375CA9",
+              fill: theme.palette.primary.main,
             },
             ".MuiTypography-root": {
-              color: "#375CA9",
+              color: "secondary.main",
             },
             ".MuiListItemIcon-root": {
               backgroundColor: "surface.1",
