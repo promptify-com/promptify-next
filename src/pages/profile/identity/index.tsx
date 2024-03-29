@@ -7,31 +7,42 @@ import { useQuestions } from "@/hooks/api/questions";
 import { useUserAnswers } from "@/hooks/api/user";
 import type { IQuestion } from "@/common/types";
 import { IdentityItem } from "@/components/profile2/IdentityItem";
-import StackedInput from "@/components/common/forms/StackedInput";
-import { useFormik } from "formik";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { StackedSelect } from "@/components/common/forms/StackedSelect";
 import MenuItem from "@mui/material/MenuItem";
-import { RELATION_TYPES } from "@/components/profile2/Constants";
+import type { UpdateUserData } from "@/core/api/dto/user";
+import { useUpdateUserProfileMutation } from "@/core/api/user";
+import useToken from "@/hooks/useToken";
+import { updateUser } from "@/core/store/userSlice";
+import { setToast } from "@/core/store/toastSlice";
+
+const GENDERS = ["MALE", "FEMALE"];
 
 function ProfileIdentity() {
+  const token = useToken();
+  const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [questions] = useQuestions();
   const [answers] = useUserAnswers();
+
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
 
   const getUserAnswer = (question: IQuestion) => {
     return answers.find(answer => answer.question.id === question.id)?.option;
   };
 
-  const formik = useFormik<any>({
-    initialValues: {
-      dob: "",
-      gender: currentUser?.gender || "",
-      relationship: "",
-      city: "",
-    },
-    onSubmit: () => console.log("Submit"),
-  });
+  const handleUpdateUser = async (userData: UpdateUserData) => {
+    try {
+      const user = await updateUserProfile({
+        token,
+        data: userData,
+      }).unwrap();
+      dispatch(updateUser(user));
+      dispatch(setToast({ message: "Identity was successfully updated", severity: "info", duration: 6000 }));
+    } catch (_) {
+      dispatch(setToast({ message: "Something went wrong please try again", severity: "error", duration: 6000 }));
+    }
+  };
 
   return (
     <Protected>
@@ -59,33 +70,48 @@ function ProfileIdentity() {
             title="General Information"
             description="We may have gathered this information from publicly available sources or your connected accounts. This data is utilized to craft a genuinely tailored experience for you."
           >
-            <StackedInput
+            {/* <StackedInput
               name="dob"
               label="Birthday"
-              value={formik.values.dob}
-              onChange={formik.handleChange}
-              onClear={() => formik.setFieldValue("dob", "")}
-            />
+              value={currentUser?.dob}
+              onChange={(e) => handleUpdateUser({ dob: e.target.value})}
+              onClear={() => handleUpdateUser({ dob: ""}}
+            /> */}
             <StackedSelect
               name="gender"
               label={"Gender"}
-              value={formik.values.gender}
-              onChange={formik.handleChange}
+              value={currentUser?.gender || GENDERS[0]}
+              onChange={e => handleUpdateUser({ gender: e.target.value.toUpperCase() })}
+              sx={{
+                ".MuiSelect-select": {
+                  textTransform: "lowercase",
+                  ":first-letter": {
+                    textTransform: "uppercase",
+                  },
+                },
+              }}
             >
-              {["Male", "Female"].map(option => (
+              {GENDERS.map(option => (
                 <MenuItem
                   key={option}
                   value={option}
+                  sx={{
+                    display: "block",
+                    textTransform: "lowercase",
+                    ":first-letter": {
+                      textTransform: "uppercase",
+                    },
+                  }}
                 >
                   {option}
                 </MenuItem>
               ))}
             </StackedSelect>
-            <StackedSelect
+            {/* <StackedSelect
               name="relationship"
               label={"Relationship Status"}
-              value={formik.values.relationship}
-              onChange={formik.handleChange}
+              value={currentUser?.relationship}
+              onChange={e => handleUpdateUser({ relationship: e.target.value })}
             >
               {RELATION_TYPES.map(option => (
                 <MenuItem
@@ -95,14 +121,14 @@ function ProfileIdentity() {
                   {option}
                 </MenuItem>
               ))}
-            </StackedSelect>
-            <StackedInput
+            </StackedSelect> */}
+            {/* <StackedInput
               name="city"
               label="City of living"
-              value={formik.values.city}
-              onChange={formik.handleChange}
-              onClear={() => formik.setFieldValue("city", "")}
-            />
+              value={currentUser?.city}
+              onChange={(e) => handleUpdateUser({ city: e.target.value})}
+              onClear={() => handleUpdateUser({ city: ""}}
+            /> */}
           </SectionWrapper>
         </ContentWrapper>
       </Layout>

@@ -23,7 +23,6 @@ export const StackedSelect: React.FC<IProps> = ({ name, label, value, children, 
         width: "100%",
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
         ":not(:last-of-type)": {
           borderBottom: "1px solid",
           borderColor: "surfaceContainerHighest",
