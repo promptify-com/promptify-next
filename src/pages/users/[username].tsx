@@ -6,23 +6,24 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { Layout } from "@/layout";
-import { useGetUserDetailsQuery, useGetUserTemplatesQuery } from "@/core/api/user";
+import { useGetUserTemplatesQuery } from "@/core/api/user";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import UserInformation from "@/components/profile/UserInformation";
 import type { Templates } from "@/core/api/dto/templates";
+import { GetServerSideProps } from "next/types";
+import { authClient } from "@/common/axios";
+import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
+import { UserProfile } from "@/core/api/dto/user";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
 
-function ProfilePage() {
+function ProfilePage({ user = initialUser }: { user: UserProfile }) {
   const router = useRouter();
   const username = router.query.username as string;
-  const { data: user = initialUser } = useGetUserDetailsQuery(username, {
-    skip: !username,
-  });
 
   return (
     <Layout>
@@ -180,4 +181,35 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
   );
 }
 
+export const getServerSideProps: GetServerSideProps = async context => {
+  const username = context.params?.username as string;
+  try {
+    const userRes = await authClient.get(`/api/meta/users/${username}/`);
+    const user: UserProfile | null = userRes.data;
+
+    //@ts-ignore
+    if (!user?.is_public) {
+      return {
+        redirect: {
+          destination: `/users/private/${username}`,
+          permanent: false,
+        },
+      };
+    }
+    return {
+      props: {
+        title: `${username} | ${SEO_TITLE}`,
+        description: SEO_DESCRIPTION,
+        user: user,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: `/`,
+        permanent: false,
+      },
+    };
+  }
+};
 export default ProfilePage;
