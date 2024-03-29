@@ -5,8 +5,29 @@ import ContentWrapper from "@/components/profile2/ContentWrapper";
 import SectionWrapper from "@/components/profile2/SectionWrapper";
 import Stack from "@mui/material/Stack";
 import StackedSwitch from "@/components/common/forms/StackedSwitch";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useUpdateUserPreferencesMutation } from "@/core/api/user";
+import { UpdateUserPreferences } from "@/core/api/dto/user";
+import { updateUser } from "@/core/store/userSlice";
 
 function ProfileNotifications() {
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
+
+  const handleChangePreferences = async (data: UpdateUserPreferences) => {
+    if (!currentUser || isLoadingPreferences) return;
+
+    const preferences = await updateUserPreferences({
+      username: currentUser.username,
+      data,
+    }).unwrap();
+    dispatch(updateUser({ ...currentUser, preferences }));
+  };
+
+  const preferences = currentUser?.preferences;
+
   return (
     <Protected>
       <Layout>
@@ -23,14 +44,14 @@ function ProfileNotifications() {
               <StackedSwitch
                 title="Generation finished"
                 description="Notify me when prompt generation is finished"
-                checked={false}
-                onChange={() => console.log("check Generation finished")}
+                checked={Boolean(preferences?.generation_finished)}
+                onChange={checked => handleChangePreferences({ generation_finished: checked })}
               />
               <StackedSwitch
                 title="GPT notification"
                 description="Allow GPT’s send me notifications"
-                checked={false}
-                onChange={() => console.log("GPT notification finished")}
+                checked={Boolean(preferences?.gpt_notification)}
+                onChange={checked => handleChangePreferences({ gpt_notification: checked })}
               />
             </Stack>
           </SectionWrapper>
@@ -43,14 +64,14 @@ function ProfileNotifications() {
               <StackedSwitch
                 title="Monthly report"
                 description="Regular update with statistic of your prompts and platform highlights"
-                checked={false}
-                onChange={() => console.log("Monthly report finished")}
+                checked={Boolean(preferences?.monthly_report)}
+                onChange={checked => handleChangePreferences({ monthly_report: checked })}
               />
               <StackedSwitch
                 title="Newsletter"
                 description="Regular update with blog posts"
-                checked={false}
-                onChange={() => console.log("Newsletter finished")}
+                checked={Boolean(preferences?.newsletter)}
+                onChange={checked => handleChangePreferences({ newsletter: checked })}
               />
             </Stack>
           </SectionWrapper>

@@ -2,7 +2,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
 
 interface Props {
   title: string;
@@ -12,8 +11,6 @@ interface Props {
 }
 
 export default function StackedSwitch({ title, description, checked, onChange }: Props) {
-  const [isChecked, setIsChecked] = useState(checked);
-
   return (
     <Stack
       direction={"row"}
@@ -48,11 +45,11 @@ export default function StackedSwitch({ title, description, checked, onChange }:
       <FormControlLabel
         control={
           <Switch
-            checked={isChecked}
-            onChange={(_, checked) => setIsChecked(checked)}
+            checked={checked}
+            onChange={(_, checked) => onChange(checked)}
           />
         }
-        label={isChecked ? "On" : "Off"}
+        label={checked ? "On" : "Off"}
         sx={{
           flexDirection: "row-reverse",
           gap: 2,
