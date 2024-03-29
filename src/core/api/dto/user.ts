@@ -1,5 +1,4 @@
 import type { IInterest, IEditProfile } from "@/common/types";
-
 import { ChatOption } from "@/core/api/dto/chats";
 
 export type ThemeType = "dynamic" | "blue";
@@ -17,6 +16,8 @@ export interface UserPreferences {
 export interface User {
   id: number;
   username: string;
+  email: string;
+  communication_email: string | null;
   role: string;
   first_name: string;
   last_name: string;
@@ -38,3 +39,5 @@ export type UserProfile = Pick<User, "id" | "avatar" | "bio" | "first_name" | "l
 export type UserPartial = Pick<User, "id" | "username" | "first_name" | "last_name" | "avatar">;
 
 export interface UpdateUserData extends IEditProfile {}
+
+export type UpdateUserPreferences = Partial<UserPreferences>;

@@ -1,10 +1,10 @@
 import Stack from "@mui/material/Stack";
 import Skeleton from "@mui/material/Skeleton";
 
-function SuggestionCardPlaceholder() {
+function SuggestionCardPlaceholder({ count = 4 }) {
   return (
     <>
-      {Array.from({ length: 4 }).map((_, index) => (
+      {Array.from({ length: count }).map((_, index) => (
         <Stack
           key={index}
           bgcolor={"surface.2"}

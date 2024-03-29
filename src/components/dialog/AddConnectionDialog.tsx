@@ -5,7 +5,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { AddConnectionButtons } from "../login/AddConnectionButtons";
-// import { AddConnectionButtons } from '../../pages/Login/components/AddConnectionButtons';
 
 interface IProps {
   openAdd: boolean;
@@ -16,26 +15,23 @@ interface IProps {
 }
 
 const AddConnectionDialog: React.FC<IProps> = ({ openAdd, setOpenAdd, preLogin, postLogin, authConnection }) => (
-  <div>
-    <Dialog
-      open={openAdd}
-      onClose={() => setOpenAdd(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">{"Add New Connection"}</DialogTitle>
-      <DialogContent>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-          <AddConnectionButtons
-            preLogin={preLogin}
-            postLogin={postLogin}
-            authConnection={authConnection}
-            setOpenAdd={setOpenAdd}
-          />
-        </GoogleOAuthProvider>
-      </DialogContent>
-    </Dialog>
-  </div>
+  <Dialog
+    open={openAdd}
+    onClose={() => setOpenAdd(false)}
+    disableScrollLock
+  >
+    <DialogTitle>Add New Connection</DialogTitle>
+    <DialogContent>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+        <AddConnectionButtons
+          preLogin={preLogin}
+          postLogin={postLogin}
+          authConnection={authConnection}
+          setOpenAdd={setOpenAdd}
+        />
+      </GoogleOAuthProvider>
+    </DialogContent>
+  </Dialog>
 );
 
 export default AddConnectionDialog;
