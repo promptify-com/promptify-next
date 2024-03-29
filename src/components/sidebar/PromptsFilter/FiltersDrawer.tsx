@@ -1,11 +1,12 @@
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
 import { useEffect } from "react";
-import DrawerContainer from "@/components/sidebar/DrawerContainer";
-import PromptsFilters from "./PromptsFilters";
 import Stack from "@mui/material/Stack";
-import FilterFloatButton from "./FilterFloatButton";
+
+import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import Storage from "@/common/storage";
+import DrawerContainer from "@/components/sidebar/DrawerContainer";
+import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
+import FilterFloatButton from "@/components/sidebar/PromptsFilter/FilterFloatButton";
 
 interface Props {
   expandedOnHover: boolean;
@@ -30,14 +31,16 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
   return (
     <Stack position={"relative"}>
       <FilterFloatButton expanded={isExpanded} />
-      <DrawerContainer
-        title="Prompts"
-        expanded={isExpanded}
-        toggleExpand={toggleSidebar}
-        sticky={isPromptsFiltersSticky}
-      >
-        <PromptsFilters />
-      </DrawerContainer>
+      {isExpanded && (
+        <DrawerContainer
+          title="Prompts"
+          expanded={isExpanded}
+          toggleExpand={toggleSidebar}
+          sticky={isPromptsFiltersSticky}
+        >
+          <PromptsFilters />
+        </DrawerContainer>
+      )}
     </Stack>
   );
 }

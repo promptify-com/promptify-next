@@ -2,11 +2,11 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
-import AutoAwesomeMosaicOutlined from "@mui/icons-material/AutoAwesomeMosaicOutlined";
 
 import { setMyFavoritesChecked } from "@/core/store/filtersSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import Browse from "@/components/sidebar/PromptsFilter/Icons/Browse";
 
 function StaticFilterItems() {
   const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ function StaticFilterItems() {
       <ListItemButton
         sx={{
           borderRadius: "16px",
-          bgcolor: "surfaceContainer",
+          bgcolor: "surfaceContainerHighest",
           padding: "16px 24px",
           flexDirection: "row",
           alignItems: "center",
@@ -39,7 +39,7 @@ function StaticFilterItems() {
         }}
       >
         <ListItemIcon sx={{ mr: -1.5 }}>
-          <AutoAwesomeMosaicOutlined />
+          <Browse />
         </ListItemIcon>
         Browse
       </ListItemButton>

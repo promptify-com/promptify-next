@@ -2,16 +2,26 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import FilterIcon from "@/components/sidebar/PromptsFilter/FilterIcon";
+import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
+import Storage from "@/common/storage";
 
 function FilterFloatButton({ expanded = false }) {
   const dispatch = useAppDispatch();
+
   const [isHovered, setIsHovered] = useState(false);
   const filters = useAppSelector(state => state.filters);
 
   const filterCount = countSelectedFilters(filters);
+
+  const handleClose = () => {
+    dispatch(resetFilters());
+    setIsHovered(false);
+    dispatch(setStickyPromptsFilters(false));
+    Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+  };
 
   if (filterCount === 0) {
     return null;
@@ -54,10 +64,7 @@ function FilterFloatButton({ expanded = false }) {
           {isHovered ? (
             <CloseIcon
               style={{ color: "white", fontSize: 16 }}
-              onClick={() => {
-                dispatch(resetFilters());
-                setIsHovered(false);
-              }}
+              onClick={handleClose}
             />
           ) : (
             <Typography

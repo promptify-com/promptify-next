@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import List from "@mui/material/List";
@@ -33,9 +33,11 @@ function Collapsible({ title, items, onSelect, isSelected, children }: Props) {
     setShowAll(!showAll);
   };
 
-  if (!title) return;
-
   const displayedItems = showAll ? items : items?.slice(0, 5);
+
+  if (!title && !items?.length) {
+    return null;
+  }
 
   return (
     <List sx={{ borderRadius: "16px", overflow: "hidden", p: 0 }}>
