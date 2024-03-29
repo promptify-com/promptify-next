@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { authClient } from "@/common/axios";
@@ -13,17 +11,14 @@ import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import Image from "@/components/design-system/Image";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
-import materialDynamicColors from "material-dynamic-colors";
-import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
-import { mix } from "polished";
+import { ThemeProvider } from "@mui/material";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { useDynamicColors } from "@/hooks/useDynamicColors";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const theme = useTheme();
-  const [palette, setPalette] = useState(theme.palette);
 
   const {
     templates,
@@ -42,58 +37,11 @@ export default function Page({ category }: { category: Category }) {
     initialStatus: "published",
   });
 
-  useEffect(() => {
-    if (!category) {
-      return;
-    }
-
-    if (category.image) {
-      fetchDynamicColors();
-    }
-  }, []);
-
+  const dynamicTheme = useDynamicColors(category, category.image);
+  console.log({ dynamicTheme });
   const goBack = () => {
     router.push("/explore");
   };
-
-  const fetchDynamicColors = () => {
-    materialDynamicColors(category.image)
-      .then(imgPalette => {
-        const newPalette: Palette = {
-          ...theme.palette,
-          ...imgPalette.light,
-          primary: {
-            ...theme.palette.primary,
-            main: imgPalette.light.primary,
-          },
-          secondary: {
-            ...theme.palette.secondary,
-            main: imgPalette.light.secondary,
-          },
-          error: {
-            ...theme.palette.secondary,
-            main: imgPalette.light.error,
-          },
-          background: {
-            ...theme.palette.background,
-            default: imgPalette.light.background,
-          },
-          surface: {
-            1: imgPalette.light.surface,
-            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            5: imgPalette.light.surfaceVariant,
-          },
-        };
-        setPalette(newPalette);
-      })
-      .catch(() => {
-        console.warn("Error fetching dynamic colors");
-      });
-  };
-
-  const dynamicTheme = createTheme({ ...theme, palette });
 
   return (
     <ThemeProvider theme={dynamicTheme}>

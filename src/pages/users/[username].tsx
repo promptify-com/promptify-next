@@ -263,7 +263,6 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                       sm={6}
                       md={5}
                       lg={3}
-                      xl={2}
                     >
                       <CardTemplate
                         template={template}
