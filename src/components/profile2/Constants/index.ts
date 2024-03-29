@@ -1,3 +1,5 @@
+import { SortOption } from "@/components/profile2/Types";
+
 export const AccountSidebarWidth = 268;
 
 export const NavItems = [
@@ -30,3 +32,11 @@ export const NavItems = [
 ];
 
 export const RELATION_TYPES = ["Single", "Engaged", "Married", "Widowed", "Separated", "Divorced"];
+
+export const SORTING_OPTIONS: SortOption[] = [
+  { label: "Edit date (new first)", orderby: "-updated_at" },
+  { label: "Edit date (old first)", orderby: "updated_at" },
+  { label: "Number of executions", orderby: "-runs" },
+  { label: "Number of likes", orderby: "-likes" },
+  { label: "Alphabetical", orderby: "title" },
+];

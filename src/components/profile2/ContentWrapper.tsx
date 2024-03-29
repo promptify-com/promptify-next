@@ -8,11 +8,9 @@ interface Props {
   title: string;
   description?: string;
   children: ReactNode;
-  actions?: ReactNode;
-  sx?: SxProps;
 }
 
-const ContentWrapper = ({ title, description, children, actions, sx }: Props) => {
+const ContentWrapper = ({ title, description, children }: Props) => {
   return (
     <Stack
       gap={5}
@@ -21,34 +19,28 @@ const ContentWrapper = ({ title, description, children, actions, sx }: Props) =>
         width: "70%",
         m: "auto",
         p: "40px 20px",
-        ...sx,
       }}
     >
       <Stack
-        direction={"row"}
-        gap={1}
-        alignItems={"center"}
+        gap={2}
         p={"8px 16px"}
       >
-        <Stack gap={2}>
+        <Typography
+          fontSize={32}
+          fontWeight={400}
+          color={"onSurface"}
+        >
+          {title}
+        </Typography>
+        {description && (
           <Typography
-            fontSize={32}
+            fontSize={16}
             fontWeight={400}
             color={"onSurface"}
           >
-            {title}
+            {description}
           </Typography>
-          {description && (
-            <Typography
-              fontSize={16}
-              fontWeight={400}
-              color={"onSurface"}
-            >
-              {description}
-            </Typography>
-          )}
-        </Stack>
-        {actions}
+        )}
       </Stack>
       {children}
     </Stack>
