@@ -9,20 +9,21 @@ import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
-import { useTheme } from "@mui/material/styles";
-import HelpIcon from "@/assets/icons/HelpIcon";
-import { ApiIcon } from "@/assets/icons";
-import Help from "./Help";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
-import PromptSequence from "./PromptSequence";
-import type { IEditPrompts } from "@/common/types/builder";
-import PaperIcon from "@/assets/icons/PaperIcon";
-import TestLog from "./TestLog";
 import ClearAll from "@mui/icons-material/ClearAll";
 import Tooltip from "@mui/material/Tooltip";
+import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
+import { useTheme } from "@mui/material/styles";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
+import PromptSequence from "@/components/builderSidebar/PromptSequence";
+import Help from "@/components/builderSidebar/Help";
+import TestLog from "@/components/builderSidebar/TestLog";
+import Support from "@/components/builder/Assets/Support";
+import Contact from "@/components/builder/Assets/Contact";
+import Api from "@/components/builder/Assets/Api";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
+import type { IEditPrompts } from "@/common/types/builder";
 
 const LINKS: Link[] = [
   {
@@ -33,17 +34,17 @@ const LINKS: Link[] = [
   {
     key: "test_log",
     name: "Test log",
-    icon: <PaperIcon />,
+    icon: <Contact />,
   },
   {
     key: "help",
     name: "Help",
-    icon: <HelpIcon />,
+    icon: <Support />,
   },
   {
     key: "api",
     name: "Api",
-    icon: <ApiIcon />,
+    icon: <Api />,
   },
 ];
 
@@ -85,6 +86,21 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
     if (templateId) await deletePrompt(templateId);
   };
 
+  const renderIcon = (item: Link) => {
+    const iconColor = item.key === activeLink?.key ? theme.palette.primary.main : "#1C1B1F";
+
+    switch (item.key) {
+      case "help":
+        return <Support color={iconColor} />;
+      case "test_log":
+        return <Contact color={iconColor} />;
+      case "api":
+        return <Api color={iconColor} />;
+      default:
+        return item.icon;
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -96,7 +112,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         width: "64px",
         borderRadius: "var(--none, 0px)",
         borderLeft: "1px solid var(--divider, #E1E2EC)",
-        bgcolor: "var(--dynamic-m-3-surfaces-surface-1, #FDFBFF)",
         padding: "75px var(--1, 8px)",
         zIndex: 1,
         flexDirection: "column",
@@ -122,6 +137,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         display={"flex"}
         flexDirection={"column"}
         gap={1}
+        mt={"120px"}
       >
         {LINKS.map(link => (
           <Grid key={link.name}>
@@ -141,7 +157,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
                 <Box
                   style={{
                     textDecoration: "none",
-
                     display: "flex",
                     width: "auto",
                     alignItems: "center",
@@ -152,11 +167,11 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
                     sx={{
                       minWidth: 0,
                       mr: "auto",
-                      color: "onSurface",
+                      color: activeLink?.name === link.name ? "primary.main" : "onSurface",
                       justifyContent: "center",
                     }}
                   >
-                    <Icon>{link.icon}</Icon>
+                    <Icon>{renderIcon(link)}</Icon>
                   </ListItemIcon>
                 </Box>
               </ListItemButton>
@@ -184,7 +199,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           justifyContent="space-between"
           gap={1}
           p={"16px 24px"}
-          border={`1px solid ${theme.palette.surface[3]}`}
           height="70px"
           boxSizing={"border-box"}
         >

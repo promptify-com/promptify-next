@@ -14,15 +14,17 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { updateTemplate } from "@/hooks/api/templates";
+import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
 import { handleInitPrompt } from "@/common/helpers/initPrompt";
+import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
+import { Layout } from "@/layout";
 import Header from "@/components/builder/Header";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { BuilderSidebar } from "@/components/builderSidebar";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
@@ -64,6 +66,16 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
       setPrompts(processedPrompts);
     }
   }, [fetchedTemplateData, engines]);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      dispatch(setOpenBuilderSidebar(false));
+    };
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+    };
+  }, [router.events]);
 
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
 
@@ -236,96 +248,97 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   };
 
   return (
-    <Box
-      sx={{
-        mt: "-10px",
-        bgcolor: "surface.4",
-        minHeight: "100svh",
-      }}
-    >
-      <Sidebar />
-      <BuilderSidebar
-        prompts={prompts}
-        setPrompts={setPrompts}
-      />
-
+    <Layout>
       <Box
         sx={{
-          ml: theme.custom.leftClosedSidebarWidth,
-          mr: builderSidebarOpen ? "352px" : "0px",
+          mt: "-10px",
+          bgcolor: "surface.4",
+          minHeight: "100svh",
         }}
       >
-        <Header
-          templateLoading={isTemplateLoading}
-          status={templateData?.status || "DRAFT"}
-          title={templateData?.title!}
-          templateSlug={templateData?.slug}
-          onPublish={handlePublishTemplate}
-          onSave={handleSaveTemplate}
-          onEditTemplate={() => setTemplateDrawerOpen(true)}
-          type={BUILDER_TYPE.USER}
-          sidebarOpened={builderSidebarOpen}
+        <Sidebar />
+        <BuilderSidebar
+          prompts={prompts}
+          setPrompts={setPrompts}
         />
 
         <Box
           sx={{
-            width: "70%",
-            mx: "auto",
-            p: "24px 0 40px",
-
-            ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
+            mr: builderSidebarOpen ? "352px" : "0px",
           }}
         >
-          <Stack
-            gap={1}
-            mb={2}
-          >
-            <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
-            <Typography sx={{ fontSize: 14, fontWeight: 400 }}>{BUILDER_DESCRIPTION}</Typography>
-          </Stack>
+          <Header
+            templateLoading={isTemplateLoading}
+            status={templateData?.status || "DRAFT"}
+            title={templateData?.title!}
+            templateSlug={templateData?.slug}
+            onPublish={handlePublishTemplate}
+            onSave={handleSaveTemplate}
+            onEditTemplate={() => setTemplateDrawerOpen(true)}
+            type={BUILDER_TYPE.USER}
+          />
 
-          <Box>
-            <DndProvider backend={HTML5Backend}>
-              <PromptList
-                templateLoading={isTemplateLoading}
-                prompts={prompts}
-                setPrompts={setPrompts}
-              />
-            </DndProvider>
-          </Box>
-        </Box>
+          <Box
+            sx={{
+              width: "70%",
+              mx: "auto",
+              p: "24px 0 40px",
 
-        {!!templateData && templateDrawerOpen && (
-          <SwipeableDrawer
-            anchor={"left"}
-            open={templateDrawerOpen}
-            onClose={() => setTemplateDrawerOpen(false)}
-            onOpen={() => setTemplateDrawerOpen(true)}
-            PaperProps={{
-              sx: {
-                width: "430px",
-                minWidth: "30svw",
-              },
+              ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
             }}
           >
-            <Box
-              sx={{
-                bgcolor: "#FDFBFF",
-                p: "24px 32px",
+            <Stack
+              mt={"72px"}
+              gap={1}
+              mb={2}
+            >
+              <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: 400 }}>{BUILDER_DESCRIPTION}</Typography>
+            </Stack>
+
+            <Box>
+              <DndProvider backend={HTML5Backend}>
+                <PromptList
+                  templateLoading={isTemplateLoading}
+                  prompts={prompts}
+                  setPrompts={setPrompts}
+                />
+              </DndProvider>
+            </Box>
+          </Box>
+
+          {!!templateData && templateDrawerOpen && (
+            <SwipeableDrawer
+              anchor={"left"}
+              open={templateDrawerOpen}
+              onClose={() => setTemplateDrawerOpen(false)}
+              onOpen={() => setTemplateDrawerOpen(true)}
+              PaperProps={{
+                sx: {
+                  width: "430px",
+                  minWidth: "30svw",
+                },
               }}
             >
-              <TemplateForm
-                type={createMode}
-                templateData={templateData}
-                darkMode
-                onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
-                onClose={() => setTemplateDrawerOpen(false)}
-              />
-            </Box>
-          </SwipeableDrawer>
-        )}
+              <Box
+                sx={{
+                  bgcolor: "#FDFBFF",
+                  p: "24px 32px",
+                }}
+              >
+                <TemplateForm
+                  type={createMode}
+                  templateData={templateData}
+                  darkMode
+                  onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
+                  onClose={() => setTemplateDrawerOpen(false)}
+                />
+              </Box>
+            </SwipeableDrawer>
+          )}
+        </Box>
       </Box>
-    </Box>
+    </Layout>
   );
 };
 
