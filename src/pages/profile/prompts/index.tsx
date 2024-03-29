@@ -24,7 +24,7 @@ function ProfilePrompts() {
           actions={
             <Button
               LinkComponent={Link}
-              href="/prompt-builder/create?editor=true"
+              href="/prompt-builder/create"
               variant="contained"
               endIcon={<Add />}
               sx={{ ml: "auto" }}

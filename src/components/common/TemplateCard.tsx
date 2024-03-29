@@ -22,6 +22,8 @@ import { setToast } from "@/core/store/toastSlice";
 import { Tooltip } from "@mui/material";
 import { ModeEditOutline } from "@mui/icons-material";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
+import { useRouter } from "next/router";
+import { getTemplateById } from "@/hooks/api/templates";
 
 interface Props {
   template: Templates;
@@ -31,6 +33,7 @@ interface Props {
 }
 
 function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: Props) {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, likes, executions_count, status } = template;
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -43,6 +46,17 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
     setTimeout(() => {
       onScrollToBottom?.();
     }, 100);
+  };
+
+  const handleNewChat = async () => {
+    let templateData = template;
+    try {
+      templateData = await getTemplateById(template.id);
+    } catch (error) {
+      console.error(error, `Something went wrong fetching template - ${template.title}`);
+    }
+    dispatch(setSelectedTemplate(templateData));
+    router.push("/chat");
   };
 
   const handleDeleteTemplate = async () => {
@@ -78,6 +92,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
     >
       <Stack
         direction={"row"}
+        alignItems={"center"}
         gap={"24px"}
       >
         <Box
@@ -249,7 +264,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
         ) : manageActions ? (
           <>
             <Button
-              onClick={() => console.log("new chat")}
+              onClick={handleNewChat}
               startIcon={<AddCommentOutlined />}
               sx={{
                 border: "1px solid",
