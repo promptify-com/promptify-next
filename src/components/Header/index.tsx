@@ -1,8 +1,11 @@
-import React, { useState } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { useRouter } from "next/router";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import SearchBar from "@/components/explorer/SearchBar";
 import { SearchDialog } from "./SearchDialog";
@@ -13,8 +16,8 @@ import { theme } from "@/theme";
 import Image from "next/image";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
-import Link from "next/link";
 import HeaderPlaceholder from "@/components/placeholders/HeaderPlaceholder";
+import { AccountSidebarWidth } from "@/components/profile2/Constants";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -243,14 +246,16 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isEditor = pathname.split("/")[1] === "prompt-builder";
+  const isAccountPage = pathname.split("/")[1] === "profile";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
     (isDocumentsPage && isDocumentsFiltersSticky);
-  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}  ${
-    builderSidebarOpen ? " + 353px" : ""
-  }`;
+
+  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""} ${
+    isAccountPage ? `+ ${AccountSidebarWidth}px` : ""
+  } ${builderSidebarOpen ? " + 353px" : ""}`;
 
   if (!clientLoaded) return <HeaderPlaceholder />;
 

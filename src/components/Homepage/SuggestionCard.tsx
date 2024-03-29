@@ -72,19 +72,28 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
 const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props) => {
   return (
     <Stack
-      border={"1px solid"}
-      borderColor={"surface.3"}
-      borderRadius={"16px"}
-      width={{ xs: "290px", md: "340px", xl: "100%" }}
+      width={{ xs: "290px", md: "330px", xl: "100%" }}
+      sx={{
+        border: "1px solid",
+        borderColor: "surfaceContainerHighest",
+        borderRadius: "16px",
+        overflow: "hidden",
+        ":hover": {
+          bgcolor: "surfaceContainerHigh",
+        },
+      }}
+      className="suggest-card"
     >
       <Stack
         direction={"row"}
-        alignItems={"center"}
-        p={"16px 8px 16px 24px"}
-        borderBottom={"1px solid"}
-        borderColor={"surface.3"}
         justifyContent={"space-between"}
+        alignItems={"center"}
         minHeight={"80px"}
+        sx={{
+          p: "16px 8px 16px 24px",
+          borderBottom: "1px solid",
+          borderColor: "surfaceContainerHighest",
+        }}
       >
         <Stack
           gap={1}
@@ -122,6 +131,11 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
         direction={"row"}
         alignItems={"center"}
         p={"16px 8px 16px 24px"}
+        sx={{
+          ":hover": {
+            bgcolor: "surfaceContainerHighest",
+          },
+        }}
       >
         <Stack
           gap={1}

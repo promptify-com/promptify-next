@@ -1,4 +1,4 @@
-export * from "./Connections";
+export * from "../profile2/Connections";
 export * from "./Content";
 export * from "./Home";
 export * from "./Identity";

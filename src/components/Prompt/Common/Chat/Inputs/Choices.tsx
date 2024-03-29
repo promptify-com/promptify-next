@@ -29,6 +29,7 @@ function Choices({ isGenerating, value, input, onChange }: Props) {
         },
       }}
       MenuProps={{
+        disableScrollLock: true,
         sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 400 } },
       }}
       value={value}
