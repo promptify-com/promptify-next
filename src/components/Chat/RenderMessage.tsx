@@ -11,6 +11,7 @@ import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
 import ReadyMessage from "./Messages/ReadyMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import HtmlMessage from "./Messages/HtmlMessage";
 
 interface Props {
   message: IMessage;
@@ -25,6 +26,13 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
     <>
       {message.type === "text" && (
         <TextMessage
+          message={message}
+          onScrollToBottom={onScrollToBottom}
+        />
+      )}
+
+      {message.type === "html" && (
+        <HtmlMessage
           message={message}
           onScrollToBottom={onScrollToBottom}
         />
