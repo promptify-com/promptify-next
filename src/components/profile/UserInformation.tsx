@@ -79,17 +79,19 @@ function UserInformation({
           {truncateBio ? (
             <>
               {truncate(user.bio, { length: 190 })}
-              <Typography
-                component={"span"}
-                sx={{
-                  fontSize: 15,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-                onClick={() => setTruncateBio(!truncateBio)}
-              >
-                Read more
-              </Typography>
+              {user.bio?.length > 190 && (
+                <Typography
+                  component={"span"}
+                  sx={{
+                    fontSize: 15,
+                    fontWeight: 500,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setTruncateBio(!truncateBio)}
+                >
+                  Read more
+                </Typography>
+              )}
             </>
           ) : (
             user.bio

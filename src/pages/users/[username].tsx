@@ -184,7 +184,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const userRes = await authClient.get(`/api/meta/users/${username}/`);
     const user: UserProfile | null = userRes.data;
 
-    //@ts-ignore
     if (!user?.is_public) {
       return {
         redirect: {
