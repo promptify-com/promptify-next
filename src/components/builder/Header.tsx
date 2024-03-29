@@ -17,8 +17,8 @@ import type { TemplateStatus } from "@/core/api/dto/templates";
 import type { BuilderType } from "@/common/types/builder";
 
 interface IHeader {
-  onSave: () => Promise<void>;
-  onPublish: () => Promise<void>;
+  onSave: () => void;
+  onPublish: () => void;
   templateLoading?: boolean;
   title: string;
   status: TemplateStatus;
