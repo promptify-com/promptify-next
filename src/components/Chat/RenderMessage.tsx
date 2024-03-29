@@ -9,9 +9,9 @@ import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox"
 import TemplateMessage from "@/components/Chat/Messages/templateMessage";
 import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
-import ReadyMessage from "./Messages/ReadyMessage";
+import ReadyMessage from "@/components/Chat/Messages/ReadyMessage";
+import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import HtmlMessage from "./Messages/HtmlMessage";
 
 interface Props {
   message: IMessage;
