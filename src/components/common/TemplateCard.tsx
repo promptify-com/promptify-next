@@ -14,7 +14,7 @@ import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
 import IconButton from "@mui/material/IconButton";
 import Edit from "@mui/icons-material/Edit";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
-import { capitalizeString, getBaseUrl, stripTags } from "@/common/helpers";
+import { getBaseUrl, stripTags } from "@/common/helpers";
 import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { useState } from "react";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
@@ -201,8 +201,14 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
                 fontSize={13}
                 fontWeight={500}
                 color={"primary.main"}
+                sx={{
+                  textTransform: "lowercase",
+                  ":first-letter": {
+                    textTransform: "uppercase",
+                  },
+                }}
               >
-                {capitalizeString(status)}
+                {status}
               </Typography>
             )}
           </Stack>
