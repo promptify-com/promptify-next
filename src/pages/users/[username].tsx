@@ -152,17 +152,14 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
               <Grid
                 container
                 gap={{ xs: 1, sm: 0 }}
-                spacing={1}
-                maxWidth={{ xs: "98%", sm: "auto" }}
               >
                 <>
                   {allTemplates?.map(template => (
                     <Grid
                       key={template.id}
                       item
-                      xs={12}
-                      sm={6}
-                      md={5}
+                      sm={4}
+                      md={4}
                       lg={3}
                     >
                       <CardTemplate

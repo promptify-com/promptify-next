@@ -14,49 +14,39 @@ interface IProps {
   setOpen: Function;
 }
 
-const DeleteConnectionDialog: React.FC<IProps> = ({
-  open,
-  handleDeleteConnection,
-  typeConnection,
-  setOpen,
-}) => (
-  <div>
-    <Dialog
-      open={open}
-      onClose={() => setOpen(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">{"Delete Connection"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          {` Are you sure you wanna remove the ${typeConnection?.provider} connection`}
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          sx={{
-            "&:hover": {
-              background: "#5a58cb24",
-            },
-          }}
-          onClick={() => setOpen(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={() => handleDeleteConnection(typeConnection)}
-          sx={{
-            "&:hover": {
-              background: "#5a58cb24",
-            },
-          }}
-        >
-          Remove
-        </Button>
-      </DialogActions>
-    </Dialog>
-  </div>
+const DeleteConnectionDialog: React.FC<IProps> = ({ open, handleDeleteConnection, typeConnection, setOpen }) => (
+  <Dialog
+    open={open}
+    onClose={() => setOpen(false)}
+    disableScrollLock
+  >
+    <DialogTitle>Delete Connection</DialogTitle>
+    <DialogContent>
+      <DialogContentText>Are you sure you wanna remove the {typeConnection?.provider} connection</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button
+        sx={{
+          "&:hover": {
+            background: "#5a58cb24",
+          },
+        }}
+        onClick={() => setOpen(false)}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={() => handleDeleteConnection(typeConnection)}
+        sx={{
+          "&:hover": {
+            background: "#5a58cb24",
+          },
+        }}
+      >
+        Remove
+      </Button>
+    </DialogActions>
+  </Dialog>
 );
 
 export default DeleteConnectionDialog;

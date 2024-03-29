@@ -93,6 +93,7 @@ function Landing() {
           <Menu
             anchorEl={socialAnchor}
             open={socialOpened}
+            disableScrollLock
             onClose={handleCloseSocial}
             sx={{
               ".MuiPaper-root": {

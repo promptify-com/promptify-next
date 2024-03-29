@@ -35,7 +35,7 @@ export const ProfileMenuItems: MenuType[] = [
   {
     id: 2,
     icon: <NoteStackIcon />,
-    href: "/profile/#my-templates",
+    href: "/profile/prompts",
     name: "My prompts",
   },
   {

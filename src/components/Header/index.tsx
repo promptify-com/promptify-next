@@ -15,6 +15,7 @@ import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import Link from "next/link";
 import HeaderPlaceholder from "@/components/placeholders/HeaderPlaceholder";
+import { AccountSidebarWidth } from "@/components/profile2/Constants";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -240,12 +241,15 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
+  const isAccountPage = pathname.split("/")[1] === "profile";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
     (isDocumentsPage && isDocumentsFiltersSticky);
-  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
+  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""} ${
+    isAccountPage ? `+ ${AccountSidebarWidth}px` : ""
+  }`;
 
   if (!clientLoaded) return <HeaderPlaceholder />;
 

@@ -18,6 +18,7 @@ export const isDesktopViewPort = () => {
 };
 
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
+
 export const promptComputeDomId = ({ title = "" }): string => `prompt-${title.toLowerCase().replace(/[^\w]/g, "-")}`;
 
 export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
@@ -72,6 +73,11 @@ export function isDeepEqual(object1: Record<string, any>, object2: Record<string
   }
   return true;
 }
+
+export const isValidEmail = (email: string) => {
+  const regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+  return regex.test(email);
+};
 
 export function numberToWord(num: number): string {
   const numWords = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];

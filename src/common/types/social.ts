@@ -1,6 +1,6 @@
-import {IUser} from "./user";
+import { User } from "@/core/api/dto/user";
 
-export interface IContinueWithSocialMediaResponse extends IUser {
+export interface IContinueWithSocialMediaResponse extends User {
   token: string;
-  created: boolean
+  created: boolean;
 }

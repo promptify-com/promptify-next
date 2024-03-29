@@ -49,8 +49,6 @@ export interface IAnswer {
   error?: boolean;
 }
 
-export type ChatOption = "QA" | "FORM";
-
 export type ChatMode = "messages" | "automation";
 
 export interface IQuestion {

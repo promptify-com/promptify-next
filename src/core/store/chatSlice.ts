@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { ChatMode, ChatOption, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
+import type { ChatMode, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IChat } from "@/core/api/dto/chats";
+import type { IChat, ChatOption } from "@/core/api/dto/chats";
 import Storage from "@/common/storage";
 
 export interface ExecutionsProps {
