@@ -26,9 +26,10 @@ function StaticFilterItems() {
       }}
     >
       <ListItemButton
+        onClick={() => dispatch(setMyFavoritesChecked(false))}
         sx={{
           borderRadius: "16px",
-          bgcolor: "surfaceContainerHighest",
+          bgcolor: !isFavourite ? "surfaceContainerHighest" : "transparent",
           padding: "16px 24px",
           flexDirection: "row",
           alignItems: "center",
@@ -50,7 +51,7 @@ function StaticFilterItems() {
             padding: "16px 24px",
             flexDirection: "row",
             alignItems: "center",
-            bgcolor: isFavourite ? "surfaceContainer" : "transparent",
+            bgcolor: isFavourite ? "surfaceContainerHighest" : "transparent",
             fontSize: "14px",
             lineHeight: "16.8px",
             letterSpacing: "0.17px",

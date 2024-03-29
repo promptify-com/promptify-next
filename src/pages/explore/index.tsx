@@ -55,6 +55,7 @@ export default function ExplorePage({ categories = [] }: Props) {
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const isFavorite = useAppSelector(state => state.filters.isFavourite);
 
   const {
     data: suggestedTemplates,
@@ -106,6 +107,7 @@ export default function ExplorePage({ categories = [] }: Props) {
           <FiltersSelected show={!allFilterParamsNull} />
 
           {allFilterParamsNull &&
+            !isFavorite &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
                 <Typography
