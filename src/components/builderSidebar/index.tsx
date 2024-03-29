@@ -111,7 +111,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         height: "100vh",
         width: "64px",
         borderRadius: "var(--none, 0px)",
-        borderLeft: "1px solid var(--divider, #E1E2EC)",
         padding: "75px var(--1, 8px)",
         zIndex: 1,
         flexDirection: "column",
