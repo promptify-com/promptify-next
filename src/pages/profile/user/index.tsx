@@ -237,12 +237,6 @@ function ProfilePrompts() {
               >
                 Save changes
               </Button>
-              <Button
-                onClick={() => {}}
-                sx={{ color: "onSurface" }}
-              >
-                Cancel
-              </Button>
             </Stack>
           </Stack>
         </ContentWrapper>

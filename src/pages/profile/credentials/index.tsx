@@ -13,9 +13,7 @@ function ProfileCredentials() {
           title="Credentials"
           description="Manage and update your account credentials to ensure the security and integrity of your account."
         >
-          <Box px={"16px"}>
-            <Credentials />
-          </Box>
+          <Credentials />
         </ContentWrapper>
       </Layout>
     </Protected>

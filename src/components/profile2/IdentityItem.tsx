@@ -6,6 +6,8 @@ import Image from "@/components/design-system/Image";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
 import type { SelectChangeEvent } from "@mui/material";
 import { StackedSelect } from "@/components/common/forms/StackedSelect";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setToast } from "@/core/store/toastSlice";
 
 const AVAILABLE_OPTION_IMGS = [
   "Countryside",
@@ -43,19 +45,27 @@ interface IProps {
 }
 
 export const IdentityItem: React.FC<IProps> = ({ question, defaultAnswer }) => {
+  const dispatch = useAppDispatch();
   const [selectedOption, setSelectedOption] = useState(defaultAnswer?.text || "");
   const [setUserAnswer] = useUpdateAnswers();
 
   const options = question.options;
 
   const handleOptionSelection = async (e: SelectChangeEvent) => {
+    const _option = selectedOption;
     const option = options.find(opt => opt.text === e.target.value);
 
     if (!option || option.text === selectedOption) return;
 
     setSelectedOption(option.text);
 
-    await setUserAnswer(question, option.id);
+    try {
+      await setUserAnswer(question, option.id);
+      dispatch(setToast({ message: "Identity was successfully updated", severity: "info" }));
+    } catch (err) {
+      setSelectedOption(_option);
+      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
+    }
   };
 
   useEffect(() => setSelectedOption(defaultAnswer?.text || ""), [defaultAnswer]);

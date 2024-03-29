@@ -51,7 +51,8 @@ function ProfileSocialAccounts() {
                 utilize to generate suggestions.
               </Typography>
               <Button
-                onClick={() => console.log("setup identity")}
+                LinkComponent={Link}
+                href="/profile/identity"
                 variant="contained"
                 sx={{
                   minWidth: "auto",

@@ -11,6 +11,7 @@ import Stack from "@mui/material/Stack";
 import Image from "@/components/design-system/Image";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
+import { Grid } from "@mui/material";
 
 function Credentials() {
   const dispatch = useAppDispatch();
@@ -56,10 +57,11 @@ function Credentials() {
       gap={2}
     >
       {credentials.map(credential => (
-        <Stack
-          direction={"row"}
+        <Grid
+          container
           justifyContent={"space-between"}
           alignItems={"center"}
+          wrap="nowrap"
           gap={3}
           key={credential.id}
           sx={{
@@ -70,53 +72,66 @@ function Credentials() {
             p: "16px 24px 16px 16px",
           }}
         >
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-            minWidth={"fit-content"}
+          <Grid
+            item
+            xs={3}
+            overflow={"hidden"}
           >
             <Typography
               fontSize={16}
               fontWeight={400}
               color={"onSurface"}
+              sx={{
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+              }}
             >
               {credential.name}
             </Typography>
-          </Stack>
-          <Stack
-            direction={"row"}
+          </Grid>
+          <Grid
+            item
+            xs={7}
+            display={"flex"}
+            justifyContent={"space-between"}
             alignItems={"center"}
             gap={2}
             whiteSpace={"nowrap"}
           >
-            <Image
-              src={require("@/assets/images/default-avatar.jpg")}
-              alt={credential.name.slice(0, 1) ?? "P"}
-              width={40}
-              height={40}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "Poppins, Space Mono",
-                fontSize: "16px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                color: "#fff",
-                backgroundColor: "black",
-                textTransform: "capitalize",
-                lineHeight: "47px",
-                textAlign: "center",
-              }}
-            />
-            <Typography
-              fontSize={16}
-              fontWeight={400}
-              color={"onSurface"}
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
             >
-              {credential.type}
-            </Typography>
+              <Image
+                src={require("@/assets/images/default-avatar.jpg")}
+                alt={credential.name.slice(0, 1) ?? "P"}
+                width={40}
+                height={40}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontFamily: "Poppins, Space Mono",
+                  fontSize: "16px",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  color: "#fff",
+                  backgroundColor: "black",
+                  textTransform: "capitalize",
+                  lineHeight: "47px",
+                  textAlign: "center",
+                }}
+              />
+              <Typography
+                fontSize={16}
+                fontWeight={400}
+                color={"onSurface"}
+              >
+                {credential.type}
+              </Typography>
+            </Stack>
             <Typography
               fontSize={14}
               fontWeight={400}
@@ -124,19 +139,24 @@ function Credentials() {
             >
               {formatDate(credential.createdAt)}
             </Typography>
-          </Stack>
-          <Button
-            onClick={() => setSelectedCredential(credential)}
-            startIcon={<DeleteForeverOutlined />}
-            sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "onSurface",
-            }}
+          </Grid>
+          <Grid
+            item
+            xs={2}
           >
-            Delete
-          </Button>
-        </Stack>
+            <Button
+              onClick={() => setSelectedCredential(credential)}
+              startIcon={<DeleteForeverOutlined />}
+              sx={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: "onSurface",
+              }}
+            >
+              Delete
+            </Button>
+          </Grid>
+        </Grid>
       ))}
       {selectedCredential?.id && (
         <DeleteDialog

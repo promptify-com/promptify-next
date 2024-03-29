@@ -18,6 +18,8 @@ export const isDesktopViewPort = () => {
 };
 
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
+export const capitalizeString = (str: string) => str.toLowerCase().replace(/^\w|\s\w/g, char => char.toUpperCase());
+
 export const promptComputeDomId = ({ title = "" }): string => `prompt-${title.toLowerCase().replace(/[^\w]/g, "-")}`;
 
 export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
