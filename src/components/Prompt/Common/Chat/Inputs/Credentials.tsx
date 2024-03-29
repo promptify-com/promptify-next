@@ -103,7 +103,6 @@ function Credentials({ input }: Props) {
 
   const updateWorkflowAndStorage = async () => {
     const storedWorkflows = Storage.get("workflows") || {};
-
     const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
     workflow?.nodes.forEach(node => attachCredentialsToNode(node));
@@ -111,14 +110,18 @@ function Credentials({ input }: Props) {
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    Storage.set("workflows", JSON.stringify(storedWorkflows));
-
     if (areAllCredentialsStored) {
       try {
         await updateWorkflow({
           workflowId: parseInt(workflowId),
           data: workflow,
         });
+
+        storedWorkflows[workflowId] = {
+          webhookPath: storedWorkflows[workflowId].webhookPath,
+        };
+
+        Storage.set("workflows", JSON.stringify(storedWorkflows));
       } catch (error) {
         console.error("Error updating workflow:", error);
       }

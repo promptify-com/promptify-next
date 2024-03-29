@@ -14,6 +14,20 @@ export interface UserPreferences {
   newsletter: boolean;
 }
 
+import { ChatOption } from "@/core/api/dto/chats";
+
+export type ThemeType = "dynamic" | "blue";
+
+export interface UserPreferences {
+  id: number;
+  theme: ThemeType;
+  input_style: ChatOption;
+  is_public: boolean;
+  generation_finished: boolean;
+  gpt_notification: boolean;
+  monthly_report: boolean;
+  newsletter: boolean;
+}
 export interface User {
   id: number;
   username: string;

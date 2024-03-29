@@ -1,13 +1,10 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { createTheme, ThemeProvider, type Palette } from "@mui/material/styles";
-import mix from "polished/lib/color/mix";
+import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import materialDynamicColors from "material-dynamic-colors";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
-import { theme } from "@/theme";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
@@ -21,13 +18,12 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
-import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
+import { useDynamicColors } from "@/hooks/useDynamicColors";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const [palette, setPalette] = useState(theme.palette);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [stopScrollingToBottom, setStopScrollingToBottom] = useState<boolean>(false);
   const [loadingInitialMessages, setLoadingInitialMessages] = useState(false);
@@ -63,12 +59,7 @@ function Chat() {
     template: selectedTemplate,
   });
 
-  const handleDynamicColors = () => {
-    if (!selectedTemplate?.thumbnail) {
-      return;
-    }
-    fetchDynamicColors();
-  };
+  const dynamicTheme = useDynamicColors(selectedTemplate, selectedChat?.thumbnail);
 
   const handleCreateChat = async () => {
     if (!selectedTemplate) return;
@@ -162,8 +153,6 @@ function Chat() {
   }, [selectedChat]);
 
   useEffect(() => {
-    handleDynamicColors();
-
     if (selectedChat && selectedTemplate?.title) {
       handleTitleChat();
     } else {
@@ -185,48 +174,6 @@ function Chat() {
     processQueuedMessages(queueSavedMessages, selectedChat?.id, lastMessage?.executionId, selectedTemplate?.id);
     setQueueSavedMessages([]);
   }, [queueSavedMessages]);
-
-  const fetchDynamicColors = () => {
-    if (!selectedTemplate?.thumbnail || !selectedChat?.thumbnail) {
-      return;
-    }
-
-    materialDynamicColors(selectedTemplate.thumbnail ?? selectedChat.thumbnail)
-      .then(imgPalette => {
-        const newPalette: Palette = {
-          ...theme.palette,
-          ...imgPalette.light,
-          primary: {
-            ...theme.palette.primary,
-            main: imgPalette.light.primary,
-          },
-          secondary: {
-            ...theme.palette.secondary,
-            main: imgPalette.light.secondary,
-          },
-          error: {
-            ...theme.palette.secondary,
-            main: imgPalette.light.error,
-          },
-          background: {
-            ...theme.palette.background,
-            default: imgPalette.light.background,
-          },
-          surface: {
-            1: imgPalette.light.surface,
-            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            5: imgPalette.light.surfaceVariant,
-          },
-        };
-        setPalette(newPalette);
-      })
-      .catch(() => {
-        console.warn("Error fetching dynamic colors");
-      });
-  };
-  const dynamicTheme = createTheme({ ...theme, palette });
 
   const handleGenerateExecution = () => {
     generateExecutionHandler((executionId: number) => {

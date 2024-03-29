@@ -7,14 +7,13 @@ import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
 import ContentContainer from "./ContentContainer";
 import { useRef, useEffect, useState } from "react";
-import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
-import materialDynamicColors from "material-dynamic-colors";
-import { mix } from "polished";
+import { ThemeProvider, useTheme } from "@mui/material";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { updatePopupTemplate, updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useViewTemplateMutation } from "@/core/api/templates";
 import { redirectToPath } from "@/common/helpers";
+import { useDynamicColors } from "@/hooks/useDynamicColors";
 
 interface Props {
   template: Templates;
@@ -42,7 +41,8 @@ function TemplatePage({ template, popup }: Props) {
   const [tabsFixed, setTabsFixed] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const topThreshold = popup ? 24 : 92;
-  const [palette, setPalette] = useState(theme.palette);
+
+  const dynamicTheme = useDynamicColors(template, template.thumbnail);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,10 +63,6 @@ function TemplatePage({ template, popup }: Props) {
     if (!template || !Object.keys(template).length) {
       redirectToPath(window.location.pathname ?? "/");
       return;
-    }
-
-    if (template.thumbnail) {
-      fetchDynamicColors();
     }
 
     if (!savedTemplateId || savedTemplateId !== template.id) {
@@ -92,44 +88,6 @@ function TemplatePage({ template, popup }: Props) {
       }),
     );
   };
-
-  const fetchDynamicColors = () => {
-    materialDynamicColors(template.thumbnail)
-      .then(imgPalette => {
-        const newPalette: Palette = {
-          ...theme.palette,
-          ...imgPalette.light,
-          primary: {
-            ...theme.palette.primary,
-            main: imgPalette.light.primary,
-          },
-          secondary: {
-            ...theme.palette.secondary,
-            main: imgPalette.light.secondary,
-          },
-          error: {
-            ...theme.palette.secondary,
-            main: imgPalette.light.error,
-          },
-          background: {
-            ...theme.palette.background,
-            default: imgPalette.light.background,
-          },
-          surface: {
-            1: imgPalette.light.surface,
-            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
-            5: imgPalette.light.surfaceVariant,
-          },
-        };
-        setPalette(newPalette);
-      })
-      .catch(() => {
-        console.warn("Error fetching dynamic colors");
-      });
-  };
-  const dynamicTheme = createTheme({ ...theme, palette });
 
   return (
     <ThemeProvider theme={dynamicTheme}>
