@@ -13,16 +13,15 @@ import Box from "@mui/material/Box";
 import StackedInput from "@/components/common/forms/StackedInput";
 import { useFormik } from "formik";
 import { IEditProfile } from "@/common/types";
-import { useRouter } from "next/router";
 import { useUpdateUserPreferencesMutation, useUpdateUserProfileMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 import useToken from "@/hooks/useToken";
 import Button from "@mui/material/Button";
 import SectionWrapper from "@/components/profile2/SectionWrapper";
+import { setToast } from "@/core/store/toastSlice";
 
 function ProfilePrompts() {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const token = useToken();
 
@@ -37,12 +36,22 @@ function ProfilePrompts() {
       data: { is_public: checked },
     }).unwrap();
     dispatch(updateUser({ ...currentUser, preferences }));
+    dispatch(
+      setToast({
+        message: `Profile has been successfully updated to be ${checked ? "public" : "private"}.`,
+        severity: "success",
+      }),
+    );
   };
 
   const onSubmit = async (values: IEditProfile) => {
-    const payload = await updateUserProfile({ token, data: values }).unwrap();
-    dispatch(updateUser(payload));
-    router.reload();
+    try {
+      const payload = await updateUserProfile({ token, data: values }).unwrap();
+      dispatch(updateUser(payload));
+      dispatch(setToast({ message: `Profile information has been successfully updated.`, severity: "success" }));
+    } catch (err) {
+      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
+    }
   };
 
   const formik = useFormik<IEditProfile>({
@@ -205,6 +214,19 @@ function ProfilePrompts() {
                 rows={3}
               />
             </SectionWrapper>
+            <Stack
+              direction={"row"}
+              gap={2}
+              p={"8px 16px"}
+            >
+              <Button
+                variant="contained"
+                onClick={formik.submitForm}
+                disabled={isLoading}
+              >
+                Save changes
+              </Button>
+            </Stack>
             <SectionWrapper
               title="Delete Account"
               description="If you wish to permanently delete your account, please be aware that this action is irreversible and
@@ -225,19 +247,6 @@ function ProfilePrompts() {
                 Delete account
               </Button>
             </SectionWrapper>
-            <Stack
-              direction={"row"}
-              gap={2}
-              p={"8px 16px"}
-            >
-              <Button
-                variant="contained"
-                onClick={formik.submitForm}
-                disabled={isLoading}
-              >
-                Save changes
-              </Button>
-            </Stack>
           </Stack>
         </ContentWrapper>
       </Layout>

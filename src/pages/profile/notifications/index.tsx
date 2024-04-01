@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
 import { UpdateUserPreferences } from "@/core/api/dto/user";
 import { updateUser } from "@/core/store/userSlice";
+import { setToast } from "@/core/store/toastSlice";
 
 function ProfileNotifications() {
   const dispatch = useAppDispatch();
@@ -19,11 +20,16 @@ function ProfileNotifications() {
   const handleChangePreferences = async (data: UpdateUserPreferences) => {
     if (!currentUser || isLoadingPreferences) return;
 
-    const preferences = await updateUserPreferences({
-      username: currentUser.username,
-      data,
-    }).unwrap();
-    dispatch(updateUser({ ...currentUser, preferences }));
+    try {
+      const preferences = await updateUserPreferences({
+        username: currentUser.username,
+        data,
+      }).unwrap();
+      dispatch(updateUser({ ...currentUser, preferences }));
+      dispatch(setToast({ message: "Notifications have been successfully updated.", severity: "success" }));
+    } catch (err) {
+      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
+    }
   };
 
   const preferences = currentUser?.preferences;
