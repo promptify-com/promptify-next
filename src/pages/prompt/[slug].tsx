@@ -10,7 +10,7 @@ import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import { useState } from "react";
-import { ExecutionCard } from "@/components/Prompt/VariantA/ExecutionCard";
+import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
 
 interface TemplateProps {
   fetchedTemplate: Templates;

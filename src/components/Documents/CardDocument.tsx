@@ -1,5 +1,5 @@
 import Card from "@mui/material/Card";
-import { ExecutionWithTemplate } from "@/core/api/dto/templates";
+import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Link from "next/link";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -24,9 +24,10 @@ const EXECUTION_LIFETIME_DAYS = 30;
 
 interface Props {
   execution: ExecutionWithTemplate;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }
 
-export default function CardDocument({ execution }: Props) {
+export default function CardDocument({ execution, onClick }: Props) {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [exportPopup, setExportPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
@@ -70,6 +71,7 @@ export default function CardDocument({ execution }: Props) {
       key={execution.id}
       component={Link}
       href={`/prompt/${execution.template.slug}?hash=${execution.hash}`}
+      onClick={onClick}
       elevation={0}
       sx={{
         display: "block",

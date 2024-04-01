@@ -4,8 +4,9 @@ import { useMemo } from "react";
 import type { Engine, Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";
+import { updatePopupTemplate } from "../../core/store/templatesSlice";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function DocumentsContainer({ templates, isLoading }: Props) {
+  const dispatch = useAppDispatch();
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const { status, contentTypes, engine, template } = useAppSelector(state => state.documents);
 
@@ -111,7 +113,17 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
               lg={isDocumentsFiltersSticky ? 6 : 4}
               xl={3}
             >
-              <CardDocument execution={execution} />
+              <CardDocument
+                execution={execution}
+                onClick={e => {
+                  e.preventDefault();
+                  dispatch(
+                    updatePopupTemplate({
+                      data: execution,
+                    }),
+                  );
+                }}
+              />
             </Grid>
           ))
         ) : (

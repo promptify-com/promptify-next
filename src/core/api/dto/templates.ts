@@ -2,7 +2,7 @@ import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 
-export type ExecutionTemplatePartial = Pick<Templates, "id" | "title" | "thumbnail" | "slug">;
+export type ExecutionTemplatePartial = Pick<Templates, "id" | "title" | "thumbnail" | "slug" | "prompts">;
 
 export interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplatePartial;
@@ -296,10 +296,12 @@ export interface TempalteApiStatusState {
   isLoading: boolean;
 }
 
-export interface PopupTemplates {
-  template: Templates | null;
-  previous?: Templates | null;
-  next?: Templates | null;
+export type PopupTypes = Templates | ExecutionWithTemplate;
+
+export interface PopupTemplateDocument {
+  data: PopupTypes | null;
+  previous?: PopupTypes | null;
+  next?: PopupTypes | null;
 }
 
 export interface IFeedback {

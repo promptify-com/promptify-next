@@ -5,7 +5,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
@@ -13,10 +12,10 @@ import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
-import ExecutionContentPreview from "./ExecutionContentPreview";
-import { isImageOutput } from "../Utils";
-import FeedbackThumbs from "../Common/FeedbackThumbs";
+import ExecutionContentPreview from "./VariantA/ExecutionContentPreview";
+import { isImageOutput } from "./Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
+import FeedbackThumbs from "./Common/FeedbackThumbs";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;

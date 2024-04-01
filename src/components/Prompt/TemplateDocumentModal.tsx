@@ -1,13 +1,19 @@
 import Stack from "@mui/material/Stack";
-import { Templates } from "@/core/api/dto/templates";
-import { Box, IconButton, Modal, Typography } from "@mui/material";
+import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import ArrowForward from "@mui/icons-material/ArrowForward";
 import TemplatePage from ".";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
+import { ExecutionCard } from "./ExecutionCard";
+import DocumentPage from "../Documents/DocumentPage";
 
 interface NavigationBoxProps {
   template: Templates | null;
@@ -64,23 +70,25 @@ const NavigationBox = ({ template, type }: NavigationBoxProps) => {
   );
 };
 
-function TemplateModal() {
-  const { template, previous, next } = useAppSelector(state => state.template.popupTemplate);
+function TemplateDocumentModal() {
+  const { data, previous, next } = useAppSelector(state => state.template.popupTemplateDocument);
   const dispatch = useDispatch();
 
   const close = () => {
     dispatch(
       updatePopupTemplate({
-        template: null,
+        data: null,
       }),
     );
   };
 
-  if (!template) return;
+  if (!data) return;
+
+  const isTemplate = "example" in data;
 
   return (
     <Modal
-      open={!!template.id}
+      open={!!data.id}
       disableAutoFocus={true}
     >
       <Stack
@@ -115,10 +123,14 @@ function TemplateModal() {
           template={template}
           type="previous"
         /> */}
-        <TemplatePage
-          template={template}
-          popup
-        />
+        {isTemplate ? (
+          <TemplatePage
+            template={data}
+            popup
+          />
+        ) : (
+          <DocumentPage document={data} />
+        )}
         {/* <NavigationBox
           template={template}
           type="next"
@@ -128,4 +140,4 @@ function TemplateModal() {
   );
 }
 
-export default TemplateModal;
+export default TemplateDocumentModal;
