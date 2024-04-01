@@ -158,8 +158,8 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                     <Grid
                       key={template.id}
                       item
-                      sm={4}
-                      md={4}
+                      sm={6}
+                      md={5}
                       lg={3}
                     >
                       <CardTemplate
@@ -196,14 +196,15 @@ export const getServerSideProps: GetServerSideProps = async context => {
       props: {
         title: `${username} | ${SEO_TITLE}`,
         description: SEO_DESCRIPTION,
-        user: user,
+        user,
       },
     };
   } catch (error) {
     return {
-      redirect: {
-        destination: `/`,
-        permanent: false,
+      props: {
+        title: `${username} | ${SEO_TITLE}`,
+        description: SEO_DESCRIPTION,
+        user: initialUser,
       },
     };
   }

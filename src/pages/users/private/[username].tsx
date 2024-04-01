@@ -7,6 +7,7 @@ import UserInformation from "@/components/profile/UserInformation";
 
 import { Layout } from "@/layout";
 import { useGetUserDetailsQuery } from "@/core/api/user";
+import Head from "next/head";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 
@@ -19,7 +20,12 @@ function PrivateUserProfile() {
 
   return (
     <Layout>
-      <Seo privateProfile />
+      <Head>
+        <meta
+          name="robots"
+          content="noindex, nofollow"
+        />
+      </Head>
       <Stack
         direction={{ xs: "column", md: "row" }}
         alignItems={"start"}

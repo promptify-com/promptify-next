@@ -6,10 +6,9 @@ interface Props {
   description?: string;
   image?: string;
   meta_keywords?: string;
-  privateProfile?: boolean;
 }
 
-function Seo({ title, description, image, meta_keywords, privateProfile }: Props) {
+function Seo({ title, description, image, meta_keywords }: Props) {
   const _title = title ? `${title} | Promptify` : SEO_TITLE;
   const _description = description ?? SEO_DESCRIPTION;
 
@@ -40,12 +39,6 @@ function Seo({ title, description, image, meta_keywords, privateProfile }: Props
         property="keywords"
         content={meta_keywords}
       />
-      {privateProfile && (
-        <meta
-          name="robots"
-          content="noindex, nofollow"
-        />
-      )}
       <link
         rel="preconnect"
         href={process.env.NEXT_PUBLIC_API_URL}
