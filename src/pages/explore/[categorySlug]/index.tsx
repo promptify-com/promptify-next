@@ -38,7 +38,7 @@ export default function Page({ category }: { category: Category }) {
   });
 
   const dynamicTheme = useDynamicColors(category, category.image);
-  console.log({ dynamicTheme });
+
   const goBack = () => {
     router.push("/explore");
   };

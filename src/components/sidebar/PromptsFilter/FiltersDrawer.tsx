@@ -1,9 +1,12 @@
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useEffect, useState } from "react";
+import Stack from "@mui/material/Stack";
+
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
-import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
-import PromptsFilters from "./PromptsFilters";
+import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
+import FilterFloatButton from "@/components/sidebar/PromptsFilter/FilterFloatButton";
 
 interface Props {
   expandedOnHover: boolean;
@@ -12,26 +15,39 @@ interface Props {
 export default function FiltersDrawer({ expandedOnHover }: Props) {
   const dispatch = useAppDispatch();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   const toggleSidebar = () => {
     dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
   };
 
   useEffect(() => {
-    const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
-    if (isPromptsFiltersSticky) {
-      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky));
+    const storedIsPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
+    if (storedIsPromptsFiltersSticky !== null) {
+      dispatch(setStickyPromptsFilters(JSON.parse(storedIsPromptsFiltersSticky)));
     }
-  }, []);
+  }, [dispatch]);
+
+  const isExpanded = isPromptsFiltersSticky || (expandedOnHover && !isButtonHovered);
 
   return (
-    <DrawerContainer
-      title="Prompts"
-      expanded={isPromptsFiltersSticky || expandedOnHover}
-      toggleExpand={toggleSidebar}
-      sticky={isPromptsFiltersSticky}
-    >
-      <PromptsFilters />
-    </DrawerContainer>
+    <Stack position={"relative"}>
+      <Stack
+        onMouseEnter={() => setIsButtonHovered(true)}
+        onMouseLeave={() => setIsButtonHovered(false)}
+      >
+        <FilterFloatButton expanded={isExpanded} />
+      </Stack>
+      {isExpanded && (
+        <DrawerContainer
+          title="Prompts"
+          expanded={isExpanded}
+          toggleExpand={toggleSidebar}
+          sticky={isPromptsFiltersSticky}
+        >
+          <PromptsFilters />
+        </DrawerContainer>
+      )}
+    </Stack>
   );
 }

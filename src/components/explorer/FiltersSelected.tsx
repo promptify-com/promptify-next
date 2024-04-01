@@ -1,23 +1,23 @@
-import { Box, Chip } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import {
   deleteSelectedTag,
+  deleteSeletedEngineType,
   setMyFavoritesChecked,
   setSelectedEngine,
   setSelectedEngineType,
   setSelectedKeyword,
 } from "@/core/store/filtersSlice";
-import { RootState } from "@/core/store";
-import { Tag } from "@/core/api/dto/templates";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import type { Tag } from "@/core/api/dto/templates";
 
 interface FiltersSelectedProps {
   show: boolean;
 }
 
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
-  const dispatch = useDispatch();
-  const filters = useSelector((state: RootState) => state.filters);
+  const dispatch = useAppDispatch();
+  const filters = useAppSelector(state => state.filters);
   const { engine, tag, title, engineType, isFavourite } = filters;
   const handleDeleteTag = (tagId: number) => {
     dispatch(deleteSelectedTag(tagId));
@@ -62,6 +62,22 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
                 ))}
             </Box>
           )}
+          {engineType.length > 0 && (
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              gap={2}
+            >
+              {engineType.map(item => (
+                <Chip
+                  key={item.id}
+                  label={item.label}
+                  sx={{ fontSize: 13, fontWeight: 500 }}
+                  onDelete={() => dispatch(deleteSeletedEngineType(item))}
+                />
+              ))}
+            </Box>
+          )}
           {title && (
             <Chip
               label={title}
@@ -70,13 +86,6 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
             />
           )}
 
-          {engineType && (
-            <Chip
-              label={engineType}
-              sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setSelectedEngineType(""))}
-            />
-          )}
           {isFavourite && (
             <Chip
               label={"My Favorites"}

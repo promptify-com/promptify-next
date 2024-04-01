@@ -84,8 +84,7 @@ export function useGetTemplatesByFilter({
       filters.title === null &&
       filters.category === null &&
       filters.subCategory === null &&
-      filters.engineType === "" &&
-      filters.isFavourite === false
+      !filters.engineType.length
     );
   }
 

@@ -61,7 +61,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
       anchor="left"
       open={expanded}
       sx={{
-        zIndex: 1201,
+        zIndex: 1,
         alignItems: "center",
         justifyContent: "center",
         display: expanded ? "flex" : "none",
