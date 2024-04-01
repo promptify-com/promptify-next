@@ -18,6 +18,7 @@ import { alpha } from "@mui/material";
 import type { UpdateUserPreferences } from "@/core/api/dto/user";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
+import { setToast } from "@/core/store/toastSlice";
 
 function ProfilePreferences() {
   const dispatch = useAppDispatch();
@@ -28,11 +29,16 @@ function ProfilePreferences() {
   const handleChangeInputStyle = async (data: UpdateUserPreferences) => {
     if (!currentUser || isLoadingPreferences) return;
 
-    const preferences = await updateUserPreferences({
-      username: currentUser.username,
-      data,
-    }).unwrap();
-    dispatch(updateUser({ ...currentUser, preferences }));
+    try {
+      const preferences = await updateUserPreferences({
+        username: currentUser.username,
+        data,
+      }).unwrap();
+      dispatch(updateUser({ ...currentUser, preferences }));
+      dispatch(setToast({ message: "Preferences have been successfully updated.", severity: "success" }));
+    } catch (err) {
+      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
+    }
   };
 
   const isBlue = currentUser?.preferences?.theme === "blue";
