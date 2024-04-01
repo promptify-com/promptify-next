@@ -36,7 +36,7 @@ function ProfilePreferences() {
   };
 
   const isBlue = currentUser?.preferences?.theme === "blue";
-  const inputStyle = currentUser?.preferences?.input_style.toUpperCase();
+  const inputStyle = currentUser?.preferences?.input_style?.toUpperCase();
 
   return (
     <Protected>
