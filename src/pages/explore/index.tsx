@@ -55,6 +55,7 @@ export default function ExplorePage({ categories = [] }: Props) {
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const isFavorite = useAppSelector(state => state.filters.isFavourite);
 
   const {
     data: suggestedTemplates,
@@ -86,6 +87,7 @@ export default function ExplorePage({ categories = [] }: Props) {
     <Layout>
       <Box
         mt={{ xs: 7, md: 0 }}
+        position={"relative"}
         sx={{
           maxWidth: "1184px",
           margin: "0 auto",
@@ -97,12 +99,15 @@ export default function ExplorePage({ categories = [] }: Props) {
           flexDirection={"column"}
           gap={"36px"}
           mt={{ xs: 2, md: 0 }}
+          position={"relative"}
           sx={{
             padding: { xs: 0, md: "32px" },
           }}
         >
           <FiltersSelected show={!allFilterParamsNull} />
+
           {allFilterParamsNull &&
+            !isFavorite &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
                 <Typography
