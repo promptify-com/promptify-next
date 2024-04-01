@@ -35,8 +35,8 @@ function ProfilePreferences() {
     dispatch(updateUser({ ...currentUser, preferences }));
   };
 
-  const isDynamic = currentUser?.preferences.theme === "dynamic";
-  const inputStyle = currentUser?.preferences.input_style.toUpperCase();
+  const isBlue = currentUser?.preferences?.theme === "blue";
+  const inputStyle = currentUser?.preferences?.input_style.toUpperCase();
 
   return (
     <Protected>
@@ -153,7 +153,7 @@ function ProfilePreferences() {
                 <Button
                   onClick={e => handleChangeInputStyle({ theme: "dynamic" })}
                   sx={themeBtnStyle}
-                  className={isDynamic ? "active" : ""}
+                  className={!isBlue ? "active" : ""}
                 >
                   <Box
                     component={"span"}
@@ -166,7 +166,7 @@ function ProfilePreferences() {
                 <Button
                   onClick={e => handleChangeInputStyle({ theme: "blue" })}
                   sx={themeBtnStyle}
-                  className={!isDynamic ? "active" : ""}
+                  className={isBlue ? "active" : ""}
                 >
                   <Box
                     component={"span"}
