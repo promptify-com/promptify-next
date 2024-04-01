@@ -1,34 +1,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { Layout } from "@/layout";
-import { useGetUserDetailsQuery, useGetUserTemplatesQuery } from "@/core/api/user";
-import Image from "@/components/design-system/Image";
+import { useGetUserTemplatesQuery } from "@/core/api/user";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
-import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import UserInformation from "@/components/profile/UserInformation";
 import type { Templates } from "@/core/api/dto/templates";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setToast } from "@/core/store/toastSlice";
-import useTruncate from "@/hooks/useTruncate";
-import type { UserProfile } from "@/core/api/dto/user";
+import { GetServerSideProps } from "next/types";
+import { authClient } from "@/common/axios";
+import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
+import { UserProfile } from "@/core/api/dto/user";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
 
-function ProfilePage() {
+function ProfilePage({ user = initialUser }: { user: UserProfile }) {
   const router = useRouter();
   const username = router.query.username as string;
-  const { data: user = initialUser } = useGetUserDetailsQuery(username, {
-    skip: !username,
-  });
 
   return (
     <Layout>
@@ -53,102 +48,6 @@ function ProfilePage() {
       </Stack>
       <FooterPrompt />
     </Layout>
-  );
-}
-
-function UserInformation({ username, user }: { username: string | undefined; user: UserProfile }) {
-  const { truncate } = useTruncate();
-  const dispatch = useAppDispatch();
-  const [truncateBio, setTruncateBio] = useState(true);
-  const [copyToClipboard, copiedResult] = useCopyToClipboard();
-  const userLink = `promptify.com/users/${user?.username}`;
-  const handleClickCopy = async () => {
-    await copyToClipboard(userLink);
-  };
-
-  useEffect(() => {
-    if (copiedResult?.state === "success") {
-      dispatch(
-        setToast({
-          message: "The URL has been copied successfully.",
-          severity: "success",
-          duration: 1000,
-        }),
-      );
-    }
-  }, [copiedResult]);
-
-  if (!username) {
-    return null;
-  }
-
-  return (
-    <Stack
-      gap={"32px"}
-      width={{ sx: "100%", md: "320px" }}
-    >
-      <Box
-        position={"relative"}
-        width={"152px"}
-        height={"152px"}
-        borderRadius={"999px"}
-        overflow={"hidden"}
-      >
-        <Image
-          src={user.avatar}
-          alt={user.username}
-          fallback={require("@/assets/images/default-avatar.jpg")}
-          fill
-        />
-      </Box>
-      <Stack>
-        <Typography
-          fontSize={24}
-          lineHeight={"28.8px"}
-        >
-          {user.first_name + " " + user.last_name}
-        </Typography>
-        <Typography
-          component={"div"}
-          fontSize={14}
-          fontWeight={400}
-          lineHeight={"22.4px"}
-        >
-          {truncateBio ? (
-            <>
-              {truncate(user.bio, { length: 190 })}
-              {user.bio?.length > 190 && (
-                <Typography
-                  component={"span"}
-                  sx={{
-                    fontSize: 15,
-                    fontWeight: 500,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setTruncateBio(!truncateBio)}
-                >
-                  Read more
-                </Typography>
-              )}
-            </>
-          ) : (
-            user.bio
-          )}
-        </Typography>
-        <Typography
-          mt={"16px"}
-          fontSize={12}
-          fontWeight={500}
-          lineHeight={"16.8px"}
-          letterSpacing={"0.17px"}
-          color={"primary.main"}
-          onClick={handleClickCopy}
-          sx={{ cursor: "pointer" }}
-        >
-          {userLink}
-        </Typography>
-      </Stack>
-    </Stack>
   );
 }
 
@@ -259,10 +158,9 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                     <Grid
                       key={template.id}
                       item
-                      sm={4}
-                      md={4}
+                      sm={6}
+                      md={5}
                       lg={3}
-                      xl={2}
                     >
                       <CardTemplate
                         template={template}
@@ -280,4 +178,35 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
   );
 }
 
+export const getServerSideProps: GetServerSideProps = async context => {
+  const username = context.params?.username as string;
+  try {
+    const userRes = await authClient.get(`/api/meta/users/${username}/`);
+    const user: UserProfile | null = userRes.data;
+
+    if (!user?.is_public) {
+      return {
+        redirect: {
+          destination: `/users/private/${username}`,
+          permanent: false,
+        },
+      };
+    }
+    return {
+      props: {
+        title: `${username} | ${SEO_TITLE}`,
+        description: SEO_DESCRIPTION,
+        user,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        title: `${username} | ${SEO_TITLE}`,
+        description: SEO_DESCRIPTION,
+        user: initialUser,
+      },
+    };
+  }
+};
 export default ProfilePage;

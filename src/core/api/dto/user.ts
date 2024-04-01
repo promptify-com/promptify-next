@@ -32,9 +32,10 @@ export interface User {
   favorite_collection_id: number;
   is_admin: boolean;
   preferences: UserPreferences;
+  is_public?: boolean;
 }
 
-export type UserProfile = Pick<User, "id" | "avatar" | "bio" | "first_name" | "last_name" | "username">;
+export type UserProfile = Pick<User, "id" | "avatar" | "bio" | "first_name" | "last_name" | "username" | "is_public">;
 
 export type UserPartial = Pick<User, "id" | "username" | "first_name" | "last_name" | "avatar">;
 
