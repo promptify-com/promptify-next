@@ -2,9 +2,8 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import { alpha } from "@mui/material/styles";
+import { alpha, useTheme } from "@mui/material/styles";
 
-import { theme } from "@/theme";
 import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
@@ -13,12 +12,13 @@ import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 
 function FilterFloatButton({ expanded = false }) {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const filters = useAppSelector(state => state.filters);
 
   const [isHovered, setIsHovered] = useState(false);
-
+  const [isCrossHovered, setIsCrossHovered] = useState(false);
   const filterCount = countSelectedFilters(filters);
 
   return (
@@ -56,10 +56,12 @@ function FilterFloatButton({ expanded = false }) {
             justifyContent={"center"}
             alignItems={"center"}
             sx={{
-              cursor: isHovered ? "pointer" : "inherit",
+              cursor: isCrossHovered ? "pointer" : "inherit",
             }}
+            onMouseEnter={() => setIsCrossHovered(true)}
+            onMouseLeave={() => setIsCrossHovered(false)}
           >
-            {isHovered ? (
+            {isCrossHovered ? (
               <CloseIcon
                 style={{ color: "white", fontSize: 16 }}
                 onClick={event => {
@@ -81,7 +83,7 @@ function FilterFloatButton({ expanded = false }) {
           </Box>
         )}
 
-        <FilterIcon />
+        <FilterIcon fill={isHovered ? theme.palette.common.white : "#032100"} />
       </>
     </Box>
   );
