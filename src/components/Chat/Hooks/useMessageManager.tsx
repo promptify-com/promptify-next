@@ -149,7 +149,7 @@ const useMessageManager = () => {
     setQuestions(questions);
 
     return [inputs, params, promptHasContent];
-  }, [selectedTemplate, repeatedExecution]);
+  }, [selectedTemplate, currentUser?.preferences?.input_style, repeatedExecution]);
 
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);

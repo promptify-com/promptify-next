@@ -9,6 +9,7 @@ import Image from "@/components/design-system/Image";
 import { CHAT_OPTIONS } from "./Constants";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
+import { UserPreferences } from "@/core/api/dto/user";
 
 type ChatOption = (typeof CHAT_OPTIONS)[number];
 
@@ -22,14 +23,16 @@ function ChatOptions() {
 
   const handleOptionClick = async (option: ChatOption) => {
     if (!currentUser || isLoadingPreferences) return;
-    const data = { input_style: option.type };
+    let preferences: UserPreferences = { ...currentUser.preferences, input_style: option.type };
+
     if (isChecked) {
-      const preferences = await updateUserPreferences({
+      const data = { input_style: option.type };
+      preferences = await updateUserPreferences({
         username: currentUser.username,
         data,
       }).unwrap();
-      dispatch(updateUser({ ...currentUser, preferences }));
     }
+    dispatch(updateUser({ ...currentUser, preferences }));
   };
 
   return (
