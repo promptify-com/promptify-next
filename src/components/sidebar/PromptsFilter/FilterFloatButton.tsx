@@ -2,7 +2,9 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
+import { alpha } from "@mui/material/styles";
 
+import { theme } from "@/theme";
 import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
@@ -35,6 +37,7 @@ function FilterFloatButton({ expanded = false }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        ":hover": { bgcolor: alpha(theme.palette.primary.main, 0.4) },
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
