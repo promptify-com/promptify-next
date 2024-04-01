@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
-import Seo from "@/components/Seo";
 import UserInformation from "@/components/profile/UserInformation";
 
 import { Layout } from "@/layout";
