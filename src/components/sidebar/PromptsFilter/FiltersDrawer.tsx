@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
@@ -15,22 +15,29 @@ interface Props {
 export default function FiltersDrawer({ expandedOnHover }: Props) {
   const dispatch = useAppDispatch();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   const toggleSidebar = () => {
     dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
   };
 
   useEffect(() => {
-    const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
-    if (isPromptsFiltersSticky) {
-      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky));
+    const storedIsPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
+    if (storedIsPromptsFiltersSticky !== null) {
+      dispatch(setStickyPromptsFilters(JSON.parse(storedIsPromptsFiltersSticky)));
     }
-  }, []);
+  }, [dispatch]);
 
-  const isExpanded = isPromptsFiltersSticky || expandedOnHover;
+  const isExpanded = isPromptsFiltersSticky || (expandedOnHover && !isButtonHovered);
+
   return (
     <Stack position={"relative"}>
-      <FilterFloatButton expanded={isExpanded} />
+      <Stack
+        onMouseEnter={() => setIsButtonHovered(true)}
+        onMouseLeave={() => setIsButtonHovered(false)}
+      >
+        <FilterFloatButton expanded={isExpanded} />
+      </Stack>
       {isExpanded && (
         <DrawerContainer
           title="Prompts"

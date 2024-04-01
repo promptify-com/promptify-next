@@ -2,11 +2,12 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
+
 import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
+import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 
 function FilterFloatButton({ expanded = false }) {
   const dispatch = useAppDispatch();
@@ -16,19 +17,9 @@ function FilterFloatButton({ expanded = false }) {
 
   const filterCount = countSelectedFilters(filters);
 
-  const handleClose = () => {
-    dispatch(resetFilters());
-    setIsHovered(false);
-    dispatch(setStickyPromptsFilters(false));
-    Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
-  };
-
-  if (filterCount === 0) {
-    return null;
-  }
-
   return (
     <Box
+      onClick={() => dispatch(setStickyPromptsFilters(true))}
       width={"64px"}
       height={"64px"}
       borderRadius={"16px"}
@@ -37,7 +28,7 @@ function FilterFloatButton({ expanded = false }) {
         position: "fixed",
         bottom: "72px",
         left: expanded ? "410px" : "140px",
-        zIndex: 54,
+        zIndex: 1220,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -46,35 +37,44 @@ function FilterFloatButton({ expanded = false }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <>
-        <Box
-          position={"absolute"}
-          top={0}
-          right={0}
-          bgcolor={"primary.main"}
-          width={"28px"}
-          height={"28px"}
-          borderRadius={"28px"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          sx={{
-            cursor: isHovered ? "pointer" : "inherit",
-          }}
-        >
-          {isHovered ? (
-            <CloseIcon
-              style={{ color: "white", fontSize: 16 }}
-              onClick={handleClose}
-            />
-          ) : (
-            <Typography
-              fontSize={"12px"}
-              color={"onPrimary"}
-            >
-              {filterCount}
-            </Typography>
-          )}
-        </Box>
+        {filterCount !== 0 && (
+          <Box
+            position={"absolute"}
+            top={0}
+            right={0}
+            bgcolor={"primary.main"}
+            width={"28px"}
+            height={"28px"}
+            borderRadius={"28px"}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            sx={{
+              cursor: isHovered ? "pointer" : "inherit",
+            }}
+          >
+            {isHovered ? (
+              <CloseIcon
+                style={{ color: "white", fontSize: 16 }}
+                onClick={event => {
+                  event.stopPropagation();
+                  dispatch(resetFilters());
+                  setIsHovered(false);
+                  dispatch(setStickyPromptsFilters(false));
+                  Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+                }}
+              />
+            ) : (
+              <Typography
+                fontSize={"12px"}
+                color={"onPrimary"}
+              >
+                {filterCount}
+              </Typography>
+            )}
+          </Box>
+        )}
+
         <FilterIcon />
       </>
     </Box>
