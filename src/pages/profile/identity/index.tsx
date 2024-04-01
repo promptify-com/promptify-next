@@ -25,7 +25,7 @@ function ProfileIdentity() {
   const [questions] = useQuestions();
   const [answers] = useUserAnswers();
 
-  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+  const [updateUserProfile] = useUpdateUserProfileMutation();
 
   const getUserAnswer = (question: IQuestion) => {
     return answers.find(answer => answer.question.id === question.id)?.option;
@@ -38,7 +38,9 @@ function ProfileIdentity() {
         data: userData,
       }).unwrap();
       dispatch(updateUser(user));
-      dispatch(setToast({ message: "Identity was successfully updated", severity: "info", duration: 6000 }));
+      dispatch(
+        setToast({ message: "General information has been successfully updated", severity: "success", duration: 6000 }),
+      );
     } catch (_) {
       dispatch(setToast({ message: "Something went wrong please try again", severity: "error", duration: 6000 }));
     }

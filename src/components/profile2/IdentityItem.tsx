@@ -61,7 +61,9 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultAnswer }) => {
 
     try {
       await setUserAnswer(question, option.id);
-      dispatch(setToast({ message: "Identity was successfully updated", severity: "info" }));
+      dispatch(
+        setToast({ message: "Onboarding questionnaire item has been successfully updated", severity: "success" }),
+      );
     } catch (err) {
       setSelectedOption(_option);
       dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
