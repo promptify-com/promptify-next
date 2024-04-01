@@ -8,8 +8,9 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
 import { CHAT_OPTIONS } from "./Constants";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
-import { updateUser } from "@/core/store/userSlice";
 import { UserPreferences } from "@/core/api/dto/user";
+import { setToast } from "@/core/store/toastSlice";
+import { setSelectedChatOption } from "@/core/store/chatSlice";
 
 type ChatOption = (typeof CHAT_OPTIONS)[number];
 
@@ -23,16 +24,34 @@ function ChatOptions() {
 
   const handleOptionClick = async (option: ChatOption) => {
     if (!currentUser || isLoadingPreferences) return;
-    let preferences: UserPreferences = { ...currentUser.preferences, input_style: option.type };
+    dispatch(setSelectedChatOption(option.type));
 
     if (isChecked) {
       const data = { input_style: option.type };
-      preferences = await updateUserPreferences({
-        username: currentUser.username,
-        data,
-      }).unwrap();
+
+      try {
+        await updateUserPreferences({
+          username: currentUser.username,
+          data,
+        }).unwrap();
+
+        setToast({
+          message: "Preferences updated successfully.",
+          severity: "success",
+          duration: 4000,
+          position: { vertical: "bottom", horizontal: "left" },
+        });
+      } catch (error) {
+        setToast({
+          message: "Failed to update preferences. Please try again.",
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "bottom", horizontal: "left" },
+        });
+
+        return;
+      }
     }
-    dispatch(updateUser({ ...currentUser, preferences }));
   };
 
   return (
