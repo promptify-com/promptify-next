@@ -12,22 +12,25 @@ import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 function FilterFloatButton({ expanded = false }) {
   const dispatch = useAppDispatch();
 
-  const [isHovered, setIsHovered] = useState(false);
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const filters = useAppSelector(state => state.filters);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   const filterCount = countSelectedFilters(filters);
 
   return (
     <Box
-      onClick={() => dispatch(setStickyPromptsFilters(true))}
+      onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
       width={"64px"}
       height={"64px"}
       borderRadius={"16px"}
       bgcolor={"primaryContainer"}
       sx={{
         position: "fixed",
+        cursor: "pointer",
         bottom: "72px",
-        left: expanded ? "410px" : "140px",
+        left: expanded ? "410px" : "120px",
         zIndex: 1220,
         display: "flex",
         alignItems: "center",
