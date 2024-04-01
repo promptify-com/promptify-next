@@ -2,7 +2,7 @@ import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 
-export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
+export type ExecutionTemplatePartial = Pick<Templates, "id" | "title" | "thumbnail" | "slug">;
 
 export interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplatePartial;

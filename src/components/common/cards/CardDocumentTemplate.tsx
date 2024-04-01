@@ -9,19 +9,23 @@ import useBrowser from "@/hooks/useBrowser";
 
 type CardDocumentTemplateProps = {
   template: TemplateExecutionsDisplay;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+  active?: boolean;
 };
 
-function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
+function CardDocumentTemplate({ template, onClick, active }: CardDocumentTemplateProps) {
   const { isMobile } = useBrowser();
 
   return (
     <Link
       href={`/prompt/${template.slug}`}
+      onClick={onClick}
       style={{
         textDecoration: "none",
       }}
     >
       <Card
+        className={active ? "active" : ""}
         sx={{
           minWidth: isMobile ? "auto" : "246px",
           height: isMobile ? "calc(100% - 16px)" : "calc(100% - 24px)",
@@ -29,7 +33,7 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
           cursor: "pointer",
           p: isMobile ? "8px" : "16px 16px 8px",
           bgcolor: isMobile ? "surface.2" : "transparent",
-          "&:hover": {
+          "&.active, &:hover": {
             bgcolor: "surface.2",
           },
         }}

@@ -8,7 +8,8 @@ import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useState } from "react";
 import { Grid } from "@mui/material";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -16,9 +17,11 @@ interface Props {
 }
 
 export default function TemplatesCarousel({ templates, isLoading }: Props) {
+  const dispatch = useAppDispatch();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
   const [isCarousel, setIsCarousel] = useState(true);
 
+  const activeTemplate = useAppSelector(state => state.documents.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   const sortedTemplates = templates?.slice().sort((tempA, tempB) => tempB.executions.length - tempA.executions.length);
@@ -94,7 +97,14 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                 lg={isDocumentsFiltersSticky ? 4 : 3}
                 xl={3}
               >
-                <CardDocumentTemplate template={template} />
+                <CardDocumentTemplate
+                  template={template}
+                  onClick={e => {
+                    e.preventDefault();
+                    dispatch(setDocumentsTemplate(template.id));
+                  }}
+                  active={template.id === activeTemplate}
+                />
               </Grid>
             ))
           )}

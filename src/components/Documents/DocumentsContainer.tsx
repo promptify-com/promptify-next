@@ -14,12 +14,13 @@ interface Props {
 
 export default function DocumentsContainer({ templates, isLoading }: Props) {
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-  const { status, contentTypes, engine } = useAppSelector(state => state.documents);
+  const { status, contentTypes, engine, template } = useAppSelector(state => state.documents);
 
   const allExecutions = useMemo(() => {
     const allExecutions: ExecutionWithTemplate[] = [];
     templates?.forEach(template => {
       const templateInfo = {
+        id: template.id,
         title: template.title,
         thumbnail: template.thumbnail,
         slug: template.slug,
@@ -55,15 +56,16 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
       const isDraft = status === "draft" && !exec.is_favorite;
       const isSaved = status === "saved" && exec.is_favorite;
       const statusMatch = !status || isDraft || isSaved;
+      const templateMatch = !template || exec.template.id === template;
 
       // const engineMatch = !engine || exec.engines.some(eng => eng.name === engine?.name);
       // const contentTypeMatch =
       //   !contentTypes.length ||
       //   exec.engines.some(eng => contentTypes.find(type => type.toUpperCase() === eng.output_type));
 
-      return statusMatch;
+      return statusMatch && templateMatch;
     });
-  }, [allExecutions, status, contentTypes, engine]);
+  }, [allExecutions, status, contentTypes, engine, template]);
 
   return (
     <Stack gap={3}>

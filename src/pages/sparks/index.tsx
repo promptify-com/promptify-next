@@ -5,7 +5,7 @@ import TemplatesCarousel from "@/components/Documents/TemplatesCarousel";
 import DocumentsContainer from "@/components/Documents/DocumentsContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { useAppSelector } from "@/hooks/useStore";
-import { SEO_DESCRIPTION } from "../../common/constants";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 function DocumentsPage() {
   const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =

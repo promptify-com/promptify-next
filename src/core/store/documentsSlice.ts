@@ -7,12 +7,14 @@ interface IState {
   status: StatusType;
   contentTypes: EngineOutput[];
   engine: Engine | null;
+  template: number | null;
 }
 
 const initialState: IState = {
   status: null,
   contentTypes: [],
   engine: null,
+  template: null,
 };
 
 const documentsSlice = createSlice({
@@ -28,9 +30,13 @@ const documentsSlice = createSlice({
     setDocumentsEngine: (state, action: PayloadAction<Engine | null>) => {
       state.engine = action.payload;
     },
+    setDocumentsTemplate: (state, action: PayloadAction<number | null>) => {
+      state.template = action.payload;
+    },
   },
 });
 
-export const { setDocumentsStatus, setDocumentsContentTypes, setDocumentsEngine } = documentsSlice.actions;
+export const { setDocumentsStatus, setDocumentsContentTypes, setDocumentsEngine, setDocumentsTemplate } =
+  documentsSlice.actions;
 
 export default documentsSlice.reducer;
