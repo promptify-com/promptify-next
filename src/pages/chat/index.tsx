@@ -33,9 +33,7 @@ function Chat() {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
-    state => state.chat,
-  );
+  const { selectedTemplate, selectedChat, chatMode, initialChat } = useAppSelector(state => state.chat);
   const [createChat] = useCreateChatMutation();
   const [updateChat] = useUpdateChatMutation();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
@@ -188,7 +186,7 @@ function Chat() {
       setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
     });
     dispatch(setChatMode("automation"));
-    if (selectedChatOption === "QA") {
+    if (currentUser?.preferences?.input_style === "qa") {
       setIsInputDisabled(false);
     }
   };
@@ -232,7 +230,8 @@ function Chat() {
   };
 
   const showLanding = !!!messages.length && !selectedTemplate;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
+  const showChatInput =
+    currentUser?.preferences?.input_style !== "form" || !!selectedExecution || chatMode === "automation";
 
   return (
     <ThemeProvider theme={dynamicTheme}>

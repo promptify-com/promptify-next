@@ -37,7 +37,6 @@ const useMessageManager = () => {
   const {
     selectedTemplate,
     isSimulationStreaming,
-    selectedChatOption,
     selectedChat,
     inputs,
     params,
@@ -93,7 +92,7 @@ const useMessageManager = () => {
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedTemplate?.title}"` });
     setQueueSavedMessages(newMessages => newMessages.concat(runMessage));
 
-    if (selectedChatOption === "FORM") {
+    if (currentUser?.preferences?.input_style === "form") {
       const formMessage = createMessage({
         type: "form",
         noHeader: true,
@@ -134,7 +133,7 @@ const useMessageManager = () => {
   };
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
-    if (!selectedTemplate || !selectedChatOption) {
+    if (!selectedTemplate || !currentUser?.preferences?.input_style) {
       return [[], [], false];
     }
     const { inputs, params, promptHasContent, paramsValues } = prepareAndRemoveDuplicateInputs(
@@ -150,7 +149,7 @@ const useMessageManager = () => {
     setQuestions(questions);
 
     return [inputs, params, promptHasContent];
-  }, [selectedTemplate, selectedChatOption, repeatedExecution]);
+  }, [selectedTemplate, repeatedExecution]);
 
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);

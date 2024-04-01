@@ -38,7 +38,6 @@ const initialState: ExecutionsProps = {
   tmpMessages: [],
   MessageSenderValue: "",
   selectedTemplate: undefined,
-  selectedChatOption: Storage.get("chatOption"),
   selectedChat: undefined,
   chatMode: "automation",
   initialChat: true,
@@ -82,9 +81,6 @@ export const chatSlice = createSlice({
     },
     setSelectedTemplate: (state, action: PayloadAction<Templates | undefined>) => {
       state.selectedTemplate = action.payload;
-    },
-    setSelectedChatOption: (state, action: PayloadAction<ChatOption | undefined>) => {
-      state.selectedChatOption = action.payload;
     },
     setSelectedChat: (state, action: PayloadAction<IChat | undefined>) => {
       state.selectedChat = action.payload;

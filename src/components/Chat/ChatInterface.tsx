@@ -30,8 +30,9 @@ const ChatInterface = ({
   stopScrollingToBottom,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChat } = useAppSelector(state => state.chat);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -52,8 +53,8 @@ const ChatInterface = ({
     return () => currentRef?.removeEventListener("scroll", handleScroll);
   }, [fetchMoreMessages]);
 
-  const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
-  const showRunButton = showGenerateButton && selectedChatOption === "QA";
+  const showChatOptions = Boolean(!!selectedTemplate && !currentUser?.preferences?.input_style);
+  const showRunButton = showGenerateButton && currentUser?.preferences?.input_style === "qa";
 
   return (
     <Stack

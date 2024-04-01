@@ -4,11 +4,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedChatOption } from "@/core/store/chatSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
-import Storage from "@/common/storage";
 import { CHAT_OPTIONS } from "./Constants";
+import { useUpdateUserPreferencesMutation } from "@/core/api/user";
+import { updateUser } from "@/core/store/userSlice";
 
 type ChatOption = (typeof CHAT_OPTIONS)[number];
 
@@ -16,10 +16,19 @@ function ChatOptions() {
   const dispatch = useAppDispatch();
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleOptionClick = (option: ChatOption) => {
-    dispatch(setSelectedChatOption(option.type));
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
+
+  const handleOptionClick = async (option: ChatOption) => {
+    if (!currentUser || isLoadingPreferences) return;
+    const data = { input_style: option.type };
     if (isChecked) {
-      Storage.set("chatOption", option.type);
+      const preferences = await updateUserPreferences({
+        username: currentUser.username,
+        data,
+      }).unwrap();
+      dispatch(updateUser({ ...currentUser, preferences }));
     }
   };
 
@@ -98,7 +107,7 @@ function ChatOptions() {
                 >
                   <Image
                     src={
-                      option.type === "QA"
+                      option.type === "qa"
                         ? require("@/pages/chat/images/QA.png")
                         : require("@/pages/chat/images/fill_prompt.png")
                     }
@@ -142,7 +151,7 @@ function ChatOptions() {
               onChange={e => setIsChecked(e.target.checked)}
             />
           }
-          label="Don’t ask me again."
+          label={<LabelText />}
           sx={{
             fontSize: "50px",
           }}
@@ -152,4 +161,41 @@ function ChatOptions() {
   );
 }
 
+function LabelText() {
+  return (
+    <Box flex={1}>
+      <Typography
+        component="span"
+        sx={{
+          color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+          fontFeatureSettings: "'clig' off, 'liga' off",
+          fontFamily: "Poppins",
+          fontSize: { sm: "12px", md: "16px" },
+          fontStyle: "normal",
+          fontWeight: 400,
+          lineHeight: "160%",
+          letterSpacing: "0.17px",
+        }}
+      >
+        Don’t ask me again.
+      </Typography>
+      {"  "}
+      <Typography
+        component="span"
+        sx={{
+          color: "var(--secondary-light, var(--secondary, #575E71))",
+          fontFeatureSettings: "'clig' off, 'liga' off",
+          fontFamily: "Poppins",
+          fontSize: { sm: "12px", md: "16px" },
+          fontStyle: "normal",
+          fontWeight: 400,
+          lineHeight: "160%",
+          letterSpacing: "0.17px",
+        }}
+      >
+        You always can change your choice in settings.
+      </Typography>
+    </Box>
+  );
+}
 export default ChatOptions;

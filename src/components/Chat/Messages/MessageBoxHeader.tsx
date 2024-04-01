@@ -19,9 +19,10 @@ interface Props {
 }
 
 function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScrollToBottom, template }: Props) {
-  const { selectedChatOption, selectedTemplate, answers, inputs, params } = useAppSelector(state => state.chat);
+  const { selectedTemplate, answers, inputs, params } = useAppSelector(state => state.chat);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const showHeaderActions = Boolean(selectedChatOption === "FORM" && variant === "FORM");
+  const showHeaderActions = Boolean(currentUser?.preferences?.input_style === "form" && variant === "FORM");
   const totalQuestions = inputs.length + params.length;
   const templateShown = template || selectedTemplate;
 
@@ -36,7 +37,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
       gap={2}
       width={{
         xs: "-webkit-fill-available",
-        md: variant === "FORM" && selectedChatOption === "FORM" ? "100%" : "-webkit-fill-available",
+        md: variant === "FORM" && currentUser?.preferences?.input_style === "form" ? "100%" : "-webkit-fill-available",
       }}
     >
       <Stack

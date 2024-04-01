@@ -26,7 +26,7 @@ const useSaveChatInteractions = () => {
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
   const [saveBatchingMessages] = useBatchingMessagesMutation();
-  const chatOption = useAppSelector(state => state.chat.selectedChatOption);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
@@ -58,7 +58,7 @@ const useSaveChatInteractions = () => {
       await saveExecutions({
         chat: chatId,
         execution: executionId,
-        type: chatOption === "QA" ? "qa" : "form",
+        type: currentUser?.preferences?.input_style === "qa" ? "qa" : "form",
       });
     } catch (error) {
       console.error(error);
@@ -115,7 +115,7 @@ const useSaveChatInteractions = () => {
             _message = {
               chat: chatId,
               execution: executionId,
-              type: chatOption === "QA" ? "qa" : "form",
+              type: currentUser?.preferences?.input_style === "qa" ? "qa" : "form",
               message_type: "execution",
             } satisfies ISaveChatExecutions;
             break;
