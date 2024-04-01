@@ -2,7 +2,7 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
+import TemplateCard from "@/components/common/TemplateCard";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -39,7 +39,7 @@ function TemplateSuggestions({ templates, scrollToBottom }: Props) {
           gap={1}
         >
           {templates.slice(0, visibleCount).map(template => (
-            <TemplateSuggestionItem
+            <TemplateCard
               key={template.id}
               template={template}
               onScrollToBottom={scrollToBottom}

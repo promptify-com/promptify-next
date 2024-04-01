@@ -117,17 +117,19 @@ function UserInformation({ username, user }: { username: string | undefined; use
           {truncateBio ? (
             <>
               {truncate(user.bio, { length: 190 })}
-              <Typography
-                component={"span"}
-                sx={{
-                  fontSize: 15,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-                onClick={() => setTruncateBio(!truncateBio)}
-              >
-                Read more
-              </Typography>
+              {user.bio?.length > 190 && (
+                <Typography
+                  component={"span"}
+                  sx={{
+                    fontSize: 15,
+                    fontWeight: 500,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setTruncateBio(!truncateBio)}
+                >
+                  Read more
+                </Typography>
+              )}
             </>
           ) : (
             user.bio
@@ -251,17 +253,14 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
               <Grid
                 container
                 gap={{ xs: 1, sm: 0 }}
-                spacing={1}
-                maxWidth={{ xs: "98%", sm: "auto" }}
               >
                 <>
                   {allTemplates?.map(template => (
                     <Grid
                       key={template.id}
                       item
-                      xs={12}
-                      sm={6}
-                      md={5}
+                      sm={4}
+                      md={4}
                       lg={3}
                       xl={2}
                     >

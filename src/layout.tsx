@@ -1,10 +1,15 @@
-import { ReactNode } from "react";
-import { Box, Grid } from "@mui/material";
-import { Header } from "@/components/Header";
-import { theme } from "@/theme";
-import Sidebar from "./components/sidebar/Sidebar";
-import { useAppSelector } from "@/hooks/useStore";
+import { type ReactNode } from "react";
 import { useRouter } from "next/router";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+
+import { theme } from "@/theme";
+import { useAppSelector } from "@/hooks/useStore";
+import { Header } from "@/components/Header";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { AccountSidebarWidth } from "@/components/profile2/Constants";
+import AccountSidebar from "@/components/profile2/AccountSidebar";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
@@ -15,6 +20,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
+  const isAccountPage = pathname.split("/")[1] === "profile";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
@@ -24,8 +30,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 
   return (
-    <>
-      <Box sx={{ bgcolor: "surface.3" }}>
+    <Stack
+      direction={"row"}
+      sx={{ bgcolor: "surfaceContainerLow" }}
+    >
+      <Box width={{ md: isAccountPage ? `calc(100% -  ${AccountSidebarWidth}px)` : "100%" }}>
         <Sidebar />
         <Box
           display={"flex"}
@@ -65,6 +74,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           </Box>
         </Box>
       </Box>
-    </>
+      {isAccountPage && <AccountSidebar />}
+    </Stack>
   );
 };

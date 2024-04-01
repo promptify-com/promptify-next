@@ -1,83 +1,72 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-
-import { Connections, Home, Identity, TemplatesManager } from "@/components/profile";
 import { useAppSelector } from "@/hooks/useStore";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import EditProfile from "@/components/profile/EditProfile";
-import Credentials from "@/components/profile/Credentials";
 import { SEO_DESCRIPTION } from "@/common/constants";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { theme } from "@/theme";
+import ChatsSuggestions from "@/components/common/ChatsSuggestions";
 
 const Profile = () => {
-  const isEditMode = useAppSelector(state => state.profile.showEditMode);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   return (
     <Protected>
-      {isEditMode ? (
-        <EditProfile />
-      ) : (
-        <Layout>
-          <Box
-            mt={{ xs: 7, md: 0 }}
-            padding={{ xs: "4px 0px", md: "0px 8px" }}
+      <Layout>
+        <Stack
+          justifyContent={"center"}
+          alignItems={"center"}
+          minHeight={{
+            xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
+            md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+          }}
+        >
+          <Stack
+            gap={3}
+            py="48px"
+            width={"85%"}
           >
-            <Grid
+            <Stack
+              alignItems={"center"}
+              gap={2}
+            >
+              <Avatar
+                src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: "50%",
+                  backgroundColor: "black",
+                  color: "white",
+                  fontSize: "40px",
+                }}
+              />
+              <Typography
+                fontSize={32}
+                fontWeight={400}
+                letterSpacing={"0.17px"}
+                color={"onSurface"}
+              >
+                Welcome, {currentUser?.username}
+              </Typography>
+            </Stack>
+
+            <Box
               sx={{
-                padding: { xs: "16px 4px", md: "32px" },
+                p: "16px",
+                ".suggest-card": {
+                  width: "auto !important",
+                },
               }}
             >
-              <Box sx={{ px: "12px" }}>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems={"flex-start"}
-                  gap={"36px"}
-                  width={"100%"}
-                >
-                  <Box
-                    display={"flex"}
-                    justifyContent={{ xs: "center", md: "start" }}
-                    textAlign={{ xs: "center", sm: "start" }}
-                  >
-                    <Typography
-                      fontWeight={500}
-                      fontSize={{ xs: "1.5rem", sm: "2rem" }}
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: { xs: "24px", sm: "34px" },
-                        lineHeight: { xs: "27px", sm: "123.5%" },
-                        color: "onSurface",
-                      }}
-                    >
-                      Welcome to your space
-                    </Typography>
-                  </Box>
-                  <Home />
-                  <Connections />
-                  <Credentials />
-                  <Identity />
-                  <TemplatesManager
-                    type={"user"}
-                    title="My templates"
-                    id="my-templates"
-                  />
-                  {currentUser?.is_admin && (
-                    <TemplatesManager
-                      type={"admin"}
-                      title="All templates"
-                    />
-                  )}
-                </Box>
-              </Box>
-            </Grid>
-          </Box>
-        </Layout>
-      )}
+              <ChatsSuggestions slice={1} />
+            </Box>
+          </Stack>
+        </Stack>
+      </Layout>
     </Protected>
   );
 };
@@ -85,7 +74,7 @@ const Profile = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Your Profile",
+      title: "My Account",
       description: SEO_DESCRIPTION,
     },
   };

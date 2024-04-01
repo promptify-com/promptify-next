@@ -195,7 +195,7 @@ const useMessageManager = () => {
       setMessages(prevMessages => prevMessages.concat(userMessage));
       setIsValidatingAnswer(true);
 
-      const botMessage: IMessage = createMessage({ type: "text", text: "" });
+      const botMessage: IMessage = createMessage({ type: "html", text: "" });
       try {
         const sendMessageResponse = await sendMessageAPI(input);
 
