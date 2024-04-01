@@ -27,7 +27,7 @@ function ProfilePreferences() {
 
   const handleChangeInputStyle = async (data: UpdateUserPreferences) => {
     if (!currentUser || isLoadingPreferences) return;
-    console.log({ data });
+
     const preferences = await updateUserPreferences({
       username: currentUser.username,
       data,

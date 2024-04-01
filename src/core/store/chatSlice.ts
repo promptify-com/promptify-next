@@ -115,7 +115,6 @@ export const {
   setTmpMessages,
   setMessageSenderValue,
   setSelectedTemplate,
-  setSelectedChatOption,
   setSelectedChat,
   setChatMode,
   setInitialChat,
