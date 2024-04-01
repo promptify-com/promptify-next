@@ -57,7 +57,7 @@ function ProfilePrompts() {
     onSubmit,
   });
 
-  const isPublic = currentUser?.preferences.is_public;
+  const isPublic = currentUser?.preferences?.is_public;
 
   return (
     <Protected>

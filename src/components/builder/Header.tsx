@@ -1,26 +1,20 @@
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import CloudOutlined from "@mui/icons-material/CloudOutlined";
 import ModeEdit from "@mui/icons-material/ModeEdit";
-import RocketLaunch from "@mui/icons-material/RocketLaunch";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
-import AccountTree from "@mui/icons-material/AccountTree";
-import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
-import { usePathname } from "next/navigation";
-import { alpha } from "@mui/material/styles";
+import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 
-import BaseButton from "../base/BaseButton";
 import { theme } from "@/theme";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { RootState } from "@/core/store";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
-import { ProfileMenu } from "@/components/ProfileMenu";
+import BaseButton from "@/components/base/BaseButton";
+import BuilderHeaderPlaceholder from "@/components/placeholders/BuilderHeaderPlaceholder";
 import type { TemplateStatus } from "@/core/api/dto/templates";
 import type { BuilderType } from "@/common/types/builder";
-import BuilderHeaderPlaceholder from "../placeholders/BuilderHeaderPlaceholder";
 
 interface IHeader {
   onSave: () => void;
@@ -31,24 +25,13 @@ interface IHeader {
   templateSlug?: string;
   onEditTemplate: () => void;
   type: BuilderType;
-  sidebarOpened?: boolean;
 }
 
-function Header({
-  templateLoading,
-  onSave,
-  onPublish,
-  title,
-  status,
-  templateSlug,
-  onEditTemplate,
-  type,
-  sidebarOpened,
-}: IHeader) {
-  const isValidUser = useAppSelector(isValidUserFn);
-  const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
-  const [isSaving, setIsSaving] = useState(false);
+function Header({ templateLoading, onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) {
   const pathname = usePathname();
+
+  const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveTemplate = async () => {
     setIsSaving(true);
@@ -62,7 +45,9 @@ function Header({
     setIsSaving(false);
   };
 
-  if (typeof templateLoading !== "undefined" && templateLoading) {
+  const containerWidth = `${theme.custom.leftClosedSidebarWidth}  ${builderSidebarOpen ? " + 353px" : ""}`;
+
+  if (typeof templateLoading === "boolean" && templateLoading) {
     return <BuilderHeaderPlaceholder />;
   }
 
@@ -73,20 +58,22 @@ function Header({
       gap={10}
       bgcolor={"surface.1"}
       p={"16px 24px"}
-      border={`1px solid `}
-      borderColor={"surface.3"}
       zIndex={3}
       height="70px"
       boxSizing={"border-box"}
       sx={{
         position: "relative",
         ...(type === BUILDER_TYPE.USER && {
-          width: sidebarOpened
-            ? `calc(100% - ${theme.custom.leftClosedSidebarWidth} - ${theme.custom.promptBuilder.drawerWidth})`
-            : `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
           position: "fixed",
-          top: 0,
-          left: theme.custom.leftClosedSidebarWidth,
+          top: "72px",
+          borderTop: "1px solid",
+          borderColor: "surface.3",
+          borderBottomRightRadius: { md: "16px" },
+          borderBottomLeftRadius: { md: "16px" },
+          width: {
+            xs: "100%",
+            md: `calc(100% - (${containerWidth}))`,
+          },
         }),
       }}
     >
@@ -139,41 +126,17 @@ function Header({
           alignItems={"center"}
           gap={1}
         >
-          {templateSlug ? (
-            <>
-              {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
-                <BaseButton
-                  variant="text"
-                  color="custom"
-                  sx={btnStyle}
-                  startIcon={<AccountTree sx={{ fontSize: 20 }} />}
-                  onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
-                >
-                  Tree of Thoughts Builder
-                </BaseButton>
-              )}
-              {type === BUILDER_TYPE.ADMIN && (
-                <BaseButton
-                  variant="text"
-                  color="custom"
-                  sx={btnStyle}
-                  startIcon={<FormatListBulleted sx={{ fontSize: 20 }} />}
-                  onClick={() => window.open(`/prompt-builder/${templateSlug}`, "_blank")}
-                >
-                  Chain of Thoughts Builder
-                </BaseButton>
-              )}
-              <BaseButton
-                variant="text"
-                color="custom"
-                sx={btnStyle}
-                startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
-                onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
-              >
-                Preview
-              </BaseButton>
-            </>
-          ) : null}
+          {templateSlug && (
+            <BaseButton
+              variant="text"
+              color="custom"
+              sx={btnStyle}
+              startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+              onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+            >
+              Preview
+            </BaseButton>
+          )}
           <BaseButton
             variant="text"
             color="custom"
@@ -191,10 +154,11 @@ function Header({
               color="custom"
               sx={{
                 ...btnStyle,
+                border: "none",
                 bgcolor: "secondary.main",
                 color: "onPrimary",
               }}
-              startIcon={<RocketLaunch sx={{ fontSize: 20 }} />}
+              startIcon={<RocketLaunchOutlined sx={{ fontSize: 27 }} />}
               disabled={isSaving}
               onClick={handlePublishTemplate}
             >
@@ -203,7 +167,6 @@ function Header({
           )}
         </Stack>
       </Stack>
-      {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
     </Stack>
   );
 }
@@ -212,8 +175,7 @@ const btnStyle = {
   color: "secondary.main",
   fontSize: 14,
   p: "6px 16px",
-  borderRadius: "8px",
-  border: `1px solid ${alpha(theme.palette.onSurface, 0.2)}`,
+  borderRadius: "50px",
   ":hover": {
     bgcolor: "action.hover",
   },

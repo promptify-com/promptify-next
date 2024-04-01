@@ -1,8 +1,11 @@
-import React, { useState } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { useRouter } from "next/router";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import SearchBar from "@/components/explorer/SearchBar";
 import { SearchDialog } from "./SearchDialog";
@@ -13,7 +16,6 @@ import { theme } from "@/theme";
 import Image from "next/image";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
-import Link from "next/link";
 import HeaderPlaceholder from "@/components/placeholders/HeaderPlaceholder";
 import { AccountSidebarWidth } from "@/components/profile2/Constants";
 
@@ -235,21 +237,25 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const router = useRouter();
   const pathname = router.pathname;
   const { isMobile, clientLoaded } = useBrowser();
-  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+
+  const { isPromptsFiltersSticky, isDocumentsFiltersSticky, isChatHistorySticky, builderSidebarOpen } = useAppSelector(
+    state => state.sidebar,
+  );
+
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
+  const isEditor = pathname.split("/")[1] === "prompt-builder";
   const isAccountPage = pathname.split("/")[1] === "profile";
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
     (isDocumentsPage && isDocumentsFiltersSticky);
+
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""} ${
     isAccountPage ? `+ ${AccountSidebarWidth}px` : ""
-  }`;
+  } ${builderSidebarOpen ? " + 353px" : ""}`;
 
   if (!clientLoaded) return <HeaderPlaceholder />;
 
@@ -260,6 +266,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
           xs: "100%",
           md: `calc(100% - (${containerWidth}))`,
         },
+
         background: transparent ? "transparent" : "surface.1",
         position: "fixed",
         zIndex: 1000,
@@ -272,8 +279,8 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
           xs: theme.custom.headerHeight.xs,
           md: theme.custom.headerHeight.md,
         },
-        borderBottomRightRadius: { md: "16px" },
-        borderBottomLeftRadius: { md: "16px" },
+        borderBottomRightRadius: { md: isEditor ? "0" : "16px" },
+        borderBottomLeftRadius: { md: isEditor ? "0" : "16px" },
         borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
       }}
     >

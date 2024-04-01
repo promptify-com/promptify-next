@@ -39,7 +39,7 @@ function BuilderHeaderPlaceholder() {
               width={"120px"}
               height={"40px"}
               sx={{
-                borderRadius: "8px",
+                borderRadius: "40px",
               }}
             />
             <Skeleton
@@ -47,15 +47,10 @@ function BuilderHeaderPlaceholder() {
               width={"220px"}
               height={"40px"}
               sx={{
-                borderRadius: "8px",
+                borderRadius: "40px",
               }}
             />
           </Stack>
-          <Skeleton
-            variant="circular"
-            width={"40px"}
-            height={"40px"}
-          />
         </Stack>
       </Stack>
     </Stack>
