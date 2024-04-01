@@ -8,9 +8,9 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
 import { CHAT_OPTIONS } from "./Constants";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
-import { UserPreferences } from "@/core/api/dto/user";
 import { setToast } from "@/core/store/toastSlice";
 import { setSelectedChatOption } from "@/core/store/chatSlice";
+import { updateUser } from "@/core/store/userSlice";
 
 type ChatOption = (typeof CHAT_OPTIONS)[number];
 
@@ -30,10 +30,12 @@ function ChatOptions() {
       const data = { input_style: option.type };
 
       try {
-        await updateUserPreferences({
+        const preferences = await updateUserPreferences({
           username: currentUser.username,
           data,
         }).unwrap();
+
+        dispatch(updateUser({ ...currentUser, preferences }));
 
         setToast({
           message: "Preferences updated successfully.",
