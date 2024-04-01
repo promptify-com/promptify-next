@@ -104,14 +104,9 @@ export default function SparksContainer({ templates }: SparksContainerProps) {
     // Calculate all executions from templates and add template information
     const allExecutions: ExecutionWithTemplate[] = [];
     templates.forEach(template => {
-      const templateInfo = {
-        title: template.title,
-        thumbnail: template.thumbnail,
-        slug: template.slug,
-      };
       const executionsWithTemplate = template.executions.map((execution: Execution) => ({
         ...execution,
-        template: templateInfo,
+        template,
         engines: [],
         output: "",
       }));

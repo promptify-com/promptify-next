@@ -21,12 +21,6 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
   const allExecutions = useMemo(() => {
     const allExecutions: ExecutionWithTemplate[] = [];
     templates?.forEach(template => {
-      const templateInfo = {
-        id: template.id,
-        title: template.title,
-        thumbnail: template.thumbnail,
-        slug: template.slug,
-      };
       // const engines = Array.from(
       //   template.prompts
       //     .reduce((map: Map<string, Engine>, prompt) => {
@@ -40,7 +34,7 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
         // const output = execution.prompt_executions?.map(promptExec => promptExec.output).join() || "";
         return {
           ...execution,
-          template: templateInfo,
+          template,
           // engines,
           output: ".......",
         };

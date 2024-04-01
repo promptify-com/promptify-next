@@ -2,16 +2,14 @@ import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 
-export type ExecutionTemplatePartial = Pick<Templates, "id" | "title" | "thumbnail" | "slug" | "prompts">;
-
 export interface ExecutionWithTemplate extends Execution {
-  template: ExecutionTemplatePartial;
+  template: TemplateExecutionsDisplay;
   // engines: Engine[];
   output: string;
 }
 export interface SparksLayoutProps {
   execution: ExecutionWithTemplate;
-  template: ExecutionTemplatePartial;
+  template: TemplateExecutionsDisplay;
   onExecutionSaved: () => void;
   onOpenEdit: () => void;
   onOpenDelete: () => void;

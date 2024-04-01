@@ -7,6 +7,7 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { theme } from "@/theme";
 import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
 import Header from "./Header";
+import Details from "./Details";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -25,47 +26,42 @@ function DocumentPage({ document }: Props) {
   };
 
   return (
-    <Stack
-      height={{
-        xs: `calc(100svh - 24px)`,
-        md: `calc(100svh - 24px)`,
-      }}
+    <Box
       sx={{
+        height: "calc(100svh - 24px)",
+        width: "calc(100% - 64px)",
         bgcolor: "surfaceContainerLowest",
-        overflow: { xs: "auto", md: "unset" },
-        mt: { xs: theme.custom.headerHeight.xs, md: 0 },
-        px: { md: "32px" },
+        px: "32px",
       }}
     >
       <Header document={document} />
-      <Box
-        flex={4}
-        order={{ xs: 1, md: 0 }}
+      <Stack
+        direction={"row"}
+        alignItems={"flex-start"}
+        gap={4}
         height={{
           md: `calc(100% - 24px)`,
         }}
         sx={{
-          pr: { md: "32px" },
-          overflow: { md: "auto" },
+          overflow: "auto",
           "&::-webkit-scrollbar": {
             width: 0,
           },
         }}
       >
-        <Stack>
-          <ExecutionCard
-            execution={document}
-            promptsData={document.template.prompts}
-            showPreview={false}
-            noRepeat
-          />
-        </Stack>
-      </Box>
+        <ExecutionCard
+          execution={document}
+          promptsData={document.template.prompts}
+          showPreview={false}
+          noRepeat
+        />
+        <Details document={document} />
+      </Stack>
       <Box
         flex={2}
         order={0}
       ></Box>
-    </Stack>
+    </Box>
   );
 }
 
