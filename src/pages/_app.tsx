@@ -18,6 +18,7 @@ import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
 import TemplateModal from "@/components/Prompt/TemplateModal";
+import type { User } from "@/core/api/dto/user";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -34,7 +35,7 @@ function App({ Component, ...rest }: AppProps) {
     };
 
     if (!isValidUser && storedToken) {
-      const _currentUser = Storage.get("currentUser");
+      const _currentUser = Storage.get("currentUser") as unknown as User;
 
       if (_currentUser && Object.values(_currentUser).length) {
         store.dispatch(updateUser(_currentUser));

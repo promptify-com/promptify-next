@@ -38,7 +38,7 @@ const initialState: ExecutionsProps = {
   tmpMessages: [],
   MessageSenderValue: "",
   selectedTemplate: undefined,
-  selectedChatOption: Storage.get("chatOption"),
+  selectedChatOption: undefined,
   selectedChat: undefined,
   chatMode: "automation",
   initialChat: true,

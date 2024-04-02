@@ -22,7 +22,7 @@ interface Props {
 
 SyntaxHighlighter.registerLanguage("javascript", js);
 
-const getExecutionSnippet = (token: string) =>
+const getExecutionSnippet = (token: string | null) =>
   new HTTPSnippet({
     method: "GET",
     url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/template-executions/__template_execution_id__/`,
