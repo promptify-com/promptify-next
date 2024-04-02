@@ -13,7 +13,7 @@ import { IEditTemplate } from "@/common/types/editTemplate";
 import { randomId } from "@/common/helpers";
 import { IEditPrompts } from "@/common/types/builder";
 
-const getSearchParams = (params: FilterParams) => {
+export const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
   params.categoryId && searchParams.append("main_category_id", String(params.categoryId));
   params.tags?.length && params.tags.forEach(tag => searchParams.append("tag", tag.name));

@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Engine, EngineOutput } from "@/core/api/dto/templates";
+import { Engine, EngineType } from "@/core/api/dto/templates";
 
 type StatusType = "draft" | "saved" | null;
 
 interface IState {
   status: StatusType;
-  contentTypes: EngineOutput[];
+  contentTypes: EngineType[];
   engine: Engine | null;
   template: number | null;
 }
@@ -24,7 +24,7 @@ const documentsSlice = createSlice({
     setDocumentsStatus: (state, action: PayloadAction<StatusType | null>) => {
       state.status = action.payload;
     },
-    setDocumentsContentTypes: (state, action: PayloadAction<EngineOutput[]>) => {
+    setDocumentsContentTypes: (state, action: PayloadAction<EngineType[]>) => {
       state.contentTypes = action.payload;
     },
     setDocumentsEngine: (state, action: PayloadAction<Engine | null>) => {

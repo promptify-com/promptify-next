@@ -244,6 +244,15 @@ export interface TemplateExecutionsDisplay {
   is_internal?: boolean;
 }
 
+export interface TemplateExecutionsWithPagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: TemplateExecutionsDisplay[];
+}
+
+export type ExecutionsFilterParams = Pick<FilterParams, "limit" | "offset" | "engineId" | "engine_type">;
+
 export interface SparkExecution {
   id: number;
   title: string;
