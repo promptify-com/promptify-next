@@ -34,7 +34,7 @@ const useSaveChatInteractions = () => {
       await saveChatInput({
         chat: chatId,
         text,
-        type: type === "text" ? "text" : "question",
+        type: type === "text" ? "text" : type === "html" ? "html" : "question",
         sender: fromUser ? "user" : "system",
       });
     } catch (error) {
@@ -150,6 +150,8 @@ const useSaveChatInteractions = () => {
           type:
             inputMessage.type === "text"
               ? "text"
+              : inputMessage.type === "html"
+              ? "html"
               : inputMessage.text.includes("ready to run")
               ? "readyMessage"
               : "questionInput",

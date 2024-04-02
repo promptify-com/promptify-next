@@ -13,21 +13,10 @@ interface Props {
 function TemplateSuggestions({ templates, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
 
-  const pluralTemplates = templates.length > 1;
+  const pluralTemplates = templates?.length > 1;
 
   return (
     <Stack>
-      <Typography
-        fontSize={16}
-        lineHeight={"25.6px"}
-        fontWeight={400}
-        letterSpacing={"0.17px"}
-        display={"flex"}
-        alignItems={"center"}
-        color={"onSurface"}
-      >
-        {`I found ${pluralTemplates ? "these" : "this"} prompt${pluralTemplates ? "s" : ""}, following your request:`}
-      </Typography>
       <Stack
         bgcolor={"surfaceContainerLow"}
         p={"8px"}

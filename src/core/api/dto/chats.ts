@@ -22,7 +22,7 @@ interface ISaveChatMessage {
 }
 
 export interface ISaveChatInput extends ISaveChatMessage {
-  type: "text" | "question";
+  type: "text" | "question" | "html";
   text: string;
   sender: Sender;
 }

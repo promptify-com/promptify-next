@@ -6,6 +6,7 @@ import {
   fetchData,
   prepareQuestions,
   sendMessageAPI,
+  suggestionsMessageText,
 } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import {
@@ -21,10 +22,10 @@ import {
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
+import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import useSaveChatInteractions from "./useSaveChatInteractions";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -196,6 +197,11 @@ const useMessageManager = () => {
       setIsValidatingAnswer(true);
 
       const botMessage: IMessage = createMessage({ type: "html", text: "" });
+      const suggestionsMessage = createMessage({
+        type: "suggestion",
+        templates: [],
+        text: "",
+      });
       try {
         const sendMessageResponse = await sendMessageAPI(input);
 
@@ -209,23 +215,26 @@ const useMessageManager = () => {
           } else {
             if (!!templateIDs.length) {
               const templates = await fetchData(templateIDs);
-              const suggestionsMessage = createMessage({
-                type: "suggestion",
-                templates,
-                text: "",
-              });
-              saveChatSuggestions(templateIDs, chatId);
-              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
+              suggestionsMessage.templates = templates;
+              botMessage.text = suggestionsMessageText(sendMessageResponse.output)!;
             }
           }
         }
       } catch (err) {
-        botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
+        botMessage.text = "Oops! I couldn't get your request, Please try again.";
       } finally {
         setIsValidatingAnswer(false);
       }
       if (botMessage.text !== "") {
-        setMessages(prevMessages => prevMessages.concat(botMessage));
+        const newMessages: IMessage[] = [botMessage];
+        saveTextAndQuestionMessage(botMessage, chatId);
+
+        if (suggestionsMessage.templates?.length) {
+          const templateIDs = suggestionsMessage.templates.map(template => template.id);
+          newMessages.push(suggestionsMessage);
+          saveChatSuggestions(templateIDs, chatId);
+        }
+        setMessages(prevMessages => prevMessages.concat(newMessages));
       }
     }
   };
