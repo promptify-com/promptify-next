@@ -19,7 +19,7 @@ import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { useState } from "react";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { setToast } from "@/core/store/toastSlice";
-import { Tooltip } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 import { ModeEditOutline } from "@mui/icons-material";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useRouter } from "next/router";
@@ -30,9 +30,10 @@ interface Props {
   onScrollToBottom?: () => void;
   manageActions?: boolean;
   isEditor?: boolean;
+  displayAvatar?: boolean;
 }
 
-function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: Props) {
+function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, displayAvatar = false }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, likes, executions_count, status } = template;
@@ -269,6 +270,18 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
           </Stack>
         ) : manageActions ? (
           <>
+            {displayAvatar && (
+              <Avatar
+                src={template.created_by?.avatar}
+                alt={template.created_by?.username}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  mr: 1,
+                }}
+              />
+            )}
+
             <Button
               onClick={handleNewChat}
               startIcon={<AddCommentOutlined />}
