@@ -107,7 +107,7 @@ const useWorkflow = (workflow: IWorkflow) => {
       ? storedWorkflows
       : ((Storage.get("workflows") || {}) as IStoredWorkflows);
 
-    if ("workflow" in _storedWorkflows[workflowId]) {
+    if (_storedWorkflows[workflowId] && "workflow" in _storedWorkflows[workflowId]) {
       const webhookPath = _storedWorkflows[workflowId].webhookPath;
 
       storedWorkflows[workflowId] = { webhookPath };
