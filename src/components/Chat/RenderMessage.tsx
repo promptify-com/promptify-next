@@ -42,7 +42,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
         >
           <Stack>
             <TemplateSuggestions
-              templates={message.templates}
+              message={message}
               scrollToBottom={onScrollToBottom}
             />
           </Stack>

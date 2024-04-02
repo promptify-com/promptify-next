@@ -26,6 +26,7 @@ import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteract
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import { text } from "stream/consumers";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -197,11 +198,7 @@ const useMessageManager = () => {
       setIsValidatingAnswer(true);
 
       const botMessage: IMessage = createMessage({ type: "html", text: "" });
-      const suggestionsMessage = createMessage({
-        type: "suggestion",
-        templates: [],
-        text: "",
-      });
+
       try {
         const sendMessageResponse = await sendMessageAPI(input);
 
@@ -215,8 +212,13 @@ const useMessageManager = () => {
           } else {
             if (!!templateIDs.length) {
               const templates = await fetchData(templateIDs);
-              suggestionsMessage.templates = templates;
-              botMessage.text = suggestionsMessageText(sendMessageResponse.output)!;
+              const suggestionsMessage = createMessage({
+                type: "suggestion",
+                templates,
+                text: suggestionsMessageText(sendMessageResponse.output)!,
+              });
+              saveChatSuggestions(templateIDs, suggestionsMessage.text, chatId);
+              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
           }
         }
@@ -226,15 +228,8 @@ const useMessageManager = () => {
         setIsValidatingAnswer(false);
       }
       if (botMessage.text !== "") {
-        const newMessages: IMessage[] = [botMessage];
         saveTextAndQuestionMessage(botMessage, chatId);
-
-        if (suggestionsMessage.templates?.length) {
-          const templateIDs = suggestionsMessage.templates.map(template => template.id);
-          newMessages.push(suggestionsMessage);
-          saveChatSuggestions(templateIDs, chatId);
-        }
-        setMessages(prevMessages => prevMessages.concat(newMessages));
+        setMessages(prevMessages => prevMessages.concat(botMessage));
       }
     }
   };

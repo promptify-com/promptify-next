@@ -31,6 +31,7 @@ export interface ISaveChatTemplate extends ISaveChatMessage {
   template: number;
 }
 export interface ISaveChatSuggestions extends ISaveChatMessage {
+  text: string;
   templates: number[];
 }
 export interface ISaveChatExecutions extends ISaveChatMessage {

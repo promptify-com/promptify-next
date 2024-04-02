@@ -2,18 +2,25 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import TemplateCard from "@/components/common/TemplateCard";
-import type { Templates } from "@/core/api/dto/templates";
+import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
-  templates: Templates[];
+  message: IMessage;
   scrollToBottom: () => void;
 }
 
-function TemplateSuggestions({ templates, scrollToBottom }: Props) {
+function TemplateSuggestions({ message, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
+  const templates = message.templates || [];
+
+  if (!templates.length) {
+    return null;
+  }
 
   return (
     <Stack>
+      <HtmlMessage message={message} />
       <Stack
         bgcolor={"surfaceContainerLow"}
         p={"8px"}
@@ -24,7 +31,7 @@ function TemplateSuggestions({ templates, scrollToBottom }: Props) {
           direction={"column"}
           gap={1}
         >
-          {templates.slice(0, visibleCount).map(template => (
+          {templates?.slice(0, visibleCount).map(template => (
             <TemplateCard
               key={template.id}
               template={template}

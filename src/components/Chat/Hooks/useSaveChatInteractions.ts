@@ -42,10 +42,11 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatSuggestions = async (templateIds: number[], chatId: number) => {
+  const saveChatSuggestions = async (templateIds: number[], text: string, chatId: number) => {
     try {
       await saveSuggestions({
         chat: chatId,
+        text,
         templates: templateIds,
       });
     } catch (error) {
