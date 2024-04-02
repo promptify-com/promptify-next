@@ -37,7 +37,6 @@ const useMessageManager = () => {
   const {
     selectedTemplate,
     isSimulationStreaming,
-    selectedChatOption,
     selectedChat,
     inputs,
     params,
@@ -46,6 +45,7 @@ const useMessageManager = () => {
     initialChat,
     parameterSelected,
     currentExecutionDetails,
+    selectedChatOption,
   } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
@@ -93,7 +93,7 @@ const useMessageManager = () => {
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedTemplate?.title}"` });
     setQueueSavedMessages(newMessages => newMessages.concat(runMessage));
 
-    if (selectedChatOption === "FORM") {
+    if (currentUser?.preferences?.input_style === "form" || selectedChatOption === "form") {
       const formMessage = createMessage({
         type: "form",
         noHeader: true,
@@ -137,6 +137,7 @@ const useMessageManager = () => {
     if (!selectedTemplate || !selectedChatOption) {
       return [[], [], false];
     }
+
     const { inputs, params, promptHasContent, paramsValues } = prepareAndRemoveDuplicateInputs(
       selectedTemplate.prompts,
       selectedTemplate.questions,

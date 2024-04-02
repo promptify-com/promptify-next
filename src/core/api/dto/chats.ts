@@ -10,7 +10,7 @@ export interface IChat {
   created_by?: number;
 }
 
-export type ChatOption = "QA" | "FORM";
+export type ChatOption = "qa" | "form";
 
 export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
 

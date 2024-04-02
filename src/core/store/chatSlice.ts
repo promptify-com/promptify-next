@@ -19,7 +19,7 @@ export interface ExecutionsProps {
   tmpMessages?: IMessage[];
   MessageSenderValue: string;
   selectedTemplate?: Templates;
-  selectedChatOption?: ChatOption;
+  selectedChatOption?: ChatOption | null;
   selectedChat?: IChat;
   chatMode: ChatMode;
   initialChat: boolean;
@@ -38,12 +38,12 @@ const initialState: ExecutionsProps = {
   tmpMessages: [],
   MessageSenderValue: "",
   selectedTemplate: undefined,
-  selectedChatOption: Storage.get("chatOption"),
   selectedChat: undefined,
   chatMode: "automation",
   initialChat: true,
   parameterSelected: null,
   currentExecutionDetails: { id: null, isFavorite: false },
+  selectedChatOption: null,
 };
 
 export const chatSlice = createSlice({
@@ -83,11 +83,11 @@ export const chatSlice = createSlice({
     setSelectedTemplate: (state, action: PayloadAction<Templates | undefined>) => {
       state.selectedTemplate = action.payload;
     },
-    setSelectedChatOption: (state, action: PayloadAction<ChatOption | undefined>) => {
-      state.selectedChatOption = action.payload;
-    },
     setSelectedChat: (state, action: PayloadAction<IChat | undefined>) => {
       state.selectedChat = action.payload;
+    },
+    setSelectedChatOption: (state, action: PayloadAction<ChatOption>) => {
+      state.selectedChatOption = action.payload;
     },
     setChatMode: (state, action: PayloadAction<ChatMode>) => {
       state.chatMode = action.payload;
@@ -119,8 +119,8 @@ export const {
   setTmpMessages,
   setMessageSenderValue,
   setSelectedTemplate,
-  setSelectedChatOption,
   setSelectedChat,
+  setSelectedChatOption,
   setChatMode,
   setInitialChat,
   updateParameterSelection,
