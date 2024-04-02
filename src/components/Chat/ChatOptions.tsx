@@ -17,11 +17,8 @@ type ChatOption = (typeof CHAT_OPTIONS)[number];
 function ChatOptions() {
   const dispatch = useAppDispatch();
   const [isChecked, setIsChecked] = useState(false);
-
   const currentUser = useAppSelector(state => state.user.currentUser);
-
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
-
   const handleOptionClick = async (option: ChatOption) => {
     if (!currentUser || isLoadingPreferences) return;
     dispatch(setSelectedChatOption(option.type));
@@ -36,18 +33,21 @@ function ChatOptions() {
         }).unwrap();
 
         dispatch(updateUser({ ...currentUser, preferences }));
-
-        setToast({
-          message: "Your option has been saved successfully.",
-          severity: "success",
-          duration: 4000,
-        });
+        dispatch(
+          setToast({
+            message: "Your option has been saved successfully.",
+            severity: "success",
+            duration: 4000,
+          }),
+        );
       } catch (error) {
-        setToast({
-          message: "Failed to save your option. Please try again.",
-          severity: "error",
-          duration: 4000,
-        });
+        dispatch(
+          setToast({
+            message: "Failed to save your option. Please try again.",
+            severity: "error",
+            duration: 4000,
+          }),
+        );
 
         return;
       }
