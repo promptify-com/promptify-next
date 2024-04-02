@@ -67,192 +67,195 @@ export default function CardDocument({ execution, onClick }: Props) {
   const autoDeleteDate = daysLeft !== "0" ? `${daysLeft} left` : "Soon";
 
   return (
-    <Card
-      key={execution.id}
-      component={Link}
-      href={`/prompt/${execution.template.slug}?hash=${execution.hash}`}
-      onClick={onClick}
-      elevation={0}
-      sx={{
-        display: "block",
-        position: "relative",
-        height: "315px",
-        maxWidth: "430px",
-        p: "8px",
-        borderRadius: "16px",
-        textDecoration: "none",
-        bgcolor: "surfaceContainerLowest",
-        transition: "background-color 0.3s ease",
-        ".actions-btn, .delete-time": {
-          opacity: actionsOpened ? 1 : 0,
-          transition: "opacity .2s ease",
-        },
-        ":hover": {
-          bgcolor: "surfaceContainerLow",
-          ".delete-time-container": {
-            bgcolor: "surfaceContainerLowest",
-          },
-          ".actions-btn, .delete-time": {
-            opacity: 1,
-          },
-        },
-      }}
-    >
-      <Box
+    <>
+      <Card
+        key={execution.id}
+        component={Link}
+        href={`/prompt/${execution.template.slug}?hash=${execution.hash}`}
+        onClick={onClick}
+        elevation={0}
         sx={{
-          p: "16px",
+          display: "block",
+          position: "relative",
+          height: "315px",
+          maxWidth: "430px",
+          p: "8px",
           borderRadius: "16px",
-          bgcolor: "surfaceContainer",
+          textDecoration: "none",
+          bgcolor: "surfaceContainerLowest",
+          transition: "background-color 0.3s ease",
+          ".actions-btn, .delete-time": {
+            opacity: actionsOpened ? 1 : 0,
+            transition: "opacity .2s ease",
+          },
+          ":hover": {
+            bgcolor: "surfaceContainerLow",
+            ".delete-time-container": {
+              bgcolor: "surfaceContainerLowest",
+            },
+            ".actions-btn, .delete-time": {
+              opacity: 1,
+            },
+          },
         }}
       >
-        <Stack
-          alignItems={"flex-start"}
-          gap={2}
+        <Box
           sx={{
-            height: "150px",
-            width: "calc(85% - 64px)",
-            m: "auto",
-            overflow: "hidden",
-            bgcolor: "surfaceContainerLowest",
-            p: "32px 32px 24px 32px",
-            borderRadius: "4px",
+            p: "16px",
+            borderRadius: "16px",
+            bgcolor: "surfaceContainer",
           }}
         >
+          <Stack
+            alignItems={"flex-start"}
+            gap={2}
+            sx={{
+              height: "150px",
+              width: "calc(85% - 64px)",
+              m: "auto",
+              overflow: "hidden",
+              bgcolor: "surfaceContainerLowest",
+              p: "32px 32px 24px 32px",
+              borderRadius: "4px",
+            }}
+          >
+            <Typography
+              fontSize={16}
+              fontWeight={400}
+              color={"onSurface"}
+            >
+              {execution.title}
+            </Typography>
+            <Box
+              sx={{
+                fontSize: 10,
+                fontWeight: 30,
+                lineHeight: "14px",
+                color: "onSurface",
+                wordWrap: "break-word",
+                pre: {
+                  m: "10px 0",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  code: {
+                    borderRadius: 0,
+                    m: 0,
+                  },
+                },
+                code: {
+                  display: "block",
+                  bgcolor: "#282a35",
+                  color: "common.white",
+                  borderRadius: "8px",
+                  p: "16px 24px",
+                  mb: "10px",
+                  overflow: "auto",
+                },
+                ".language-label": {
+                  p: "8px 24px",
+                  bgcolor: "#4d5562",
+                  color: "#ffffff",
+                  fontSize: 8,
+                },
+              }}
+              dangerouslySetInnerHTML={{
+                __html: content,
+              }}
+            />
+          </Stack>
+        </Box>
+        <Box p={"8px"}>
           <Typography
             fontSize={16}
-            fontWeight={400}
+            fontWeight={500}
             color={"onSurface"}
+            sx={oneLineStyle}
           >
             {execution.title}
           </Typography>
-          <Box
-            sx={{
-              fontSize: 10,
-              fontWeight: 30,
-              lineHeight: "14px",
-              color: "onSurface",
-              wordWrap: "break-word",
-              pre: {
-                m: "10px 0",
-                borderRadius: "8px",
-                overflow: "hidden",
-                code: {
-                  borderRadius: 0,
-                  m: 0,
-                },
-              },
-              code: {
-                display: "block",
-                bgcolor: "#282a35",
-                color: "common.white",
-                borderRadius: "8px",
-                p: "16px 24px",
-                mb: "10px",
-                overflow: "auto",
-              },
-              ".language-label": {
-                p: "8px 24px",
-                bgcolor: "#4d5562",
-                color: "#ffffff",
-                fontSize: 8,
-              },
-            }}
-            dangerouslySetInnerHTML={{
-              __html: content,
-            }}
-          />
-        </Stack>
-      </Box>
-      <Box p={"8px"}>
-        <Typography
-          fontSize={16}
-          fontWeight={500}
-          color={"onSurface"}
-          sx={oneLineStyle}
-        >
-          {execution.title}
-        </Typography>
-        <Typography
-          fontSize={14}
-          fontWeight={400}
-          color={"secondary.light"}
-          sx={oneLineStyle}
-        >
-          {execution.template.title}
-        </Typography>
-        <Typography
-          fontSize={12}
-          fontWeight={400}
-          color={"secondary.light"}
-          sx={oneLineStyle}
-        >
-          {formatDate(execution.created_at)}
-        </Typography>
-      </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          top: 16,
-          left: 14,
-          zIndex: 999,
-          svg: {
-            p: "2px",
-            bgcolor: "surfaceContainerLowest",
-            borderRadius: "99px",
-          },
-        }}
-      >
-        {isFavorite ? (
-          <CloudDone color="primary" />
-        ) : (
-          <Stack
-            className="delete-time-container"
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            gap={"2px"}
-            sx={{
-              p: "2px",
-              borderRadius: "99px",
-              overflow: "hidden",
-              fontSize: 12,
-              fontWeight: 400,
-              color: "secondary.light",
-              transition: "background-color .2s ease",
-            }}
+          <Typography
+            fontSize={14}
+            fontWeight={400}
+            color={"secondary.light"}
+            sx={oneLineStyle}
           >
-            <ScheduleOutlined sx={{ color: "secondary.light" }} />
-            <Box
-              component={"span"}
-              className="delete-time"
+            {execution.template.title}
+          </Typography>
+          <Typography
+            fontSize={12}
+            fontWeight={400}
+            color={"secondary.light"}
+            sx={oneLineStyle}
+          >
+            {formatDate(execution.created_at)}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 16,
+            left: 14,
+            zIndex: 999,
+            svg: {
+              p: "2px",
+              bgcolor: "surfaceContainerLowest",
+              borderRadius: "99px",
+            },
+          }}
+        >
+          {isFavorite ? (
+            <CloudDone color="primary" />
+          ) : (
+            <Stack
+              className="delete-time-container"
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={"2px"}
               sx={{
-                pr: "6px",
+                p: "2px",
+                borderRadius: "99px",
+                overflow: "hidden",
+                fontSize: 12,
+                fontWeight: 400,
+                color: "secondary.light",
+                transition: "background-color .2s ease",
               }}
             >
-              {autoDeleteDate}
-            </Box>
-          </Stack>
-        )}
-      </Box>
-      <IconButton
-        onClick={e => {
-          e.preventDefault();
-          setMenuAnchor(e.currentTarget);
-        }}
-        className="actions-btn"
-        sx={{
-          position: "absolute",
-          top: 16,
-          right: 12,
-          zIndex: 999,
-          border: "none",
-          "&:hover": {
-            bgcolor: "surface.2",
-          },
-        }}
-      >
-        <MoreVert sx={{ fontSize: "24px" }} />
-      </IconButton>
+              <ScheduleOutlined sx={{ color: "secondary.light" }} />
+              <Box
+                component={"span"}
+                className="delete-time"
+                sx={{
+                  pr: "6px",
+                }}
+              >
+                {autoDeleteDate}
+              </Box>
+            </Stack>
+          )}
+        </Box>
+        <IconButton
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            setMenuAnchor(e.currentTarget);
+          }}
+          className="actions-btn"
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 12,
+            zIndex: 999,
+            border: "none",
+            "&:hover": {
+              bgcolor: "surface.2",
+            },
+          }}
+        >
+          <MoreVert sx={{ fontSize: "24px" }} />
+        </IconButton>
+      </Card>
       <Menu
         anchorEl={menuAnchor}
         open={actionsOpened}
@@ -309,7 +312,7 @@ export default function CardDocument({ execution, onClick }: Props) {
           />
         )}
       </Menu>
-    </Card>
+    </>
   );
 }
 
