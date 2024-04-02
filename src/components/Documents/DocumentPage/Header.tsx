@@ -1,14 +1,16 @@
-import Stack from "@mui/material/Stack";
-import type { ExecutionTemplatePopupType, ExecutionWithTemplate } from "@/core/api/dto/templates";
-import { Box, Button, IconButton, Typography } from "@mui/material";
-import Edit from "@mui/icons-material/Edit";
 import { useState } from "react";
-import { SparkSaveDeletePopup } from "../../dialog/SparkSaveDeletePopup";
-import { SparkExportPopup } from "../../dialog/SparkExportPopup";
+import type { ExecutionTemplatePopupType, ExecutionWithTemplate } from "@/core/api/dto/templates";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Edit from "@mui/icons-material/Edit";
+import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
+import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import FolderDeleteOutlined from "@mui/icons-material/FolderDeleteOutlined";
 import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
-import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "../../../core/api/executions";
+import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import CloudDone from "@mui/icons-material/CloudDone";
 import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 
@@ -18,6 +20,7 @@ interface Props {
 
 function Header({ document }: Props) {
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
+  const [title, setTitle] = useState(document.title);
   const [isFavorite, setIsFavorite] = useState(document.is_favorite);
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
@@ -58,7 +61,7 @@ function Header({ document }: Props) {
             fontWeight={500}
             color={"onSurface"}
           >
-            {document.title}
+            {title}
           </Typography>
           <IconButton
             onClick={() => setPopup("update")}
@@ -113,6 +116,7 @@ function Header({ document }: Props) {
           type={popup}
           activeExecution={document}
           onClose={() => setPopup(null)}
+          onUpdate={updateDocument => setTitle(updateDocument.title)}
         />
       )}
       {popup === "export" && (
