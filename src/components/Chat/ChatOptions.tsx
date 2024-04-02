@@ -44,7 +44,7 @@ function ChatOptions() {
         });
       } catch (error) {
         setToast({
-          message: "Failed to update preferences. Please try again.",
+          message: "Failed to save your option. Please try again.",
           severity: "error",
           duration: 4000,
         });
