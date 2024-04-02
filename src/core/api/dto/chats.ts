@@ -65,6 +65,7 @@ export interface SuggestionsMessage {
   updated_at: string;
   sender: Sender;
   templates: Templates[];
+  text: string;
 }
 
 export interface TemplateMessage {
