@@ -48,7 +48,6 @@ function ChatOptions() {
           message: "Failed to update preferences. Please try again.",
           severity: "error",
           duration: 4000,
-          position: { vertical: "bottom", horizontal: "left" },
         });
 
         return;
