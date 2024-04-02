@@ -18,7 +18,7 @@ import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   user: User | null;
-  token: string;
+  token: string | null;
 }
 const ProfileImageSignUp = ({ user, token }: Props) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -37,7 +37,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
   const onSave = async () => {
     const avatar = getCroppedImage();
 
-    if (avatar) {
+    if (avatar && token) {
       setCroppedImage(avatar);
 
       const payload = await updateUserProfile({ token, data: { avatar } }).unwrap();

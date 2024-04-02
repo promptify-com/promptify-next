@@ -34,7 +34,7 @@ function FormInput({ input }: Props) {
   }, 400);
 
   useEffect(() => {
-    const answersStored = Storage.get("answers");
+    const answersStored = Storage.get("answers") as unknown as IAnswer[];
 
     if (!answersStored) return;
 

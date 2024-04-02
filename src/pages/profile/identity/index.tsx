@@ -32,6 +32,10 @@ function ProfileIdentity() {
   };
 
   const handleUpdateUser = async (userData: UpdateUserData) => {
+    if (!userData || !token) {
+      return;
+    }
+
     try {
       const user = await updateUserProfile({
         token,

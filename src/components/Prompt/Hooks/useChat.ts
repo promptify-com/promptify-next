@@ -137,7 +137,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
         variables: questionAnswerMap,
       };
 
-      const varyResponse = await vary({ token, payload });
+      const varyResponse = await vary({ token: `${token}`, payload });
 
       if (typeof varyResponse === "string") {
         setIsValidatingAnswer(false);

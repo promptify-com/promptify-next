@@ -1,7 +1,7 @@
 import { LCL_STR_KEY } from "./constants";
 import { isBrowser } from "./helpers";
 export default class Storage {
-  static get(key: string) {
+  static get(key: string): string | null {
     if (!isBrowser()) {
       return null;
     }

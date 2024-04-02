@@ -2,7 +2,7 @@ import { SortOption } from "@/components/profile2/Types";
 
 export const AccountSidebarWidth = 268;
 
-export const NavItems = [
+export const navItems = [
   {
     items: [
       { title: "Welcome", link: "/profile" },
@@ -16,9 +16,9 @@ export const NavItems = [
   {
     label: "Account",
     items: [
-      { title: "My accounts", link: "/profile/social-accounts" },
-      { title: "Credentials", link: "/profile/credentials" },
-      { title: "Email", link: "/profile/email" },
+      { title: "Account connections", link: "/profile/social-accounts" },
+      { title: "GPT credentials", link: "/profile/credentials" },
+      { title: "Email settings", link: "/profile/email" },
     ],
   },
   {

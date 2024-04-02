@@ -11,7 +11,7 @@ import Image from "../design-system/Image";
 
 interface IProps {
   user: User | null;
-  token: string;
+  token: string | null;
 }
 
 export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
@@ -31,7 +31,7 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
   const onSave = async () => {
     const avatar = getCroppedImage();
 
-    if (avatar) {
+    if (avatar && token) {
       setCroppedImage(avatar);
 
       const payload = await updateUserProfile({ token, data: { avatar } }).unwrap();

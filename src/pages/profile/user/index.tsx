@@ -45,6 +45,10 @@ function ProfilePrompts() {
   };
 
   const onSubmit = async (values: IEditProfile) => {
+    if (!token) {
+      return;
+    }
+
     try {
       const payload = await updateUserProfile({ token, data: values }).unwrap();
       dispatch(updateUser(payload));

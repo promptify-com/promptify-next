@@ -28,7 +28,7 @@ function ProfileEmail() {
   const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
 
   const updateEmail = async () => {
-    if (!isValidEmail(communicationEmail)) return;
+    if (!isValidEmail(communicationEmail) || !token) return;
 
     try {
       const user = await updateUserProfile({
@@ -53,7 +53,7 @@ function ProfileEmail() {
     <Protected>
       <Layout>
         <ContentWrapper
-          title="Email"
+          title="Email settings"
           description="Here, you can view and manage the email addresses associated with your account."
         >
           <SectionWrapper

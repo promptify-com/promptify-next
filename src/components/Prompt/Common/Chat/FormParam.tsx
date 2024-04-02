@@ -21,7 +21,7 @@ export default function FormParam({ param, variant }: GeneratorParamProps) {
   const { paramsValues, answers } = useAppSelector(state => state.chat);
 
   useEffect(() => {
-    const paramsStored = Storage.get("paramsValue");
+    const paramsStored = Storage.get("paramsValue") as unknown as ResOverrides[];
 
     if (!paramsStored || isAutomationPage) return;
 
