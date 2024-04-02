@@ -43,7 +43,7 @@ const initialState: ExecutionsProps = {
   initialChat: true,
   parameterSelected: null,
   currentExecutionDetails: { id: null, isFavorite: false },
-  selectedChatOption: Storage.get("currentUser")?.preferences?.input_style || null,
+  selectedChatOption: null,
 };
 
 export const chatSlice = createSlice({
