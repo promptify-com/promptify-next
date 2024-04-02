@@ -41,7 +41,6 @@ function ChatOptions() {
           message: "Preferences updated successfully.",
           severity: "success",
           duration: 4000,
-          position: { vertical: "bottom", horizontal: "left" },
         });
       } catch (error) {
         setToast({
