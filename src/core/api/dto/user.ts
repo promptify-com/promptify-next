@@ -6,7 +6,7 @@ export type ThemeType = "dynamic" | "blue";
 export interface UserPreferences {
   id: number;
   theme: ThemeType;
-  input_style: ChatOption;
+  input_style: ChatOption | null;
   is_public: boolean;
   generation_finished: boolean;
   gpt_notification: boolean;
