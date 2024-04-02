@@ -7,15 +7,6 @@ export interface ExecutionWithTemplate extends Execution {
   // engines: Engine[];
   output: string;
 }
-export interface SparksLayoutProps {
-  execution: ExecutionWithTemplate;
-  template: TemplateExecutionsDisplay;
-  onExecutionSaved: () => void;
-  onOpenEdit: () => void;
-  onOpenDelete: () => void;
-  onOpenExport: () => void;
-  onClosePopup?: () => void;
-}
 
 export interface FilterParams {
   categoryId?: number;
