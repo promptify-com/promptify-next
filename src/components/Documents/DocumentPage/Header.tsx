@@ -13,6 +13,7 @@ import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import CloudDone from "@mui/icons-material/CloudDone";
 import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
+import { daysFrom } from "@/common/helpers/timeManipulation";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -39,6 +40,8 @@ function Header({ document }: Props) {
       console.error(error);
     }
   };
+
+  const savedFor = daysFrom(document.created_at);
 
   return (
     <Stack
@@ -89,7 +92,7 @@ function Header({ document }: Props) {
           ) : (
             <>
               <ScheduleOutlined sx={{ color: "secondary.light" }} />
-              Saved as draft
+              Saved as draft for {savedFor} days
             </>
           )}
         </Typography>

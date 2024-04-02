@@ -11,6 +11,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { theme } from "@/theme";
 import Link from "next/link";
 import Edit from "@mui/icons-material/Edit";
+import { formatDate } from "@/common/helpers/timeManipulation";
 
 const PARAMETERS = [
   { name: "Age", value: 30 },
@@ -142,6 +143,20 @@ function Details({ document }: Props) {
           </Stack>
         </AccordionDetails>
       </Accordion>
+      <Typography
+        fontSize={14}
+        fontWeight={400}
+        color={"onSurface"}
+        sx={{
+          py: "16px",
+          ".label": {
+            opacity: 0.5,
+            mr: "8px",
+          },
+        }}
+      >
+        <span className="label">Created at:</span> {formatDate(document.created_at)}
+      </Typography>
     </Stack>
   );
 }

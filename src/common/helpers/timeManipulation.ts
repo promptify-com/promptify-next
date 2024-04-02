@@ -29,6 +29,11 @@ export function timeAgo(input: Date | string) {
   return "some time ago";
 }
 
+export function daysFrom(from: Date | string, to: Date | string = "") {
+  const toDate = to ? new Date(to) : new Date();
+  return Math.round((toDate.getTime() - new Date(from).getTime()) / (1000 * 3600 * 24));
+}
+
 export function timeLeft(input: Date | string): string {
   const date = input instanceof Date ? input : new Date(input);
 
