@@ -10,7 +10,6 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   message: IMessage;
-  onScrollToBottom: () => void;
 }
 
 const MessageContentWithHTML = memo(({ content }: { content: string }) => {
@@ -37,17 +36,13 @@ const MessageContentWithHTML = memo(({ content }: { content: string }) => {
   );
 });
 
-const HtmlMessage = ({ message, onScrollToBottom }: Props) => {
+const HtmlMessage = ({ message }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const { fromUser, text, createdAt, type } = message;
+  const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
-
-  if (type !== "html") {
-    return;
-  }
 
   return (
     <Grid

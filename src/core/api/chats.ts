@@ -118,11 +118,12 @@ export const chatsApi = baseApi.injectEndpoints({
         }),
       }),
       saveChatSuggestions: builder.mutation<void, ISaveChatSuggestions>({
-        query: ({ chat, templates }) => ({
+        query: ({ chat, text, templates }) => ({
           url: "/api/chat/suggestions/",
           method: "POST",
           data: {
             chat,
+            text,
             templates,
           },
         }),
