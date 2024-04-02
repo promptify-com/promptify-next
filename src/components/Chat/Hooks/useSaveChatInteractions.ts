@@ -31,13 +31,13 @@ const useSaveChatInteractions = () => {
 
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
 
-  const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
+  const saveTextMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
     try {
       await saveChatInput({
         chat: chatId,
         text,
-        type: type === "text" ? "text" : "question",
+        type: type === "text" ? "text" : type === "html" ? "html" : "question",
         sender: fromUser ? "user" : "system",
       });
     } catch (error) {
@@ -45,10 +45,11 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatSuggestions = async (templateIds: number[], chatId: number) => {
+  const saveChatSuggestions = async (templateIds: number[], text: string, chatId: number) => {
     try {
       await saveSuggestions({
         chat: chatId,
+        text,
         templates: templateIds,
       });
     } catch (error) {
@@ -153,6 +154,8 @@ const useSaveChatInteractions = () => {
           type:
             inputMessage.type === "text"
               ? "text"
+              : inputMessage.type === "html"
+              ? "html"
               : inputMessage.text.includes("ready to run")
               ? "readyMessage"
               : "questionInput",
@@ -184,7 +187,7 @@ const useSaveChatInteractions = () => {
     }
   }
 
-  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
+  return { saveTextMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
 };
 
 export default useSaveChatInteractions;
