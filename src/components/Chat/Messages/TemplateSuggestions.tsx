@@ -2,6 +2,7 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import TemplateCard from "@/components/common/TemplateCard";
+import Typography from "@mui/material/Typography";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
@@ -18,9 +19,26 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
     return null;
   }
 
+  const pluralTemplates = templates.length > 1;
+
   return (
     <Stack>
-      <HtmlMessage message={message} />
+      {!message.text ? (
+        <Typography
+          fontSize={16}
+          lineHeight={"25.6px"}
+          fontWeight={400}
+          letterSpacing={"0.17px"}
+          display={"flex"}
+          alignItems={"center"}
+          color={"onSurface"}
+        >
+          {`I found ${pluralTemplates ? "these" : "this"} prompt${pluralTemplates ? "s" : ""}, following your request:`}
+        </Typography>
+      ) : (
+        <HtmlMessage message={message} />
+      )}
+
       <Stack
         bgcolor={"surfaceContainerLow"}
         p={"8px"}

@@ -26,14 +26,13 @@ import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteract
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { text } from "stream/consumers";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { saveTextAndQuestionMessage, saveChatSuggestions } = useSaveChatInteractions();
+  const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
   const [createChat] = useCreateChatMutation();
 
   const {
@@ -192,7 +191,7 @@ const useMessageManager = () => {
     const userMessage = createMessage({ type: "text", fromUser: true, text: input });
 
     if (chatId) {
-      saveTextAndQuestionMessage(userMessage, chatId);
+      saveTextMessage(userMessage, chatId);
 
       setMessages(prevMessages => prevMessages.concat(userMessage));
       setIsValidatingAnswer(true);
@@ -228,7 +227,7 @@ const useMessageManager = () => {
         setIsValidatingAnswer(false);
       }
       if (botMessage.text !== "") {
-        saveTextAndQuestionMessage(botMessage, chatId);
+        saveTextMessage(botMessage, chatId);
         setMessages(prevMessages => prevMessages.concat(botMessage));
       }
     }

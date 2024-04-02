@@ -28,7 +28,7 @@ const useSaveChatInteractions = () => {
   const [saveBatchingMessages] = useBatchingMessagesMutation();
   const chatOption = useAppSelector(state => state.chat.selectedChatOption);
 
-  const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
+  const saveTextMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
     try {
       await saveChatInput({
@@ -184,7 +184,7 @@ const useSaveChatInteractions = () => {
     }
   }
 
-  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
+  return { saveTextMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
 };
 
 export default useSaveChatInteractions;
