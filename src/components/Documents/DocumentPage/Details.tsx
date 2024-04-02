@@ -107,7 +107,7 @@ function Details({ document }: Props) {
                   color={"secondary.main"}
                   sx={inputStyle}
                 >
-                  {param.name} <span className="val">{param.value}</span>
+                  {param.name}: <span className="val">{param.value}</span>
                 </Typography>
               ))}
             </Box>

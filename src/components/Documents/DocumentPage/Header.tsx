@@ -63,6 +63,12 @@ function Header({ document }: Props) {
             fontSize={16}
             fontWeight={500}
             color={"onSurface"}
+            sx={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 1,
+              overflow: "hidden",
+            }}
           >
             {title}
           </Typography>
