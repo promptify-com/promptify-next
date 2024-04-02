@@ -38,7 +38,7 @@ function ChatOptions() {
         dispatch(updateUser({ ...currentUser, preferences }));
 
         setToast({
-          message: "Preferences updated successfully.",
+          message: "Your option has been saved successfully.",
           severity: "success",
           duration: 4000,
         });
