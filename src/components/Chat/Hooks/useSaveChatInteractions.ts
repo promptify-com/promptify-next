@@ -164,6 +164,7 @@ const useSaveChatInteractions = () => {
         return {
           ...baseMessage,
           templates: suggestionMessage.templates,
+          text: suggestionMessage.text,
           type: "suggestion",
         };
 
