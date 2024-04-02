@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TemplateCard from "@/components/common/TemplateCard";
 import type { Templates } from "@/core/api/dto/templates";
@@ -12,8 +11,6 @@ interface Props {
 
 function TemplateSuggestions({ templates, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-
-  const pluralTemplates = templates?.length > 1;
 
   return (
     <Stack>
