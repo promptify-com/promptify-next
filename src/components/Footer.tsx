@@ -1,13 +1,13 @@
-import { LogoApp } from "@/assets/icons/LogoApp";
+import Link from "next/link";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Link from "next/link";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { IconButton } from "@mui/material";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
 const Links = [
   { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
@@ -27,7 +27,7 @@ const socialLinks = [
 
 const thisYear = new Date().getFullYear();
 
-function FooterPrompt() {
+function Footer() {
   return (
     <Stack
       width={"95%"}
@@ -163,4 +163,4 @@ function FooterPrompt() {
   );
 }
 
-export default FooterPrompt;
+export default Footer;
