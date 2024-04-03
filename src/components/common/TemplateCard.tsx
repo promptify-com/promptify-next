@@ -9,8 +9,8 @@ import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setSelectedTemplate, setAnswers, setChatMode, setSelectedChatOption } from "@/core/store/chatSlice";
 import IconButton from "@mui/material/IconButton";
 import Edit from "@mui/icons-material/Edit";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
@@ -39,11 +39,16 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
   const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, likes, executions_count, status } = template;
   const [confirmDelete, setConfirmDelete] = useState(false);
-
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const [deleteTemplate] = useDeleteTemplateMutation();
 
   const handleRunPrompt = () => {
     dispatch(setSelectedTemplate(template));
+
+    if (currentUser?.preferences?.input_style) {
+      dispatch(setSelectedChatOption(currentUser.preferences.input_style));
+    }
+
     dispatch(setAnswers([]));
     setTimeout(() => {
       onScrollToBottom?.();
