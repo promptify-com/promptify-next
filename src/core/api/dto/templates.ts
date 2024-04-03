@@ -227,6 +227,7 @@ export interface TemplateExecutionsDisplay {
   prompts: Prompts[];
   tags: Tag[];
   slug: string;
+  executions?: Execution[];
   likes?: number;
   favorites_count: number;
   executions_count: number;
