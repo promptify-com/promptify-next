@@ -82,6 +82,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
   res.setHeader("Cache-Control", "public, maxage=900, stale-while-revalidate=2");
 
   const { hash } = query;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   let fetchedTemplate: Templates = {} as Templates;
   let hashedExecution: TemplatesExecutions | null = null;
 
@@ -113,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
       props: {
         title: SEO_TITLE,
         description: SEO_DESCRIPTION,
-        fetchedTemplate: {} as Templates,
+        fetchedTemplate,
         hashedExecution,
       },
     };

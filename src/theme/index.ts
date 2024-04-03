@@ -1,4 +1,5 @@
-import { Theme, createTheme } from "@mui/system";
+import { createTheme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 
 interface SurfaceVariants {
   1: string;
@@ -34,7 +35,7 @@ interface CustomPalette {
   surfaceContainer: string;
   surfaceDim: string;
 }
-interface CustomTheme extends Theme {
+interface CustomTheme {
   custom: {
     defaultSidebarWidth: string;
     leftClosedSidebarWidth: string;
@@ -128,7 +129,6 @@ export const customTheme = {
 
 export let theme: Theme = createTheme(customTheme);
 
-// @ts-expect-error incompatible-zindex
 theme = createTheme(theme, {
   components: {
     MuiButton: {

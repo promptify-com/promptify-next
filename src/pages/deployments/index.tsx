@@ -79,7 +79,9 @@ function Deployments() {
                         size="small"
                         variant="outlined"
                         value={searchName}
-                        onChange={e => setSearchName(e.target.value.trim().toLowerCase())}
+                        onChange={e => {
+                          setSearchName(e.target.value.trim().toLowerCase());
+                        }}
                       />
                     </Box>
                     <FormControl
@@ -91,7 +93,9 @@ function Deployments() {
                         value={status}
                         label="Status"
                         autoWidth
-                        onChange={e => setStatus(e.target.value as DeploymentStatus)}
+                        onChange={e => {
+                          setStatus(e.target.value as DeploymentStatus);
+                        }}
                       >
                         {deploymentStatuses.map((status, idx) => (
                           <MenuItem
@@ -114,9 +118,13 @@ function Deployments() {
                 </Stack>
                 <ActiveFilters
                   status={status}
-                  onClearStatus={() => setStatus("")}
+                  onClearStatus={() => {
+                    setStatus("");
+                  }}
                   searchName={searchName}
-                  onClearSearch={() => setSearchName("")}
+                  onClearSearch={() => {
+                    setSearchName("");
+                  }}
                 />
 
                 {isLoading ? (

@@ -1,5 +1,4 @@
 import { Layout } from "@/layout";
-import { theme } from "@/theme";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
@@ -36,7 +35,7 @@ export default function ComingSoon({ backTo }: Props) {
           >
             Coming soon... <br />
             <Link
-              href={backTo || "/"}
+              href={backTo ?? "/"}
               style={{ textDecoration: "none" }}
             >
               Go back
