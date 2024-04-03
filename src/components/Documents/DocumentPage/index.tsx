@@ -4,7 +4,6 @@ import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Box from "@mui/material/Box";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { useAppDispatch } from "@/hooks/useStore";
-import { theme } from "@/theme";
 import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
 import Header from "./Header";
 import Details from "./Details";
@@ -16,6 +15,8 @@ interface Props {
 function DocumentPage({ document }: Props) {
   const { isMobile } = useBrowser();
   const dispatch = useAppDispatch();
+
+  const template = document.template;
 
   const closeTemplatePopup = () => {
     dispatch(
@@ -51,7 +52,7 @@ function DocumentPage({ document }: Props) {
       >
         <ExecutionCard
           execution={document}
-          promptsData={document.template.prompts}
+          promptsData={template?.prompts || []}
           showPreview={false}
           noRepeat
         />

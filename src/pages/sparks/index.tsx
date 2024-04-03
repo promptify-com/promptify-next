@@ -1,15 +1,91 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import TemplatesCarousel from "@/components/Documents/TemplatesCarousel";
 import DocumentsContainer from "@/components/Documents/DocumentsContainer";
-import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
+import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION } from "@/common/constants";
+import type { ExecutionsFilterParams, TemplatesExecutions } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
+import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
+import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
+
+const PAGINATION_LIMIT = 12;
+const SCROLL_THRESHOLD = 24;
 
 function DocumentsPage() {
-  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
-    useGetTemplatesExecutionsByMeQuery(undefined);
+  const { isMobile } = useBrowser();
+  const observer = useRef<IntersectionObserver | null>(null);
+  const { contentTypes, engine } = useAppSelector(state => state.documents);
+  const [offset, setOffset] = useState(0);
+  const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
+
+  const { data: templates, isLoading: isTemplatesLoading } = useGetExecutedTemplatesQuery();
+
+  const params: ExecutionsFilterParams = {
+    offset,
+    limit: PAGINATION_LIMIT,
+    engineId: engine?.id,
+    engine_type: contentTypes,
+  };
+
+  const {
+    data: fetchExecutions,
+    isLoading: isExecutionsLoading,
+    isFetching: isExecutionsFetching,
+  } = useGetExecutionsByMeQuery(params);
+
+  const { executions: templatesExecutions } = usePrepareTemplatesExecutions(
+    executions,
+    templates ?? [],
+    isTemplatesLoading,
+  );
+
+  const handleNextPage = () => {
+    if (!!fetchExecutions?.next) {
+      setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
+    }
+  };
+
+  useEffect(() => {
+    if (fetchExecutions?.results) {
+      if (offset === 0) {
+        setExecutions(fetchExecutions?.results);
+      } else {
+        setExecutions(prevTemplates => prevTemplates.concat(fetchExecutions?.results));
+      }
+    }
+  }, [fetchExecutions?.results]);
+
+  const lastTemplateElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isExecutionsFetching) return;
+
+      if (observer.current) observer.current.disconnect();
+      if (executions.length >= SCROLL_THRESHOLD) {
+        observer.current?.disconnect();
+        return;
+      }
+
+      const rowHeight = isMobile ? 145 : 80;
+      const margin = `${2 * rowHeight}px`;
+
+      observer.current = new IntersectionObserver(
+        entries => {
+          if (entries[0].isIntersecting && !!fetchExecutions?.next) {
+            handleNextPage();
+          }
+        },
+        { rootMargin: margin },
+      );
+      if (node) observer.current.observe(node);
+    },
+    [isExecutionsFetching, !!fetchExecutions?.next, executions.length],
+  );
 
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
@@ -27,13 +103,31 @@ function DocumentsPage() {
           }}
         >
           <TemplatesCarousel
-            templates={executedTemplates}
-            isLoading={isExecutedTemplatesLoading}
+            templates={templates}
+            isLoading={isTemplatesLoading}
           />
-          <DocumentsContainer
-            templates={executedTemplates}
-            isLoading={isExecutedTemplatesLoading}
-          />
+          <TemplatesPaginatedList
+            loading={isExecutionsFetching}
+            hasNext={!!fetchExecutions?.next}
+            onNextPage={handleNextPage}
+            hasPrev={false}
+            buttonText={isExecutionsFetching ? "Loading..." : "Load more"}
+            variant="outlined"
+            endIcon={
+              isExecutionsFetching && (
+                <CircularProgress
+                  size={24}
+                  color="primary"
+                />
+              )
+            }
+          >
+            <DocumentsContainer
+              executions={templatesExecutions}
+              isLoading={isTemplatesLoading || isExecutionsLoading}
+            />
+            <div ref={lastTemplateElementRef}></div>
+          </TemplatesPaginatedList>
         </Stack>
       </Layout>
     </Protected>

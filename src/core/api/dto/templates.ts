@@ -3,9 +3,7 @@ import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 
 export interface ExecutionWithTemplate extends Execution {
-  template: TemplateExecutionsDisplay;
-  // engines: Engine[];
-  output: string;
+  template?: TemplateExecutionsDisplay;
 }
 
 export interface FilterParams {
@@ -167,6 +165,7 @@ export interface TemplatesExecutions {
   parameters?: { [key: string]: any };
   contextual_overrides?: { [key: string]: any };
   template?: {
+    id: number;
     title: string;
     slug: string;
     thumbnail: string;
@@ -228,54 +227,21 @@ export interface TemplateExecutionsDisplay {
   prompts: Prompts[];
   tags: Tag[];
   slug: string;
-  executions: Execution[];
   likes?: number;
   favorites_count: number;
   executions_count: number;
   is_internal?: boolean;
+  self_executions_count?: number;
 }
 
 export interface TemplateExecutionsWithPagination {
   count: number;
   next: string | null;
   previous: string | null;
-  results: TemplateExecutionsDisplay[];
+  results: TemplatesExecutions[];
 }
 
 export type ExecutionsFilterParams = Pick<FilterParams, "limit" | "offset" | "engineId" | "engine_type">;
-
-export interface SparkExecution {
-  id: number;
-  title: string;
-  parameters: {
-    [key: number]: string | number;
-  };
-  contextual_overrides: {
-    [key: number]: [];
-  };
-  template: number;
-  executed_by: number;
-  created_at: string;
-  prompt_executions: PromptExecutions[];
-  is_favorite: boolean;
-  hash: string;
-  errors?: string;
-}
-
-export interface SparkVersion {
-  id: number;
-  title: string;
-  created_at: string;
-}
-export interface Spark {
-  id: number;
-  initial_title: string;
-  created_at?: string;
-  created_by?: number;
-  versions: SparkVersion[];
-  current_version: TemplatesExecutions;
-  is_favorite?: boolean;
-}
 
 export interface CollectionMutationParams {
   collectionId: number;

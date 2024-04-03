@@ -1,67 +1,20 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { useMemo } from "react";
-import type { Engine, Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";
-import { updatePopupTemplate } from "../../core/store/templatesSlice";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface Props {
-  templates: TemplateExecutionsDisplay[] | undefined;
+  executions: ExecutionWithTemplate[] | undefined;
   isLoading: boolean;
 }
 
-export default function DocumentsContainer({ templates, isLoading }: Props) {
+export default function DocumentsContainer({ executions = [], isLoading }: Props) {
   const dispatch = useAppDispatch();
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-  const { status, contentTypes, engine, template } = useAppSelector(state => state.documents);
-
-  const allExecutions = useMemo(() => {
-    const allExecutions: ExecutionWithTemplate[] = [];
-    templates?.forEach(template => {
-      // const engines = Array.from(
-      //   template.prompts
-      //     .reduce((map: Map<string, Engine>, prompt) => {
-      //       map.set(prompt.engine.name, prompt.engine);
-      //       return map;
-      //     }, new Map())
-      //     .values(),
-      // );
-
-      const executionsWithTemplate = template.executions.map((execution: Execution) => {
-        // const output = execution.prompt_executions?.map(promptExec => promptExec.output).join() || "";
-        return {
-          ...execution,
-          template,
-          // engines,
-          output: ".......",
-        };
-      });
-      allExecutions.push(...executionsWithTemplate);
-    });
-
-    return allExecutions.sort(
-      (execA, execB) => new Date(execB.created_at).getTime() - new Date(execA.created_at).getTime(),
-    );
-  }, [templates]);
-
-  const executions = useMemo(() => {
-    return allExecutions.filter(exec => {
-      const isDraft = status === "draft" && !exec.is_favorite;
-      const isSaved = status === "saved" && exec.is_favorite;
-      const statusMatch = !status || isDraft || isSaved;
-      const templateMatch = !template || exec.template.id === template;
-
-      // const engineMatch = !engine || exec.engines.some(eng => eng.name === engine?.name);
-      // const contentTypeMatch =
-      //   !contentTypes.length ||
-      //   exec.engines.some(eng => contentTypes.find(type => type.toUpperCase() === eng.output_type));
-
-      return statusMatch && templateMatch;
-    });
-  }, [allExecutions, status, contentTypes, engine, template]);
 
   return (
     <Stack gap={3}>

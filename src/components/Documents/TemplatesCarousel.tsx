@@ -24,8 +24,6 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const activeTemplate = useAppSelector(state => state.documents.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
-  const sortedTemplates = templates?.slice().sort((tempA, tempB) => tempB.executions.length - tempA.executions.length);
-
   const isEmpty = !isLoading && !templates?.length;
 
   if (isEmpty) return;
@@ -87,7 +85,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           {isLoading ? (
             <CardDocumentTemplatePlaceholder count={5} />
           ) : (
-            sortedTemplates?.map(template => (
+            templates?.map(template => (
               <Grid
                 key={template.id}
                 item

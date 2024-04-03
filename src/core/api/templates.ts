@@ -1,6 +1,6 @@
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
-import {
+import type {
   FilterParams,
   IFeedback,
   IPostFeedback,
@@ -8,6 +8,7 @@ import {
   Templates,
   TemplatesWithPagination,
   IPromptExecution,
+  TemplateExecutionsDisplay,
 } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { randomId } from "@/common/helpers";
@@ -105,6 +106,12 @@ export const templatesApi = baseApi.injectEndpoints({
           refetchOnMountOrArgChange: true,
         }),
         providesTags: ["MyTemplates"],
+      }),
+      getExecutedTemplates: builder.query<TemplateExecutionsDisplay[], void>({
+        query: () => ({
+          url: "/api/meta/templates/executed",
+          method: "get",
+        }),
       }),
       getTemplatesBySearch: builder.query<Templates[], string>({
         query: (query: string) => ({
@@ -245,6 +252,7 @@ export const {
   useGetPromptTemplateBySlugQuery,
   useGetTemplateByIdQuery,
   useGetMyTemplatesQuery,
+  useGetExecutedTemplatesQuery,
   useCreateTemplateMutation,
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
