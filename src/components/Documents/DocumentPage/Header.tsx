@@ -48,7 +48,14 @@ function Header({ document }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={2}
-      p={"24px 32px"}
+      sx={{
+        position: "sticky",
+        top: 0,
+        bgcolor: "surfaceContainerLowest",
+        p: "24px 32px",
+        borderBottom: "1px solid",
+        borderColor: "surfaceContainerHighest",
+      }}
     >
       <Stack
         flex={1}

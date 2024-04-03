@@ -108,11 +108,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
 
   return (
     <Stack
-      gap={1}
+      gap={3}
       sx={{
-        width: { md: "80%" },
-        m: { md: "auto" },
-        p: { xs: "20px", md: "48px 0" },
+        p: { xs: "20px", md: "48px" },
       }}
     >
       {execution && "title" in execution && (
@@ -121,7 +119,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
             fontSize: { xs: 30, md: 48 },
             fontWeight: 400,
             color: "onSurface",
-            py: "24px",
             wordBreak: "break-word",
           }}
         >
@@ -215,6 +212,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                                   code: {
                                     borderRadius: 0,
                                     m: 0,
+                                    whiteSpace: "pre-wrap",
                                   },
                                 },
                                 code: {

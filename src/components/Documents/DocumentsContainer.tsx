@@ -6,6 +6,7 @@ import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocum
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { getTemplateById } from "@/hooks/api/templates";
 
 interface Props {
   executions: ExecutionWithTemplate[] | undefined;
@@ -15,6 +16,18 @@ interface Props {
 export default function DocumentsContainer({ executions = [], isLoading }: Props) {
   const dispatch = useAppDispatch();
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
+
+  const handleOpenDocument = async (execution: ExecutionWithTemplate) => {
+    let template = execution.template;
+    if (!template?.prompts && template?.id) {
+      template = await getTemplateById(template.id);
+    }
+    dispatch(
+      updatePopupTemplate({
+        data: { ...execution, template },
+      }),
+    );
+  };
 
   return (
     <Stack gap={3}>
@@ -64,11 +77,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
                 execution={execution}
                 onClick={e => {
                   e.preventDefault();
-                  dispatch(
-                    updatePopupTemplate({
-                      data: execution,
-                    }),
-                  );
+                  handleOpenDocument(execution);
                 }}
               />
             </Grid>

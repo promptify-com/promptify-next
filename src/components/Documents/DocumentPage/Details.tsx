@@ -53,8 +53,8 @@ function Details({ document }: Props) {
           }}
         >
           <Image
-            src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-            alt={template.title}
+            src={template?.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            alt={template?.title || "Promptify"}
             style={{ borderRadius: "24px", objectFit: "cover", width: "103px", height: "77px" }}
           />
           <Stack
@@ -66,14 +66,14 @@ function Details({ document }: Props) {
               fontWeight={500}
               color={"onSurface"}
             >
-              {template.title}
+              {template?.title}
             </Typography>
             <Typography
               fontSize={16}
               fontWeight={400}
               color={"secondary.light"}
             >
-              {template.category.name}
+              {template?.category.name}
             </Typography>
           </Stack>
         </Stack>
@@ -124,7 +124,7 @@ function Details({ document }: Props) {
             </Box>
             <Button
               LinkComponent={Link}
-              href={`/prompt-builder/${template.slug}`}
+              href={`/prompt-builder/${template?.slug}`}
               target="_blank"
               endIcon={<Edit />}
               variant="contained"

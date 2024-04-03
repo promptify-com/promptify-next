@@ -14,13 +14,12 @@ export const usePrepareTemplatesExecutions = (
       executions.map(async execution => {
         const templateId = execution.template?.id!;
 
-        let template = templates.find(template => template.id === templateId)!;
+        let templateData = templates.find(template => template.id === templateId);
 
-        // if (!template) {
-        //   template = await getTemplateById(templateId);
-        // }
-
-        return { ...execution, template };
+        return {
+          ...execution,
+          template: templateData ?? (execution.template as TemplateExecutionsDisplay),
+        };
       }),
     );
 

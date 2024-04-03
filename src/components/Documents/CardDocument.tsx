@@ -1,6 +1,5 @@
 import Card from "@mui/material/Card";
 import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
-import Link from "next/link";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -32,7 +31,7 @@ export default function CardDocument({ execution, onClick }: Props) {
   const [exportPopup, setExportPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
   const [isFavorite, setIsFavorite] = useState(execution.is_favorite);
-  const [content, setContent] = useState(execution.output);
+  const [content, setContent] = useState("execution.output");
 
   // useEffect(() => {
   //   if (execution.output) {
@@ -70,8 +69,7 @@ export default function CardDocument({ execution, onClick }: Props) {
     <>
       <Card
         key={execution.id}
-        component={Link}
-        href={`/prompt/${execution.template.slug}?hash=${execution.hash}`}
+        component={"a"}
         onClick={onClick}
         elevation={0}
         sx={{
@@ -82,6 +80,7 @@ export default function CardDocument({ execution, onClick }: Props) {
           p: "8px",
           borderRadius: "16px",
           textDecoration: "none",
+          cursor: "pointer",
           bgcolor: "surfaceContainerLowest",
           transition: "background-color 0.3s ease",
           ".actions-btn, .delete-time": {
@@ -179,7 +178,7 @@ export default function CardDocument({ execution, onClick }: Props) {
             color={"secondary.light"}
             sx={oneLineStyle}
           >
-            {execution.template.title}
+            {execution.template?.title}
           </Typography>
           <Typography
             fontSize={12}
@@ -256,62 +255,64 @@ export default function CardDocument({ execution, onClick }: Props) {
           <MoreVert sx={{ fontSize: "24px" }} />
         </IconButton>
       </Card>
-      <Menu
-        anchorEl={menuAnchor}
-        open={actionsOpened}
-        onClose={() => setMenuAnchor(null)}
-        onClick={e => e.preventDefault()}
-        disableScrollLock
-        sx={{
-          ".MuiPaper-root": {
-            width: "199px",
-            borderRadius: "16px",
-          },
-          ".MuiList-root": {
-            p: 0,
-          },
-        }}
-      >
-        <MenuItem
-          onClick={e => setExportPopup(true)}
-          sx={menuItemStyle}
+      {actionsOpened && (
+        <Menu
+          anchorEl={menuAnchor}
+          open={actionsOpened}
+          onClose={() => setMenuAnchor(null)}
+          onClick={e => e.preventDefault()}
+          disableScrollLock
+          sx={{
+            ".MuiPaper-root": {
+              width: "199px",
+              borderRadius: "16px",
+            },
+            ".MuiList-root": {
+              p: 0,
+            },
+          }}
         >
-          <ShareOutlined /> Export
-        </MenuItem>
-        <MenuItem
-          onClick={saveExecution}
-          sx={menuItemStyle}
-        >
-          {isFavorite ? (
-            <>
-              <CloudOffOutlined /> Save as draft
-            </>
-          ) : (
-            <>
-              <CloudOutlined /> Save as document
-            </>
+          <MenuItem
+            onClick={e => setExportPopup(true)}
+            sx={menuItemStyle}
+          >
+            <ShareOutlined /> Export
+          </MenuItem>
+          <MenuItem
+            onClick={saveExecution}
+            sx={menuItemStyle}
+          >
+            {isFavorite ? (
+              <>
+                <CloudOffOutlined /> Save as draft
+              </>
+            ) : (
+              <>
+                <CloudOutlined /> Save as document
+              </>
+            )}
+          </MenuItem>
+          <MenuItem
+            onClick={e => setDeletePopup(true)}
+            sx={menuItemStyle}
+          >
+            <DeleteForeverOutlined /> Delete
+          </MenuItem>
+          {exportPopup && (
+            <SparkExportPopup
+              onClose={() => setExportPopup(false)}
+              activeExecution={execution}
+            />
           )}
-        </MenuItem>
-        <MenuItem
-          onClick={e => setDeletePopup(true)}
-          sx={menuItemStyle}
-        >
-          <DeleteForeverOutlined /> Delete
-        </MenuItem>
-        {exportPopup && (
-          <SparkExportPopup
-            onClose={() => setExportPopup(false)}
-            activeExecution={execution}
-          />
-        )}
-        {deletePopup && (
-          <SparkSaveDeletePopup
-            type={"delete"}
-            activeExecution={execution}
-            onClose={() => setDeletePopup(false)}
-          />
-        )}
-      </Menu>
+          {deletePopup && (
+            <SparkSaveDeletePopup
+              type={"delete"}
+              activeExecution={execution}
+              onClose={() => setDeletePopup(false)}
+            />
+          )}
+        </Menu>
+      )}
     </>
   );
 }

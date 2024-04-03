@@ -100,6 +100,7 @@ function TemplateDocumentModal() {
           borderTopLeftRadius: "24px",
           borderTopRightRadius: "24px",
           overflow: "auto",
+          overscrollBehavior: "contain",
           position: "relative",
           "&::-webkit-scrollbar": {
             width: 0,

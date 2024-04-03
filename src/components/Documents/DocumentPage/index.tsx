@@ -18,30 +18,21 @@ function DocumentPage({ document }: Props) {
 
   const template = document.template;
 
-  const closeTemplatePopup = () => {
-    dispatch(
-      updatePopupTemplate({
-        data: null,
-      }),
-    );
-  };
-
   return (
     <Box
       sx={{
         height: "calc(100svh - 24px)",
         width: "calc(100% - 64px)",
         bgcolor: "surfaceContainerLowest",
-        px: "32px",
+        px: "72px",
       }}
     >
       <Header document={document} />
       <Stack
         direction={"row"}
         alignItems={"flex-start"}
-        gap={4}
         height={{
-          md: `calc(100% - 24px)`,
+          md: `calc(100% - 119px)`,
         }}
         sx={{
           overflow: "auto",
@@ -50,13 +41,36 @@ function DocumentPage({ document }: Props) {
           },
         }}
       >
-        <ExecutionCard
-          execution={document}
-          promptsData={template?.prompts || []}
-          showPreview={false}
-          noRepeat
-        />
-        <Details document={document} />
+        <Box
+          sx={{
+            flex: 3,
+            pr: "32px",
+            height: "100%",
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              width: 0,
+            },
+          }}
+        >
+          <ExecutionCard
+            execution={document}
+            promptsData={template?.prompts || []}
+            showPreview={false}
+            noRepeat
+          />
+        </Box>
+        <Box
+          sx={{
+            flex: 1,
+            height: "100%",
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              width: 0,
+            },
+          }}
+        >
+          <Details document={document} />
+        </Box>
       </Stack>
       <Box
         flex={2}
