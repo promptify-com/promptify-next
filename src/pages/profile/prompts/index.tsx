@@ -33,7 +33,7 @@ function ProfilePrompts() {
     <Protected>
       <Layout>
         <PromptsContainer
-          title="Prompts Review"
+          title="My prompts:"
           sortOption={sortOption}
           setSortAnchor={setSortAnchor}
           sortOpen={sortOpen}
