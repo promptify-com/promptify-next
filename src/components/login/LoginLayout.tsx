@@ -45,12 +45,13 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           alignSelf: "stretch",
           flex: 3,
           background: `url(${backgroundImage.src}) lightgray 50% / cover no-repeat`,
-          pt: { xs: "32px", sm: "32px", md: "48px" },
+          pt: { xs: "40px", sm: "40px", md: "48px" },
         }}
       >
         <Box
           sx={{
             width: { xs: "271", sm: "471px" },
+            alignSelf: "stretch",
           }}
         >
           <Typography
@@ -101,8 +102,8 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           overflowY: { md: "auto" },
           mt: { xs: "-24px", md: 0 },
           bgcolor: "onPrimary",
-          borderTopRightRadius: { xs: "24px", md: 0 },
-          borderTopLeftRadius: { xs: "24px", md: 0 },
+          borderTopRightRadius: { xs: 0, sm: "24px", md: 0 },
+          borderTopLeftRadius: { xs: 0, sm: "24px", md: 0 },
         }}
       >
         <Box
@@ -117,8 +118,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
         >
           <Box
             sx={{
-              marginTop: { xs: "20px", md: "0em" },
-              marginBottom: { xs: "10px", md: "0em" },
+              my: { xs: "32px 0", md: 0 },
             }}
           >
             <LogoApp width={desktopView ? 57 : 37} />
@@ -139,11 +139,11 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
         <Box
           sx={{
             display: "flex",
-            width: { xs: "300px", sm: "360px", md: "560px" },
+            width: { xs: "90%", sm: "360px", md: "560px" },
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            gap: { xs: "18px", md: "48px" },
+            gap: { xs: "32px", md: "48px" },
             flex: 1,
           }}
         >
@@ -177,7 +177,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               sx={{
                 fontStyle: "normal",
                 fontWeight: 400,
-                fontSize: { xs: "12px", sm: "16px" },
+                fontSize: "16px",
                 letterSpacing: "0.17px",
                 lineHeight: "25.6px",
                 color: "var(--onSurface, var(--onSurface, #1B1B1F))",
@@ -268,7 +268,8 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
         <Box
           sx={{
             display: "flex",
-            padding: "var(--2, 16px) var(--3, 24px)",
+            width: { xs: "100%" },
+            p: "48px 0",
             justifyContent: "center",
             alignItems: "center",
             gap: "var(--3, 24px)",
@@ -284,6 +285,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               fontStyle: "normal",
               fontWeight: "400",
               lineHeight: "150%",
+              textAlign: "center",
             }}
           >
             © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
