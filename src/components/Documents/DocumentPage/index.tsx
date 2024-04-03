@@ -47,21 +47,22 @@ function DocumentPage({ document }: Props) {
         }}
       >
         <Tooltip
-          title="Preview"
+          title={`${showPreviews ? "Hide" : "Show"} Preview`}
           enterDelay={500}
-          enterNextDelay={1000}
+          enterNextDelay={500}
         >
           <IconButton
             sx={{
               position: "absolute",
               zIndex: 999,
               top: "150px",
-              left: "20px",
+              left: "22px",
               border: "none",
               p: "16px",
               bgcolor: showPreviews ? "surfaceContainer" : "transparent",
               color: "onSurface",
               ":hover": {
+                bgcolor: showPreviews ? "surfaceContainer" : "transparent",
                 color: "onSurface",
               },
             }}
