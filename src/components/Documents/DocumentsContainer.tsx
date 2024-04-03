@@ -20,6 +20,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
   const handleOpenDocument = async (execution: ExecutionWithTemplate) => {
     let template = execution.template;
     if (!template?.prompts && template?.id) {
+      // TODO: update execution template in executions state and avoid refetch
       template = await getTemplateById(template.id);
     }
     dispatch(

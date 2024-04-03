@@ -12,15 +12,7 @@ import { theme } from "@/theme";
 import Link from "next/link";
 import Edit from "@mui/icons-material/Edit";
 import { formatDate } from "@/common/helpers/timeManipulation";
-
-const PARAMETERS = [
-  { name: "Age", value: 30 },
-  { name: "Gender", value: "male" },
-  { name: "Purpose", value: "maintain my weight and this is long text item" },
-  { name: "Activity level", value: "none" },
-  { name: "Equipment", value: "none" },
-  { name: "Specific requirement", value: "none" },
-];
+import { usePrepareExecutionInputs } from "@/components/Documents/Hooks/usePrepareExecutionInputs";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -28,6 +20,7 @@ interface Props {
 
 function Details({ document }: Props) {
   const template = document.template;
+  const { inputs, params } = usePrepareExecutionInputs(document);
 
   return (
     <Stack
@@ -98,30 +91,46 @@ function Details({ document }: Props) {
         <AccordionDetails>
           <Stack gap={1}>
             <Box sx={inputsContainer}>
-              <Typography sx={instructionTitleStyle}>Motivational Coach</Typography>
-              {PARAMETERS.map(param => (
+              {/* <Typography sx={instructionTitleStyle}>Motivational Coach</Typography> */}
+              {inputs.length > 0 ? (
+                inputs.map(input => (
+                  <Typography
+                    key={input[0]}
+                    fontSize={15}
+                    fontWeight={500}
+                    color={"secondary.main"}
+                    sx={inputStyle}
+                  >
+                    {input[0]}: <span className="val">{input[1] || "none"}</span>
+                  </Typography>
+                ))
+              ) : (
                 <Typography
-                  key={param.name}
                   fontSize={15}
                   fontWeight={500}
-                  color={"secondary.main"}
+                  color={"secondary.light"}
                   sx={inputStyle}
                 >
-                  {param.name}: <span className="val">{param.value}</span>
+                  No instruction specified
                 </Typography>
-              ))}
+              )}
             </Box>
-            <Box sx={inputsContainer}>
-              <Typography sx={instructionTitleStyle}>Contextual parameters</Typography>
-              <Typography
-                fontSize={15}
-                fontWeight={500}
-                color={"secondary.main"}
-                sx={inputStyle}
-              >
-                Tone <span className="val">Professional</span>
-              </Typography>
-            </Box>
+            {params.length > 0 && (
+              <Box sx={inputsContainer}>
+                <Typography sx={instructionTitleStyle}>Contextual parameters</Typography>
+                {params.map(param => (
+                  <Typography
+                    key={param[0]}
+                    fontSize={15}
+                    fontWeight={500}
+                    color={"secondary.main"}
+                    sx={inputStyle}
+                  >
+                    {param[0]}: <span className="val">{param[1] || "none"}</span>
+                  </Typography>
+                ))}
+              </Box>
+            )}
             <Button
               LinkComponent={Link}
               href={`/prompt-builder/${template?.slug}`}
@@ -175,6 +184,12 @@ const inputsContainer = {
 };
 const inputStyle = {
   p: "12px 16px",
+  wordBreak: "break-all",
+  maxHeight: "120px",
+  overflow: "auto",
+  "::-webkit-scrollbar": {
+    display: "none",
+  },
   ".val": { fontWeight: 400 },
   ":not(:last-of-type)": { borderBottom: `1px solid ${theme.palette.surfaceContainerHigh}` },
 };

@@ -2,7 +2,7 @@ import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 
-export interface ExecutionWithTemplate extends Execution {
+export interface ExecutionWithTemplate extends TemplatesExecutions {
   template?: TemplateExecutionsDisplay;
 }
 
@@ -162,8 +162,16 @@ export interface TemplatesExecutions {
   created_at: Date | string;
   prompt_executions?: PromptExecutions[];
   is_favorite: boolean;
-  parameters?: { [key: string]: any };
-  contextual_overrides?: { [key: string]: any };
+  parameters?: {
+    [key: string]: {
+      [key: string]: string;
+    };
+  };
+  contextual_overrides?: {
+    [key: string]: {
+      [key: string]: number;
+    }[];
+  };
   template?: {
     id: number;
     title: string;

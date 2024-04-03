@@ -24,7 +24,8 @@ function DocumentPage({ document }: Props) {
         height: "calc(100svh - 24px)",
         width: "calc(100% - 64px)",
         bgcolor: "surfaceContainerLowest",
-        px: "72px",
+        pl: "72px",
+        pr: "92px",
       }}
     >
       <Header document={document} />

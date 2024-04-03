@@ -52,7 +52,7 @@ function Header({ document }: Props) {
         position: "sticky",
         top: 0,
         bgcolor: "surfaceContainerLowest",
-        p: "24px 32px",
+        p: "24px 0 24px 32px",
         borderBottom: "1px solid",
         borderColor: "surfaceContainerHighest",
       }}

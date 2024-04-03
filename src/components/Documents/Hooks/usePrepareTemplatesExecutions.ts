@@ -1,5 +1,4 @@
 import type { ExecutionWithTemplate, TemplateExecutionsDisplay, TemplatesExecutions } from "@/core/api/dto/templates";
-import { getTemplateById } from "@/hooks/api/templates";
 import { useEffect, useState } from "react";
 
 export const usePrepareTemplatesExecutions = (
