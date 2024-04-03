@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
@@ -26,12 +26,15 @@ function DocumentsPage() {
 
   const { data: templates, isLoading: isTemplatesLoading } = useGetExecutedTemplatesQuery();
 
-  const params: ExecutionsFilterParams = {
-    offset,
-    limit: PAGINATION_LIMIT,
-    engineId: engine?.id,
-    engine_type: contentTypes,
-  };
+  const params: ExecutionsFilterParams = useMemo(
+    () => ({
+      offset,
+      limit: PAGINATION_LIMIT,
+      engineId: engine?.id,
+      engine_type: contentTypes,
+    }),
+    [contentTypes, engine?.id, offset],
+  );
 
   const {
     data: fetchExecutions,
@@ -52,6 +55,10 @@ function DocumentsPage() {
   };
 
   useEffect(() => {
+    setOffset(0);
+  }, [contentTypes, engine?.id]);
+
+  useEffect(() => {
     if (fetchExecutions?.results) {
       if (offset === 0) {
         setExecutions(fetchExecutions?.results);
@@ -61,7 +68,7 @@ function DocumentsPage() {
     }
   }, [fetchExecutions?.results]);
 
-  const lastTemplateElementRef = useCallback(
+  const lastExecutionElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isExecutionsFetching) return;
 
@@ -110,7 +117,6 @@ function DocumentsPage() {
             loading={isExecutionsFetching}
             hasNext={!!fetchExecutions?.next}
             onNextPage={handleNextPage}
-            hasPrev={false}
             buttonText={isExecutionsFetching ? "Loading..." : "Load more"}
             variant="outlined"
             endIcon={
@@ -126,7 +132,7 @@ function DocumentsPage() {
               executions={templatesExecutions}
               isLoading={isTemplatesLoading || isExecutionsLoading}
             />
-            <div ref={lastTemplateElementRef}></div>
+            <div ref={lastExecutionElementRef}></div>
           </TemplatesPaginatedList>
         </Stack>
       </Layout>
