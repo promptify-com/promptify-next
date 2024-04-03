@@ -14,7 +14,6 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import { SORTING_OPTIONS } from "@/components/profile2/Constants";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { SortOption } from "@/components/profile2/Types";
-import type { Templates } from "@/core/api/dto/templates";
 
 function ProfilePromptsReview() {
   const [sortOption, setSortOption] = useState(SORTING_OPTIONS[0]);
@@ -38,7 +37,6 @@ function ProfilePromptsReview() {
     setSortAnchor(null);
   };
 
-  const templates = fetchedTemplates as Templates[];
   const sortOpen = Boolean(sortAnchor);
 
   return (
@@ -64,7 +62,7 @@ function ProfilePromptsReview() {
               gap={2}
               px={"16px"}
             >
-              {templates?.map(template => (
+              {fetchedTemplates?.map(template => (
                 <Box
                   key={template.id}
                   sx={{
