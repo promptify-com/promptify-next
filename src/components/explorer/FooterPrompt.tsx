@@ -56,7 +56,7 @@ function FooterPrompt() {
           <Stack
             flexDirection={{ xs: "column", md: "row" }}
             gap={{ xs: "16px", md: "48px" }}
-            alignItems={"center"}
+            alignItems={{ md: "center" }}
           >
             <Stack flexDirection={"row"}>
               <LogoApp

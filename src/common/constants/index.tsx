@@ -7,25 +7,22 @@ import HomeRounded from "@mui/icons-material/HomeRounded";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
+import PreviewOutlined from "@mui/icons-material/PreviewOutlined";
+
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "@/common/types/deployments";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
-import { Link } from "@/components/Prompt/Types";
 import AccountCircleIcon from "@/assets/icons/AccountCircleIcon";
 import AddCircleIcon from "@/assets/icons/AddCircleIcon";
-
-export interface MenuType {
-  id: number;
-  icon: ReactNode;
-  name: string;
-  href: string;
-}
+import LogoutIcon from "@/assets/icons/LogoutIcon";
+import type { Link } from "@/components/Prompt/Types";
+import type { ProfileLink } from "@/components/SidebarMobile/Types";
 
 export const BLOG_URL = "https://blog.promptify.com/";
 
-export const ProfileMenuItems: MenuType[] = [
+export const ProfileMenuItems: ProfileLink[] = [
   {
     id: 1,
     icon: <AccountCircleIcon />,
@@ -34,15 +31,28 @@ export const ProfileMenuItems: MenuType[] = [
   },
   {
     id: 2,
+    icon: <PreviewOutlined />,
+    href: "/profile/prompts-review",
+    name: "Prompts review",
+  },
+  {
+    id: 3,
     icon: <NoteStackIcon />,
     href: "/profile/prompts",
     name: "My prompts",
   },
   {
-    id: 3,
+    id: 4,
     icon: <AddCircleIcon />,
     href: "/prompt-builder/create",
     name: "Add new prompt",
+  },
+
+  {
+    id: 5,
+    icon: <LogoutIcon />,
+    href: "#",
+    name: "Sign out",
   },
 ];
 
