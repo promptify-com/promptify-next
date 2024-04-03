@@ -80,7 +80,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
   }, [templates?.results]);
 
   const handleNextPage = () => {
-    if (!!templates?.next) {
+    if (templates?.next) {
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
     }
   };

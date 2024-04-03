@@ -8,13 +8,12 @@ import type { ICredential, ICredentialInput, INode } from "@/components/Automati
 
 const useCredentials = () => {
   const dispatch = useAppDispatch();
-  const [credentials, setCredentials] = useState<ICredential[]>(Storage.get("credentials") || []);
-
+  const [credentials, setCredentials] = useState<ICredential[]>(
+    (Storage.get("credentials") as unknown as ICredential[]) || [],
+  );
   const credentialsInput = useAppSelector(state => state.chat.credentialsInput);
   const currentUser = useAppSelector(state => state.user.currentUser);
-
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
-
   const initializeCredentials = (): Promise<ICredential[]> => {
     return new Promise(async resolve => {
       if (!!credentials.length || !currentUser?.id) {
@@ -63,7 +62,7 @@ const useCredentials = () => {
   };
 
   const updateCredentials = (newCredential: ICredential) => {
-    const updatedCredentials = Storage.get("credentials") || [];
+    const updatedCredentials = (Storage.get("credentials") as unknown as ICredential[]) || [];
     updatedCredentials.push(newCredential);
     setCredentials(updatedCredentials);
     Storage.set("credentials", JSON.stringify(updatedCredentials));

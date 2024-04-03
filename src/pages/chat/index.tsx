@@ -61,6 +61,8 @@ function Chat() {
 
   const dynamicTheme = useDynamicColors(selectedTemplate, selectedChat?.thumbnail);
 
+  const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
+
   const handleCreateChat = async () => {
     if (!selectedTemplate) return;
 
@@ -188,7 +190,7 @@ function Chat() {
       setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
     });
     dispatch(setChatMode("automation"));
-    if (selectedChatOption === "QA") {
+    if (isInputStyleQA) {
       setIsInputDisabled(false);
     }
   };
@@ -232,7 +234,7 @@ function Chat() {
   };
 
   const showLanding = !!!messages.length && !selectedTemplate;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
+  const showChatInput = isInputStyleQA || !!selectedExecution || chatMode === "automation";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
@@ -277,7 +279,9 @@ function Chat() {
                   messages={messages}
                   showGenerateButton={showGenerateButton}
                   onAbort={abortConnection}
-                  onGenerate={() => handleGenerateExecution()}
+                  onGenerate={() => {
+                    handleGenerateExecution();
+                  }}
                   stopScrollingToBottom={stopScrollingToBottom}
                 />
               </Stack>

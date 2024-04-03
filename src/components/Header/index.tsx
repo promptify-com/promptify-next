@@ -12,7 +12,7 @@ import { SearchDialog } from "./SearchDialog";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
@@ -235,23 +235,30 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
 
 export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "", setKeyWord }) => {
   const router = useRouter();
+  const theme = useTheme();
   const pathname = router.pathname;
   const { isMobile, clientLoaded } = useBrowser();
 
-  const { isPromptsFiltersSticky, isDocumentsFiltersSticky, isChatHistorySticky, builderSidebarOpen } = useAppSelector(
-    state => state.sidebar,
-  );
+  const {
+    isPromptsFiltersSticky,
+    isDocumentsFiltersSticky,
+    isChatHistorySticky,
+    builderSidebarOpen,
+    isPromptsReviewFiltersSticky,
+  } = useAppSelector(state => state.sidebar);
 
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isEditor = pathname.split("/")[1] === "prompt-builder";
-  const isAccountPage = pathname.split("/")[1] === "profile";
+  const isPromptsReview = pathname.split("/")[2] === "prompts-review";
+  const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
-    (isDocumentsPage && isDocumentsFiltersSticky);
+    (isDocumentsPage && isDocumentsFiltersSticky) ||
+    (isPromptsReview && isPromptsReviewFiltersSticky);
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""} ${
     isAccountPage ? `+ ${AccountSidebarWidth}px` : ""

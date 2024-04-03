@@ -21,7 +21,7 @@ const Login = () => {
 
   if (isValidUser) {
     if (!saveToken) {
-      logoutUser();
+      void logoutUser();
     } else {
       if (path === "no-redirect") {
         deletePathURL();

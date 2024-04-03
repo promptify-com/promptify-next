@@ -11,7 +11,7 @@ import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import TryRounded from "@mui/icons-material/TryRounded";
 
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
@@ -29,9 +29,13 @@ const ChatsDrawerLazy = lazy(() => import("./ChatsHistory/ChatsDrawer"), {
 const DocumentsDrawerLazy = lazy(() => import("./DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
 });
+const PromptsReviewDrawerLazy = lazy(() => import("./PromptsReview/PromptsReviewDrawer"), {
+  ssr: false,
+});
 
 function Sidebar() {
   const router = useRouter();
+  const theme = useTheme();
   const { isMobile } = useBrowser();
   const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;
@@ -39,6 +43,7 @@ function Sidebar() {
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
+  const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -114,6 +119,7 @@ function Sidebar() {
   const promptFilterExpanded = isPromptsPage && mouseHover;
   const chatsExpanded = isChatPage && mouseHover;
   const documentsFilterExpanded = isDocumentsPage && mouseHover;
+  const promptsReviewFilterExpanded = isPromptsReview && mouseHover;
 
   return (
     <Grid
@@ -160,6 +166,7 @@ function Sidebar() {
       {isPromptsPage && <FiltersDrawerLazy expandedOnHover={promptFilterExpanded} />}
       {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
       {isDocumentsPage && <DocumentsDrawerLazy expandedOnHover={documentsFilterExpanded} />}
+      {isPromptsReview && <PromptsReviewDrawerLazy expandedOnHover={promptsReviewFilterExpanded} />}
     </Grid>
   );
 }

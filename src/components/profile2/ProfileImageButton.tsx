@@ -29,7 +29,7 @@ export const ProfileImageButton = () => {
   const onSave = async () => {
     const avatar = getCroppedImage();
 
-    if (avatar) {
+    if (avatar && token) {
       const payload = await updateUserProfile({ token, data: { avatar } }).unwrap();
       dispatch(updateUser(payload));
       setShowCropModal(false);

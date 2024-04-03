@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Palette, createTheme, useTheme } from "@mui/material";
+import { type Palette, createTheme, useTheme } from "@mui/material/styles";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { Category, Templates } from "@/core/api/dto/templates";
@@ -11,16 +11,11 @@ export const useDynamicColors = (template: Templates | Category | undefined, ima
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   useEffect(() => {
-    if (currentUser?.preferences?.theme === "blue") {
-      return;
-    }
-    if (!template) {
+    if (currentUser?.preferences?.theme === "blue" || !template || !image) {
       return;
     }
 
-    if (image) {
-      fetchDynamicColors(image);
-    }
+    fetchDynamicColors(image);
   }, []);
 
   const fetchDynamicColors = (thumbnail: string) => {

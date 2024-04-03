@@ -7,6 +7,7 @@ import HomeRounded from "@mui/icons-material/HomeRounded";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
+import PreviewOutlinedIcon from "@mui/icons-material/PreviewOutlined";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "@/common/types/deployments";
@@ -34,12 +35,18 @@ export const ProfileMenuItems: MenuType[] = [
   },
   {
     id: 2,
+    icon: <PreviewOutlinedIcon />,
+    href: "/profile/prompts-review",
+    name: "Prompts review",
+  },
+  {
+    id: 3,
     icon: <NoteStackIcon />,
     href: "/profile/prompts",
     name: "My prompts",
   },
   {
-    id: 3,
+    id: 4,
     icon: <AddCircleIcon />,
     href: "/prompt-builder/create",
     name: "Add new prompt",

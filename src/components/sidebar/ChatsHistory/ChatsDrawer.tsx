@@ -18,7 +18,7 @@ export default function ChatsDrawer({ expandedOnHover }: Props) {
   };
 
   useEffect(() => {
-    const isChatHistorySticky = Storage.get("isChatHistorySticky");
+    const isChatHistorySticky = Boolean(Storage.get("isChatHistorySticky"));
     if (isChatHistorySticky === null) {
       dispatch(setStickyChatHistory(true));
     } else {

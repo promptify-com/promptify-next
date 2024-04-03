@@ -26,9 +26,9 @@ function PromptsFilters() {
   const { tag, engine, engineType } = useAppSelector(state => state.filters);
 
   useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") || null;
-    const storedTags = Storage.get("tagFilter") || [];
-    const storedEngineType = Storage.get("engineTypeFilter") || "";
+    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
+    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
+    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType) || "";
 
     if (storedEngine) {
       dispatch(setSelectedEngine(storedEngine));

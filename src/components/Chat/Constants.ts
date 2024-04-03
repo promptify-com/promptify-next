@@ -10,15 +10,19 @@ interface ChatOptionData {
 export const CHAT_OPTIONS: ChatOptionData[] = [
   {
     imagePath: "@/pages/chat/images/QA.png",
-    label: "Complete questionary",
+    label: "Questionnaire",
     hint: "Easy for new users",
-    type: "QA",
+    type: "qa",
   },
 
   {
     imagePath: "@/pages/chat/images/fill_prompt.png",
-    label: "Fill prompt instructions",
+    label: "Input form",
     hint: "Better for advanced users",
-    type: "FORM",
+    type: "form",
   },
 ];
+export const CHAT_OPTIONS_MAPPING = {
+  qa: CHAT_OPTIONS[0].label,
+  form: CHAT_OPTIONS[1].label,
+};

@@ -5,7 +5,7 @@ import "@fontsource/space-mono/400.css";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import Script from "next/script";
 import { Provider } from "react-redux";
 import { wrapper } from "@/core/store";
@@ -18,6 +18,7 @@ import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
 import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
+import type { User } from "@/core/api/dto/user";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -30,11 +31,15 @@ function App({ Component, ...rest }: AppProps) {
     const _updateUser = async () => {
       const payload = await store.dispatch(userApi.endpoints.getCurrentUser.initiate(storedToken));
 
-      store.dispatch(updateUser(payload.data!));
+      if (!payload.data) {
+        return;
+      }
+
+      store.dispatch(updateUser(payload.data));
     };
 
     if (!isValidUser && storedToken) {
-      const _currentUser = Storage.get("currentUser");
+      const _currentUser = Storage.get("currentUser") as unknown as User;
 
       if (_currentUser && Object.values(_currentUser).length) {
         store.dispatch(updateUser(_currentUser));
@@ -61,9 +66,9 @@ function App({ Component, ...rest }: AppProps) {
   }, [router]);
 
   useEffect(() => {
-    const viewportMetaTagElement = document?.querySelector("[name=viewport]") as HTMLMetaElement;
+    const viewportMetaTagElement = document.querySelector("[name=viewport]");
 
-    if (navigator.userAgent.indexOf("iPhone") <= -1) {
+    if (viewportMetaTagElement && navigator.userAgent.includes("iPhone")) {
       viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1");
     }
   }, []);

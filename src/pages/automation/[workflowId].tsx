@@ -17,8 +17,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
-import { oAuthTypeMapping } from "@/components/Automation/helpers";
-import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { oAuthTypeMapping, N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
@@ -28,6 +27,7 @@ interface Props {
   workflow: IWorkflow;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -71,7 +71,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
-        .flatMap(node => node.parameters.fields?.values || [])
+        .flatMap(node => node.parameters.fields?.values ?? [])
         .map(value => ({
           name: value.name,
           fullName: value.name,
@@ -96,7 +96,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     const initialQueuedMessages: IMessage[] = [];
 
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type!]);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {

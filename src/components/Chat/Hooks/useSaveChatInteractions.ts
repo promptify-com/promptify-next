@@ -26,15 +26,18 @@ const useSaveChatInteractions = () => {
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
   const [saveBatchingMessages] = useBatchingMessagesMutation();
-  const chatOption = useAppSelector(state => state.chat.selectedChatOption);
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const selectedChatOption = useAppSelector(state => state.chat.selectedChatOption);
 
-  const saveTextAndQuestionMessage = async (message: IMessage, chatId: number) => {
+  const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
+
+  const saveTextMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
     try {
       await saveChatInput({
         chat: chatId,
         text,
-        type: type === "text" ? "text" : "question",
+        type: type === "text" ? "text" : type === "html" ? "html" : "question",
         sender: fromUser ? "user" : "system",
       });
     } catch (error) {
@@ -42,10 +45,11 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatSuggestions = async (templateIds: number[], chatId: number) => {
+  const saveChatSuggestions = async (templateIds: number[], text: string, chatId: number) => {
     try {
       await saveSuggestions({
         chat: chatId,
+        text,
         templates: templateIds,
       });
     } catch (error) {
@@ -58,7 +62,7 @@ const useSaveChatInteractions = () => {
       await saveExecutions({
         chat: chatId,
         execution: executionId,
-        type: chatOption === "QA" ? "qa" : "form",
+        type: isInputStyleQA ? "qa" : "form",
       });
     } catch (error) {
       console.error(error);
@@ -115,7 +119,7 @@ const useSaveChatInteractions = () => {
             _message = {
               chat: chatId,
               execution: executionId,
-              type: chatOption === "QA" ? "qa" : "form",
+              type: isInputStyleQA ? "qa" : "form",
               message_type: "execution",
             } satisfies ISaveChatExecutions;
             break;
@@ -150,6 +154,8 @@ const useSaveChatInteractions = () => {
           type:
             inputMessage.type === "text"
               ? "text"
+              : inputMessage.type === "html"
+              ? "html"
               : inputMessage.text.includes("ready to run")
               ? "readyMessage"
               : "questionInput",
@@ -158,6 +164,7 @@ const useSaveChatInteractions = () => {
         return {
           ...baseMessage,
           templates: suggestionMessage.templates,
+          text: suggestionMessage.text,
           type: "suggestion",
         };
 
@@ -181,7 +188,7 @@ const useSaveChatInteractions = () => {
     }
   }
 
-  return { saveTextAndQuestionMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
+  return { saveTextMessage, saveChatSuggestions, processQueuedMessages, mapApiMessageToIMessage };
 };
 
 export default useSaveChatInteractions;

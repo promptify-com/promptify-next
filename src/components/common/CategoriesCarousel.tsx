@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Slide from "@mui/material/Slide";
 import Avatar from "@mui/material/Avatar";
 
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import useCarousel from "@/hooks/useCarousel";
 import { useAppSelector } from "@/hooks/useStore";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
@@ -42,7 +42,7 @@ function CategoryCarousel({
   } = useCarousel(autoPlay);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  const theme = useTheme();
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
   return (

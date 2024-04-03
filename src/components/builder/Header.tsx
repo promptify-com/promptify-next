@@ -8,13 +8,13 @@ import ModeEdit from "@mui/icons-material/ModeEdit";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 
-import { theme } from "@/theme";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import BaseButton from "@/components/base/BaseButton";
 import BuilderHeaderPlaceholder from "@/components/placeholders/BuilderHeaderPlaceholder";
 import type { TemplateStatus } from "@/core/api/dto/templates";
 import type { BuilderType } from "@/common/types/builder";
+import { useTheme } from "@mui/material/styles";
 
 interface IHeader {
   onSave: () => void;
@@ -29,6 +29,7 @@ interface IHeader {
 
 function Header({ templateLoading, onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) {
   const pathname = usePathname();
+  const theme = useTheme();
 
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
   const [isSaving, setIsSaving] = useState(false);

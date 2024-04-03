@@ -6,6 +6,7 @@ import {
   fetchData,
   prepareQuestions,
   sendMessageAPI,
+  suggestionsMessageText,
 } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import {
@@ -21,23 +22,22 @@ import {
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
+import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import useSaveChatInteractions from "./useSaveChatInteractions";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { saveTextAndQuestionMessage, saveChatSuggestions } = useSaveChatInteractions();
+  const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
   const [createChat] = useCreateChatMutation();
 
   const {
     selectedTemplate,
     isSimulationStreaming,
-    selectedChatOption,
     selectedChat,
     inputs,
     params,
@@ -46,6 +46,7 @@ const useMessageManager = () => {
     initialChat,
     parameterSelected,
     currentExecutionDetails,
+    selectedChatOption,
   } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
@@ -93,7 +94,7 @@ const useMessageManager = () => {
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedTemplate?.title}"` });
     setQueueSavedMessages(newMessages => newMessages.concat(runMessage));
 
-    if (selectedChatOption === "FORM") {
+    if (currentUser?.preferences?.input_style === "form" || selectedChatOption === "form") {
       const formMessage = createMessage({
         type: "form",
         noHeader: true,
@@ -137,6 +138,7 @@ const useMessageManager = () => {
     if (!selectedTemplate || !selectedChatOption) {
       return [[], [], false];
     }
+
     const { inputs, params, promptHasContent, paramsValues } = prepareAndRemoveDuplicateInputs(
       selectedTemplate.prompts,
       selectedTemplate.questions,
@@ -190,12 +192,13 @@ const useMessageManager = () => {
     const userMessage = createMessage({ type: "text", fromUser: true, text: input });
 
     if (chatId) {
-      saveTextAndQuestionMessage(userMessage, chatId);
+      saveTextMessage(userMessage, chatId);
 
       setMessages(prevMessages => prevMessages.concat(userMessage));
       setIsValidatingAnswer(true);
 
       const botMessage: IMessage = createMessage({ type: "html", text: "" });
+
       try {
         const sendMessageResponse = await sendMessageAPI(input);
 
@@ -212,19 +215,20 @@ const useMessageManager = () => {
               const suggestionsMessage = createMessage({
                 type: "suggestion",
                 templates,
-                text: "",
+                text: suggestionsMessageText(sendMessageResponse.output)!,
               });
-              saveChatSuggestions(templateIDs, chatId);
+              saveChatSuggestions(templateIDs, suggestionsMessage.text, chatId);
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
           }
         }
       } catch (err) {
-        botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
+        botMessage.text = "Oops! I couldn't get your request, Please try again.";
       } finally {
         setIsValidatingAnswer(false);
       }
       if (botMessage.text !== "") {
+        saveTextMessage(botMessage, chatId);
         setMessages(prevMessages => prevMessages.concat(botMessage));
       }
     }

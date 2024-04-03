@@ -33,7 +33,7 @@ import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import LoadingOverlay from "./design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import Image from "./design-system/Image";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
@@ -60,6 +60,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 }) => {
   const router = useRouter();
   const pathname = router.pathname;
+  const theme = useTheme();
   const splitPath = pathname.split("/");
   const dispatch = useDispatch();
   const logout = useLogout();

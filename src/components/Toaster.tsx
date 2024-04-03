@@ -18,7 +18,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) 
 
 function Toaster() {
   const dispatch = useAppDispatch();
-  const { open, message, severity, duration, position } = useAppSelector(state => state.toast);
+  const { open, message, severity, duration = 6000, position } = useAppSelector(state => state.toast);
   return (
     <Snackbar
       open={open}

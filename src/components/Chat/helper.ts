@@ -105,3 +105,16 @@ export const createMessage = ({
   template,
   isLatestExecution,
 });
+
+export const suggestionsMessageText = (content?: string) => {
+  if (!content) {
+    return;
+  }
+  return content
+    .replace(
+      /[\(]?(promptify_tpl_id|template([\_\s*]?id)?|with id|workflow([\_\s*]?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)[ \)]?/gi,
+      "",
+    )
+    .replace(/((\,\d+)|#\d+|([\(]?id:\s*\d+[\)]?))/gi, "")
+    .trim();
+};

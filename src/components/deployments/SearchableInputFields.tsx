@@ -97,6 +97,10 @@ export default function SearchableInputField({ name, label, setFieldValue, isDep
           onScroll: (event: SyntheticEvent) => {
             const listboxNode = event.currentTarget;
 
+            if (!listboxNode) {
+              return;
+            }
+
             if (listboxNode.scrollTop + listboxNode.clientHeight === listboxNode.scrollHeight && hasNextData) {
               fetchNextData();
             }

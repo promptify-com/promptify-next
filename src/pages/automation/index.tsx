@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -89,7 +89,7 @@ export default function Automation({ workflows = [] }: Props) {
 
 export async function getServerSideProps({ query }: Props) {
   try {
-    const enable = query.enable === "true" ? true : false;
+    const enable = query.enable === "true";
     const res = await authClient.get(`/api/n8n/workflows/${enable ? "?enabled=true" : ""}`);
     const workflows: IWorkflow[] = res.data;
 
