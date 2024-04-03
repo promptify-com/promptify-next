@@ -6,7 +6,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint '*/**/*.{ts,tsx}'",
+    "lint": "eslint \"*/**/*.{ts,tsx}\"",
     "prepare": "husky install",
     "prettier:fix": "prettier src/**/*.{ts,tsx} --write",
     "analyze:bundle": "source-map-explorer '.next/static/chunks/pages/prompt/*.js'"

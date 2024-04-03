@@ -5,11 +5,10 @@ import ContentWrapper from "@/components/profile2/ContentWrapper";
 import SectionWrapper from "@/components/profile2/SectionWrapper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { CHAT_OPTIONS } from "@/components/Chat/Constants";
+import { CHAT_OPTIONS, CHAT_OPTIONS_MAPPING } from "@/components/Chat/Constants";
 import type { ChatOption } from "@/core/api/dto/chats";
 import { DynamicThemeIcon } from "@/assets/icons/DynamicThemeIcon";
 import Box from "@mui/material/Box";
@@ -19,13 +18,13 @@ import type { UpdateUserPreferences } from "@/core/api/dto/user";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 import { setToast } from "@/core/store/toastSlice";
+import { useEffect, useState } from "react";
 
 function ProfilePreferences() {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-
+  const [chatOption, setChatOption] = useState<ChatOption>((currentUser?.preferences?.input_style as ChatOption) ?? "");
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
-
   const handleChangeInputStyle = async (data: UpdateUserPreferences) => {
     if (!currentUser || isLoadingPreferences) return;
 
@@ -35,11 +34,16 @@ function ProfilePreferences() {
         data,
       }).unwrap();
       dispatch(updateUser({ ...currentUser, preferences }));
+      data.input_style && setChatOption(data.input_style);
       dispatch(setToast({ message: "Preferences have been successfully updated.", severity: "success" }));
     } catch (err) {
       dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
     }
   };
+
+  useEffect(() => {
+    setChatOption((currentUser?.preferences?.input_style as ChatOption) ?? "");
+  }, [currentUser]);
 
   const isBlue = currentUser?.preferences?.theme === "blue";
   const inputStyle = currentUser?.preferences?.input_style?.toUpperCase();
@@ -81,48 +85,56 @@ function ProfilePreferences() {
                   How Promptify will gather instructions
                 </Typography>
               </Stack>
-              <Select
-                value={inputStyle}
-                onChange={e => handleChangeInputStyle({ input_style: e.target.value.toLowerCase() as ChatOption })}
-                displayEmpty
-                MenuProps={{
-                  disableScrollLock: true,
-                  sx: {
-                    ".MuiList-root": {
-                      p: 0,
-                      fontSize: 16,
-                      fontWeight: 400,
-                      color: "onSurface",
-                    },
-                    ".MuiMenuItem-root": {
-                      borderTop: "1px solid #E3E3E3",
-                      gap: 2,
-                      fontSize: 16,
-                      fontWeight: 400,
-                      color: "onSurface",
-                    },
-                  },
-                }}
-                sx={{
-                  flex: 1,
-                  ".MuiSelect-select": {
-                    p: 0,
-                    img: { display: "none" },
-                  },
-                  fieldset: {
-                    border: "none",
-                  },
-                }}
+
+              <Stack
+                alignItems={"flex-end"}
+                flexDirection={"row"}
               >
-                {CHAT_OPTIONS.map(option => (
-                  <MenuItem
-                    key={option.label}
-                    value={option.type}
-                  >
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
+                {CHAT_OPTIONS_MAPPING[chatOption] ?? ""}
+                <Select
+                  value={inputStyle}
+                  onChange={e => handleChangeInputStyle({ input_style: e.target.value.toLowerCase() as ChatOption })}
+                  displayEmpty
+                  MenuProps={{
+                    disableScrollLock: true,
+                    sx: {
+                      ".MuiList-root": {
+                        p: 0,
+                        fontSize: 16,
+                        fontWeight: 400,
+                        color: "onSurface",
+                      },
+                      ".MuiMenuItem-root": {
+                        borderTop: "1px solid #E3E3E3",
+                        gap: 2,
+                        fontSize: 16,
+                        fontWeight: 400,
+                        color: "onSurface",
+                      },
+                    },
+                  }}
+                  sx={{
+                    flex: 1,
+                    ".MuiSelect-select": {
+                      p: 0,
+                      img: { display: "none" },
+                    },
+                    fieldset: {
+                      border: "none",
+                    },
+                  }}
+                >
+                  {CHAT_OPTIONS.map(option => (
+                    <MenuItem
+                      key={option.label}
+                      value={option.type}
+                      disabled={option.type === chatOption}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
             </Stack>
           </SectionWrapper>
           <SectionWrapper title="Appearance">
