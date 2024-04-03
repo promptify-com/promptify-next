@@ -61,13 +61,13 @@ module.exports = {
         // }
         // ],
         "no-restricted-imports": ["error", {
-            "paths": ["@mui/material", "!@mui/material/*"], 
-            "patterns": ["@mui/material/[a-zA-Z]+"] 
+            "paths": ["@mui/material", "!@mui/material/*", "@mui/icons-material", "@mui/icons-material/*"], 
+            "patterns": ["@mui/material/[a-zA-Z]+", "@mui/icons-material/[a-zA-Z]+"] 
         }]
     },
     ignorePatterns: [
         "build",
-        ".eslintrc.json",
+        ".eslintrc.js",
         ".prettierrc.js",
         "src/components",
         "src/hooks",

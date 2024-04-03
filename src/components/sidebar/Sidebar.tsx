@@ -29,6 +29,9 @@ const ChatsDrawerLazy = lazy(() => import("./ChatsHistory/ChatsDrawer"), {
 const DocumentsDrawerLazy = lazy(() => import("./DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
 });
+const PromptsReviewDrawerLazy = lazy(() => import("./PromptsReview/PromptsReviewDrawer"), {
+  ssr: false,
+});
 
 function Sidebar() {
   const router = useRouter();
@@ -40,6 +43,7 @@ function Sidebar() {
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
+  const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -115,6 +119,7 @@ function Sidebar() {
   const promptFilterExpanded = isPromptsPage && mouseHover;
   const chatsExpanded = isChatPage && mouseHover;
   const documentsFilterExpanded = isDocumentsPage && mouseHover;
+  const promptsReviewFilterExpanded = isPromptsReview && mouseHover;
 
   return (
     <Grid
@@ -161,6 +166,7 @@ function Sidebar() {
       {isPromptsPage && <FiltersDrawerLazy expandedOnHover={promptFilterExpanded} />}
       {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
       {isDocumentsPage && <DocumentsDrawerLazy expandedOnHover={documentsFilterExpanded} />}
+      {isPromptsReview && <PromptsReviewDrawerLazy expandedOnHover={promptsReviewFilterExpanded} />}
     </Grid>
   );
 }
