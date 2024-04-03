@@ -53,7 +53,7 @@ const ChatInterface = ({
     return () => currentRef?.removeEventListener("scroll", handleScroll);
   }, [fetchMoreMessages]);
 
-  const showChatOptions = Boolean(selectedTemplate && !currentUser?.preferences?.input_style && !selectedChatOption);
+  const showChatOptions = Boolean(selectedTemplate && !selectedChatOption);
   const showRunButton =
     showGenerateButton && (currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa");
 

@@ -20,8 +20,8 @@ function ChatOptions() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
   const handleOptionClick = async (option: ChatOption) => {
-    if (!currentUser || isLoadingPreferences) return;
     dispatch(setSelectedChatOption(option.type));
+    if (!currentUser || isLoadingPreferences) return;
 
     if (isChecked) {
       const data = { input_style: option.type };
