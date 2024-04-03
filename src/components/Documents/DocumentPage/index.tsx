@@ -7,14 +7,17 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
 import Header from "./Header";
 import Details from "./Details";
+import { useState } from "react";
+import { IconButton, Tooltip } from "@mui/material";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 
 interface Props {
   document: ExecutionWithTemplate;
 }
 
 function DocumentPage({ document }: Props) {
-  const { isMobile } = useBrowser();
-  const dispatch = useAppDispatch();
+  const [showPreviews, setShowPreviews] = useState(false);
 
   const template = document.template;
 
@@ -26,6 +29,7 @@ function DocumentPage({ document }: Props) {
         bgcolor: "surfaceContainerLowest",
         pl: "72px",
         pr: "92px",
+        position: "relative",
       }}
     >
       <Header document={document} />
@@ -42,6 +46,30 @@ function DocumentPage({ document }: Props) {
           },
         }}
       >
+        <Tooltip
+          title="Preview"
+          enterDelay={500}
+          enterNextDelay={1000}
+        >
+          <IconButton
+            sx={{
+              position: "absolute",
+              zIndex: 999,
+              top: "150px",
+              left: "20px",
+              border: "none",
+              p: "16px",
+              bgcolor: showPreviews ? "surfaceContainer" : "transparent",
+              color: "onSurface",
+              ":hover": {
+                color: "onSurface",
+              },
+            }}
+            onClick={() => setShowPreviews(!showPreviews)}
+          >
+            <VisibilityOutlined />
+          </IconButton>
+        </Tooltip>
         <Box
           sx={{
             flex: 3,
@@ -56,7 +84,7 @@ function DocumentPage({ document }: Props) {
           <ExecutionCard
             execution={document}
             promptsData={template?.prompts || []}
-            showPreview={false}
+            showPreview={showPreviews}
             noRepeat
           />
         </Box>
