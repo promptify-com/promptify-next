@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Protected from "@/components/Protected";
 import Box from "@mui/material/Box";
@@ -14,10 +14,13 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import { SORTING_OPTIONS } from "@/components/profile2/Constants";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { SortOption } from "@/components/profile2/Types";
+import { useAppSelector } from "@/hooks/useStore";
+import { redirectToPath } from "@/common/helpers";
 
 function ProfilePromptsReview() {
   const [sortOption, setSortOption] = useState(SORTING_OPTIONS[0]);
   const [sortAnchor, setSortAnchor] = useState<null | HTMLElement>(null);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const {
     templates: fetchedTemplates,
@@ -36,6 +39,12 @@ function ProfilePromptsReview() {
     setSortOption(option);
     setSortAnchor(null);
   };
+
+  useEffect(() => {
+    if (!currentUser?.is_admin) {
+      redirectToPath("/");
+    }
+  }, []);
 
   const sortOpen = Boolean(sortAnchor);
 
