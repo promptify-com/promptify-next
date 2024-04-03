@@ -14,7 +14,7 @@ function ProfileSocialAccounts() {
     <Protected>
       <Layout>
         <ContentWrapper
-          title="My accounts"
+          title="Account connections"
           description="Enhance your experience and unlock personalized features by connecting your accounts. By linking your accounts, our app can securely access relevant information to tailor recommendations and provide a more personalized user experience."
         >
           <Box

@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { theme } from "@/theme";
 import Box from "@mui/material/Box";
-import { AccountSidebarWidth, NavItems } from "./Constants";
+import { AccountSidebarWidth, navItems } from "./Constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useLogout from "@/hooks/useLogout";
@@ -63,7 +63,7 @@ export default function AccountSidebar() {
             },
           }}
         >
-          {NavItems.map((navItem, idx) => (
+          {navItems.map((navItem, idx) => (
             <Stack
               key={idx}
               gap={"1px"}

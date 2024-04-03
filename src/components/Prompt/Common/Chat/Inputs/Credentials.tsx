@@ -23,7 +23,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ICredentialProperty, IStoredWorkflows, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import SigninButton from "@/components/common/buttons/SigninButton";
 
@@ -102,15 +102,15 @@ function Credentials({ input }: Props) {
   );
 
   const updateWorkflowAndStorage = async () => {
-    const storedWorkflows = Storage.get("workflows") || {};
-    const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
+    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+    const workflow = storedWorkflows[workflowId].workflow;
 
-    workflow?.nodes.forEach(node => attachCredentialsToNode(node));
+    (workflow?.nodes ?? []).forEach(node => attachCredentialsToNode(node));
 
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    if (areAllCredentialsStored) {
+    if (areAllCredentialsStored && workflow) {
       try {
         await updateWorkflow({
           workflowId: parseInt(workflowId),

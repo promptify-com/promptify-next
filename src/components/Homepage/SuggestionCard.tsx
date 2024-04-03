@@ -71,102 +71,107 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
 
 const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props) => {
   return (
-    <Stack
-      width={{ xs: "290px", md: "330px", xl: "100%" }}
-      sx={{
-        border: "1px solid",
-        borderColor: "surfaceContainerHighest",
-        borderRadius: "16px",
-        overflow: "hidden",
-        ":hover": {
-          bgcolor: "surfaceContainerHigh",
-        },
-      }}
-      className="suggest-card"
+    <Link
+      href={href}
+      style={{ textDecoration: "none" }}
     >
       <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        minHeight={"80px"}
+        width={{ xs: "290px", md: "330px", xl: "100%" }}
         sx={{
-          p: "16px 8px 16px 24px",
-          borderBottom: "1px solid",
+          border: "1px solid",
           borderColor: "surfaceContainerHighest",
-        }}
-      >
-        <Stack
-          gap={1}
-          flex={1}
-          pr={1}
-        >
-          <Typography
-            fontSize={12}
-            fontWeight={500}
-            lineHeight={"14.4px"}
-            letterSpacing={"2px"}
-            textTransform={"uppercase"}
-            color={"text.secondary"}
-            sx={{
-              opacity: 0.8,
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography
-            fontSize={16}
-            fontWeight={400}
-            lineHeight={"22.4px"}
-            letterSpacing={"0.17px"}
-            color={"text.secondary"}
-          >
-            {description}
-          </Typography>
-        </Stack>
-
-        {avatar}
-      </Stack>
-
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        p={"16px 8px 16px 24px"}
-        sx={{
+          borderRadius: "16px",
+          overflow: "hidden",
           ":hover": {
-            bgcolor: "surfaceContainerHighest",
+            bgcolor: "surfaceContainerHigh",
           },
         }}
+        className="suggest-card"
       >
         <Stack
-          gap={1}
           direction={"row"}
-          alignItems={"center"}
           justifyContent={"space-between"}
-          width={"100%"}
+          alignItems={"center"}
+          minHeight={"80px"}
+          sx={{
+            p: "16px 8px 16px 24px",
+            borderBottom: "1px solid",
+            borderColor: "surfaceContainerHighest",
+          }}
         >
-          <Typography
-            fontSize={16}
-            fontWeight={500}
-            lineHeight={"19.2px"}
-            letterSpacing={"0.17px"}
+          <Stack
+            gap={1}
+            flex={1}
+            pr={1}
           >
-            {actionLabel}
-          </Typography>
-          <Link href={href}>
-            <IconButton
+            <Typography
+              fontSize={12}
+              fontWeight={500}
+              lineHeight={"14.4px"}
+              letterSpacing={"2px"}
+              textTransform={"uppercase"}
+              color={"text.secondary"}
               sx={{
-                border: "none",
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
+                opacity: 0.8,
               }}
             >
-              <ArrowForward />
-            </IconButton>
-          </Link>
+              {title}
+            </Typography>
+            <Typography
+              fontSize={16}
+              fontWeight={400}
+              lineHeight={"22.4px"}
+              letterSpacing={"0.17px"}
+              color={"text.secondary"}
+            >
+              {description}
+            </Typography>
+          </Stack>
+
+          {avatar}
+        </Stack>
+
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          p={"16px 8px 16px 24px"}
+          sx={{
+            ":hover": {
+              bgcolor: "surfaceContainerHighest",
+            },
+          }}
+        >
+          <Stack
+            gap={1}
+            direction={"row"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            width={"100%"}
+          >
+            <Typography
+              fontSize={16}
+              fontWeight={500}
+              lineHeight={"19.2px"}
+              letterSpacing={"0.17px"}
+            >
+              {actionLabel}
+            </Typography>
+            <Link href={href}>
+              <IconButton
+                sx={{
+                  border: "none",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                <ArrowForward />
+              </IconButton>
+            </Link>
+          </Stack>
         </Stack>
       </Stack>
-    </Stack>
+    </Link>
   );
 };
 

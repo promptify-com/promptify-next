@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
 import ContentContainer from "./ContentContainer";
 import { useRef, useEffect, useState } from "react";
-import { ThemeProvider, useTheme } from "@mui/material";
+import { ThemeProvider, useTheme } from "@mui/material/styles";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { updatePopupTemplate, updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";

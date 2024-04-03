@@ -82,6 +82,6 @@ const breadcrumbStyle = {
   letterSpacing: ".2px",
   p: "8px",
   ":hover": {
-    color: theme.palette.text.secondary,
+    color: "rgba(0, 0, 0, 0.6)",
   },
 };

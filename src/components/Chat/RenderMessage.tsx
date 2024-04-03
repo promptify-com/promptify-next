@@ -3,7 +3,7 @@ import Fade from "@mui/material/Fade";
 
 import { useAppDispatch } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
-import TemplateSuggestions from "./Messages/TemplateSuggestions";
+import TemplateSuggestions from "@/components/Chat/Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
 import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox";
 import TemplateMessage from "@/components/Chat/Messages/templateMessage";
@@ -31,12 +31,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
         />
       )}
 
-      {message.type === "html" && (
-        <HtmlMessage
-          message={message}
-          onScrollToBottom={onScrollToBottom}
-        />
-      )}
+      {message.type === "html" && <HtmlMessage message={message} />}
 
       {message.type === "suggestion" && !!message.templates?.length && (
         <Fade
@@ -47,7 +42,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
         >
           <Stack>
             <TemplateSuggestions
-              templates={message.templates}
+              message={message}
               scrollToBottom={onScrollToBottom}
             />
           </Stack>

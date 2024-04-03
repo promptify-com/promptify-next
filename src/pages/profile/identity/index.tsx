@@ -32,6 +32,10 @@ function ProfileIdentity() {
   };
 
   const handleUpdateUser = async (userData: UpdateUserData) => {
+    if (!userData || !token) {
+      return;
+    }
+
     try {
       const user = await updateUserProfile({
         token,
@@ -82,7 +86,7 @@ function ProfileIdentity() {
             <StackedSelect
               name="gender"
               label={"Gender"}
-              value={currentUser?.gender || GENDERS[0]}
+              value={currentUser?.gender ?? GENDERS[0]}
               onChange={e => handleUpdateUser({ gender: e.target.value.toUpperCase() })}
               sx={{
                 ".MuiSelect-select": {

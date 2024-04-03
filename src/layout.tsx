@@ -1,10 +1,10 @@
-import { type ReactNode } from "react";
-import { useRouter } from "next/router";
+import type { ReactNode } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import { useTheme } from "@mui/material/styles";
+import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 
-import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
 import { Header } from "@/components/Header";
 import Sidebar from "@/components/sidebar/Sidebar";
@@ -14,6 +14,7 @@ import AccountSidebar from "@/components/profile2/AccountSidebar";
 export const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = router.pathname;
+  const theme = useTheme();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);

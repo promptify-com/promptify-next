@@ -14,7 +14,7 @@ import type { ChatOption } from "@/core/api/dto/chats";
 import { DynamicThemeIcon } from "@/assets/icons/DynamicThemeIcon";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { alpha } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import type { UpdateUserPreferences } from "@/core/api/dto/user";
 import { useUpdateUserPreferencesMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";

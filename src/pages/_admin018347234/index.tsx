@@ -1,4 +1,5 @@
-import { type MouseEvent, useState } from "react";
+import { useState } from "react";
+import type { MouseEvent } from "react";
 import Storage from "@/common/storage";
 
 export default function Admin() {
@@ -20,7 +21,9 @@ export default function Admin() {
       <input
         type="text"
         value={token}
-        onChange={e => setToken(e.target.value)}
+        onChange={e => {
+          setToken(e.target.value);
+        }}
         placeholder="Paste/type your token here"
         style={{ width: "50%", marginBottom: "10px" }}
       />

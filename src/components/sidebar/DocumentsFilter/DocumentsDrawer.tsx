@@ -18,7 +18,7 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
   };
 
   useEffect(() => {
-    const isDocumentsFiltersSticky = Storage.get("isDocumentsFiltersSticky");
+    const isDocumentsFiltersSticky = Boolean(Storage.get("isDocumentsFiltersSticky"));
     if (isDocumentsFiltersSticky) {
       dispatch(setStickyDocumentsFilters(isDocumentsFiltersSticky));
     }

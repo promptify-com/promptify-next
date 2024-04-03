@@ -11,7 +11,7 @@ import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import Image from "@/components/design-system/Image";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
