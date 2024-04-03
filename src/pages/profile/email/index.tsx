@@ -100,8 +100,12 @@ function ProfileEmail() {
                 label="Communication Email"
                 required
                 value={communicationEmail}
-                onChange={e => setCommunicationEmail(e.target.value)}
-                onClear={() => setCommunicationEmail("")}
+                onChange={e => {
+                  setCommunicationEmail(e.target.value);
+                }}
+                onClear={() => {
+                  setCommunicationEmail("");
+                }}
                 sx={{
                   border: "1px solid",
                   borderColor: "surfaceContainerHighest",

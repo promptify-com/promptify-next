@@ -60,11 +60,11 @@ function ProfilePrompts() {
 
   const formik = useFormik<IEditProfile>({
     initialValues: {
-      first_name: currentUser?.first_name || "",
-      last_name: currentUser?.last_name || "",
-      username: currentUser?.username || "",
-      gender: currentUser?.gender || "",
-      bio: currentUser?.bio || "",
+      first_name: currentUser?.first_name ?? "",
+      last_name: currentUser?.last_name ?? "",
+      username: currentUser?.username ?? "",
+      gender: currentUser?.gender ?? "",
+      bio: currentUser?.bio ?? "",
     },
     enableReinitialize: true,
     onSubmit,
@@ -238,7 +238,9 @@ function ProfilePrompts() {
               noBorder
             >
               <Button
-                onClick={() => console.log("delete account")}
+                onClick={() => {
+                  console.log("delete account");
+                }}
                 sx={{
                   border: "1px solid",
                   borderColor: "surfaceContainerHigh",

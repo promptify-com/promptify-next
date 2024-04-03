@@ -65,7 +65,9 @@ const SignUp = () => {
       {step === 1 && (
         <Questions
           questions={questions}
-          skip={() => setStep(2)}
+          skip={() => {
+            setStep(2);
+          }}
         />
       )}
       {step === 2 && <Finish />}

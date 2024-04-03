@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { SxProps } from "@mui/system";
+import type { SxProps } from "@mui/system";
 import Button from "@mui/material/Button";
 import useSaveFavoriteTemplate from "@/hooks/useSaveFavoriteTemplate";
 import Bookmark from "@mui/icons-material/Bookmark";

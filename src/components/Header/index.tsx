@@ -12,7 +12,7 @@ import { SearchDialog } from "./SearchDialog";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
@@ -235,6 +235,7 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
 
 export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "", setKeyWord }) => {
   const router = useRouter();
+  const theme = useTheme();
   const pathname = router.pathname;
   const { isMobile, clientLoaded } = useBrowser();
 

@@ -11,7 +11,7 @@ import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import TryRounded from "@mui/icons-material/TryRounded";
 
-import { theme } from "@/theme";
+import { useTheme } from "@mui/material/styles";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
@@ -32,6 +32,7 @@ const DocumentsDrawerLazy = lazy(() => import("./DocumentsFilter/DocumentsDrawer
 
 function Sidebar() {
   const router = useRouter();
+  const theme = useTheme();
   const { isMobile } = useBrowser();
   const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;

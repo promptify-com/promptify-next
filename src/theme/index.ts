@@ -1,4 +1,5 @@
-import { Theme, createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 
 interface SurfaceVariants {
   1: string;
@@ -34,7 +35,6 @@ interface CustomPalette {
   surfaceContainer: string;
   surfaceDim: string;
 }
-
 interface CustomTheme {
   custom: {
     defaultSidebarWidth: string;
@@ -48,6 +48,7 @@ interface CustomTheme {
       drawerWidth: string;
     };
   };
+  zIndex?: Record<string, number>;
 }
 
 declare module "@mui/material/styles" {
@@ -57,7 +58,7 @@ declare module "@mui/material/styles" {
   interface ThemeOptions extends CustomTheme {}
 }
 
-export let theme: Theme = createTheme({
+export const customTheme = {
   typography: {
     fontFamily: ["Poppins", "Space Mono"].join(","),
   },
@@ -124,7 +125,9 @@ export let theme: Theme = createTheme({
       drawerWidth: "352px",
     },
   },
-});
+};
+
+export let theme: Theme = createTheme(customTheme);
 
 theme = createTheme(theme, {
   components: {

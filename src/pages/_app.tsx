@@ -5,7 +5,7 @@ import "@fontsource/space-mono/400.css";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import Script from "next/script";
 import { Provider } from "react-redux";
 import { wrapper } from "@/core/store";
@@ -31,7 +31,11 @@ function App({ Component, ...rest }: AppProps) {
     const _updateUser = async () => {
       const payload = await store.dispatch(userApi.endpoints.getCurrentUser.initiate(storedToken));
 
-      store.dispatch(updateUser(payload.data!));
+      if (!payload.data) {
+        return;
+      }
+
+      store.dispatch(updateUser(payload.data));
     };
 
     if (!isValidUser && storedToken) {
@@ -62,9 +66,9 @@ function App({ Component, ...rest }: AppProps) {
   }, [router]);
 
   useEffect(() => {
-    const viewportMetaTagElement = document?.querySelector("[name=viewport]") as HTMLMetaElement;
+    const viewportMetaTagElement = document.querySelector("[name=viewport]");
 
-    if (navigator.userAgent.indexOf("iPhone") <= -1) {
+    if (viewportMetaTagElement && navigator.userAgent.includes("iPhone")) {
       viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1");
     }
   }, []);
