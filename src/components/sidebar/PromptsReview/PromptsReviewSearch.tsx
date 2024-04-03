@@ -4,9 +4,19 @@ import InputBase from "@mui/material/InputBase";
 
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
+import useDebounce from "@/hooks/useDebounce";
+import { useDeferredValue, useEffect, useState } from "react";
 
 export default function PromptsReviewSearch() {
   const dispatch = useAppDispatch();
+  const [textInput, setTextInput] = useState("");
+  const deferredSearchName = useDeferredValue(textInput);
+  const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+
+  useEffect(() => {
+    dispatch(setSelectedKeyword(debouncedSearchName || null));
+  }, [debouncedSearchName, dispatch]);
+
   return (
     <Box
       sx={{
@@ -33,7 +43,7 @@ export default function PromptsReviewSearch() {
       >
         <Search />
         <InputBase
-          onChange={e => dispatch(setSelectedKeyword(e.target.value || null))}
+          onChange={e => setTextInput(e.target.value)}
           placeholder={"Search..."}
           sx={{
             flex: 1,
