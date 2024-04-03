@@ -144,12 +144,12 @@ export const ProfileMenu = () => {
                     sx={{ p: "16px", gap: 1 }}
                   >
                     {ProfileMenuItems.map(item => {
-                      if (item.name === "Prompts review" && !currentUser?.is_admin) {
+                      if (item.href === "/profile/prompts-review" && !currentUser?.is_admin) {
                         return null;
                       }
                       return (
                         <MenuItem
-                          key={item.name}
+                          key={item.href}
                           onClick={() => handleHeaderMenu(item)}
                           sx={{
                             display: "flex",
