@@ -40,11 +40,9 @@ function ProfilePromptsReview() {
     setSortAnchor(null);
   };
 
-  useEffect(() => {
-    if (!currentUser?.is_admin) {
-      redirectToPath("/");
-    }
-  }, []);
+  if (!currentUser?.is_admin) {
+    redirectToPath("/");
+  }
 
   const sortOpen = Boolean(sortAnchor);
 
