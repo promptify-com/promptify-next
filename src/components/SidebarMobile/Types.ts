@@ -9,3 +9,10 @@ export interface Link {
   active: boolean;
   external: boolean;
 }
+
+export interface ProfileLink {
+  id: number;
+  icon: ReactNode;
+  name: string;
+  href: string;
+}
