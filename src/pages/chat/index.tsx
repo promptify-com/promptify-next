@@ -279,7 +279,9 @@ function Chat() {
                   messages={messages}
                   showGenerateButton={showGenerateButton}
                   onAbort={abortConnection}
-                  onGenerate={() => handleGenerateExecution()}
+                  onGenerate={() => {
+                    handleGenerateExecution();
+                  }}
                   stopScrollingToBottom={stopScrollingToBottom}
                 />
               </Stack>

@@ -65,7 +65,9 @@ function ProfilePrompts() {
               gap={1}
             >
               <Button
-                onClick={e => setSortAnchor(e.currentTarget)}
+                onClick={e => {
+                  setSortAnchor(e.currentTarget);
+                }}
                 endIcon={<ArrowDropDown />}
                 sx={{
                   border: "1px solid",
@@ -124,7 +126,9 @@ function ProfilePrompts() {
         <Menu
           anchorEl={sortAnchor}
           open={sortOpen}
-          onClose={() => setSortAnchor(null)}
+          onClose={() => {
+            setSortAnchor(null);
+          }}
           disableScrollLock
           sx={{
             ".MuiList-root": {
@@ -141,7 +145,9 @@ function ProfilePrompts() {
           {SORTING_OPTIONS.map(option => (
             <MenuItem
               key={option.label}
-              onClick={() => handleSelectSort(option)}
+              onClick={() => {
+                handleSelectSort(option);
+              }}
               disabled={sortOption.orderby === option.orderby}
             >
               {option.label}

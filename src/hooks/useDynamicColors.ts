@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Palette, createTheme, useTheme } from "@mui/material";
+import { type Palette, createTheme, useTheme } from "@mui/material/styles";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { Category, Templates } from "@/core/api/dto/templates";

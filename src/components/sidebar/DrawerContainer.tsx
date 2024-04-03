@@ -3,9 +3,8 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MuiDrawer from "@mui/material/Drawer";
-import { styled, Theme, CSSObject } from "@mui/material/styles";
-import { theme } from "@/theme";
-import { ReactNode } from "react";
+import { styled, type Theme, type CSSObject, useTheme } from "@mui/material/styles";
+import type { ReactNode } from "react";
 import { KeyboardTab } from "@mui/icons-material";
 
 const drawerWidth = 255;
@@ -55,6 +54,8 @@ interface Props {
 }
 
 export default function DrawerContainer({ title, expanded, toggleExpand, sticky, children }: Props) {
+  const theme = useTheme();
+
   return (
     <Drawer
       variant={"permanent"}

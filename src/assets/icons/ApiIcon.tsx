@@ -1,5 +1,3 @@
-import React from "react";
-
 export const ApiIcon: React.FC = () => (
   <svg
     width="24"
