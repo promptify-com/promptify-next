@@ -31,6 +31,7 @@ function ProfilePromptsReview() {
     ordering: sortOption.orderby,
     paginatedList: true,
     admin: true,
+    shouldSkip: false,
   });
   const handleSelectSort = (option: SortOption) => {
     setSortOption(option);
@@ -76,7 +77,7 @@ function ProfilePromptsReview() {
                   <TemplateCard
                     template={template}
                     manageActions
-                    displayAvatar
+                    displayCreatorAvatar
                   />
                 </Box>
               ))}

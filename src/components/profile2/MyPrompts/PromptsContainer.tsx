@@ -4,10 +4,10 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Add from "@mui/icons-material/Add";
+import TemplateCardPlaceholder from "@/components/placeholders/TemplateCardPlaceholder";
 
 import { ArrowDropDown } from "@mui/icons-material";
-import { SortOption } from "../Types";
-import TemplateCardPlaceholder from "@/components/placeholders/TemplateCardPlaceholder";
+import type { SortOption } from "@/components/profile2/Types";
 
 interface PromptsContainerProps {
   children?: React.ReactNode;

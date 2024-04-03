@@ -27,7 +27,7 @@ export default function PromptsReviewDrawer({ expandedOnHover }: Props) {
     if (storedPromptsReviewFilter !== null) {
       dispatch(setStickyPromptsReviewFilters(JSON.parse(storedPromptsReviewFilter)));
     }
-  }, [dispatch]);
+  }, []);
 
   const isExpanded = isPromptsReviewFiltersSticky || (expandedOnHover && !isButtonHovered);
 

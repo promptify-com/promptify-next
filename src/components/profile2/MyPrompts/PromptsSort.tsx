@@ -2,13 +2,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
 import { SORTING_OPTIONS } from "@/components/profile2/Constants";
+import type { SortOption } from "@/components/profile2/Types";
 
 interface PromptsSortProps {
   sortAnchor: null | HTMLElement;
   sortOpen: boolean;
   setSortAnchor: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
   handleSelectSort: (option: any) => void;
-  sortOption: any;
+  sortOption: SortOption;
 }
 
 export default function PromptsSort({

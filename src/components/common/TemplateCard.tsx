@@ -19,8 +19,9 @@ import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { useState } from "react";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { setToast } from "@/core/store/toastSlice";
-import { Avatar, Tooltip } from "@mui/material";
-import { ModeEditOutline } from "@mui/icons-material";
+import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
+import ModeEditOutline from "@mui/icons-material/ModeEditOutline";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useRouter } from "next/router";
 import { getTemplateById } from "@/hooks/api/templates";
@@ -30,10 +31,10 @@ interface Props {
   onScrollToBottom?: () => void;
   manageActions?: boolean;
   isEditor?: boolean;
-  displayAvatar?: boolean;
+  displayCreatorAvatar?: boolean;
 }
 
-function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, displayAvatar = false }: Props) {
+function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, displayCreatorAvatar = false }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, likes, executions_count, status } = template;
@@ -270,7 +271,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
           </Stack>
         ) : manageActions ? (
           <>
-            {displayAvatar && (
+            {displayCreatorAvatar && (
               <Avatar
                 src={template.created_by?.avatar}
                 alt={template.created_by?.username}

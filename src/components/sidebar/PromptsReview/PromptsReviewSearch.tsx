@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Search from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
@@ -5,17 +6,15 @@ import InputBase from "@mui/material/InputBase";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import useDebounce from "@/hooks/useDebounce";
-import { useDeferredValue, useEffect, useState } from "react";
 
-export default function PromptsReviewSearch() {
+export default function PromptsReviewSearch({ title }: { title: string | null }) {
   const dispatch = useAppDispatch();
-  const [textInput, setTextInput] = useState("");
-  const deferredSearchName = useDeferredValue(textInput);
-  const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+  const [textInput, setTextInput] = useState(title ?? "");
+  const debouncedSearchName = useDebounce<string>(textInput, 300);
 
   useEffect(() => {
     dispatch(setSelectedKeyword(debouncedSearchName || null));
-  }, [debouncedSearchName, dispatch]);
+  }, [debouncedSearchName]);
 
   return (
     <Box
@@ -36,15 +35,13 @@ export default function PromptsReviewSearch() {
           alignItems: "center",
           gap: "var(--1, 8px)",
           alignSelf: "stretch",
-          mb: "4px",
-          mt: "4px",
-          mx: "8px",
         }}
       >
         <Search />
         <InputBase
           onChange={e => setTextInput(e.target.value)}
           placeholder={"Search..."}
+          value={textInput}
           sx={{
             flex: 1,
             fontSize: "13px",

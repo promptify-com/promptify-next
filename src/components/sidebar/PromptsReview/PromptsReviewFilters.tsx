@@ -9,6 +9,7 @@ import {
   deleteSelectedTag,
   setSelectedEngineType,
   deleteSeletedEngineType,
+  setSelectedKeyword,
 } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -23,7 +24,7 @@ import PromptsReviewSearch from "./PromptsReviewSearch";
 function PromptsReviewFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine, engineType } = useAppSelector(state => state.filters);
+  const { tag, engine, engineType, title } = useAppSelector(state => state.filters);
 
   useEffect(() => {
     const storedEngine = Storage.get("engineFilter") || null;
@@ -42,6 +43,9 @@ function PromptsReviewFilters() {
 
     if (storedEngineType) {
       dispatch(setSelectedEngineType(storedEngineType));
+    }
+    if (title) {
+      dispatch(setSelectedKeyword(title));
     }
   }, []);
 
@@ -86,7 +90,7 @@ function PromptsReviewFilters() {
       gap={2}
       py={"16px"}
     >
-      <PromptsReviewSearch />
+      <PromptsReviewSearch title={title} />
       <Collapsible
         title="Content type"
         key="contentType"
