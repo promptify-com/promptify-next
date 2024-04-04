@@ -5,7 +5,7 @@ import Protected from "@/components/Protected";
 import TemplatesCarousel from "@/components/Documents/TemplatesCarousel";
 import DocumentsContainer from "@/components/Documents/DocumentsContainer";
 import { useGetExecutionsByMeQuery } from "@/core/api/executions";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import type { ExecutionsFilterParams, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
@@ -13,11 +13,19 @@ import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
 import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
+import { alpha } from "@mui/system";
+import { theme } from "@/theme";
+import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
+import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 
 const PAGINATION_LIMIT = 12;
 const SCROLL_THRESHOLD = 24;
 
 function DocumentsPage() {
+  const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const observer = useRef<IntersectionObserver | null>(null);
   const filter = useAppSelector(state => state.documents);
@@ -109,6 +117,33 @@ function DocumentsPage() {
 
   const hasNext = Boolean(fetchExecutions?.next && filteredExecutions.length);
 
+  const activeTemplate = templates?.find(template => template.id === filter.template);
+
+  const templateBreadcrumbs = [
+    <Link
+      href="/sparks"
+      onClick={e => {
+        e.preventDefault();
+        dispatch(setDocumentsTemplate(null));
+      }}
+      sx={breadcrumbStyle}
+    >
+      All Templates
+    </Link>,
+    <Typography
+      key="2"
+      sx={{
+        ...breadcrumbStyle,
+        color: "onSurface",
+        ":hover": {
+          color: "onSurface",
+        },
+      }}
+    >
+      {activeTemplate?.title}
+    </Typography>,
+  ];
+
   return (
     <Protected>
       <Layout>
@@ -116,16 +151,25 @@ function DocumentsPage() {
           gap={3}
           sx={{
             p: "40px 72px",
+            width: "calc(100% - 144px)",
             ...(!isDocumentsFiltersSticky && {
               maxWidth: "1112px",
               m: "auto",
             }),
           }}
         >
-          <TemplatesCarousel
-            templates={templates}
-            isLoading={isTemplatesLoading}
-          />
+          {activeTemplate ? (
+            <Breadcrumbs
+              separator={<ArrowBackIosNew sx={{ fontSize: 14, color: alpha(theme.palette.onSurface, 0.3) }} />}
+            >
+              {templateBreadcrumbs}
+            </Breadcrumbs>
+          ) : (
+            <TemplatesCarousel
+              templates={templates}
+              isLoading={isTemplatesLoading}
+            />
+          )}
           <TemplatesPaginatedList
             loading={isExecutionsFetching}
             hasNext={hasNext}
@@ -163,3 +207,14 @@ export async function getServerSideProps({ params }: any) {
 }
 
 export default DocumentsPage;
+
+const breadcrumbStyle = {
+  color: alpha(theme.palette.onSurface, 0.3),
+  fontSize: 16,
+  fontWeight: 400,
+  letterSpacing: ".2px",
+  p: "8px",
+  ":hover": {
+    color: "rgba(0, 0, 0, 0.6)",
+  },
+};

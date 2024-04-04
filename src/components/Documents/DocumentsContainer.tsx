@@ -15,6 +15,7 @@ interface Props {
 
 export default function DocumentsContainer({ executions = [], isLoading }: Props) {
   const dispatch = useAppDispatch();
+  const filterTemplate = useAppSelector(state => state.documents.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   const handleOpenDocument = async (execution: ExecutionWithTemplate) => {
@@ -39,12 +40,14 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
         gap={1}
         p={"8px 16px"}
       >
-        <Typography
-          fontSize={32}
-          fontWeight={400}
-        >
-          All documents
-        </Typography>
+        {!filterTemplate && (
+          <Typography
+            fontSize={32}
+            fontWeight={400}
+          >
+            All documents
+          </Typography>
+        )}
       </Stack>
       <Grid
         container
