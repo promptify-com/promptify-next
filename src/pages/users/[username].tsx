@@ -9,7 +9,6 @@ import { Layout } from "@/layout";
 import { useGetUserTemplatesQuery } from "@/core/api/user";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
-import FooterPrompt from "@/components/explorer/FooterPrompt";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import UserInformation from "@/components/profile/UserInformation";
 import type { Templates } from "@/core/api/dto/templates";
@@ -17,12 +16,15 @@ import { GetServerSideProps } from "next/types";
 import { authClient } from "@/common/axios";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import { UserProfile } from "@/core/api/dto/user";
+import Footer from "@/components/Footer";
+import useBrowser from "@/hooks/useBrowser";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
 
 function ProfilePage({ user = initialUser }: { user: UserProfile }) {
   const router = useRouter();
+  const { isMobile } = useBrowser();
   const username = router.query.username as string;
 
   return (
@@ -46,7 +48,7 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
           lastName={user.last_name}
         />
       </Stack>
-      <FooterPrompt />
+      {!isMobile && <Footer />}
     </Layout>
   );
 }

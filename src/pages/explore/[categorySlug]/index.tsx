@@ -12,13 +12,15 @@ import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import Image from "@/components/design-system/Image";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { ThemeProvider } from "@mui/material/styles";
-import FooterPrompt from "@/components/explorer/FooterPrompt";
+import Footer from "@/components/Footer";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
+import useBrowser from "@/hooks/useBrowser";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
+  const { isMobile } = useBrowser();
 
   const {
     templates,
@@ -170,7 +172,7 @@ export default function Page({ category }: { category: Category }) {
           <Box py={"40px"}>
             <PopularTemplates catId={category?.id} />
           </Box>
-          <FooterPrompt />
+          {!isMobile && <Footer />}
         </Box>
       </Layout>
     </ThemeProvider>
