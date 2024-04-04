@@ -15,7 +15,7 @@ export const usePrepareExecutionInputs = (execution: ExecutionWithTemplate) => {
     Object.values(execution.parameters ?? {})
       .flatMap(obj => Object.entries(obj))
       .reduce<Record<string, string>>((acc, [key, value]) => {
-        acc[key] = value;
+        acc[key] = typeof value === "object" ? JSON.stringify(value) : value.toString();
         return acc;
       }, {}),
   );

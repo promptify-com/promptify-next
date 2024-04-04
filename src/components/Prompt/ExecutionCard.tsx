@@ -1,6 +1,5 @@
 import React, { useEffect, useState, createRef, RefObject } from "react";
 import Error from "@mui/icons-material/Error";
-import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -14,7 +13,7 @@ import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import ExecutionContentPreview from "./VariantA/ExecutionContentPreview";
 import { isImageOutput } from "./Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
-import FeedbackThumbs from "./Common/FeedbackThumbs";
+import Collapse from "@mui/material/Collapse";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -142,13 +141,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                 if (prompt?.show_output || sparkHashQueryParam) {
                   return (
                     <React.Fragment key={index}>
-                      {showPreview && (
+                      <Collapse in={showPreview}>
                         <ExecutionContentPreview
                           prompt={prompt}
                           answers={answers}
                           execution={execution as TemplatesExecutions}
                         />
-                      )}
+                      </Collapse>
                       <Stack
                         gap={1}
                         sx={{ pb: "24px" }}
