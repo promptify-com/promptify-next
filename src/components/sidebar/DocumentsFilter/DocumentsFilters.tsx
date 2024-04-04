@@ -12,7 +12,7 @@ import { contentTypeItems } from "@/components/sidebar/Constants";
 
 function StatusFilter() {
   const dispatch = useAppDispatch();
-  const status = useAppSelector(state => state.documents.status);
+  const status = useAppSelector(state => state.documents.filter.status);
 
   return (
     <Box>
@@ -69,7 +69,7 @@ function StatusFilter() {
 
 function DocumentsFilters() {
   const dispatch = useAppDispatch();
-  const { engine, contentTypes } = useAppSelector(state => state.documents);
+  const { engine, contentTypes } = useAppSelector(state => state.documents.filter);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
     dispatch(setDocumentsEngine(selectedEngine));

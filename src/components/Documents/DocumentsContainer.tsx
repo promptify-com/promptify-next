@@ -15,7 +15,7 @@ interface Props {
 
 export default function DocumentsContainer({ executions = [], isLoading }: Props) {
   const dispatch = useAppDispatch();
-  const filterTemplate = useAppSelector(state => state.documents.template);
+  const filterTemplate = useAppSelector(state => state.documents.filter.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   const handleOpenDocument = async (execution: ExecutionWithTemplate) => {

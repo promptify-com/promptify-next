@@ -24,7 +24,7 @@ const PAGINATION_LIMIT = 12;
 
 function DocumentsPage() {
   const dispatch = useAppDispatch();
-  const filter = useAppSelector(state => state.documents);
+  const filter = useAppSelector(state => state.documents.filter);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
 

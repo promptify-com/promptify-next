@@ -4,34 +4,38 @@ import { Engine, EngineType } from "@/core/api/dto/templates";
 type StatusType = "draft" | "saved" | null;
 
 interface IState {
-  status: StatusType;
-  contentTypes: EngineType[];
-  engine: Engine | null;
-  template: number | null;
+  filter: {
+    status: StatusType;
+    contentTypes: EngineType[];
+    engine: Engine | null;
+    template: number | null;
+  };
 }
 
 const initialState: IState = {
-  status: null,
-  contentTypes: [],
-  engine: null,
-  template: null,
+  filter: {
+    status: null,
+    contentTypes: [],
+    engine: null,
+    template: null,
+  },
 };
 
 const documentsSlice = createSlice({
-  name: "filters",
+  name: "documents",
   initialState,
   reducers: {
     setDocumentsStatus: (state, action: PayloadAction<StatusType | null>) => {
-      state.status = action.payload;
+      state.filter.status = action.payload;
     },
     setDocumentsContentTypes: (state, action: PayloadAction<EngineType[]>) => {
-      state.contentTypes = action.payload;
+      state.filter.contentTypes = action.payload;
     },
     setDocumentsEngine: (state, action: PayloadAction<Engine | null>) => {
-      state.engine = action.payload;
+      state.filter.engine = action.payload;
     },
     setDocumentsTemplate: (state, action: PayloadAction<number | null>) => {
-      state.template = action.payload;
+      state.filter.template = action.payload;
     },
   },
 });
