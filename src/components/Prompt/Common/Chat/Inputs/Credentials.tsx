@@ -23,7 +23,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ICredentialProperty, IStoredWorkflows } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import SigninButton from "@/components/common/buttons/SigninButton";
 
@@ -102,23 +102,26 @@ function Credentials({ input }: Props) {
   );
 
   const updateWorkflowAndStorage = async () => {
-    const storedWorkflows = Storage.get("workflows") || {};
+    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+    const workflow = storedWorkflows[workflowId].workflow;
 
-    const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
-
-    workflow?.nodes.forEach(node => attachCredentialsToNode(node));
+    (workflow?.nodes ?? []).forEach(node => attachCredentialsToNode(node));
 
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    Storage.set("workflows", JSON.stringify(storedWorkflows));
-
-    if (areAllCredentialsStored) {
+    if (areAllCredentialsStored && workflow) {
       try {
         await updateWorkflow({
           workflowId: parseInt(workflowId),
           data: workflow,
         });
+
+        storedWorkflows[workflowId] = {
+          webhookPath: storedWorkflows[workflowId].webhookPath,
+        };
+
+        Storage.set("workflows", JSON.stringify(storedWorkflows));
       } catch (error) {
         console.error("Error updating workflow:", error);
       }
