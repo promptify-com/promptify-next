@@ -21,15 +21,18 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const isPromptsReviewFiltersSticky = useAppSelector(state => state.sidebar.isPromptsReviewFiltersSticky);
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
-  const isAccountPage = pathname.split("/")[1] === "profile";
+  const isPromptsReview = pathname.split("/")[2] === "prompts-review";
+  const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
-    (isDocumentsPage && isDocumentsFiltersSticky);
+    (isDocumentsPage && isDocumentsFiltersSticky) ||
+    (isPromptsReview && isPromptsReviewFiltersSticky);
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 

@@ -144,33 +144,38 @@ export const ProfileMenu = () => {
                     autoFocusItem={false}
                     sx={{ p: "16px", gap: 1 }}
                   >
-                    {ProfileMenuItems.map(item => (
-                      <MenuItem
-                        key={item.name}
-                        onClick={() => handleHeaderMenu(item)}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          p: "16px 8px 16px 16px",
-                          borderRadius: "16px",
-                          gap: 1,
-                          ":hover": {
-                            bgcolor: "surfaceContainerHighest",
-                          },
-                        }}
-                      >
-                        {item.icon}
-                        <Typography
+                    {ProfileMenuItems.map(item => {
+                      if (item.href === "/profile/prompts-review" && !currentUser?.is_admin) {
+                        return null;
+                      }
+                      return (
+                        <MenuItem
+                          key={item.href}
+                          onClick={() => handleHeaderMenu(item)}
                           sx={{
-                            fontSize: 14,
-                            fontWeight: 400,
-                            color: "onSurface",
+                            display: "flex",
+                            alignItems: "center",
+                            p: "16px 8px 16px 16px",
+                            borderRadius: "16px",
+                            gap: 1,
+                            ":hover": {
+                              bgcolor: "surfaceContainerHighest",
+                            },
                           }}
                         >
-                          {item.name}
-                        </Typography>
-                      </MenuItem>
-                    ))}
+                          {item.icon}
+                          <Typography
+                            sx={{
+                              fontSize: 14,
+                              fontWeight: 400,
+                              color: "onSurface",
+                            }}
+                          >
+                            {item.name}
+                          </Typography>
+                        </MenuItem>
+                      );
+                    })}
                     <MenuItem
                       onClick={() => handleLogout()}
                       sx={{

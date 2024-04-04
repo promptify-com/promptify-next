@@ -9,8 +9,8 @@ import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedTemplate, setAnswers } from "@/core/store/chatSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setSelectedTemplate, setAnswers, setChatMode, setSelectedChatOption } from "@/core/store/chatSlice";
 import IconButton from "@mui/material/IconButton";
 import Edit from "@mui/icons-material/Edit";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
@@ -19,8 +19,9 @@ import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { useState } from "react";
 import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { setToast } from "@/core/store/toastSlice";
-import { Tooltip } from "@mui/material";
-import { ModeEditOutline } from "@mui/icons-material";
+import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
+import ModeEditOutline from "@mui/icons-material/ModeEditOutline";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useRouter } from "next/router";
 import { getTemplateById } from "@/hooks/api/templates";
@@ -30,18 +31,24 @@ interface Props {
   onScrollToBottom?: () => void;
   manageActions?: boolean;
   isEditor?: boolean;
+  displayCreatorAvatar?: boolean;
 }
 
-function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: Props) {
+function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, displayCreatorAvatar = false }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { thumbnail, title, slug, description, likes, executions_count, status } = template;
   const [confirmDelete, setConfirmDelete] = useState(false);
-
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const [deleteTemplate] = useDeleteTemplateMutation();
 
   const handleRunPrompt = () => {
     dispatch(setSelectedTemplate(template));
+
+    if (currentUser?.preferences?.input_style) {
+      dispatch(setSelectedChatOption(currentUser.preferences.input_style));
+    }
+
     dispatch(setAnswers([]));
     setTimeout(() => {
       onScrollToBottom?.();
@@ -269,6 +276,18 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor }: P
           </Stack>
         ) : manageActions ? (
           <>
+            {displayCreatorAvatar && (
+              <Avatar
+                src={template.created_by?.avatar}
+                alt={template.created_by?.username}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  mr: 1,
+                }}
+              />
+            )}
+
             <Button
               onClick={handleNewChat}
               startIcon={<AddCommentOutlined />}

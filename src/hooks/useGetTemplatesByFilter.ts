@@ -14,6 +14,7 @@ interface Props {
   templateLimit?: number;
   paginatedList?: boolean;
   initialStatus?: LowercaseTemplateStatus;
+  shouldSkip?: boolean;
 }
 
 export function useGetTemplatesByFilter({
@@ -24,6 +25,7 @@ export function useGetTemplatesByFilter({
   templateLimit,
   paginatedList = false,
   initialStatus,
+  shouldSkip = true,
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
@@ -56,10 +58,12 @@ export function useGetTemplatesByFilter({
   }
 
   const allFilterParamsNull = areAllStatesNull(filters);
-  const skipFetchingTemplates =
-    ![catId, subCatId, admin, ordering].some(_param => _param) ||
-    !Object.values(filters)?.length ||
-    (ordering === "-likes" && allFilterParamsNull);
+  const skipFetchingTemplates = shouldSkip
+    ? ![catId, subCatId, admin, ordering].some(_param => _param) ||
+      !Object.values(filters)?.length ||
+      (ordering === "-likes" && allFilterParamsNull)
+    : false;
+
   const {
     data: templates,
     isLoading: isTemplatesLoading,
