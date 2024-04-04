@@ -34,7 +34,7 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
         alignItems={"start"}
         pt={{ xs: " 80px", md: "48px" }}
         px={"8px"}
-        width={{ xs: "100%", md: "94%" }}
+        width={{ xs: "auto", md: "94%" }}
         gap={"50px"}
         mx={"auto"}
       >
@@ -96,9 +96,9 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
     <Stack
       gap={2}
       minHeight={"480px"}
-      width={"100%"}
+      width={{ xs: "auto", sm: "100%", md: "100%" }}
       overflow={"hidden"}
-      pr={{ xs: "16px", sm: 0 }}
+      pr={{ sm: 0 }}
       sx={{
         overflowX: "hidden",
         "&::-webkit-scrollbar": {
@@ -107,11 +107,19 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       }}
     >
       <Typography
-        fontSize={24}
-        fontWeight={400}
-        lineHeight={"28.8px"}
-        letterSpacing={"0.17px"}
-        pl={{ md: "15px" }}
+        sx={{
+          color: "var(--onSurface, var(--onSurface, #1D1B1E))",
+          fontFeatureSettings: "'clig' off, 'liga' off",
+          fontFamily: "Poppins",
+          fontSize: "24px",
+          fontStyle: "normal",
+          fontWeight: 400,
+          lineHeight: "120%",
+          letterSpacing: "0.17px",
+          [`@media (min-width: 425px) and (max-width: 430px)`]: {
+            ml: "4px",
+          },
+        }}
       >
         {`Prompts by ${firstName + " " + lastName}`}
       </Typography>
@@ -121,19 +129,19 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
           direction={"row"}
           justifyContent={"center"}
           alignItems={"center"}
+          sx={{
+            ml: { xs: "6em", sm: 0 },
+            [`@media (max-width: 430)`]: {
+              ml: "3em",
+            },
+          }}
         >
           <Typography color={"text.secondary"}>No templates created</Typography>
         </Stack>
       ) : (
         <>
           {templatesLoading ? (
-            <Grid
-              container
-              gap={2}
-              justifyContent={"center"}
-            >
-              <LatestTemplatePlaceholder count={10} />
-            </Grid>
+            <LatestTemplatePlaceholder count={10} />
           ) : (
             <TemplatesPaginatedList
               loading={isFetching}
@@ -153,14 +161,21 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
             >
               <Grid
                 container
-                gap={{ xs: 1, sm: 0 }}
+                columnSpacing={{ xs: 3.5, sm: 1 }}
+                rowSpacing={1}
+                sx={{
+                  [`@media (min-width: 425px) and (max-width: 430px)`]: {
+                    ml: "-24px",
+                  },
+                }}
               >
                 <>
                   {allTemplates?.map(template => (
                     <Grid
                       key={template.id}
                       item
-                      sm={6}
+                      xs={6}
+                      sm={3}
                       md={5}
                       lg={3}
                     >
