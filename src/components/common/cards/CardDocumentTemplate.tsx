@@ -45,6 +45,7 @@ function CardDocumentTemplate({ template, onClick }: CardDocumentTemplateProps) 
               overflow: "hidden",
               width: { xs: 180, md: "100%" },
               height: { xs: 135, md: 191 },
+              maxWidth: "100%",
             }}
           >
             <Image

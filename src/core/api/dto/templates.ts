@@ -19,6 +19,7 @@ export interface FilterParams {
   engine_type?: EngineType[];
   isFavourite?: boolean;
   isInternal?: boolean;
+  template?: number;
 }
 
 export interface SelectedFilters {
@@ -250,7 +251,7 @@ export interface TemplateExecutionsWithPagination {
   results: TemplatesExecutions[];
 }
 
-export type ExecutionsFilterParams = Pick<FilterParams, "limit" | "offset" | "engineId" | "engine_type">;
+export type ExecutionsFilterParams = Pick<FilterParams, "limit" | "offset" | "engineId" | "engine_type" | "template">;
 
 export interface CollectionMutationParams {
   collectionId: number;

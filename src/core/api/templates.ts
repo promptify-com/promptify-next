@@ -20,6 +20,7 @@ export const getSearchParams = (params: FilterParams) => {
   params.tags?.length && params.tags.forEach(tag => searchParams.append("tag", tag.name));
   params.subcategoryId && searchParams.append("sub_category_id", String(params.subcategoryId));
   params.engineId && searchParams.append("engine", String(params.engineId));
+  params.template && searchParams.append("template", String(params.template));
   params.title && searchParams.append("title", params.title);
   params.ordering && searchParams.append("ordering", params.ordering);
   params.limit && searchParams.append("limit", String(params.limit));

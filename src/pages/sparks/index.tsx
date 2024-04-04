@@ -36,8 +36,9 @@ function DocumentsPage() {
       limit: PAGINATION_LIMIT,
       engineId: filter.engine?.id,
       engine_type: filter.contentTypes,
+      template: filter.template ?? undefined,
     }),
-    [filter.contentTypes, filter.engine?.id, offset],
+    [filter.contentTypes, filter.engine?.id, filter.template, offset],
   );
 
   const {
@@ -76,12 +77,9 @@ function DocumentsPage() {
     return templatesExecutions.filter(exec => {
       const isDraft = filter.status === "draft" && !exec.is_favorite;
       const isSaved = filter.status === "saved" && exec.is_favorite;
-      const statusMatch = !filter.status || isDraft || isSaved;
-      const templateMatch = !filter.template || exec.template?.id === filter.template;
-
-      return statusMatch && templateMatch;
+      return !filter.status || isDraft || isSaved;
     });
-  }, [templatesExecutions, filter.status, filter.template]);
+  }, [templatesExecutions, filter.status]);
 
   const sortedTemplates = [...(templates ?? [])].sort(
     ({ executions: executionsA = [] }, { executions: executionsB = [] }) => {
@@ -140,6 +138,9 @@ function DocumentsPage() {
           {activeTemplate ? (
             <Breadcrumbs
               separator={<ArrowBackIosNew sx={{ fontSize: 14, color: alpha(theme.palette.onSurface, 0.3) }} />}
+              sx={{
+                p: { xs: "24px 16px 0", md: 0 },
+              }}
             >
               {templateBreadcrumbs}
             </Breadcrumbs>

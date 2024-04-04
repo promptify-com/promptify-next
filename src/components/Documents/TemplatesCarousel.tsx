@@ -99,11 +99,14 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
               <Grid
                 key={template.id}
                 item
-                xs={12}
-                sm={6}
+                xs={6}
+                sm={4}
                 md={isDocumentsFiltersSticky ? 8 : 6}
                 lg={isDocumentsFiltersSticky ? 4 : 3}
                 xl={3}
+                sx={{
+                  flex: 0,
+                }}
               >
                 <CardDocumentTemplate
                   template={template}
