@@ -116,6 +116,9 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
           fontWeight: 400,
           lineHeight: "120%",
           letterSpacing: "0.17px",
+          [`@media (min-width: 425px) and (max-width: 430px)`]: {
+            ml: "4px",
+          },
         }}
       >
         {`Prompts by ${firstName + " " + lastName}`}
@@ -128,7 +131,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
           alignItems={"center"}
           sx={{
             ml: { xs: "6em", sm: 0 },
-            [`@media (max-width: 424.98px)`]: {
+            [`@media (max-width: 430)`]: {
               ml: "3em",
             },
           }}
@@ -138,13 +141,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       ) : (
         <>
           {templatesLoading ? (
-            <Grid
-              container
-              gap={2}
-              justifyContent={"center"}
-            >
-              <LatestTemplatePlaceholder count={10} />
-            </Grid>
+            <LatestTemplatePlaceholder count={10} />
           ) : (
             <TemplatesPaginatedList
               loading={isFetching}
@@ -164,8 +161,13 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
             >
               <Grid
                 container
-                columnSpacing={{ xs: 4, sm: 1 }}
+                columnSpacing={{ xs: 3.5, sm: 1 }}
                 rowSpacing={1}
+                sx={{
+                  [`@media (min-width: 425px) and (max-width: 430px)`]: {
+                    ml: "-24px",
+                  },
+                }}
               >
                 <>
                   {allTemplates?.map(template => (
