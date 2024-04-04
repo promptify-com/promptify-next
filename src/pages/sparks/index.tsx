@@ -121,6 +121,7 @@ function DocumentsPage() {
 
   const templateBreadcrumbs = [
     <Link
+      key={"0"}
       href="/sparks"
       onClick={e => {
         e.preventDefault();
@@ -131,7 +132,7 @@ function DocumentsPage() {
       All Templates
     </Link>,
     <Typography
-      key="2"
+      key={"1"}
       sx={{
         ...breadcrumbStyle,
         color: "onSurface",

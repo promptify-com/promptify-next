@@ -1,4 +1,4 @@
-import { useEffect, useState, createRef, RefObject } from "react";
+import React, { useEffect, useState, createRef, RefObject } from "react";
 import Error from "@mui/icons-material/Error";
 import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
@@ -141,7 +141,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
 
                 if (prompt?.show_output || sparkHashQueryParam) {
                   return (
-                    <>
+                    <React.Fragment key={index}>
                       {showPreview && (
                         <ExecutionContentPreview
                           prompt={prompt}
@@ -150,7 +150,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         />
                       )}
                       <Stack
-                        key={index}
                         gap={1}
                         sx={{ pb: "24px" }}
                       >
@@ -261,7 +260,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           </>
                         )}
                       </Stack>
-                    </>
+                    </React.Fragment>
                   );
                 }
               })
