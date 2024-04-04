@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -9,31 +10,28 @@ import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import useLogout from "@/hooks/useLogout";
-import { profileLinks } from "@/common/constants";
-import { useSelector } from "react-redux";
-import { RootState } from "@/core/store";
-import { useRef, useState } from "react";
-import defaultAvatar from "@/assets/images/default-avatar.jpg";
+
 import { theme } from "@/theme";
-import LogoutIcon from "@/assets/icons/LogoutIcon";
+import { useAppSelector } from "@/hooks/useStore";
+import useLogout from "@/hooks/useLogout";
+import defaultAvatar from "@/assets/images/default-avatar.jpg";
+import { profileLinks } from "@/common/constants";
 import type { ProfileLink } from "./SidebarMobile/Types";
 
 export const ProfileMenu = () => {
   const router = useRouter();
   const logout = useLogout();
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuShown, setIsMenuShown] = useState(false);
 
-  const handleHeaderMenu = (item: ProfileLink) => {
-    router.push(`${item.href}`);
-    setIsMenuShown(!isMenuShown);
-  };
-
-  const handleLogout = async () => {
-    setIsMenuShown(false);
-    await logout();
+  const handleHeaderMenu = async (link: ProfileLink) => {
+    if (link.href === "/signout") {
+      setIsMenuShown(false);
+      await logout();
+    } else {
+      router.push(link.href);
+    }
   };
 
   const filtredProfileLinks = currentUser?.is_admin
@@ -175,30 +173,6 @@ export const ProfileMenu = () => {
                         </Typography>
                       </MenuItem>
                     ))}
-                    <MenuItem
-                      onClick={() => handleLogout()}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        p: "16px 8px 16px 16px",
-                        borderRadius: "16px",
-                        gap: 1,
-                        ":hover": {
-                          bgcolor: "surfaceContainerHighest",
-                        },
-                      }}
-                    >
-                      <LogoutIcon />
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          fontWeight: 400,
-                          color: "onSurface",
-                        }}
-                      >
-                        Sign out
-                      </Typography>
-                    </MenuItem>
                   </MenuList>
                 </Box>
               </ClickAwayListener>

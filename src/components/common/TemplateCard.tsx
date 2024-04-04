@@ -10,7 +10,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setSelectedTemplate, setAnswers, setChatMode, setSelectedChatOption } from "@/core/store/chatSlice";
+import { setSelectedTemplate, setAnswers, setSelectedChatOption } from "@/core/store/chatSlice";
 import IconButton from "@mui/material/IconButton";
 import Edit from "@mui/icons-material/Edit";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
