@@ -8,6 +8,7 @@ import { useGetMyTemplatesQuery } from "@/core/api/templates";
 import type { TemplatesWithPagination } from "@/core/api/dto/templates";
 import type { ICreateBuilderLink } from "@/components/builder/Types";
 import TemplateCard from "@/components/common/TemplateCard";
+import { isDesktopViewPort } from "@/common/helpers";
 
 const createPageLinks = [
   {
@@ -23,11 +24,16 @@ const createPageLinks = [
 ] satisfies ICreateBuilderLink[];
 
 export default function WelcomeScreen() {
-  const { data: templates, isLoading } = useGetMyTemplatesQuery({
-    ordering: "-created_at",
-    limit: 1,
-    status: "draft",
-  });
+  const desktopView = isDesktopViewPort();
+
+  const { data: templates, isLoading } = useGetMyTemplatesQuery(
+    {
+      ordering: "-created_at",
+      limit: 1,
+      status: "draft",
+    },
+    { skip: !desktopView },
+  );
 
   return (
     <Stack
@@ -36,12 +42,13 @@ export default function WelcomeScreen() {
       gap={"48px"}
       justifyContent={"center"}
       alignItems={"center"}
-      width={{ md: "80%" }}
+      width={{ md: "100%" }}
       mx={{ xs: "16px", md: "auto" }}
+      mb={{ xs: "72px", md: "0" }}
     >
       <Stack
         width={"100%"}
-        gap={3}
+        gap={2}
         justifyContent={"center"}
         alignItems={{ xs: "start", md: "center" }}
         textAlign={{ xs: "start", md: "center" }}
@@ -76,13 +83,13 @@ export default function WelcomeScreen() {
       </Stack>
       <Stack
         gap={"72px"}
-        width={{ md: "80%" }}
+        width={{ xs: "100%", sm: "107svh", md: "80%" }}
+        height={{ xs: "auto", sm: "100svh", md: "auto" }}
       >
         <Stack
           direction={{ xs: "column", sm: "row" }}
           alignItems={{ sm: "center" }}
           justifyContent={"center"}
-          mx={{ xs: "32px", sm: 0 }}
           gap={3}
         >
           {createPageLinks.map(link => (
@@ -92,28 +99,33 @@ export default function WelcomeScreen() {
             />
           ))}
         </Stack>
-        {isLoading && <TemplateSuggestionPlaceholder />}
 
-        {(templates as TemplatesWithPagination)?.results.length > 0 && !isLoading && (
-          <Stack
-            gap={3}
-            direction={"column"}
-            justifyContent={"center"}
-            alignItems={"center"}
-          >
-            <Typography
-              fontSize={16}
-              fontWeight={500}
-              lineHeight={"19.2px"}
-              letterSpacing={"0.17px"}
-            >
-              Continue editing
-            </Typography>
-            <TemplateCard
-              template={(templates as TemplatesWithPagination).results[0]}
-              isEditor
-            />
-          </Stack>
+        {desktopView && (
+          <>
+            {isLoading && <TemplateSuggestionPlaceholder />}
+
+            {(templates as TemplatesWithPagination)?.results.length > 0 && !isLoading && (
+              <Stack
+                gap={3}
+                direction={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Typography
+                  fontSize={16}
+                  fontWeight={500}
+                  lineHeight={"19.2px"}
+                  letterSpacing={"0.17px"}
+                >
+                  Continue editing
+                </Typography>
+                <TemplateCard
+                  template={(templates as TemplatesWithPagination).results[0]}
+                  isEditor
+                />
+              </Stack>
+            )}
+          </>
         )}
       </Stack>
     </Stack>

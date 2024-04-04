@@ -28,6 +28,8 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
+import { isDesktopViewPort } from "@/common/helpers";
+import { DesktopIcon } from "@/assets/icons/DesktopIcon";
 
 export const PromptBuilder = ({ isNewTemplate = false }) => {
   const router = useRouter();
@@ -36,6 +38,8 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const theme = useTheme();
   const [publishTemplate] = usePublishTemplateMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const desktopView = isDesktopViewPort();
 
   const slug = router.query.slug as string;
 
@@ -250,95 +254,152 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
 
   return (
     <Layout>
-      <Box
-        sx={{
-          mt: "-10px",
-          bgcolor: "surface.4",
-          minHeight: "100svh",
-        }}
-      >
-        <Sidebar />
-        <BuilderSidebar
-          prompts={prompts}
-          setPrompts={setPrompts}
-        />
-
+      {desktopView ? (
         <Box
           sx={{
-            mr: builderSidebarOpen ? "352px" : "0px",
+            mt: "-10px",
+            bgcolor: "surface.4",
+            minHeight: "100svh",
           }}
         >
-          <Header
-            templateLoading={isTemplateLoading}
-            status={templateData?.status || "DRAFT"}
-            title={templateData?.title!}
-            templateSlug={templateData?.slug}
-            onPublish={handlePublishTemplate}
-            onSave={handleSaveTemplate}
-            onEditTemplate={() => setTemplateDrawerOpen(true)}
-            type={BUILDER_TYPE.USER}
+          <Sidebar />
+          <BuilderSidebar
+            prompts={prompts}
+            setPrompts={setPrompts}
           />
 
           <Box
             sx={{
-              width: "70%",
-              mx: "auto",
-              p: "24px 0 40px",
-
-              ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
+              mr: builderSidebarOpen ? "352px" : "0px",
             }}
           >
-            <Stack
-              mt={"72px"}
-              gap={1}
-              mb={2}
-            >
-              <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
-              <Typography sx={{ fontSize: 14, fontWeight: 400 }}>{BUILDER_DESCRIPTION}</Typography>
-            </Stack>
+            <Header
+              templateLoading={isTemplateLoading}
+              status={templateData?.status || "DRAFT"}
+              title={templateData?.title!}
+              templateSlug={templateData?.slug}
+              onPublish={handlePublishTemplate}
+              onSave={handleSaveTemplate}
+              onEditTemplate={() => setTemplateDrawerOpen(true)}
+              type={BUILDER_TYPE.USER}
+            />
 
-            <Box>
-              <DndProvider backend={HTML5Backend}>
-                <PromptList
-                  templateLoading={isTemplateLoading}
-                  prompts={prompts}
-                  setPrompts={setPrompts}
-                />
-              </DndProvider>
-            </Box>
-          </Box>
+            <Box
+              sx={{
+                width: "70%",
+                mx: "auto",
+                p: "24px 0 40px",
 
-          {!!templateData && templateDrawerOpen && (
-            <SwipeableDrawer
-              anchor={"left"}
-              open={templateDrawerOpen}
-              onClose={() => setTemplateDrawerOpen(false)}
-              onOpen={() => setTemplateDrawerOpen(true)}
-              PaperProps={{
-                sx: {
-                  width: "430px",
-                  minWidth: "30svw",
-                },
+                ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
               }}
             >
-              <Box
-                sx={{
-                  bgcolor: "#FDFBFF",
-                  p: "24px 32px",
+              <Stack
+                mt={"72px"}
+                gap={1}
+                mb={2}
+              >
+                <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 400 }}>{BUILDER_DESCRIPTION}</Typography>
+              </Stack>
+
+              <Box>
+                <DndProvider backend={HTML5Backend}>
+                  <PromptList
+                    templateLoading={isTemplateLoading}
+                    prompts={prompts}
+                    setPrompts={setPrompts}
+                  />
+                </DndProvider>
+              </Box>
+            </Box>
+
+            {!!templateData && templateDrawerOpen && (
+              <SwipeableDrawer
+                anchor={"left"}
+                open={templateDrawerOpen}
+                onClose={() => setTemplateDrawerOpen(false)}
+                onOpen={() => setTemplateDrawerOpen(true)}
+                PaperProps={{
+                  sx: {
+                    width: "430px",
+                    minWidth: "30svw",
+                  },
                 }}
               >
-                <TemplateForm
-                  type={createMode}
-                  templateData={templateData}
-                  darkMode
-                  onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
-                  onClose={() => setTemplateDrawerOpen(false)}
-                />
-              </Box>
-            </SwipeableDrawer>
-          )}
+                <Box
+                  sx={{
+                    bgcolor: "#FDFBFF",
+                    p: "24px 32px",
+                  }}
+                >
+                  <TemplateForm
+                    type={createMode}
+                    templateData={templateData}
+                    darkMode
+                    onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
+                    onClose={() => setTemplateDrawerOpen(false)}
+                  />
+                </Box>
+              </SwipeableDrawer>
+            )}
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "100vh",
+            backgroundColor: "var(--surfaceContainerLowest, #FDFBFF)",
+            width: { xs: "auto", sm: "107svh", md: "auto" },
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "var(--1, 8px) 16px",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <DesktopIcon />
+            <Typography
+              sx={{
+                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+                textAlign: "center",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Poppins",
+                fontSize: "24px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "120%",
+                letterSpacing: "0.17px",
+              }}
+            >
+              Your browser too small
+            </Typography>
+
+            <Typography
+              sx={{
+                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+                textAlign: "center",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Poppins",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "160%",
+                letterSpacing: "0.17px",
+              }}
+            >
+              Resize your browser to be at least 900px wide to get back into editor
+            </Typography>
+          </Box>
+        </Box>
+      )}
     </Layout>
   );
 };
