@@ -83,7 +83,7 @@ function DocumentsPage() {
     });
   }, [templatesExecutions, filter.status, filter.template]);
 
-  const sortedTemplates = [...(templates || [])].sort(
+  const sortedTemplates = [...(templates ?? [])].sort(
     ({ executions: executionsA = [] }, { executions: executionsB = [] }) => {
       return executionsB.length - executionsA.length;
     },
