@@ -32,7 +32,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={{ xs: 2, md: 3 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -42,7 +42,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
       >
         {!filterTemplate && (
           <Typography
-            fontSize={32}
+            fontSize={{ xs: 24, md: 32 }}
             fontWeight={400}
           >
             All documents
@@ -52,6 +52,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
       <Grid
         container
         rowGap={2}
+        px={{ xs: "16px", md: 0 }}
       >
         {isLoading ? (
           <Stack

@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Grid } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setDocumentsTemplate } from "@/core/store/documentsSlice";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -18,6 +19,7 @@ interface Props {
 
 export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
   const [isCarousel, setIsCarousel] = useState(true);
 
@@ -33,7 +35,10 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   if (isEmpty) return;
 
   return (
-    <Stack gap={3}>
+    <Stack
+      gap={3}
+      py={{ xs: "24px", md: 0 }}
+    >
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -42,7 +47,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
         p={"8px 16px"}
       >
         <Typography
-          fontSize={32}
+          fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
         >
           Top prompts
@@ -53,21 +58,22 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
             alignItems={"center"}
             justifyContent={"space-between"}
             gap={1}
-            sx={{ display: { xs: "none", md: "flex" } }}
           >
             <Button
               onClick={e => setIsCarousel(false)}
               variant="outlined"
-              sx={{ color: "#67677C", visibility: isLoading ? "hidden" : "visible" }}
+              sx={{ color: "onSurface", visibility: isLoading ? "hidden" : "visible" }}
             >
               See all
             </Button>
-            <CarouselButtons
-              scrollPrev={scrollPrev}
-              scrollNext={scrollNext}
-              canScrollNext={true}
-              canScrollPrev={true}
-            />
+            {!isMobile && (
+              <CarouselButtons
+                scrollPrev={scrollPrev}
+                scrollNext={scrollNext}
+                canScrollNext={true}
+                canScrollPrev={true}
+              />
+            )}
           </Stack>
         )}
       </Stack>
@@ -105,7 +111,6 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                     e.preventDefault();
                     handleSelectTemplate(template);
                   }}
-                  active={template.id === activeTemplate}
                 />
               </Grid>
             ))

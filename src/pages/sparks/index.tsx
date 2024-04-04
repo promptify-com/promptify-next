@@ -127,8 +127,10 @@ function DocumentsPage() {
         <Stack
           gap={3}
           sx={{
-            p: "40px 72px",
-            width: "calc(100% - 144px)",
+            p: { md: "40px 72px" },
+            mt: { xs: theme.custom.headerHeight.xs, md: 0 },
+            width: { xs: "100svw", md: "calc(100% - 144px)" },
+            bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
             ...(!isDocumentsFiltersSticky && {
               maxWidth: "1112px",
               m: "auto",
