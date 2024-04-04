@@ -1,17 +1,19 @@
 import Box from "@mui/material/Box";
-import { useSelector } from "react-redux";
+import type { GetServerSideProps } from "next/types";
 import { Layout } from "@/layout";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { GetServerSideProps } from "next/types";
 import { getCategories } from "@/hooks/api/categories";
-import { Category } from "@/core/api/dto/templates";
+import { useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
+import useBrowser from "@/hooks/useBrowser";
 import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 import HomepageLayout from "@/components/Homepage";
-import FooterPrompt from "@/components/explorer/FooterPrompt";
+import Footer from "@/components/Footer";
+import type { Category } from "@/core/api/dto/templates";
 
 const HomePage = ({ categories }: { categories: Category[] }) => {
-  const isValidUser = useSelector(isValidUserFn);
+  const isValidUser = useAppSelector(isValidUserFn);
+  const { isMobile } = useBrowser();
 
   return (
     <Layout>
@@ -21,7 +23,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
         p={{ xs: "16px", md: "42px" }}
       >
         {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
-        <FooterPrompt />
+        {!isMobile && <Footer />}
       </Box>
     </Layout>
   );

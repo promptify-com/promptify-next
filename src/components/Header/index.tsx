@@ -10,7 +10,6 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import SearchBar from "@/components/explorer/SearchBar";
 import { SearchDialog } from "./SearchDialog";
 import { ProfileMenu } from "@/components/ProfileMenu";
-import { SideBarMobile } from "../SideBarMobile";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
@@ -18,6 +17,7 @@ import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import HeaderPlaceholder from "@/components/placeholders/HeaderPlaceholder";
 import { AccountSidebarWidth } from "@/components/profile2/Constants";
+import { SideBarMobile } from "../SidebarMobile";
 
 interface HeaderProps {
   transparent?: boolean;
