@@ -12,6 +12,10 @@ export default function Admin() {
       return;
     }
 
+    Storage.remove("workflows");
+    Storage.remove("credentials");
+    Storage.remove("currentUser");
+    Storage.remove("path");
     Storage.set("token", token);
     setToken("");
   };
