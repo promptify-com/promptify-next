@@ -43,7 +43,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
 
   const slug = router.query.slug as string;
 
-  const { data: engines } = useGetEnginesQuery();
+  const { data: engines } = useGetEnginesQuery(undefined, { skip: !desktopView });
   const { data: fetchedTemplateData, isLoading: isTemplateLoading } = useGetPromptTemplateBySlugQuery(slug, {
     skip: isNewTemplate,
   });
