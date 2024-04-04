@@ -6,7 +6,7 @@ import MenuList from "@mui/material/MenuList";
 
 import { useAppSelector } from "@/hooks/useStore";
 import useLogout from "@/hooks/useLogout";
-import { ProfileMenuItems } from "@/common/constants";
+import { profileLinks } from "@/common/constants";
 import Image from "@/components/design-system/Image";
 import type { ProfileLink } from "@/components/SidebarMobile/Types";
 
@@ -21,7 +21,7 @@ function ProfileLinks({ onCloseDrawer }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const handleHeaderMenu = async (link: ProfileLink) => {
-    if (link.name === "Sign out") {
+    if (link.href === "/signout") {
       await logout();
     } else {
       router.push(link.href);
@@ -29,9 +29,9 @@ function ProfileLinks({ onCloseDrawer }: Props) {
     onCloseDrawer();
   };
 
-  const ProfileMenuItemsFiltered = currentUser?.is_admin
-    ? ProfileMenuItems
-    : ProfileMenuItems.filter(item => item.href !== "/deployments");
+  const filtredProfileLinks = currentUser?.is_admin
+    ? profileLinks
+    : profileLinks.filter(item => item.href !== "/deployments" && item.href !== "/profile/prompts-review");
 
   return (
     <Stack direction={"column"}>
@@ -95,7 +95,7 @@ function ProfileLinks({ onCloseDrawer }: Props) {
         </Stack>
       </Stack>
       <MenuList autoFocusItem={false}>
-        {ProfileMenuItemsFiltered.map(item => (
+        {filtredProfileLinks.map(item => (
           <MenuItem
             key={item.name}
             onClick={() => handleHeaderMenu(item)}

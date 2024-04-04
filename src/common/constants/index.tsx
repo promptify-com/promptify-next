@@ -22,7 +22,7 @@ import type { ProfileLink } from "@/components/SidebarMobile/Types";
 
 export const BLOG_URL = "https://blog.promptify.com/";
 
-export const ProfileMenuItems: ProfileLink[] = [
+export const profileLinks: ProfileLink[] = [
   {
     id: 1,
     icon: <AccountCircleIcon />,
@@ -51,7 +51,7 @@ export const ProfileMenuItems: ProfileLink[] = [
   {
     id: 5,
     icon: <LogoutIcon />,
-    href: "#",
+    href: "/signout",
     name: "Sign out",
   },
 ];
