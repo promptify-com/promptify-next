@@ -33,7 +33,8 @@ const useWorkflow = (workflow: IWorkflow) => {
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
-    const storedWorkflows = Storage.get("workflows") || {};
+    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+
     if (selectedWorkflowId.toString() in storedWorkflows) return;
 
     try {
@@ -41,6 +42,10 @@ const useWorkflow = (workflow: IWorkflow) => {
 
       if (response) {
         webhookPathRef.current = extractWebhookPath(response.nodes);
+
+        if (!webhookPathRef.current) {
+          return;
+        }
 
         const nodesRequiringAuthentication = response.nodes.filter(
           node => (node.parameters?.authentication || oAuthTypeMapping[node.type]) && !node.credentials,
@@ -102,7 +107,7 @@ const useWorkflow = (workflow: IWorkflow) => {
       ? storedWorkflows
       : ((Storage.get("workflows") || {}) as IStoredWorkflows);
 
-    if ("workflow" in _storedWorkflows[workflowId]) {
+    if (_storedWorkflows[workflowId] && "workflow" in _storedWorkflows[workflowId]) {
       const webhookPath = _storedWorkflows[workflowId].webhookPath;
 
       storedWorkflows[workflowId] = { webhookPath };
@@ -114,7 +119,7 @@ const useWorkflow = (workflow: IWorkflow) => {
     let inputsData: Record<string, string> = {};
 
     if (!webhookPathRef.current) {
-      const storedWorkflows = Storage.get("workflows") || {};
+      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
       webhookPathRef.current = storedWorkflows[workflowId].webhookPath;
       removeWorkflowFromStorage(storedWorkflows);
     } else {
