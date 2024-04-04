@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
@@ -8,7 +8,6 @@ import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import type { ExecutionsFilterParams, TemplatesExecutions } from "@/core/api/dto/templates";
-import useBrowser from "@/hooks/useBrowser";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
@@ -22,12 +21,9 @@ import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 
 const PAGINATION_LIMIT = 12;
-const SCROLL_THRESHOLD = 24;
 
 function DocumentsPage() {
   const dispatch = useAppDispatch();
-  const { isMobile } = useBrowser();
-  const observer = useRef<IntersectionObserver | null>(null);
   const filter = useAppSelector(state => state.documents);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
@@ -75,32 +71,6 @@ function DocumentsPage() {
       }
     }
   }, [fetchExecutions?.results]);
-
-  const lastExecutionElementRef = useCallback(
-    (node: HTMLDivElement) => {
-      if (isExecutionsFetching) return;
-
-      if (observer.current) observer.current.disconnect();
-      if (executions.length >= SCROLL_THRESHOLD) {
-        observer.current?.disconnect();
-        return;
-      }
-
-      const rowHeight = isMobile ? 145 : 80;
-      const margin = `${2 * rowHeight}px`;
-
-      observer.current = new IntersectionObserver(
-        entries => {
-          if (entries[0].isIntersecting && !!fetchExecutions?.next) {
-            handleNextPage();
-          }
-        },
-        { rootMargin: margin },
-      );
-      if (node) observer.current.observe(node);
-    },
-    [isExecutionsFetching, !!fetchExecutions?.next, executions.length],
-  );
 
   const filteredExecutions = useMemo(() => {
     return templatesExecutions.filter(exec => {
@@ -190,7 +160,6 @@ function DocumentsPage() {
               executions={filteredExecutions}
               isLoading={isTemplatesLoading || isExecutionsLoading}
             />
-            <div ref={lastExecutionElementRef}></div>
           </TemplatesPaginatedList>
         </Stack>
       </Layout>

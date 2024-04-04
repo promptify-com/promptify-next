@@ -37,7 +37,6 @@ function Details({ document }: Props) {
         </Typography>
         <Stack
           direction={"row"}
-          alignItems={"center"}
           gap={2}
           sx={{
             p: "8px",
@@ -48,23 +47,38 @@ function Details({ document }: Props) {
           <Image
             src={template?.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
             alt={template?.title || "Promptify"}
-            style={{ borderRadius: "24px", objectFit: "cover", width: "103px", height: "77px" }}
+            style={{ borderRadius: "16px", objectFit: "cover", width: "103px", height: "77px" }}
           />
           <Stack
             flex={1}
             gap={1}
+            justifyContent={"space-between"}
           >
             <Typography
               fontSize={16}
               fontWeight={500}
               color={"onSurface"}
+              sx={{
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 2,
+                overflow: "hidden",
+                wordBreak: "break-word",
+              }}
             >
               {template?.title}
             </Typography>
             <Typography
-              fontSize={16}
+              fontSize={14}
               fontWeight={400}
               color={"secondary.light"}
+              sx={{
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 1,
+                overflow: "hidden",
+                wordBreak: "break-word",
+              }}
             >
               {template?.category.name}
             </Typography>

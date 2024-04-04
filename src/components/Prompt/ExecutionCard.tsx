@@ -270,36 +270,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
               </Typography>
             )}
           </Stack>
-          {"title" in execution && !!sortedPrompts.length && (
-            <Box
-              sx={{
-                height: "fit-content",
-                position: "sticky",
-                top: "50px",
-                mr: { md: "-50px" },
-                ml: { md: "20px" },
-              }}
-            >
-              <FeedbackThumbs
-                vertical
-                execution={execution}
-                variant="icon"
-                noRepeat={noRepeat}
-              />
-            </Box>
-          )}
         </Stack>
       )}
     </Stack>
   );
 };
-
-const expandAnimation = keyframes`
-  from { width: 0%; }
-  to { width: 20%; }
-`;
-
-const collapseAnimation = keyframes`
-  from { width: 20%; }
-  to { width: 0%; }
-`;

@@ -110,7 +110,7 @@ function TemplateDocumentModal() {
           onClick={close}
           sx={{
             position: "absolute",
-            top: "24px",
+            top: "40px",
             right: "24px",
             zIndex: 9999,
             border: "none",
