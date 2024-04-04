@@ -24,6 +24,10 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const activeTemplate = useAppSelector(state => state.documents.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
+  const handleSelectTemplate = (template: TemplateExecutionsDisplay) => {
+    dispatch(setDocumentsTemplate(template.id === activeTemplate ? null : template.id));
+  };
+
   const isEmpty = !isLoading && !templates?.length;
 
   if (isEmpty) return;
@@ -99,7 +103,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                   template={template}
                   onClick={e => {
                     e.preventDefault();
-                    dispatch(setDocumentsTemplate(template.id));
+                    handleSelectTemplate(template);
                   }}
                   active={template.id === activeTemplate}
                 />

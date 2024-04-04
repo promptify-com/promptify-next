@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -12,8 +12,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
-import { ExecutionCard } from "./ExecutionCard";
-import DocumentPage from "../Documents/DocumentPage";
+import DocumentPage from "@/components/Documents/DocumentPage";
 
 interface NavigationBoxProps {
   template: Templates | null;

@@ -20,7 +20,7 @@ const SCROLL_THRESHOLD = 24;
 function DocumentsPage() {
   const { isMobile } = useBrowser();
   const observer = useRef<IntersectionObserver | null>(null);
-  const { contentTypes, engine } = useAppSelector(state => state.documents);
+  const filter = useAppSelector(state => state.documents);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
 
@@ -30,10 +30,10 @@ function DocumentsPage() {
     () => ({
       offset,
       limit: PAGINATION_LIMIT,
-      engineId: engine?.id,
-      engine_type: contentTypes,
+      engineId: filter.engine?.id,
+      engine_type: filter.contentTypes,
     }),
-    [contentTypes, engine?.id, offset],
+    [filter.contentTypes, filter.engine?.id, offset],
   );
 
   const {
@@ -56,7 +56,7 @@ function DocumentsPage() {
 
   useEffect(() => {
     setOffset(0);
-  }, [contentTypes, engine?.id]);
+  }, [filter.contentTypes, filter.engine?.id, filter.template, filter.status]);
 
   useEffect(() => {
     if (fetchExecutions?.results) {
@@ -94,7 +94,20 @@ function DocumentsPage() {
     [isExecutionsFetching, !!fetchExecutions?.next, executions.length],
   );
 
+  const filteredExecutions = useMemo(() => {
+    return templatesExecutions.filter(exec => {
+      const isDraft = filter.status === "draft" && !exec.is_favorite;
+      const isSaved = filter.status === "saved" && exec.is_favorite;
+      const statusMatch = !filter.status || isDraft || isSaved;
+      const templateMatch = !filter.template || exec.template?.id === filter.template;
+
+      return statusMatch && templateMatch;
+    });
+  }, [templatesExecutions, filter.status, filter.template]);
+
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
+
+  const hasNext = Boolean(fetchExecutions?.next && filteredExecutions.length);
 
   return (
     <Protected>
@@ -115,7 +128,7 @@ function DocumentsPage() {
           />
           <TemplatesPaginatedList
             loading={isExecutionsFetching}
-            hasNext={!!fetchExecutions?.next}
+            hasNext={hasNext}
             onNextPage={handleNextPage}
             buttonText={isExecutionsFetching ? "Loading..." : "Load more"}
             variant="outlined"
@@ -129,7 +142,7 @@ function DocumentsPage() {
             }
           >
             <DocumentsContainer
-              executions={templatesExecutions}
+              executions={filteredExecutions}
               isLoading={isTemplatesLoading || isExecutionsLoading}
             />
             <div ref={lastExecutionElementRef}></div>

@@ -1,15 +1,11 @@
 import Stack from "@mui/material/Stack";
-import useBrowser from "@/hooks/useBrowser";
 import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Box from "@mui/material/Box";
-import { updatePopupTemplate } from "@/core/store/templatesSlice";
-import { useAppDispatch } from "@/hooks/useStore";
 import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
 import Header from "./Header";
 import Details from "./Details";
 import { useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 
 interface Props {
