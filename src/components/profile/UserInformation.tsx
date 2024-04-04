@@ -47,12 +47,17 @@ function UserInformation({
   return (
     <Stack
       gap={"32px"}
-      width={{ sx: "100%", md: "320px" }}
+      width={{ xs: "100%", md: "320px" }}
+      sx={{
+        justifyContent: { xs: "center", md: "flex-start" },
+        alignItems: { xs: "center", md: "flex-start" },
+        pt: { xs: "24px", md: 0 },
+      }}
     >
       <Box
         position={"relative"}
-        width={"152px"}
-        height={"152px"}
+        width={{ xs: "91.2px", md: "152px" }}
+        height={{ xs: "91.2px", md: "152px" }}
         borderRadius={"999px"}
         overflow={"hidden"}
       >
@@ -63,18 +68,41 @@ function UserInformation({
           fill
         />
       </Box>
-      <Stack>
+      <Stack
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: { xs: "center", md: "flex-start" },
+          alignItems: { xs: "center", md: "flex-start" },
+          gap: "16px",
+        }}
+      >
         <Typography
-          fontSize={24}
-          lineHeight={"28.8px"}
+          sx={{
+            color: "var(--onSurface, var(--onSurface, #1D1B1E))",
+            textAlign: "center",
+            fontFeatureSettings: "'clig' off, 'liga' off",
+            fontFamily: "Poppins",
+            fontSize: "24px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            lineHeight: "120%",
+          }}
         >
           {privateProfile ? "Anonymous" : user.first_name + " " + user.last_name}
         </Typography>
         <Typography
           component={"div"}
-          fontSize={14}
-          fontWeight={400}
-          lineHeight={"22.4px"}
+          sx={{
+            color: "var(--onSurface, var(--onSurface, #1D1B1E))",
+            textAlign: "center",
+            fontFeatureSettings: "'clig' off, 'liga' off",
+            fontFamily: "Poppins",
+            fontSize: "14px",
+            fontStyle: "normal",
+            fontWeight: 400,
+            lineHeight: "160%",
+          }}
         >
           {truncateBio ? (
             <>
@@ -99,7 +127,6 @@ function UserInformation({
         </Typography>
         {!privateProfile && (
           <Typography
-            mt={"16px"}
             fontSize={12}
             fontWeight={500}
             lineHeight={"16.8px"}

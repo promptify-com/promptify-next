@@ -76,8 +76,8 @@ function CardTemplate({
           height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: isDesktop && vertical ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
+          p: isDesktop && vertical ? "16px 16px 8px" : "0 0 8px 0",
+          bgcolor: "transparent",
           ".tags": {
             display: "none",
           },
@@ -95,7 +95,7 @@ function CardTemplate({
           direction={{ xs: "column", md: vertical ? "column" : "row" }}
           alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
           justifyContent={"space-between"}
-          gap={1}
+          gap={{ xs: 0, md: 1 }}
           height={"100%"}
         >
           <Stack
@@ -103,7 +103,7 @@ function CardTemplate({
             justifyContent={{ xs: "flex-start", md: "space-between" }}
             alignItems={vertical ? "flex-start" : "center"}
             flexWrap={"wrap"}
-            gap={2}
+            gap={{ xs: "10px", md: 2 }}
             width={"100%"}
             height={"100%"}
           >
@@ -112,8 +112,8 @@ function CardTemplate({
                 zIndex: 1,
                 borderRadius: "16px",
                 overflow: "hidden",
-                width: { xs: "98px", sm: vertical ? "100%" : "72px" },
-                height: { xs: "73px", sm: vertical ? "160px" : "54px" },
+                width: { xs: "180px", sm: vertical ? "100%" : "72px" },
+                height: { xs: "135px", sm: vertical ? "160px" : "54px" },
               }}
             >
               <Image
@@ -132,18 +132,20 @@ function CardTemplate({
               >
                 {highlightSearchQuery(template.title)}
               </Typography>
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 400,
-                  lineHeight: "16.8px",
-                  letterSpacing: "0.15px",
-                  color: "onSurface",
-                  opacity: vertical ? 0.75 : 1,
-                }}
-              >
-                {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
-              </Typography>
+              {isDesktop && (
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: "16.8px",
+                    letterSpacing: "0.15px",
+                    color: "onSurface",
+                    opacity: vertical ? 0.75 : 1,
+                  }}
+                >
+                  {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
+                </Typography>
+              )}
             </Stack>
             {!vertical && template.created_by && (
               <Image
@@ -170,19 +172,22 @@ function CardTemplate({
                   alignItems={"center"}
                   gap={0.5}
                   sx={iconTextStyle}
+                  mt={{ xs: "-10px", md: 0 }}
                 >
                   <Favorite />
                   {template.favorites_count || 0}
                 </Stack>
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={0.5}
-                  sx={iconTextStyle}
-                >
-                  <Bolt />
-                  {template.likes || template.executions_count || 0}
-                </Stack>
+                {isDesktop && (
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={0.5}
+                    sx={iconTextStyle}
+                  >
+                    <Bolt />
+                    {template.likes || template.executions_count || 0}
+                  </Stack>
+                )}
                 {template.created_by?.username && (
                   <Link
                     href={`/users/${template.created_by?.username}`}
