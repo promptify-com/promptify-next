@@ -25,14 +25,13 @@ export const ProfileMenu = () => {
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuShown, setIsMenuShown] = useState(false);
 
-  const handleHeaderMenu = (item: ProfileLink) => {
-    router.push(`${item.href}`);
-    setIsMenuShown(!isMenuShown);
-  };
-
-  const handleLogout = async () => {
-    setIsMenuShown(false);
-    await logout();
+  const handleHeaderMenu = async (link: ProfileLink) => {
+    if (link.href === "/signout") {
+      setIsMenuShown(false);
+      await logout();
+    } else {
+      router.push(link.href);
+    }
   };
 
   const filtredProfileLinks = currentUser?.is_admin
