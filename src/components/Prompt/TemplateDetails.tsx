@@ -72,7 +72,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
     router.push("/chat");
     dispatch(
       updatePopupTemplate({
-        template: null,
+        data: null,
       }),
     );
   };

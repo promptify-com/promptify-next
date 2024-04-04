@@ -11,7 +11,7 @@ export const usePrepareTemplatesExecutions = (
   const mapExecutionsTemplates = async () => {
     const mappedExecutions = await Promise.all(
       executions.map(async execution => {
-        const templateId = execution.template?.id!;
+        const templateId = execution.template?.id;
 
         let templateData = templates.find(template => template.id === templateId);
 

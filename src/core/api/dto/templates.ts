@@ -173,7 +173,7 @@ export interface TemplatesExecutions {
     }[];
   };
   template?: {
-    id: number;
+    id?: number;
     title: string;
     slug: string;
     thumbnail: string;

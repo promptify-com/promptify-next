@@ -84,7 +84,7 @@ function TemplatePage({ template, popup }: Props) {
   const closeTemplatePopup = () => {
     dispatch(
       updatePopupTemplate({
-        template: null,
+        data: null,
       }),
     );
   };
