@@ -108,7 +108,6 @@ function Details({ document }: Props) {
         <AccordionDetails>
           <Stack gap={1}>
             <Box sx={inputsContainer}>
-              {/* <Typography sx={instructionTitleStyle}>Motivational Coach</Typography> */}
               {inputs.length > 0 ? (
                 inputs.map(input => (
                   <Typography
@@ -124,7 +123,7 @@ function Details({ document }: Props) {
               ) : (
                 <Typography
                   fontSize={14}
-                  fontWeight={500}
+                  fontWeight={400}
                   color={"secondary.light"}
                   sx={inputStyle}
                 >
