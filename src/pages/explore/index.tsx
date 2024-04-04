@@ -19,7 +19,7 @@ import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import useBrowser from "@/hooks/useBrowser";
-import FooterPrompt from "@/components/explorer/FooterPrompt";
+import Footer from "@/components/Footer";
 import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
@@ -257,7 +257,7 @@ export default function ExplorePage({ categories = [] }: Props) {
             )}
           </Box>
         </Grid>
-        <FooterPrompt />
+        {!isMobile && <Footer />}
       </Box>
     </Layout>
   );

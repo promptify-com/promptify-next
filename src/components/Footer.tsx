@@ -1,13 +1,13 @@
-import { LogoApp } from "@/assets/icons/LogoApp";
+import Link from "next/link";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Link from "next/link";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { IconButton } from "@mui/material";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
 const Links = [
   { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
@@ -27,11 +27,12 @@ const socialLinks = [
 
 const thisYear = new Date().getFullYear();
 
-function FooterPrompt() {
+function Footer() {
   return (
     <Stack
-      width={"95%"}
-      margin={"auto"}
+      width={{ md: "95%" }}
+      p={{ xs: "24px", sm: 0 }}
+      margin={{ md: "auto" }}
     >
       <Divider />
       <Stack
@@ -48,15 +49,15 @@ function FooterPrompt() {
         <Stack
           display={"flex"}
           width={"100%"}
-          justifyContent={{ xs: "center", md: "space-between" }}
-          alignItems={"center"}
+          justifyContent={{ xs: "space-between", md: "space-between" }}
+          alignItems={{ md: "center" }}
           flexDirection={{ xs: "column", md: "row" }}
           gap={"24px"}
         >
           <Stack
             flexDirection={{ xs: "column", md: "row" }}
-            gap={{ xs: "16px", md: "48px" }}
-            alignItems={"center"}
+            gap={"48px"}
+            alignItems={{ md: "center" }}
           >
             <Stack flexDirection={"row"}>
               <LogoApp
@@ -72,6 +73,7 @@ function FooterPrompt() {
             </Stack>
             <Stack
               direction={"row"}
+              ml={{ xs: -1.5, m: 0 }}
               alignItems={"center"}
               gap={1}
             >
@@ -81,14 +83,14 @@ function FooterPrompt() {
                   sx={{
                     display: "inline-flex",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: { xs: "between", md: "center" },
                     borderRadius: "99px",
                     transition: "background-color 0.3s",
                     "&:hover": {
                       backgroundColor: "action.hover",
                     },
                   }}
-                  p={"12px 16px"}
+                  p={{ xs: "0px 12px", md: "12px 16px" }}
                 >
                   <Link
                     href={link.href}
@@ -97,11 +99,11 @@ function FooterPrompt() {
                   >
                     <Typography
                       sx={{
-                        fontSize: "16px",
+                        fontSize: { xs: 14, md: 16 },
                         fontWeight: 500,
-                        lineHeight: "150%",
+                        lineHeight: { xs: "170%", md: "150%" },
                         color: "onSurface",
-                        fontFeatureSettings: "'clig' off, 'liga' off",
+                        // fontFeatureSettings: "'clig' off, 'liga' off",
                       }}
                     >
                       {link.title}
@@ -138,21 +140,19 @@ function FooterPrompt() {
           </Stack>
         </Stack>
         <Stack
-          display={"flex"}
+          mt={"24px"}
           width={"100%"}
-          p={"var(--2, 16px) var(--3, 24px)"}
-          alignItems={{ xs: "center", md: "flex-start" }}
+          direction={"row"}
           gap={"24px"}
         >
           <Typography
             sx={{
-              fontSize: 16,
+              fontSize: { xs: 12, md: 16 },
               fontWeight: 400,
               lineHeight: "160%",
               letterSpacing: "0.17px",
-              color: "#575E71",
+              color: "secondary.light",
               fontFeatureSettings: "'clig' off, 'liga' off",
-              textAlign: { xs: "center", md: "left" },
             }}
           >
             © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
@@ -163,4 +163,4 @@ function FooterPrompt() {
   );
 }
 
-export default FooterPrompt;
+export default Footer;

@@ -1,17 +1,20 @@
 import { useRouter } from "next/router";
+import Head from "next/head";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import FooterPrompt from "@/components/explorer/FooterPrompt";
-import UserInformation from "@/components/profile/UserInformation";
 
 import { Layout } from "@/layout";
 import { useGetUserDetailsQuery } from "@/core/api/user";
-import Head from "next/head";
+import useBrowser from "@/hooks/useBrowser";
+import Footer from "@/components/Footer";
+import UserInformation from "@/components/profile/UserInformation";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 
 function PrivateUserProfile() {
   const router = useRouter();
+  const { isMobile } = useBrowser();
+
   const username = router.query.username as string;
   const { data: user = initialUser } = useGetUserDetailsQuery(username, {
     skip: !username,
@@ -73,7 +76,7 @@ function PrivateUserProfile() {
         </Stack>
       </Stack>
 
-      <FooterPrompt />
+      {!isMobile && <Footer />}
     </Layout>
   );
 }

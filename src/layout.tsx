@@ -10,11 +10,14 @@ import { Header } from "@/components/Header";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { AccountSidebarWidth } from "@/components/profile2/Constants";
 import AccountSidebar from "@/components/profile2/AccountSidebar";
+import useBrowser from "./hooks/useBrowser";
+import Footer from "./components/Footer";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = router.pathname;
   const theme = useTheme();
+  const { isMobile } = useBrowser();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
@@ -74,6 +77,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               gap={"16px"}
             >
               {children}
+              {isMobile && !isChatPage && <Footer />}
             </Grid>
           </Box>
         </Box>

@@ -10,13 +10,14 @@ import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import useLogout from "@/hooks/useLogout";
-import { MenuType, ProfileMenuItems } from "@/common/constants";
+import { profileLinks } from "@/common/constants";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useRef, useState } from "react";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
 import { theme } from "@/theme";
 import LogoutIcon from "@/assets/icons/LogoutIcon";
+import type { ProfileLink } from "./SidebarMobile/Types";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -25,8 +26,8 @@ export const ProfileMenu = () => {
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuShown, setIsMenuShown] = useState(false);
 
-  const handleHeaderMenu = (el: MenuType) => {
-    router.push(`${el.href}`);
+  const handleHeaderMenu = (item: ProfileLink) => {
+    router.push(`${item.href}`);
     setIsMenuShown(!isMenuShown);
   };
 
@@ -34,6 +35,10 @@ export const ProfileMenu = () => {
     setIsMenuShown(false);
     await logout();
   };
+
+  const filtredProfileLinks = currentUser?.is_admin
+    ? profileLinks
+    : profileLinks.filter(item => item.href !== "/deployments" && item.href !== "/profile/prompts-review");
 
   return (
     <Box>
@@ -143,38 +148,33 @@ export const ProfileMenu = () => {
                     autoFocusItem={false}
                     sx={{ p: "16px", gap: 1 }}
                   >
-                    {ProfileMenuItems.map(item => {
-                      if (item.href === "/profile/prompts-review" && !currentUser?.is_admin) {
-                        return null;
-                      }
-                      return (
-                        <MenuItem
-                          key={item.href}
-                          onClick={() => handleHeaderMenu(item)}
+                    {filtredProfileLinks.map(item => (
+                      <MenuItem
+                        key={item.href}
+                        onClick={() => handleHeaderMenu(item)}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          p: "16px 8px 16px 16px",
+                          borderRadius: "16px",
+                          gap: 1,
+                          ":hover": {
+                            bgcolor: "surfaceContainerHighest",
+                          },
+                        }}
+                      >
+                        {item.icon}
+                        <Typography
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            p: "16px 8px 16px 16px",
-                            borderRadius: "16px",
-                            gap: 1,
-                            ":hover": {
-                              bgcolor: "surfaceContainerHighest",
-                            },
+                            fontSize: 14,
+                            fontWeight: 400,
+                            color: "onSurface",
                           }}
                         >
-                          {item.icon}
-                          <Typography
-                            sx={{
-                              fontSize: 14,
-                              fontWeight: 400,
-                              color: "onSurface",
-                            }}
-                          >
-                            {item.name}
-                          </Typography>
-                        </MenuItem>
-                      );
-                    })}
+                          {item.name}
+                        </Typography>
+                      </MenuItem>
+                    ))}
                     <MenuItem
                       onClick={() => handleLogout()}
                       sx={{

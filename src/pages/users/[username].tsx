@@ -16,12 +16,15 @@ import { GetServerSideProps } from "next/types";
 import { authClient } from "@/common/axios";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import { UserProfile } from "@/core/api/dto/user";
+import Footer from "@/components/Footer";
+import useBrowser from "@/hooks/useBrowser";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
 
 function ProfilePage({ user = initialUser }: { user: UserProfile }) {
   const router = useRouter();
+  const { isMobile } = useBrowser();
   const username = router.query.username as string;
 
   return (
@@ -45,6 +48,7 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
           lastName={user.last_name}
         />
       </Stack>
+      {!isMobile && <Footer />}
     </Layout>
   );
 }
@@ -160,13 +164,8 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
             >
               <Grid
                 container
-                columnSpacing={{ xs: 6, sm: 1 }}
+                columnSpacing={{ xs: 4, sm: 1 }}
                 rowSpacing={1}
-                sx={{
-                  [`@media (max-width: 424.98px)`]: {
-                    spacing: theme => theme.spacing(1),
-                  },
-                }}
               >
                 <>
                   {allTemplates?.map(template => (

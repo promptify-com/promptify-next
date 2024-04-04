@@ -96,7 +96,7 @@ function UserInformation({
           component={"div"}
           sx={{
             color: "var(--onSurface, var(--onSurface, #1D1B1E))",
-            textAlign: "center",
+            textAlign: { xs: "center", md: "left" },
             fontFeatureSettings: "'clig' off, 'liga' off",
             fontFamily: "Poppins",
             fontSize: "14px",
