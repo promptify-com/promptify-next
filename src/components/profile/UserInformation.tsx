@@ -47,7 +47,9 @@ function UserInformation({
   return (
     <Stack
       gap={"32px"}
-      width={{ sx: "100%", md: "320px" }}
+      width={{ xs: "100%", md: "320px" }}
+      direction={"column"}
+      alignItems={{ xs: "center", md: "start" }}
     >
       <Box
         position={"relative"}
@@ -63,7 +65,11 @@ function UserInformation({
           fill
         />
       </Box>
-      <Stack>
+      <Stack
+        textAlign={{ xs: "center", md: "start" }}
+        px={{ xs: "16px", md: 0 }}
+        gap={2}
+      >
         <Typography
           fontSize={24}
           lineHeight={"28.8px"}
@@ -75,6 +81,9 @@ function UserInformation({
           fontSize={14}
           fontWeight={400}
           lineHeight={"22.4px"}
+          sx={{
+            opacity: { xs: 0.72, md: 1 },
+          }}
         >
           {truncateBio ? (
             <>
@@ -99,7 +108,7 @@ function UserInformation({
         </Typography>
         {!privateProfile && (
           <Typography
-            mt={"16px"}
+            mt={{ md: "16px" }}
             fontSize={12}
             fontWeight={500}
             lineHeight={"16.8px"}

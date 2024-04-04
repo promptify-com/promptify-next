@@ -23,18 +23,9 @@ type CardTemplateProps = {
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
-  bgColor?: string;
-  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({
-  template,
-  query,
-  asResult,
-  vertical,
-  bgColor = "surface.2",
-  showTagsOnHover = false,
-}: CardTemplateProps) {
+function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -64,20 +55,20 @@ function CardTemplate({
     <Link
       href={`/prompt/${template.slug}`}
       style={{
-        flex: isDesktop ? 1 : "none",
-        width: isDesktop ? "auto" : "100%",
+        flex: 1,
+        width: "auto",
         textDecoration: "none",
         position: "relative",
       }}
     >
       <Card
         sx={{
-          minWidth: isDesktop && vertical ? "210px" : "auto",
-          height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
+          minWidth: { xs: "50%", sm: vertical ? "220px" : "auto" },
+          height: vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: isDesktop && vertical ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
+          p: { sm: vertical ? "16px 16px 8px" : "8px" },
+          bgcolor: vertical ? "transparent" : "surface.2",
           ".tags": {
             display: "none",
           },
@@ -92,15 +83,15 @@ function CardTemplate({
         elevation={0}
       >
         <Stack
-          direction={{ xs: "column", md: vertical ? "column" : "row" }}
-          alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
+          direction={vertical ? "column" : "row"}
+          alignItems={vertical ? "flex-start" : "center"}
           justifyContent={"space-between"}
           gap={1}
           height={"100%"}
         >
           <Stack
-            direction={isDesktop && vertical ? "column" : "row"}
-            justifyContent={{ xs: "flex-start", md: "space-between" }}
+            direction={vertical ? "column" : "row"}
+            justifyContent={"space-between"}
             alignItems={vertical ? "flex-start" : "center"}
             flexWrap={"wrap"}
             gap={2}
@@ -112,8 +103,8 @@ function CardTemplate({
                 zIndex: 1,
                 borderRadius: "16px",
                 overflow: "hidden",
-                width: { xs: "98px", sm: vertical ? "100%" : "72px" },
-                height: { xs: "73px", sm: vertical ? "160px" : "54px" },
+                width: vertical ? "100%" : "72px",
+                height: vertical ? "160px" : "54px",
               }}
             >
               <Image
@@ -132,18 +123,20 @@ function CardTemplate({
               >
                 {highlightSearchQuery(template.title)}
               </Typography>
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 400,
-                  lineHeight: "16.8px",
-                  letterSpacing: "0.15px",
-                  color: "onSurface",
-                  opacity: vertical ? 0.75 : 1,
-                }}
-              >
-                {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
-              </Typography>
+              {isDesktop && (
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: "16.8px",
+                    letterSpacing: "0.15px",
+                    color: "onSurface",
+                    opacity: vertical ? 0.75 : 1,
+                  }}
+                >
+                  {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
+                </Typography>
+              )}
             </Stack>
             {!vertical && template.created_by && (
               <Image
@@ -205,8 +198,8 @@ function CardTemplate({
             display={asResult ? "none" : "flex"}
             direction={"row"}
             justifyContent={"space-between"}
-            alignItems={{ xs: "end", md: "center" }}
-            width={{ xs: "100%", md: "auto" }}
+            alignItems={"center"}
+            width={"auto"}
             marginTop={{ xs: vertical ? 0 : "10px", md: "0px" }}
             gap={2}
           >

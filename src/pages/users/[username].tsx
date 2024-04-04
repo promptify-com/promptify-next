@@ -33,10 +33,9 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
         direction={{ xs: "column", md: "row" }}
         alignItems={"start"}
         pt={{ xs: " 80px", md: "48px" }}
-        px={"8px"}
         width={{ xs: "100%", md: "94%" }}
         gap={"50px"}
-        mx={"auto"}
+        mx={{ md: "auto" }}
       >
         <UserInformation
           username={username}
@@ -98,7 +97,6 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       minHeight={"480px"}
       width={"100%"}
       overflow={"hidden"}
-      pr={{ xs: "16px", sm: 0 }}
       sx={{
         overflowX: "hidden",
         "&::-webkit-scrollbar": {
@@ -111,13 +109,13 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
         fontWeight={400}
         lineHeight={"28.8px"}
         letterSpacing={"0.17px"}
-        pl={{ md: "15px" }}
+        px={"16px"}
       >
         {`Prompts by ${firstName + " " + lastName}`}
       </Typography>
       {hasNoTemplates ? (
         <Stack
-          minHeight={"60svh"}
+          minHeight={{ xs: "30svh", md: "60svh" }}
           direction={"row"}
           justifyContent={"center"}
           alignItems={"center"}
@@ -153,24 +151,23 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
             >
               <Grid
                 container
-                gap={{ xs: 1, sm: 0 }}
+                spacing={1}
               >
-                <>
-                  {allTemplates?.map(template => (
-                    <Grid
-                      key={template.id}
-                      item
-                      sm={6}
-                      md={5}
-                      lg={3}
-                    >
-                      <CardTemplate
-                        template={template}
-                        vertical
-                      />
-                    </Grid>
-                  ))}
-                </>
+                {allTemplates?.map(template => (
+                  <Grid
+                    key={template.id}
+                    item
+                    xs={6}
+                    sm={6}
+                    md={5}
+                    lg={3}
+                  >
+                    <CardTemplate
+                      template={template}
+                      vertical
+                    />
+                  </Grid>
+                ))}
               </Grid>
             </TemplatesPaginatedList>
           )}

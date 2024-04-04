@@ -41,8 +41,8 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
       ) : (
         <Grid
           container
-          gap={{ xs: 1, sm: 0 }}
           ml={{ md: -2 }}
+          spacing={1}
         >
           {showAdsBox && (
             <Grid
@@ -63,7 +63,7 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
               <Grid
                 key={template.id}
                 item
-                xs={12}
+                xs={6}
                 sm={6}
                 md={4}
                 lg={3}

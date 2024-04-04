@@ -92,7 +92,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           showAdsBox
         />
 
-        <Stack mr={"16px"}>
+        {/* <Stack mr={{ md: "16px" }}>
           <CategoryCarousel
             categories={categories}
             userScrolled={false}
@@ -101,7 +101,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
             explore
             autoPlay
           />
-        </Stack>
+        </Stack> */}
 
         <Learn />
         <Testimonials />
