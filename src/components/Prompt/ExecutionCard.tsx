@@ -6,7 +6,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";

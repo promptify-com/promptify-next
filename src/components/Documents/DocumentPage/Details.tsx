@@ -82,6 +82,9 @@ function Details({ document }: Props) {
           "::before": { display: "none" },
           ".MuiAccordionSummary-root": {
             p: "16px 8px",
+            fontSize: 14,
+            fontWeight: 500,
+            color: "onSurface",
           },
           ".MuiAccordionSummary-content": { m: "0 !important" },
           ".MuiAccordionDetails-root": { p: 0 },
@@ -96,7 +99,7 @@ function Details({ document }: Props) {
                 inputs.map(input => (
                   <Typography
                     key={input[0]}
-                    fontSize={15}
+                    fontSize={14}
                     fontWeight={500}
                     color={"secondary.main"}
                     sx={inputStyle}
@@ -106,7 +109,7 @@ function Details({ document }: Props) {
                 ))
               ) : (
                 <Typography
-                  fontSize={15}
+                  fontSize={14}
                   fontWeight={500}
                   color={"secondary.light"}
                   sx={inputStyle}
@@ -121,7 +124,7 @@ function Details({ document }: Props) {
                 {params.map(param => (
                   <Typography
                     key={param[0]}
-                    fontSize={15}
+                    fontSize={14}
                     fontWeight={500}
                     color={"secondary.main"}
                     sx={inputStyle}
