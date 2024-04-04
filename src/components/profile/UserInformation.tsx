@@ -75,6 +75,7 @@ function UserInformation({
           justifyContent: { xs: "center", md: "flex-start" },
           alignItems: { xs: "center", md: "flex-start" },
           gap: "16px",
+          p: { xs: "0 24px", md: 0 },
         }}
       >
         <Typography
