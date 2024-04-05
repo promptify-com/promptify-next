@@ -40,7 +40,6 @@ function CardDocumentTemplate({ template, onClick }: CardDocumentTemplateProps) 
         >
           <CardMedia
             sx={{
-              zIndex: 1,
               borderRadius: "16px",
               overflow: "hidden",
               width: { xs: 180, md: "100%" },
