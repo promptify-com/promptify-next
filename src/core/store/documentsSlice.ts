@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Engine, EngineType, ExecutionWithTemplate } from "@/core/api/dto/templates";
+import type { Engine, EngineType } from "@/core/api/dto/templates";
 
 type StatusType = "draft" | "saved" | null;
 
@@ -49,6 +49,18 @@ const documentsSlice = createSlice({
     },
   },
 });
+
+export const countSelectedFilters = (state: IState["filter"]): number => {
+  let count = 0;
+
+  if (state.engine) count += 1;
+  if (state.status) count += 1;
+  if (state.template) count += 1;
+
+  count += state.contentTypes.length;
+
+  return count;
+};
 
 export const {
   setDocumentsStatus,

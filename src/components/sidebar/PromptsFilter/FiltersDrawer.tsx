@@ -6,7 +6,7 @@ import Storage from "@/common/storage";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
 import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
-import { resetFilters } from "@/core/store/filtersSlice";
+import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 
 interface Props {
   expandedOnHover: boolean;
@@ -16,6 +16,8 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
   const dispatch = useAppDispatch();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const filters = useAppSelector(state => state.filters);
+  const filterCount = countSelectedFilters(filters);
 
   const toggleSidebar = () => {
     dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
@@ -38,6 +40,7 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
       >
         <FilterFloatButton
           expanded={isExpanded}
+          count={filterCount}
           onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
           onClose={() => {
             dispatch(resetFilters());

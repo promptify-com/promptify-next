@@ -21,7 +21,7 @@ import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 import lazy from "next/dynamic";
 import useBrowser from "@/hooks/useBrowser";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 
 const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
