@@ -152,6 +152,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
               <Grid
                 container
                 spacing={1}
+                px={{ xs: "16px", md: 0 }}
               >
                 {allTemplates?.map(template => (
                   <Grid

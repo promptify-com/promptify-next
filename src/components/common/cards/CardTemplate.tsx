@@ -23,9 +23,18 @@ type CardTemplateProps = {
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
+  bgColor?: string;
+  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps) {
+function CardTemplate({
+  template,
+  query,
+  asResult,
+  vertical,
+  bgColor = "surface.2",
+  showTagsOnHover = false,
+}: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -55,20 +64,20 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
     <Link
       href={`/prompt/${template.slug}`}
       style={{
-        flex: 1,
-        width: "auto",
+        flex: isDesktop ? 1 : "none",
+        width: isDesktop ? "auto" : "100%",
         textDecoration: "none",
         position: "relative",
       }}
     >
       <Card
         sx={{
-          minWidth: { xs: "50%", sm: vertical ? "220px" : "auto" },
-          height: vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
+          minWidth: { xs: "50%", sm: isDesktop && vertical ? "210px" : "auto" },
+          height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: { sm: vertical ? "16px 16px 8px" : "8px" },
-          bgcolor: vertical ? "transparent" : "surface.2",
+          p: isDesktop && vertical ? "16px 16px 8px" : "0 0 8px 0",
+          bgcolor: "transparent",
           ".tags": {
             display: "none",
           },
@@ -83,18 +92,17 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
         elevation={0}
       >
         <Stack
-          direction={vertical ? "column" : "row"}
-          alignItems={vertical ? "flex-start" : "center"}
+          direction={{ xs: "column", md: vertical ? "column" : "row" }}
+          alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
           justifyContent={"space-between"}
-          gap={1}
+          gap={{ xs: 0, md: 1 }}
           height={"100%"}
         >
           <Stack
             direction={vertical ? "column" : "row"}
-            justifyContent={"space-between"}
+            justifyContent={{ xs: "flex-start", md: "space-between" }}
             alignItems={vertical ? "flex-start" : "center"}
-            flexWrap={"wrap"}
-            gap={2}
+            gap={{ xs: "10px", md: 2 }}
             width={"100%"}
             height={"100%"}
           >
@@ -104,7 +112,7 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                 borderRadius: "16px",
                 overflow: "hidden",
                 width: vertical ? "100%" : "72px",
-                height: vertical ? "160px" : "54px",
+                height: { xs: "135px", sm: vertical ? "160px" : "54px" },
               }}
             >
               <Image
@@ -156,7 +164,8 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                 direction={"row"}
                 alignItems={"center"}
                 gap={1}
-                width={"100%"}
+                width={{ xs: "auto", md: "100%" }}
+                mt={{ xs: "-10px", md: 0 }}
               >
                 <Stack
                   direction={"row"}
@@ -167,15 +176,17 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                   <Favorite />
                   {template.favorites_count || 0}
                 </Stack>
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={0.5}
-                  sx={iconTextStyle}
-                >
-                  <Bolt />
-                  {template.likes || template.executions_count || 0}
-                </Stack>
+                {isDesktop && (
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={0.5}
+                    sx={iconTextStyle}
+                  >
+                    <Bolt />
+                    {template.likes || template.executions_count || 0}
+                  </Stack>
+                )}
                 {template.created_by?.username && (
                   <Link
                     href={`/users/${template.created_by?.username}`}
@@ -198,8 +209,8 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
             display={asResult ? "none" : "flex"}
             direction={"row"}
             justifyContent={"space-between"}
-            alignItems={"center"}
-            width={"auto"}
+            alignItems={{ xs: "end", md: "center" }}
+            width={{ xs: "100%", md: "auto" }}
             marginTop={{ xs: vertical ? 0 : "10px", md: "0px" }}
             gap={2}
           >
