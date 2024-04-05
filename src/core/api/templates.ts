@@ -1,6 +1,6 @@
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
-import {
+import type {
   FilterParams,
   IFeedback,
   IPostFeedback,
@@ -8,17 +8,19 @@ import {
   Templates,
   TemplatesWithPagination,
   IPromptExecution,
+  TemplateExecutionsDisplay,
 } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { randomId } from "@/common/helpers";
 import { IEditPrompts } from "@/common/types/builder";
 
-const getSearchParams = (params: FilterParams) => {
+export const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
   params.categoryId && searchParams.append("main_category_id", String(params.categoryId));
   params.tags?.length && params.tags.forEach(tag => searchParams.append("tag", tag.name));
   params.subcategoryId && searchParams.append("sub_category_id", String(params.subcategoryId));
   params.engineId && searchParams.append("engine", String(params.engineId));
+  params.template && searchParams.append("template", String(params.template));
   params.title && searchParams.append("title", params.title);
   params.ordering && searchParams.append("ordering", params.ordering);
   params.limit && searchParams.append("limit", String(params.limit));
@@ -105,6 +107,12 @@ export const templatesApi = baseApi.injectEndpoints({
           refetchOnMountOrArgChange: true,
         }),
         providesTags: ["MyTemplates"],
+      }),
+      getExecutedTemplates: builder.query<TemplateExecutionsDisplay[], void>({
+        query: () => ({
+          url: "/api/meta/template-executions/me",
+          method: "get",
+        }),
       }),
       getTemplatesBySearch: builder.query<Templates[], string>({
         query: (query: string) => ({
@@ -245,6 +253,7 @@ export const {
   useGetPromptTemplateBySlugQuery,
   useGetTemplateByIdQuery,
   useGetMyTemplatesQuery,
+  useGetExecutedTemplatesQuery,
   useCreateTemplateMutation,
   useUpdateTemplateMutation,
   usePublishTemplateMutation,

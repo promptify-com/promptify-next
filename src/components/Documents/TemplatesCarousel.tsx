@@ -8,7 +8,9 @@ import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useState } from "react";
 import { Grid } from "@mui/material";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setDocumentsTemplate } from "@/core/store/documentsSlice";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   templates: TemplateExecutionsDisplay[] | undefined;
@@ -16,19 +18,27 @@ interface Props {
 }
 
 export default function TemplatesCarousel({ templates, isLoading }: Props) {
+  const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
   const [isCarousel, setIsCarousel] = useState(true);
 
+  const activeTemplate = useAppSelector(state => state.documents.filter.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
-  const sortedTemplates = templates?.slice().sort((tempA, tempB) => tempB.executions.length - tempA.executions.length);
+  const handleSelectTemplate = (template: TemplateExecutionsDisplay) => {
+    dispatch(setDocumentsTemplate(template.id === activeTemplate ? null : template.id));
+  };
 
   const isEmpty = !isLoading && !templates?.length;
 
   if (isEmpty) return;
 
   return (
-    <Stack gap={3}>
+    <Stack
+      gap={3}
+      py={{ xs: "24px", md: 0 }}
+    >
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -37,7 +47,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
         p={"8px 16px"}
       >
         <Typography
-          fontSize={32}
+          fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
         >
           Top prompts
@@ -48,21 +58,22 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
             alignItems={"center"}
             justifyContent={"space-between"}
             gap={1}
-            sx={{ display: { xs: "none", md: "flex" } }}
           >
             <Button
               onClick={e => setIsCarousel(false)}
               variant="outlined"
-              sx={{ color: "#67677C", visibility: isLoading ? "hidden" : "visible" }}
+              sx={{ color: "onSurface", visibility: isLoading ? "hidden" : "visible" }}
             >
               See all
             </Button>
-            <CarouselButtons
-              scrollPrev={scrollPrev}
-              scrollNext={scrollNext}
-              canScrollNext={true}
-              canScrollPrev={true}
-            />
+            {!isMobile && (
+              <CarouselButtons
+                scrollPrev={scrollPrev}
+                scrollNext={scrollNext}
+                canScrollNext={true}
+                canScrollPrev={true}
+              />
+            )}
           </Stack>
         )}
       </Stack>
@@ -82,19 +93,35 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           })}
         >
           {isLoading ? (
-            <CardDocumentTemplatePlaceholder count={5} />
+            <CardDocumentTemplatePlaceholder
+              count={5}
+              sx={{
+                width: { xs: 212, md: 278 },
+                height: { xs: 219, md: 278 },
+                p: "16px 16px 8px",
+              }}
+            />
           ) : (
-            sortedTemplates?.map(template => (
+            templates?.map(template => (
               <Grid
                 key={template.id}
                 item
-                xs={12}
-                sm={6}
+                xs={6}
+                sm={4}
                 md={isDocumentsFiltersSticky ? 8 : 6}
                 lg={isDocumentsFiltersSticky ? 4 : 3}
                 xl={3}
+                sx={{
+                  flex: 0,
+                }}
               >
-                <CardDocumentTemplate template={template} />
+                <CardDocumentTemplate
+                  template={template}
+                  onClick={e => {
+                    e.preventDefault();
+                    handleSelectTemplate(template);
+                  }}
+                />
               </Grid>
             ))
           )}

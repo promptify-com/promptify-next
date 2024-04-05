@@ -27,7 +27,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const isChatPage = pathname.split("/")[1] === "chat";
   const isPromptPage = pathname.split("/")[1] === "prompt";
 
-  console.log(pathname.split("/"));
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
 

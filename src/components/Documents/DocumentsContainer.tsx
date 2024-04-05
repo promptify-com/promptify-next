@@ -1,72 +1,38 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { useMemo } from "react";
-import type { Engine, Execution, ExecutionWithTemplate, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import CardDocument from "./CardDocument";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { getTemplateById } from "@/hooks/api/templates";
 
 interface Props {
-  templates: TemplateExecutionsDisplay[] | undefined;
+  executions: ExecutionWithTemplate[] | undefined;
   isLoading: boolean;
 }
 
-export default function DocumentsContainer({ templates, isLoading }: Props) {
+export default function DocumentsContainer({ executions = [], isLoading }: Props) {
+  const dispatch = useAppDispatch();
+  const filterTemplate = useAppSelector(state => state.documents.filter.template);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-  const { status, contentTypes, engine } = useAppSelector(state => state.documents);
 
-  const allExecutions = useMemo(() => {
-    const allExecutions: ExecutionWithTemplate[] = [];
-    templates?.forEach(template => {
-      const templateInfo = {
-        title: template.title,
-        thumbnail: template.thumbnail,
-        slug: template.slug,
-      };
-      // const engines = Array.from(
-      //   template.prompts
-      //     .reduce((map: Map<string, Engine>, prompt) => {
-      //       map.set(prompt.engine.name, prompt.engine);
-      //       return map;
-      //     }, new Map())
-      //     .values(),
-      // );
-
-      const executionsWithTemplate = template.executions.map((execution: Execution) => {
-        // const output = execution.prompt_executions?.map(promptExec => promptExec.output).join() || "";
-        return {
-          ...execution,
-          template: templateInfo,
-          // engines,
-          output: ".......",
-        };
-      });
-      allExecutions.push(...executionsWithTemplate);
-    });
-
-    return allExecutions.sort(
-      (execA, execB) => new Date(execB.created_at).getTime() - new Date(execA.created_at).getTime(),
+  const handleOpenDocument = async (execution: ExecutionWithTemplate) => {
+    let template = execution.template;
+    if (!template?.prompts && template?.id) {
+      // TODO: update execution template in executions state and avoid refetch
+      template = await getTemplateById(template.id);
+    }
+    dispatch(
+      updatePopupTemplate({
+        data: { ...execution, template },
+      }),
     );
-  }, [templates]);
-
-  const executions = useMemo(() => {
-    return allExecutions.filter(exec => {
-      const isDraft = status === "draft" && !exec.is_favorite;
-      const isSaved = status === "saved" && exec.is_favorite;
-      const statusMatch = !status || isDraft || isSaved;
-
-      // const engineMatch = !engine || exec.engines.some(eng => eng.name === engine?.name);
-      // const contentTypeMatch =
-      //   !contentTypes.length ||
-      //   exec.engines.some(eng => contentTypes.find(type => type.toUpperCase() === eng.output_type));
-
-      return statusMatch;
-    });
-  }, [allExecutions, status, contentTypes, engine]);
+  };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={{ xs: 2, md: 3 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -74,27 +40,31 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
         gap={1}
         p={"8px 16px"}
       >
-        <Typography
-          fontSize={32}
-          fontWeight={400}
-        >
-          All documents
-        </Typography>
+        {!filterTemplate && (
+          <Typography
+            fontSize={{ xs: 24, md: 32 }}
+            fontWeight={400}
+          >
+            All documents
+          </Typography>
+        )}
       </Stack>
       <Grid
         container
         rowGap={2}
+        px={{ xs: "16px", md: 0 }}
       >
         {isLoading ? (
           <Stack
             direction={"row"}
             flexWrap={"wrap"}
-            gap={2}
           >
             <CardDocumentTemplatePlaceholder
               count={5}
               sx={{
-                height: "315px",
+                height: { xs: 315, md: 331 },
+                width: { xs: "95%", md: 350 },
+                p: "8px",
               }}
             />
           </Stack>
@@ -109,7 +79,13 @@ export default function DocumentsContainer({ templates, isLoading }: Props) {
               lg={isDocumentsFiltersSticky ? 6 : 4}
               xl={3}
             >
-              <CardDocument execution={execution} />
+              <CardDocument
+                execution={execution}
+                onClick={e => {
+                  e.preventDefault();
+                  handleOpenDocument(execution);
+                }}
+              />
             </Grid>
           ))
         ) : (

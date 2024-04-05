@@ -3,27 +3,24 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-
-import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
 import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 
-function FilterFloatButton({ expanded = false }) {
-  const dispatch = useAppDispatch();
-  const theme = useTheme();
+interface Props {
+  expanded: boolean;
+  onClick: () => void;
+  onClose?: () => void;
+  count: number;
+}
 
-  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const filters = useAppSelector(state => state.filters);
+function FilterFloatButton({ expanded, onClick, onClose, count }: Props) {
+  const theme = useTheme();
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCrossHovered, setIsCrossHovered] = useState(false);
-  const filterCount = countSelectedFilters(filters);
 
   return (
     <Box
-      onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
+      onClick={onClick}
       width={"64px"}
       height={"64px"}
       borderRadius={"16px"}
@@ -32,7 +29,7 @@ function FilterFloatButton({ expanded = false }) {
         position: "fixed",
         cursor: "pointer",
         bottom: "72px",
-        left: expanded ? "410px" : "120px",
+        left: { xs: "82svw", md: expanded ? "410px" : "120px" },
         zIndex: 1220,
         display: "flex",
         alignItems: "center",
@@ -43,7 +40,7 @@ function FilterFloatButton({ expanded = false }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <>
-        {filterCount !== 0 && (
+        {count !== 0 && (
           <Box
             position={"absolute"}
             top={0}
@@ -66,10 +63,8 @@ function FilterFloatButton({ expanded = false }) {
                 style={{ color: "white", fontSize: 16 }}
                 onClick={event => {
                   event.stopPropagation();
-                  dispatch(resetFilters());
                   setIsHovered(false);
-                  dispatch(setStickyPromptsFilters(false));
-                  Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+                  onClose?.();
                 }}
               />
             ) : (
@@ -77,7 +72,7 @@ function FilterFloatButton({ expanded = false }) {
                 fontSize={"12px"}
                 color={"onPrimary"}
               >
-                {filterCount}
+                {count}
               </Typography>
             )}
           </Box>

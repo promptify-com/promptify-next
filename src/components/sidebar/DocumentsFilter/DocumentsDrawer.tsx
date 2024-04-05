@@ -1,37 +1,64 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyDocumentsFilters } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import DocumentsFilters from "./DocumentsFilters";
+import { Stack } from "@mui/material";
+import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
+import useBrowser from "@/hooks/useBrowser";
+import { countSelectedFilters } from "@/core/store/documentsSlice";
 
 interface Props {
-  expandedOnHover: boolean;
+  expandedOnHover?: boolean;
 }
 
-export default function FiltersDrawer({ expandedOnHover }: Props) {
+export default function DocumentsDrawer({ expandedOnHover = false }: Props) {
   const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
+  const filters = useAppSelector(state => state.documents.filter);
+  const filterCount = countSelectedFilters(filters);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   const toggleSidebar = () => {
     dispatch(setStickyDocumentsFilters(!isDocumentsFiltersSticky));
   };
 
   useEffect(() => {
+    if (isMobile) return;
+
     const isDocumentsFiltersSticky = Boolean(Storage.get("isDocumentsFiltersSticky"));
     if (isDocumentsFiltersSticky) {
       dispatch(setStickyDocumentsFilters(isDocumentsFiltersSticky));
     }
   }, []);
 
+  const isExpanded = isDocumentsFiltersSticky || (expandedOnHover && !isButtonHovered);
+
   return (
-    <DrawerContainer
-      title="Documents"
-      expanded={isDocumentsFiltersSticky || expandedOnHover}
-      toggleExpand={toggleSidebar}
-      sticky={isDocumentsFiltersSticky}
-    >
-      <DocumentsFilters />
-    </DrawerContainer>
+    <Stack position={"relative"}>
+      {isMobile && (
+        <Stack
+          onMouseEnter={() => setIsButtonHovered(true)}
+          onMouseLeave={() => setIsButtonHovered(false)}
+        >
+          <FilterFloatButton
+            expanded={isExpanded}
+            onClick={() => dispatch(setStickyDocumentsFilters(!isDocumentsFiltersSticky))}
+            count={filterCount}
+          />
+        </Stack>
+      )}
+      <DrawerContainer
+        title="Documents"
+        expanded={isExpanded}
+        toggleExpand={toggleSidebar}
+        sticky={isDocumentsFiltersSticky}
+        onClose={() => dispatch(setStickyDocumentsFilters(false))}
+      >
+        <DocumentsFilters />
+      </DrawerContainer>
+    </Stack>
   );
 }

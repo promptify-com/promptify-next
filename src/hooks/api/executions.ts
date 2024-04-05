@@ -1,12 +1,5 @@
-import {
-  ISparkWithExecution,
-  ISparkWithTemplate,
-  ITemplateExecutionPut,
-  Spark,
-  SparkExecution,
-  TemplatesExecutions,
-} from "@/core/api/dto/templates";
-import { authClient } from "../../common/axios";
+import type { ITemplateExecutionPut, TemplatesExecutions } from "@/core/api/dto/templates";
+import { authClient } from "@/common/axios";
 
 export const updateExecution = async (templateExecutionId: number, data: ITemplateExecutionPut) => {
   return await authClient
@@ -38,22 +31,6 @@ export const getExecutionById = async (id: number): Promise<TemplatesExecutions>
   return await authClient.get(`/api/meta/template-executions/${id}`).then(response => {
     return response.data;
   });
-};
-
-export const createSpark = async (data: ISparkWithTemplate): Promise<Spark> => {
-  return await authClient
-    .post(`/api/meta/sparks/`, data, { headers: { "Content-Type": "application/json" } })
-    .then(response => {
-      return response.data;
-    });
-};
-
-export const createSparkWithExecution = async (data: ISparkWithExecution): Promise<Spark> => {
-  return await authClient
-    .post(`/api/meta/sparks/create_with_execution/`, data, { headers: { "Content-Type": "application/json" } })
-    .then(response => {
-      return response.data;
-    });
 };
 
 export const addToFavorite = async (templateExecutionId: number) => {
