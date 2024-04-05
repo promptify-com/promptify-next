@@ -32,7 +32,7 @@ export default function Layout({ children, title }: { children: React.ReactNode;
           alignSelf: "stretch",
           flexWrap: "wrap",
           mt: 8,
-          ml: 2,
+          ml: 1,
         }}
       >
         <IconButton

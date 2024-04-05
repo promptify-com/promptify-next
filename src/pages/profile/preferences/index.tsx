@@ -57,10 +57,10 @@ function ProfilePreferences() {
         >
           <SectionWrapper title="App settings">
             <Stack
-              direction={"row"}
+              direction={{ md: "row" }}
               justifyContent={"space-between"}
-              alignItems={"center"}
-              gap={5}
+              alignItems={{ md: "center" }}
+              gap={{ xs: 1, md: 5 }}
               sx={{
                 width: "calc(100% - 48px)",
                 p: "16px 24px",
@@ -89,6 +89,7 @@ function ProfilePreferences() {
               <Stack
                 alignItems={"flex-end"}
                 flexDirection={"row"}
+                ml={"auto"}
               >
                 {CHAT_OPTIONS_MAPPING[chatOption] ?? ""}
                 <Select
