@@ -21,6 +21,7 @@ import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
 import { setSelectedChat } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   chat: IChat;
@@ -30,13 +31,13 @@ interface Props {
 
 export const ChatCard = ({ chat, active, onClick }: Props) => {
   const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
   const [actionsMenuAnchor, setActionsMenuAnchor] = useState<null | HTMLElement>(null);
   const handleOpenActions = (e: React.MouseEvent<HTMLElement>) => setActionsMenuAnchor(e.currentTarget);
   const handleCloseActions = () => setActionsMenuAnchor(null);
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
-
   const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [deleteChat] = useDeleteChatMutation();
   const [updateChat] = useUpdateChatMutation();
@@ -87,7 +88,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
         overflow: "hidden",
         cursor: onClick ? "pointer" : "default",
         ".actions-menu": {
-          opacity: 0,
+          opacity: isMobile ? 1 : 0,
           transition: "opacity 0.3s ease",
         },
         "&:hover": {
@@ -167,7 +168,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
               handleOpenActions(e);
             }}
             className="actions-menu"
-            sx={{ border: "none", ":hover": { bgcolor: "action.hover" } }}
+            sx={{
+              border: "none",
+              ...(isMobile && { bgcolor: "action.hover" }),
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
           >
             <MoreVert />
           </IconButton>
