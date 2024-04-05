@@ -19,11 +19,19 @@ import { alpha } from "@mui/system";
 import { theme } from "@/theme";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import { setDocumentsTemplate } from "@/core/store/documentsSlice";
+import lazy from "next/dynamic";
+import useBrowser from "@/hooks/useBrowser";
+import { Box } from "@mui/material";
+
+const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
+  ssr: false,
+});
 
 const PAGINATION_LIMIT = 12;
 
 function DocumentsPage() {
   const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
   const filter = useAppSelector(state => state.documents.filter);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
@@ -122,6 +130,11 @@ function DocumentsPage() {
   return (
     <Protected>
       <Layout>
+        {isMobile && (
+          <Box mt={-2}>
+            <DocumentsDrawerLazy />
+          </Box>
+        )}
         <Stack
           gap={3}
           sx={{

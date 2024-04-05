@@ -6,6 +6,8 @@ import MuiDrawer from "@mui/material/Drawer";
 import { styled, type Theme, type CSSObject, useTheme } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { KeyboardTab } from "@mui/icons-material";
+import useBrowser from "@/hooks/useBrowser";
+import Close from "@mui/icons-material/Close";
 
 const drawerWidth = 255;
 
@@ -55,6 +57,7 @@ interface Props {
 
 export default function DrawerContainer({ title, expanded, toggleExpand, sticky, children }: Props) {
   const theme = useTheme();
+  const { isMobile } = useBrowser();
 
   return (
     <Drawer
@@ -67,15 +70,17 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
         justifyContent: "center",
         display: expanded ? "flex" : "none",
         "& .MuiDrawer-paper": {
+          height: { xs: `calc(100svh - ${theme.custom.headerHeight.xs})`, md: "100svh" },
+          width: { xs: "85svw", md: `calc(${theme.custom.leftClosedSidebarWidth} + ${drawerWidth}px)` },
+          left: { xs: 0, md: theme.custom.leftClosedSidebarWidth },
+          mt: { xs: theme.custom.headerHeight.xs, md: 0 },
+          boxShadow: { xs: "0px 0px 24px 8px rgba(0, 0, 0, 0.1), 0px 2px 16px 0px rgba(0, 0, 0, 0.1)", md: "none" },
           my: 0,
           padding: "10px 20px",
           borderRadius: 0,
-          height: "100svh",
           boxSizing: "border-box",
           bgcolor: "surfaceContainerLow",
           border: "none",
-          width: `calc(${theme.custom.leftClosedSidebarWidth} + ${drawerWidth}px)`,
-          left: theme.custom.leftClosedSidebarWidth,
           overflow: "auto",
           overscrollBehavior: "contain",
           "&::-webkit-scrollbar": {
@@ -118,7 +123,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
             },
           }}
         >
-          <KeyboardTab />
+          {isMobile ? <Close /> : <KeyboardTab />}
         </IconButton>
       </Stack>
       <Divider />

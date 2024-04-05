@@ -217,7 +217,6 @@ export default function CardDocument({ execution, onClick }: Props) {
             position: "absolute",
             top: 16,
             left: 14,
-            zIndex: 999,
             svg: {
               p: "2px",
               bgcolor: "surfaceContainerLowest",
