@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ThemeProvider, useTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
-import ChatIcon from "@mui/icons-material/Chat";
 import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
@@ -22,11 +21,12 @@ import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import ChatsHistory from "@/components/sidebar/ChatsHistory/ChatsHistory";
+import Button from "@mui/material/Button";
+import ChatOutlined from "@mui/icons-material/ChatOutlined";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const theme = useTheme();
   const { isMobile } = useBrowser();
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [stopScrollingToBottom, setStopScrollingToBottom] = useState<boolean>(false);
@@ -315,24 +315,26 @@ function Chat() {
 
         {isMobile && (
           <>
-            <Stack
+            <Button
+              onClick={() => {
+                setDisplayChatHistoryOnMobile(true);
+              }}
               className="chat-hmg-container"
+              startIcon={<ChatOutlined />}
               sx={{
                 position: "absolute",
-                top: "7%",
-                left: "3%",
-                color: "common.black",
-                flexDirection: "row",
+                top: "8%",
+                left: "1%",
+                borderRadius: "16px",
+                p: "16px",
+                bgcolor: "surfaceContainerHighest",
+                color: "onSurface",
+                fontSize: 16,
+                fontWeight: 500,
               }}
             >
-              <ChatIcon
-                sx={{ mr: "5px" }}
-                onClick={() => {
-                  setDisplayChatHistoryOnMobile(true);
-                }}
-              />{" "}
               Chats
-            </Stack>
+            </Button>
             <DrawerContainer
               title="Chats"
               expanded={displayChatHistoryOnMobile}

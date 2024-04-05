@@ -1,13 +1,18 @@
 import Stack from "@mui/material/Stack";
-import { Templates } from "@/core/api/dto/templates";
-import { Box, IconButton, Modal, Typography } from "@mui/material";
+import type { Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import ArrowForward from "@mui/icons-material/ArrowForward";
 import TemplatePage from ".";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
+import DocumentPage from "@/components/Documents/DocumentPage";
 
 interface NavigationBoxProps {
   template: Templates | null;
@@ -64,34 +69,37 @@ const NavigationBox = ({ template, type }: NavigationBoxProps) => {
   );
 };
 
-function TemplateModal() {
-  const { template, previous, next } = useAppSelector(state => state.template.popupTemplate);
+function TemplateDocumentModal() {
+  const { data, previous, next } = useAppSelector(state => state.template.popupTemplateDocument);
   const dispatch = useDispatch();
 
   const close = () => {
     dispatch(
       updatePopupTemplate({
-        template: null,
+        data: null,
       }),
     );
   };
 
-  if (!template) return;
+  if (!data) return;
+
+  const isTemplate = "example" in data;
 
   return (
     <Modal
-      open={!!template.id}
+      open={!!data.id}
       disableAutoFocus={true}
     >
       <Stack
         direction={"row"}
         bgcolor={"surfaceContainerLowest"}
         sx={{
-          height: "calc(100svh - 24px)",
-          m: "24px 16px 0",
+          height: { xs: "calc(100svh - 12px)", md: "calc(100svh - 24px)" },
+          m: { xs: "12px 12px 0", md: "24px 16px 0" },
           borderTopLeftRadius: "24px",
           borderTopRightRadius: "24px",
           overflow: "auto",
+          overscrollBehavior: "contain",
           position: "relative",
           "&::-webkit-scrollbar": {
             width: 0,
@@ -101,11 +109,12 @@ function TemplateModal() {
         <IconButton
           onClick={close}
           sx={{
-            position: "absolute",
-            top: "24px",
-            right: "24px",
+            position: { xs: "fixed", md: "absolute" },
+            top: { xs: "20px", md: "40px" },
+            right: { xs: "20px", md: "24px" },
             zIndex: 9999,
             border: "none",
+            bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
             ":hover": { bgcolor: "surfaceContainerHigh" },
           }}
         >
@@ -115,10 +124,14 @@ function TemplateModal() {
           template={template}
           type="previous"
         /> */}
-        <TemplatePage
-          template={template}
-          popup
-        />
+        {isTemplate ? (
+          <TemplatePage
+            template={data}
+            popup
+          />
+        ) : (
+          <DocumentPage document={data} />
+        )}
         {/* <NavigationBox
           template={template}
           type="next"
@@ -128,4 +141,4 @@ function TemplateModal() {
   );
 }
 
-export default TemplateModal;
+export default TemplateDocumentModal;

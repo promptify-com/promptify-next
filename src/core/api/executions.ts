@@ -1,11 +1,13 @@
 import { baseApi } from "./api";
 import type {
+  ExecutionsFilterParams,
   ITemplateExecutionPut,
   ResponseType,
-  TemplateExecutionsDisplay,
+  TemplateExecutionsWithPagination,
   Templates,
   TemplatesExecutions,
 } from "./dto/templates";
+import { getSearchParams } from "./templates";
 
 // TODO: Optimistic updates for invalidatesTags: ["Executions"] very heavy request
 export const executionsApi = baseApi.injectEndpoints({
@@ -18,9 +20,9 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Executions"],
       }),
-      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], number | undefined>({
-        query: limit => ({
-          url: `/api/meta/template-executions/me/${limit ? `?limit=${limit}` : ""}`,
+      getExecutionsByMe: builder.query<TemplateExecutionsWithPagination, ExecutionsFilterParams>({
+        query: params => ({
+          url: `/api/meta/template-executions/my-executions?${getSearchParams(params)}`,
           method: "get",
         }),
         providesTags: ["Executions"],
@@ -83,7 +85,7 @@ export const executionsApi = baseApi.injectEndpoints({
 export const {
   useGetExecutionsByTemplateQuery,
   useExportExecutionQuery,
-  useGetTemplatesExecutionsByMeQuery,
+  useGetExecutionsByMeQuery,
   useUpdateExecutionMutation,
   useDeleteExecutionMutation,
   useDeleteExecutionFavoriteMutation,

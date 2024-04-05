@@ -6,10 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import FilterList from "@mui/icons-material/FilterList";
 import Close from "@mui/icons-material/Close";
-
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import CardTemplateLast from "@/components/common/cards/CardTemplateLast";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
@@ -71,34 +69,6 @@ function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "
       </Stack>
       {openFilters && <TemplatesFilter />}
     </Box>
-  );
-}
-
-function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">) {
-  if (!templates?.length) {
-    return null;
-  }
-
-  return (
-    <Grid
-      display={"flex"}
-      flexWrap={{ xs: "nowrap", md: "wrap" }}
-      sx={{
-        gap: "1em",
-        width: "100%",
-        overflow: { xs: "auto", md: "initial" },
-        WebkitOverflowScrolling: { xs: "touch", md: "initial" },
-      }}
-    >
-      {templates.map((template: TemplateExecutionsDisplay | Templates) => (
-        <Grid key={template.id}>
-          <CardTemplateLast
-            key={template.id}
-            template={template as TemplateExecutionsDisplay}
-          />
-        </Grid>
-      ))}
-    </Grid>
   );
 }
 
@@ -198,7 +168,6 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
   ref,
 ) {
   const isNotLoading = !isLoading && !templateLoading;
-  const isLatestTemplates = type === "myLatestExecutions";
   const isPopularTemplates = type === "popularTemplates";
 
   if (isNotLoading && !templates?.length) {
@@ -218,7 +187,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
       )}
 
       {templateLoading ? (
-        isLatestTemplates || isPopularTemplates ? (
+        isPopularTemplates ? (
           <Grid
             display={"flex"}
             flexDirection={"row"}
@@ -237,7 +206,6 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
         <Grid
           display={"flex"}
           gap={"16px"}
-          flexDirection={isLatestTemplates ? "row" : "column"}
           flexWrap={{ xs: "nowrap", md: "wrap" }}
           sx={{
             mt: "10px",
@@ -247,9 +215,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
             WebkitOverflowScrolling: { xs: "touch", md: "initial" },
           }}
         >
-          {isLatestTemplates ? (
-            <LatestTemplates templates={templates} />
-          ) : isPopularTemplates ? (
+          {isPopularTemplates ? (
             <PopularTemplates
               templates={templates}
               bgColor={bgColor}

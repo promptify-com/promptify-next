@@ -293,7 +293,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
               return;
             }
 
-            const newParam = param.map((parameter: ContextualOverrides) => ({
+            const newParam = param.map(parameter => ({
               parameter: parameter.parameter,
               score: parameter.score,
             }));
