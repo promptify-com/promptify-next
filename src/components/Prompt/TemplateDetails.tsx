@@ -85,6 +85,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
     <Stack
       minHeight={{ xs: "calc(100svh - 60px)", md: "100%" }}
       overflow={"auto"}
+      bgcolor={{ xs: "surfaceContainerHigh", md: "transparent" }}
       sx={{
         "&::-webkit-scrollbar": {
           width: 0,

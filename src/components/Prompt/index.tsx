@@ -94,11 +94,10 @@ function TemplatePage({ template, popup }: Props) {
       <Stack
         direction={{ md: "row" }}
         height={{
-          xs: `auto`,
+          xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
           md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
         }}
         sx={{
-          bgcolor: "surfaceContainerLowest",
           overflow: { xs: "auto", md: "unset" },
           mt: { xs: theme.custom.headerHeight.xs, md: 0 },
           px: { md: "32px" },
