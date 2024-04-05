@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Engine, EngineType } from "@/core/api/dto/templates";
+import { Engine, EngineType, ExecutionWithTemplate } from "@/core/api/dto/templates";
 
 type StatusType = "draft" | "saved" | null;
 
@@ -10,6 +10,8 @@ interface IState {
     engine: Engine | null;
     template: number | null;
   };
+  title: string;
+  showPreviews: boolean;
 }
 
 const initialState: IState = {
@@ -19,6 +21,8 @@ const initialState: IState = {
     engine: null,
     template: null,
   },
+  title: "",
+  showPreviews: false,
 };
 
 const documentsSlice = createSlice({
@@ -37,10 +41,22 @@ const documentsSlice = createSlice({
     setDocumentsTemplate: (state, action: PayloadAction<number | null>) => {
       state.filter.template = action.payload;
     },
+    setDocumentTitle: (state, action: PayloadAction<string>) => {
+      state.title = action.payload;
+    },
+    toggleShowPreviews: state => {
+      state.showPreviews = !state.showPreviews;
+    },
   },
 });
 
-export const { setDocumentsStatus, setDocumentsContentTypes, setDocumentsEngine, setDocumentsTemplate } =
-  documentsSlice.actions;
+export const {
+  setDocumentsStatus,
+  setDocumentsContentTypes,
+  setDocumentsEngine,
+  setDocumentsTemplate,
+  setDocumentTitle,
+  toggleShowPreviews,
+} = documentsSlice.actions;
 
 export default documentsSlice.reducer;

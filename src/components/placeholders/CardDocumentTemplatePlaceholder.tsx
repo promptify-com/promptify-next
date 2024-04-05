@@ -11,7 +11,7 @@ export default function CardDocumentTemplatePlaceholder({ count = 12, sx }: Prop
       key={idx}
       gap={2}
       sx={{
-        minWidth: "246px",
+        minWidth: { xs: 190, md: 246 },
         height: "100%",
         ...sx,
       }}
@@ -19,15 +19,15 @@ export default function CardDocumentTemplatePlaceholder({ count = 12, sx }: Prop
       <Skeleton
         variant="rounded"
         sx={{
-          width: { xs: "256px", sm: "100%" },
-          height: { xs: "191px", sm: "191px" },
+          width: { xs: 155, md: 246 },
+          height: { xs: 135, md: 191 },
           borderRadius: "16px",
         }}
       />
       <Skeleton
         variant="text"
         sx={{
-          width: "90%",
+          width: "60%",
           height: 24,
         }}
       />

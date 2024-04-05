@@ -108,7 +108,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
     <Stack
       gap={3}
       sx={{
-        p: { xs: "20px", md: "48px" },
+        p: "48px",
       }}
     >
       {execution && "title" in execution && (
@@ -163,6 +163,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                               ref={elementRefs[index]}
                               direction={{ md: "row" }}
                               gap={2}
+                              width={"100%"}
                             >
                               {isPrevItemImage && (
                                 <Box

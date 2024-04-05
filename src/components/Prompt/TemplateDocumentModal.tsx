@@ -94,8 +94,8 @@ function TemplateDocumentModal() {
         direction={"row"}
         bgcolor={"surfaceContainerLowest"}
         sx={{
-          height: "calc(100svh - 24px)",
-          m: "24px 16px 0",
+          height: { xs: "calc(100svh - 12px)", md: "calc(100svh - 24px)" },
+          m: { xs: "12px 12px 0", md: "24px 16px 0" },
           borderTopLeftRadius: "24px",
           borderTopRightRadius: "24px",
           overflow: "auto",
@@ -109,11 +109,12 @@ function TemplateDocumentModal() {
         <IconButton
           onClick={close}
           sx={{
-            position: "absolute",
-            top: "40px",
-            right: "24px",
+            position: { xs: "fixed", md: "absolute" },
+            top: { xs: "20px", md: "40px" },
+            right: { xs: "20px", md: "24px" },
             zIndex: 9999,
             border: "none",
+            bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
             ":hover": { bgcolor: "surfaceContainerHigh" },
           }}
         >
