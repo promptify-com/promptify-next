@@ -25,6 +25,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
+  const isPromptPage = pathname.split("/")[1] === "prompt";
+
+  console.log(pathname.split("/"));
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
 
@@ -35,6 +38,8 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     (isPromptsReview && isPromptsReviewFiltersSticky);
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
+
+  const showFooter = isMobile && !isChatPage && !isPromptPage;
 
   return (
     <Stack
@@ -68,7 +73,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               borderTopRightRadius: "16px",
               overflow: "hidden",
               zIndex: 1,
-              marginTop: { xs: "0", md: `calc(${theme.custom.headerHeight.md} + 2px)` },
+              marginTop: { xs: -1, md: `calc(${theme.custom.headerHeight.md} + 2px)` },
             }}
           >
             <Grid
@@ -77,7 +82,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               gap={"16px"}
             >
               {children}
-              {isMobile && !isChatPage && <Footer />}
+              {showFooter && <Footer />}
             </Grid>
           </Box>
         </Box>

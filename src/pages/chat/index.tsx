@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import ChatIcon from "@mui/icons-material/Chat";
 import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
@@ -19,16 +19,20 @@ import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
+import useBrowser from "@/hooks/useBrowser";
+import DrawerContainer from "@/components/sidebar/DrawerContainer";
+import ChatsHistory from "@/components/sidebar/ChatsHistory/ChatsHistory";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-
+  const theme = useTheme();
+  const { isMobile } = useBrowser();
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [stopScrollingToBottom, setStopScrollingToBottom] = useState<boolean>(false);
   const [loadingInitialMessages, setLoadingInitialMessages] = useState(false);
+  const [displayChatHistoryOnMobile, setDisplayChatHistoryOnMobile] = useState(false);
   const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
-
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
@@ -39,7 +43,6 @@ function Chat() {
   const [createChat] = useCreateChatMutation();
   const [updateChat] = useUpdateChatMutation();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
-
   const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();
   const {
     messages,
@@ -54,15 +57,11 @@ function Chat() {
     setQueueSavedMessages,
     resetStates,
   } = useMessageManager();
-
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template: selectedTemplate,
   });
-
   const dynamicTheme = useDynamicColors(selectedTemplate, selectedChat?.thumbnail);
-
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
-
   const handleCreateChat = async () => {
     if (!selectedTemplate) return;
 
@@ -76,7 +75,6 @@ function Chat() {
       console.error("Error creating a new chat: ", err);
     }
   };
-
   const handleTitleChat = async () => {
     if (!selectedChat || !selectedTemplate?.title) return;
 
@@ -89,14 +87,6 @@ function Chat() {
       console.error("Error updating chat: ", err);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      dispatch(setSelectedChat(undefined));
-      dispatch(setInitialChat(true));
-    };
-  }, []);
-
   const loadInitialMessages = async () => {
     if (!selectedChat?.id) {
       return;
@@ -116,7 +106,6 @@ function Chat() {
       setLoadingInitialMessages(false);
     }
   };
-
   const loadMoreMessages = async () => {
     if (!selectedChat?.id || loadingMoreMessages || !nextCursor) {
       return;
@@ -144,6 +133,56 @@ function Chat() {
       setLoadingMoreMessages(false);
     }
   };
+  const handleGenerateExecution = () => {
+    generateExecutionHandler((executionId: number) => {
+      const executionMessage = createMessage({
+        type: "spark",
+        text: "",
+        executionId,
+        template: selectedTemplate,
+        isLatestExecution: true,
+      });
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
+      setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
+    });
+    dispatch(setChatMode("automation"));
+    if (isInputStyleQA) {
+      setIsInputDisabled(false);
+    }
+  };
+  const selectGeneratedExecution = async () => {
+    if (generatedExecution?.id) {
+      try {
+        const _newExecution = await getExecutionById(generatedExecution.id);
+
+        setMessages(prevMessages => {
+          const messagesWithUpdatedFlags = prevMessages.map(message =>
+            message.type === "spark" ? { ...message, isLatestExecution: false } : message,
+          );
+
+          const updatedMessages = messagesWithUpdatedFlags.map(message => {
+            if (message.type === "spark" && message.executionId === generatedExecution.id) {
+              return { ...message, spark: _newExecution };
+            }
+            return message;
+          });
+
+          return updatedMessages;
+        });
+
+        dispatch(setSelectedExecution(_newExecution));
+      } catch {
+        window.location.reload();
+      }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      dispatch(setSelectedChat(undefined));
+      dispatch(setInitialChat(true));
+    };
+  }, []);
 
   useEffect(() => {
     setStopScrollingToBottom(false);
@@ -177,24 +216,6 @@ function Chat() {
     setQueueSavedMessages([]);
   }, [queueSavedMessages]);
 
-  const handleGenerateExecution = () => {
-    generateExecutionHandler((executionId: number) => {
-      const executionMessage = createMessage({
-        type: "spark",
-        text: "",
-        executionId,
-        template: selectedTemplate,
-        isLatestExecution: true,
-      });
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
-      setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
-    });
-    dispatch(setChatMode("automation"));
-    if (isInputStyleQA) {
-      setIsInputDisabled(false);
-    }
-  };
-
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
       const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
@@ -205,33 +226,6 @@ function Chat() {
       }
     }
   }, [isGenerating, generatedExecution]);
-
-  const selectGeneratedExecution = async () => {
-    if (generatedExecution?.id) {
-      try {
-        const _newExecution = await getExecutionById(generatedExecution.id);
-
-        setMessages(prevMessages => {
-          const messagesWithUpdatedFlags = prevMessages.map(message =>
-            message.type === "spark" ? { ...message, isLatestExecution: false } : message,
-          );
-
-          const updatedMessages = messagesWithUpdatedFlags.map(message => {
-            if (message.type === "spark" && message.executionId === generatedExecution.id) {
-              return { ...message, spark: _newExecution };
-            }
-            return message;
-          });
-
-          return updatedMessages;
-        });
-
-        dispatch(setSelectedExecution(_newExecution));
-      } catch {
-        window.location.reload();
-      }
-    }
-  };
 
   const showLanding = !!!messages.length && !selectedTemplate;
   const showChatInput = isInputStyleQA || !!selectedExecution || chatMode === "automation";
@@ -245,13 +239,15 @@ function Chat() {
             justifyContent={"center"}
             alignItems={"center"}
             height={{ xs: "100vh", md: "calc(100vh - 100px)" }}
+            sx={{
+              ...(isMobile && { minWidth: `${window.innerWidth}px` }),
+            }}
           >
             <CircularProgress />
           </Stack>
         ) : (
           <Stack
             sx={{
-              // mx: { md: "auto" },
               height: { xs: "100vh", md: "calc(100vh - 100px)" },
               display: "flex",
               flexDirection: "column",
@@ -315,6 +311,69 @@ function Chat() {
               )}
             </Stack>
           </Stack>
+        )}
+
+        {isMobile && (
+          <>
+            <Stack
+              className="chat-hmg-container"
+              sx={{
+                position: "absolute",
+                top: "7%",
+                left: "3%",
+                color: "common.black",
+                flexDirection: "row",
+              }}
+            >
+              <ChatIcon
+                sx={{ mr: "5px" }}
+                onClick={() => {
+                  setDisplayChatHistoryOnMobile(true);
+                }}
+              />{" "}
+              Chats
+            </Stack>
+            <DrawerContainer
+              title="Chats"
+              expanded={displayChatHistoryOnMobile}
+              toggleExpand={() => {
+                setDisplayChatHistoryOnMobile(false);
+              }}
+              onClose={() => {
+                setDisplayChatHistoryOnMobile(false);
+              }}
+              sticky={false}
+              style={{
+                zIndex: 50,
+                "& .MuiDrawer-paper": {
+                  my: 0,
+                  px: "10px",
+                  pb: "60px", // for last chat entry to be displayed properly
+                  borderRadius: 0,
+                  height: "100svh",
+                  boxSizing: "border-box",
+                  bgcolor: "surfaceContainerLow",
+                  border: "none",
+                  width: "90%",
+                  left: 0,
+                  position: "absolute",
+                  top: "6%",
+                  transform: displayChatHistoryOnMobile ? "translateX(0)" : "translateX(-90%)",
+                  overflow: "auto",
+                  overscrollBehavior: "contain",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                },
+              }}
+            >
+              <ChatsHistory
+                onClose={() => {
+                  setDisplayChatHistoryOnMobile(false);
+                }}
+              />
+            </DrawerContainer>
+          </>
         )}
       </Layout>
     </ThemeProvider>

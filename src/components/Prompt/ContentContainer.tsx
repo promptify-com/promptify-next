@@ -14,6 +14,7 @@ import ApiAccess from "./ApiAccess";
 import Feedback from "./Feedback";
 import ClientOnly from "@/components/base/ClientOnly";
 import useBrowser from "@/hooks/useBrowser";
+import Footer from "../Footer";
 
 const ScrollTabs: Link[] = [
   {
@@ -98,19 +99,19 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
         sx={{
           position: { xs: "sticky", md: tabsFixed ? "sticky" : "relative" },
           zIndex: 999,
-          top: 0,
+          top: { xs: 0, md: 0 },
           bgcolor: "surfaceContainerLowest",
-          p: { xs: "8px 16px", md: "32px 36px" },
+          p: { xs: "32px 16px", md: "32px 36px" },
         }}
       >
         <Stack
           direction={"row"}
           gap={{ xs: 0.5, md: 2 }}
           sx={{
-            width: "100%",
+            width: "98%",
             minWidth: "fit-content",
             bgcolor: "surfaceContainerLow",
-            p: "4px",
+            p: { md: "4px" },
             borderRadius: "999px",
           }}
         >
@@ -124,6 +125,8 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                 sx={{
                   flex: 1,
                   minWidth: "fit-content",
+                  fontSize: 12,
+
                   p: "8px 16px",
                   color: selected ? "onSecondary" : "onSurface",
                   bgcolor: selected ? "secondary.main" : "transparent",
@@ -155,6 +158,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           <Feedback />
         </ClientOnly>
       </div>
+      {isMobile && <Footer />}
     </Box>
   );
 }

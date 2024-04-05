@@ -125,6 +125,7 @@ function Sidebar() {
     <Grid
       onMouseEnter={() => setMouseHover(true)}
       onMouseLeave={() => setMouseHover(false)}
+      className="main-sidebar"
       sx={{
         display: { xs: "none", md: "flex" },
         flexDirection: "column",
