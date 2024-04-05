@@ -95,7 +95,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
     <Stack
       gap={2}
       minHeight={"480px"}
-      width={"100%"}
+      width={{ xs: "auto", sm: "100%", md: "100%" }}
       overflow={"hidden"}
       sx={{
         overflowX: "hidden",
@@ -119,6 +119,12 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
           direction={"row"}
           justifyContent={"center"}
           alignItems={"center"}
+          sx={{
+            ml: { xs: "6em", sm: 0 },
+            [`@media (max-width: 430)`]: {
+              ml: "3em",
+            },
+          }}
         >
           <Typography color={"text.secondary"}>No templates created</Typography>
         </Stack>

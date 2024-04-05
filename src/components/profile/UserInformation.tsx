@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import type { UserProfile } from "@/core/api/dto/user";
@@ -53,8 +53,8 @@ function UserInformation({
     >
       <Box
         position={"relative"}
-        width={"152px"}
-        height={"152px"}
+        width={{ xs: "91.2px", md: "152px" }}
+        height={{ xs: "91.2px", md: "152px" }}
         borderRadius={"999px"}
         overflow={"hidden"}
       >
@@ -71,8 +71,16 @@ function UserInformation({
         gap={2}
       >
         <Typography
-          fontSize={24}
-          lineHeight={"28.8px"}
+          sx={{
+            color: "onSurface",
+            textAlign: "center",
+            fontFeatureSettings: "'clig' off, 'liga' off",
+            fontFamily: "Poppins",
+            fontSize: "24px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            lineHeight: "120%",
+          }}
         >
           {privateProfile ? "Anonymous" : user.first_name + " " + user.last_name}
         </Typography>
