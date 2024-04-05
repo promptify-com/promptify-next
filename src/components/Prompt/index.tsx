@@ -121,10 +121,16 @@ function TemplatePage({ template, popup }: Props) {
         >
           <Stack>
             {!isMobile && (
-              <Header
-                template={template}
-                close={closeTemplatePopup}
-              />
+              <Stack
+                sx={{
+                  p: "24px 48px",
+                }}
+              >
+                <Header
+                  template={template}
+                  close={closeTemplatePopup}
+                />
+              </Stack>
             )}
             {!isMobile && (
               <Box

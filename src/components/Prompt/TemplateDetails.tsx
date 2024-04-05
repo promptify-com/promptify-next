@@ -24,6 +24,7 @@ import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import useBrowser from "@/hooks/useBrowser";
 import Link from "next/link";
 import { useState } from "react";
+import Header from "./Common/Header";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -99,6 +100,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
             gap={2}
             px={{ xs: "16px", md: 0 }}
           >
+            {isMobile && <Header template={template} />}
             <Typography
               fontSize={24}
               fontWeight={500}
@@ -143,7 +145,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
               sx={{
                 position: "relative",
                 width: "100%",
-                height: "40svh",
+                height: "30svh",
                 borderRadius: { md: "24px" },
                 overflow: "hidden",
               }}
