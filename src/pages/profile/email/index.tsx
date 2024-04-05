@@ -91,6 +91,11 @@ function ProfileEmail() {
                   fontSize={16}
                   fontWeight={400}
                   color={"onSurface"}
+                  sx={{
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                  }}
                 >
                   {currentUser?.email}
                 </Typography>

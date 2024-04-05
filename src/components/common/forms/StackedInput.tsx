@@ -43,7 +43,7 @@ export default function StackedInput({
       sx={{
         width: "100%",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: rows ? "column" : "row",
         alignItems: "flex-start",
         ":not(:last-of-type)": {
           borderBottom: "1px solid",
@@ -98,7 +98,7 @@ export default function StackedInput({
           sx={{
             flex: 1,
             ".MuiInputBase-root": {
-              p: 0,
+              p: { xs: rows ? "0 8px" : 0, md: 0 },
               "textarea::-webkit-scrollbar": {
                 width: 0,
               },

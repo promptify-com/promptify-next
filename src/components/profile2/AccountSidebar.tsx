@@ -7,10 +7,18 @@ import { AccountSidebarWidth, navItems } from "./Constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useLogout from "@/hooks/useLogout";
+import { isDesktopViewPort } from "@/common/helpers";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import IconButton from "@mui/material/IconButton";
 
-export default function AccountSidebar() {
+interface Props {
+  closeSidebar?: () => void;
+}
+
+export default function AccountSidebar({ closeSidebar }: Props) {
   const router = useRouter();
   const logout = useLogout();
+  const desktopView = isDesktopViewPort();
 
   const handleLogout = async () => {
     await logout();
@@ -18,12 +26,19 @@ export default function AccountSidebar() {
 
   return (
     <Box
-      width={AccountSidebarWidth}
+      width={desktopView ? AccountSidebarWidth : "301px"}
       height={"100svh"}
       sx={{
         position: "fixed",
         top: 0,
-        right: 0,
+        ...(desktopView
+          ? {
+              right: 0,
+            }
+          : {
+              left: 0,
+              bgcolor: "surfaceContainerLow",
+            }),
         overflow: "auto",
         overscrollBehavior: "contain",
         "&::-webkit-scrollbar": {
@@ -34,14 +49,44 @@ export default function AccountSidebar() {
       <Box px={"16px"}>
         <Box
           sx={{
-            height: "40px",
-            p: "16px 8px",
-            fontSize: 18,
-            fontWeight: 500,
-            color: "onSurface",
+            display: "flex",
+            height: "72px",
+            alignItems: "center",
+            gap: "var(--1, 8px)",
+            flexShrink: 0,
+            alignSelf: "stretch",
+            justifyContent: "space-between",
           }}
         >
-          My Account
+          <Typography
+            sx={{
+              color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontFamily: "Poppins",
+              fontSize: "18px",
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "100%",
+            }}
+          >
+            My Account
+          </Typography>
+
+          {!desktopView && (
+            <IconButton
+              sx={{
+                border: "none",
+                "& > svg": { width: 24, height: 24 },
+                "&:active": {
+                  color: "#1C1B1F",
+                  textDecoration: "none",
+                },
+              }}
+              onClick={() => closeSidebar?.()}
+            >
+              <CloseRoundedIcon fontSize="large" />
+            </IconButton>
+          )}
         </Box>
         <Divider />
         <Stack

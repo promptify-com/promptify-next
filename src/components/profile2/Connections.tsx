@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LinkOff from "@mui/icons-material/LinkOff";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/router";
@@ -14,6 +13,7 @@ import useTruncate from "@/hooks/useTruncate";
 import Image from "@/components/design-system/Image";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
+import useBrowser from "@/hooks/useBrowser";
 
 export const Connections = () => {
   const router = useRouter();
@@ -27,7 +27,7 @@ export const Connections = () => {
   const [_useDeferredAction] = useConnectionss();
   const [useDeferredAction] = useDeleteConnection();
   const { truncate } = useTruncate();
-  const { breakpoints } = useTheme();
+  const isMobile = useBrowser();
   const preLogin = () => {
     setIsLoading(true);
   };
@@ -112,13 +112,15 @@ export const Connections = () => {
                 minWidth={"fit-content"}
               >
                 {customConnection.icon}
-                <Typography
-                  fontSize={16}
-                  fontWeight={400}
-                  color={"onSurface"}
-                >
-                  {customConnection.service}
-                </Typography>
+                {!isMobile && (
+                  <Typography
+                    fontSize={16}
+                    fontWeight={400}
+                    color={"onSurface"}
+                  >
+                    {customConnection.service}
+                  </Typography>
+                )}
               </Stack>
               <Stack
                 flex={3}
@@ -150,6 +152,12 @@ export const Connections = () => {
                   fontSize={16}
                   fontWeight={400}
                   color={"onSurface"}
+                  sx={{
+                    width: { xs: "112px", md: "auto" },
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "wrap",
+                  }}
                 >
                   {truncate(customConnection.name, { length: 32 })}
                 </Typography>
