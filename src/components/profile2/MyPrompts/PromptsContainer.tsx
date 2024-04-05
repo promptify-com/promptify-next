@@ -41,22 +41,32 @@ export default function PromptsContainer({
     >
       <Stack
         direction={{ xs: "column", md: "row" }}
-        alignItems={"center"}
         justifyContent={"space-between"}
         gap={1}
-        p={"8px 16px"}
+        p={{ xs: 0, md: "8px 16px" }}
       >
         <Typography
           fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
           color={"onSurface"}
+          sx={{
+            flexGrow: 1,
+            display: "block",
+            textAlign: "left",
+          }}
         >
           {title}
         </Typography>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          alignItems={"center"}
-          gap={1}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "center", md: "center" },
+            alignItems: "center",
+            width: { xs: "60%", md: "auto" },
+            mx: "auto",
+            gap: 1,
+            flexDirection: { xs: "column", md: "row" },
+          }}
         >
           <Button
             onClick={e => setSortAnchor(e.currentTarget)}
@@ -69,6 +79,7 @@ export default function PromptsContainer({
               fontWeight: 500,
               color: "onSurface",
               gap: 0.5,
+              width: { xs: "100%", md: "auto" },
               label: { color: "secondary.light", cursor: "pointer" },
               svg: {
                 transform: sortOpen ? "rotateX(180deg)" : "none",
@@ -86,10 +97,13 @@ export default function PromptsContainer({
             href="/prompt-builder/create"
             variant="contained"
             endIcon={<Add />}
+            sx={{
+              width: { xs: "100%", md: "auto" },
+            }}
           >
             New prompt
           </Button>
-        </Stack>
+        </Box>
       </Stack>
 
       {isFetching ? <TemplateCardPlaceholder /> : children}

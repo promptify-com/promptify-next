@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import Link from "next/link";
 import { navItems } from "@/components/profile2/Constants";
+import Button from "@mui/material/Button";
 
 interface NavItem {
   title: string;
@@ -40,10 +40,11 @@ const ProfileNavigation = () => {
       sx={{
         display: "flex",
         padding: "16px",
-        justifyContent: prevItem ? "center" : "flex-end",
+        justifyContent: prevItem ? "flex-start" : nextItem ? "flex-end" : "center",
         alignItems: "flex-start",
         gap: "16px",
         alignSelf: "stretch",
+        m: "20px",
       }}
     >
       {prevItem && (
@@ -54,13 +55,13 @@ const ProfileNavigation = () => {
             textDecoration: "none",
           }}
         >
-          <IconButton
+          <Button
             component="a"
             sx={btnStyle}
+            startIcon={<ArrowBackIosNewRoundedIcon sx={{ color: "onSurface" }} />}
           >
-            <ArrowBackIosNewRoundedIcon />
             <Typography sx={btnTypographyStyle}>{prevItem?.title}</Typography>
-          </IconButton>
+          </Button>
         </Link>
       )}
       {nextItem && (
@@ -71,13 +72,13 @@ const ProfileNavigation = () => {
             textDecoration: "none",
           }}
         >
-          <IconButton
+          <Button
             component="a"
             sx={btnStyle}
+            endIcon={<ArrowForwardIosRoundedIcon sx={{ color: "onSurface" }} />}
           >
             <Typography sx={btnTypographyStyle}>{nextItem?.title}</Typography>
-            <ArrowForwardIosRoundedIcon />
-          </IconButton>
+          </Button>
         </Link>
       )}
     </Box>
@@ -91,14 +92,14 @@ const btnStyle = {
   gap: "8px",
   justifyContent: "center",
   alignItems: "center",
-  flex: "1 0 0",
   borderRadius: "99px",
-  border: "1px solid var(--surfaceContainerHigh, #E9E7EC)",
+  border: "1px solid",
+  borderColor: "surfaceContainerHigh",
   textDecoration: "none",
 };
 
 const btnTypographyStyle = {
-  color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+  color: "onSurface",
   fontFeatureSettings: "'clig' off, 'liga' off",
   fontFamily: "Poppins",
   fontSize: "16px",
@@ -106,7 +107,7 @@ const btnTypographyStyle = {
   fontWeight: 500,
   lineHeight: "150%",
   display: "inline",
-  maxWidth: "120px",
+  minWidth: "100%",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
