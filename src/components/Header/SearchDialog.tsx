@@ -15,6 +15,7 @@ import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import SearchField from "@/components/common/forms/SearchField";
+import CardTemplateResult from "../common/cards/CardTemplateResult";
 
 interface SearchDialogProps {
   open: boolean;
@@ -136,7 +137,10 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
         ) : (
           <Grid>
             {isFetching ? (
-              <CardTemplatePlaceholder count={5} />
+              <CardTemplatePlaceholder
+                count={5}
+                isVertical={false}
+              />
             ) : (
               <Grid
                 display={"flex"}
@@ -150,9 +154,12 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                     width={"100%"}
                   >
                     {templates?.map(template => (
-                      <CardTemplate
+                      <CardTemplateResult
                         key={template.id}
-                        template={template}
+                        title={template.title}
+                        description={template.description}
+                        slug={template.slug}
+                        thumbnail={template.thumbnail}
                         query={debouncedSearchName}
                       />
                     ))}

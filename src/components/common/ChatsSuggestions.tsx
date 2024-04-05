@@ -1,3 +1,6 @@
+import { type RefObject } from "react";
+import { useRouter } from "next/router";
+import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import AddCircleOutlineRounded from "@mui/icons-material/AddCircleOutlineRounded";
@@ -5,9 +8,6 @@ import Grid from "@mui/material/Grid";
 import { useGetChatsQuery } from "@/core/api/chats";
 import SuggestionCard, { Avatar } from "@/components/Homepage/SuggestionCard";
 import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlaceholder";
-import { RefObject } from "react";
-import { useRouter } from "next/router";
-import { useTheme } from "@mui/material/styles";
 
 interface Props {
   carouselRef?: RefObject<HTMLDivElement>;
@@ -19,6 +19,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
   const router = useRouter();
   const theme = useTheme();
   const profilePage = router.pathname === "/profile";
+  const isHomePage = router.pathname === "/";
   return (
     <>
       {isLoading ? (
@@ -39,7 +40,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
         >
           <SuggestionCardPlaceholder
             count={2 + slice}
-            width={profilePage ? "100%" : "23%"}
+            width={profilePage || isHomePage ? "100%" : "23%"}
           />
         </Stack>
       ) : (

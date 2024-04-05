@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 
 import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -21,7 +21,7 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
   return (
     <Stack gap={"32px"}>
       <Typography
-        fontSize={{ xs: 19, md: 32 }}
+        fontSize={{ xs: 24, md: 32 }}
         fontWeight={400}
         lineHeight={"38.8px"}
         letterSpacing={"0.17px"}
@@ -36,13 +36,13 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
           gap={2}
           justifyContent={{ xs: "center", md: "flex-start" }}
         >
-          <LatestTemplatePlaceholder count={5} />
+          <CardTemplatePlaceholder count={5} />
         </Grid>
       ) : (
         <Grid
           container
-          gap={{ xs: 1, sm: 0 }}
           ml={{ md: -2 }}
+          spacing={1}
         >
           {showAdsBox && (
             <Grid
@@ -63,16 +63,13 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
               <Grid
                 key={template.id}
                 item
-                xs={12}
+                xs={6}
                 sm={6}
                 md={4}
                 lg={3}
                 xl={2}
               >
-                <CardTemplate
-                  template={template}
-                  vertical
-                />
+                <CardTemplate template={template} />
               </Grid>
             ))}
           </>

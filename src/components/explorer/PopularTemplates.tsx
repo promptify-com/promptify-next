@@ -81,7 +81,7 @@ function PopularTemplates({ catId }: Props) {
         mb={"-24px"}
       >
         <Typography
-          fontSize={{ xs: 19, md: 32 }}
+          fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
           color={"onSurface"}
           fontFamily={"Poppins"}
@@ -113,7 +113,6 @@ function PopularTemplates({ catId }: Props) {
             templateLoading={isLoading}
             templates={allTemplates}
             type="popularTemplates"
-            bgColor="surfaceContainerLow"
           />
         </Box>
         <div ref={lastTemplateElementRef}></div>

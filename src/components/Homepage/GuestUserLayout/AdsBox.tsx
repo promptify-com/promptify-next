@@ -26,7 +26,7 @@ function AdsBox() {
         direction={"column"}
         position={"absolute"}
         top={"54px"}
-        left={"54px"}
+        left={{ xs: "16px", md: "54px" }}
         zIndex={4}
         gap={2}
       >

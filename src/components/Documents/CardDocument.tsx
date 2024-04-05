@@ -32,7 +32,7 @@ export default function CardDocument({ execution, onClick }: Props) {
   const [exportPopup, setExportPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
   const [isFavorite, setIsFavorite] = useState(execution.is_favorite);
-  const firstPromptOutput = execution.prompt_executions?.[0].output ?? "";
+  const firstPromptOutput = execution.prompt_executions?.[0]?.output ?? "";
   const [content, setContent] = useState(firstPromptOutput ?? "");
 
   useEffect(() => {

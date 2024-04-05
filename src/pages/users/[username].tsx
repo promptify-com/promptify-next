@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { GetServerSideProps } from "next/types";
 import { useRouter } from "next/router";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -7,17 +8,16 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { Layout } from "@/layout";
 import { useGetUserTemplatesQuery } from "@/core/api/user";
-import CardTemplate from "@/components/common/cards/CardTemplate";
-import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
-import UserInformation from "@/components/profile/UserInformation";
-import type { Templates } from "@/core/api/dto/templates";
-import { GetServerSideProps } from "next/types";
+import useBrowser from "@/hooks/useBrowser";
 import { authClient } from "@/common/axios";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import { UserProfile } from "@/core/api/dto/user";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import UserInformation from "@/components/profile/UserInformation";
 import Footer from "@/components/Footer";
-import useBrowser from "@/hooks/useBrowser";
+import type { Templates } from "@/core/api/dto/templates";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
@@ -33,10 +33,9 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
         direction={{ xs: "column", md: "row" }}
         alignItems={"start"}
         pt={{ xs: " 80px", md: "48px" }}
-        px={"8px"}
-        width={{ xs: "auto", md: "94%" }}
+        width={{ xs: "100%", md: "94%" }}
         gap={"50px"}
-        mx={"auto"}
+        mx={{ md: "auto" }}
       >
         <UserInformation
           username={username}
@@ -98,7 +97,6 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       minHeight={"480px"}
       width={{ xs: "auto", sm: "100%", md: "100%" }}
       overflow={"hidden"}
-      pr={{ sm: 0 }}
       sx={{
         overflowX: "hidden",
         "&::-webkit-scrollbar": {
@@ -107,25 +105,17 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       }}
     >
       <Typography
-        sx={{
-          color: "var(--onSurface, var(--onSurface, #1D1B1E))",
-          fontFeatureSettings: "'clig' off, 'liga' off",
-          fontFamily: "Poppins",
-          fontSize: "24px",
-          fontStyle: "normal",
-          fontWeight: 400,
-          lineHeight: "120%",
-          letterSpacing: "0.17px",
-          [`@media (min-width: 425px) and (max-width: 430px)`]: {
-            ml: "4px",
-          },
-        }}
+        fontSize={24}
+        fontWeight={400}
+        lineHeight={"28.8px"}
+        letterSpacing={"0.17px"}
+        px={"16px"}
       >
         {`Prompts by ${firstName + " " + lastName}`}
       </Typography>
       {hasNoTemplates ? (
         <Stack
-          minHeight={"60svh"}
+          minHeight={{ xs: "30svh", md: "60svh" }}
           direction={"row"}
           justifyContent={"center"}
           alignItems={"center"}
@@ -141,7 +131,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       ) : (
         <>
           {templatesLoading ? (
-            <LatestTemplatePlaceholder count={10} />
+            <CardTemplatePlaceholder count={10} />
           ) : (
             <TemplatesPaginatedList
               loading={isFetching}
@@ -161,31 +151,21 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
             >
               <Grid
                 container
-                columnSpacing={{ xs: 3.5, sm: 1 }}
-                rowSpacing={1}
-                sx={{
-                  [`@media (min-width: 425px) and (max-width: 430px)`]: {
-                    ml: "-24px",
-                  },
-                }}
+                spacing={1}
+                px={{ xs: "16px", md: 0 }}
               >
-                <>
-                  {allTemplates?.map(template => (
-                    <Grid
-                      key={template.id}
-                      item
-                      xs={6}
-                      sm={3}
-                      md={5}
-                      lg={3}
-                    >
-                      <CardTemplate
-                        template={template}
-                        vertical
-                      />
-                    </Grid>
-                  ))}
-                </>
+                {allTemplates?.map(template => (
+                  <Grid
+                    key={template.id}
+                    item
+                    xs={6}
+                    sm={6}
+                    md={5}
+                    lg={3}
+                  >
+                    <CardTemplate template={template} />
+                  </Grid>
+                ))}
               </Grid>
             </TemplatesPaginatedList>
           )}

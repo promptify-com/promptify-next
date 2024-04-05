@@ -47,10 +47,10 @@ export default function DrawerContainer({
         justifyContent: "center",
         display: expanded ? "flex" : "none",
         "& .MuiDrawer-paper": {
-          height: { xs: `calc(100svh - ${theme.custom.headerHeight.xs})`, md: "100svh" },
+          height: { xs: `calc(100svh - ${theme.custom.headerHeight.xs} + 16px)`, md: "100svh" },
           width: { xs: "85svw", md: `calc(${theme.custom.leftClosedSidebarWidth} + ${drawerWidth}px)` },
           left: { xs: 0, md: theme.custom.leftClosedSidebarWidth },
-          mt: { xs: theme.custom.headerHeight.xs, md: 0 },
+          mt: { xs: `calc(${theme.custom.headerHeight.xs} - 10px)`, md: 0 },
           my: 0,
           padding: "10px 20px",
           borderRadius: 0,

@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import type { UserProfile } from "@/core/api/dto/user";
@@ -48,11 +48,8 @@ function UserInformation({
     <Stack
       gap={"32px"}
       width={{ xs: "100%", md: "320px" }}
-      sx={{
-        justifyContent: { xs: "center", md: "flex-start" },
-        alignItems: { xs: "center", md: "flex-start" },
-        pt: { xs: "24px", md: 0 },
-      }}
+      direction={"column"}
+      alignItems={{ xs: "center", md: "start" }}
     >
       <Box
         position={"relative"}
@@ -69,18 +66,13 @@ function UserInformation({
         />
       </Box>
       <Stack
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: { xs: "center", md: "flex-start" },
-          alignItems: { xs: "center", md: "flex-start" },
-          gap: "16px",
-          p: { xs: "0 24px", md: 0 },
-        }}
+        textAlign={{ xs: "center", md: "start" }}
+        px={{ xs: "16px", md: 0 }}
+        gap={2}
       >
         <Typography
           sx={{
-            color: "var(--onSurface, var(--onSurface, #1D1B1E))",
+            color: "onSurface",
             textAlign: "center",
             fontFeatureSettings: "'clig' off, 'liga' off",
             fontFamily: "Poppins",
@@ -94,15 +86,11 @@ function UserInformation({
         </Typography>
         <Typography
           component={"div"}
+          fontSize={14}
+          fontWeight={400}
+          lineHeight={"22.4px"}
           sx={{
-            color: "var(--onSurface, var(--onSurface, #1D1B1E))",
-            textAlign: { xs: "center", md: "left" },
-            fontFeatureSettings: "'clig' off, 'liga' off",
-            fontFamily: "Poppins",
-            fontSize: "14px",
-            fontStyle: "normal",
-            fontWeight: 400,
-            lineHeight: "160%",
+            opacity: { xs: 0.72, md: 1 },
           }}
         >
           {truncateBio ? (
@@ -128,6 +116,7 @@ function UserInformation({
         </Typography>
         {!privateProfile && (
           <Typography
+            mt={{ md: "16px" }}
             fontSize={12}
             fontWeight={500}
             lineHeight={"16.8px"}

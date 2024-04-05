@@ -6,6 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
+import useTruncate from "@/hooks/useTruncate";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   title: string;
@@ -70,6 +72,8 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
 };
 
 const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props) => {
+  const { truncate } = useTruncate();
+  const { isMobile } = useBrowser();
   return (
     <Link
       href={href}
@@ -124,7 +128,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
               letterSpacing={"0.17px"}
               color={"text.secondary"}
             >
-              {description}
+              {truncate(description, { length: isMobile ? 40 : 50 })}
             </Typography>
           </Stack>
 

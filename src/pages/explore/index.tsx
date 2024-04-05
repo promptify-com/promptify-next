@@ -1,29 +1,34 @@
 import { useEffect, useRef, useState } from "react";
+import type { GetServerSideProps } from "next";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import lazy from "next/dynamic";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
 
-import type { GetServerSideProps } from "next";
 import { Layout } from "@/layout";
-import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import useBrowser from "@/hooks/useBrowser";
+import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import Footer from "@/components/Footer";
-import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import { CategoryCard } from "@/components/common/cards/CardCategory";
+
+const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
+  ssr: false,
+});
 
 interface Props {
   categories: Category[];
@@ -85,6 +90,14 @@ export default function ExplorePage({ categories = [] }: Props) {
 
   return (
     <Layout>
+      {isMobile && (
+        <Box
+          mt={-2}
+          zIndex={444}
+        >
+          <PromptsDrawerLazy />
+        </Box>
+      )}
       <Box
         mt={{ xs: 7, md: 0 }}
         position={"relative"}
@@ -93,12 +106,13 @@ export default function ExplorePage({ categories = [] }: Props) {
           margin: "0 auto",
           width: "100%",
         }}
+        bgcolor={{ xs: "surfaceContainerLow", md: "surfaceContainerLowest" }}
       >
         <Grid
           display={"flex"}
           flexDirection={"column"}
           gap={"36px"}
-          mt={{ xs: 2, md: 0 }}
+          mt={{ xs: 5, md: 0 }}
           position={"relative"}
           sx={{
             padding: { xs: 0, md: "32px" },
@@ -125,24 +139,25 @@ export default function ExplorePage({ categories = [] }: Props) {
                 </Typography>
                 <Grid
                   container
-                  spacing={{ xs: 1, md: 2 }}
+                  spacing={{ xs: 2, md: 2 }}
                   alignItems={"flex-start"}
-                  sx={{
-                    overflow: { xs: "auto", md: "initial" },
-                    WebkitOverflowScrolling: { xs: "touch", md: "initial" },
-                  }}
                 >
                   {categories?.map(category => (
                     <Grid
                       item
-                      xs={12}
-                      sm={6}
+                      xs={4}
+                      sm={2}
                       md={isPromptsFiltersSticky ? 5 : 3}
                       lg={isPromptsFiltersSticky ? 3 : 2.4}
                       xl={2.4}
                       key={category.id}
                     >
-                      <ExploreCardCategory category={category} />
+                      <CategoryCard
+                        category={category}
+                        priority={false}
+                        href={`/explore/${category.slug}`}
+                        min={isMobile}
+                      />
                     </Grid>
                   ))}
                 </Grid>
@@ -173,7 +188,7 @@ export default function ExplorePage({ categories = [] }: Props) {
                   alignSelf={"stretch"}
                   flexWrap={{ xs: "nowrap", md: "wrap" }}
                 >
-                  <LatestTemplatePlaceholder count={4} />
+                  <CardTemplatePlaceholder count={4} />
                 </Grid>
               ) : templates?.length === 0 ? (
                 <Typography
@@ -205,18 +220,13 @@ export default function ExplorePage({ categories = [] }: Props) {
                     {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
                       <Grid
                         item
-                        xs={12}
+                        xs={4}
                         sm={6}
                         md={isPromptsFiltersSticky ? 5 : 4}
                         lg={3}
                         key={`${template.id}_${index}`}
                       >
-                        <CardTemplate
-                          template={template as Templates}
-                          bgColor={"surfaceContainerLow"}
-                          vertical
-                          showTagsOnHover
-                        />
+                        <CardTemplate template={template as Templates} />
                       </Grid>
                     ))}
                   </Grid>
@@ -242,7 +252,7 @@ export default function ExplorePage({ categories = [] }: Props) {
                 alignSelf={"stretch"}
                 flexWrap={{ xs: "nowrap", md: "wrap" }}
               >
-                <LatestTemplatePlaceholder count={4} />
+                <CardTemplatePlaceholder count={4} />
               </Grid>
             )}
             {isValidUser && !!suggestedTemplates?.length && (
@@ -252,7 +262,6 @@ export default function ExplorePage({ categories = [] }: Props) {
                 isLoading={isSuggestedTemplatesLoading}
                 templateLoading={isSuggestedTemplatesLoading}
                 title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
-                explore
               />
             )}
           </Box>
