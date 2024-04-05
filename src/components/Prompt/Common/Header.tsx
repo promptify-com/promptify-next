@@ -64,8 +64,7 @@ export default function Header({ template, close }: TemplateHeaderProps) {
       alignItems={"baseline"}
       justifyContent={"space-between"}
       sx={{
-        p: "24px 48px",
-        display: { xs: "none", md: "flex" },
+        display: "flex",
       }}
     >
       <Breadcrumbs separator={<ArrowBackIosNew sx={{ fontSize: 14, color: alpha(theme.palette.onSurface, 0.3) }} />}>
@@ -77,10 +76,10 @@ export default function Header({ template, close }: TemplateHeaderProps) {
 
 const breadcrumbStyle = {
   color: alpha(theme.palette.onSurface, 0.3),
-  fontSize: 16,
+  fontSize: { xs: 12, md: 16 },
   fontWeight: 400,
   letterSpacing: ".2px",
-  p: "8px",
+  pr: "8px",
   ":hover": {
     color: "rgba(0, 0, 0, 0.6)",
   },

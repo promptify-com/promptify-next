@@ -52,6 +52,7 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
           expanded={isExpanded}
           toggleExpand={toggleSidebar}
           sticky={isPromptsFiltersSticky}
+          onClose={() => dispatch(setStickyPromptsFilters(false))}
         >
           <PromptsFilters />
         </DrawerContainer>

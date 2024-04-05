@@ -274,14 +274,14 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
           md: `calc(100% - (${containerWidth}))`,
         },
 
-        background: transparent ? "transparent" : "surface.1",
+        background: transparent ? "transparent" : "surfaceContainerLowest",
         position: "fixed",
         zIndex: 1000,
         top: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: { xs: "surface.1", md: "surface.1" },
+        bgcolor: "surfaceContainerLowest",
         height: {
           xs: theme.custom.headerHeight.xs,
           md: theme.custom.headerHeight.md,

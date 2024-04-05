@@ -11,11 +11,15 @@ import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
+import useBrowser from "@/hooks/useBrowser";
 
-interface Props {}
+interface Props {
+  onClose?: () => void;
+}
 
-export default function ChatsHistory({}: Props) {
+export default function ChatsHistory({ onClose }: Props) {
   const router = useRouter();
+  const { isMobile } = useBrowser();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const selectedChat = useAppSelector(state => state.chat.selectedChat);
@@ -58,6 +62,7 @@ export default function ChatsHistory({}: Props) {
   const handleClickChat = (chat: IChat) => {
     dispatch(setSelectedChat(chat));
     dispatch(setInitialChat(false));
+    onClose?.();
   };
 
   useEffect(() => {
@@ -87,7 +92,11 @@ export default function ChatsHistory({}: Props) {
   return (
     <Stack
       gap={4}
-      py={"16px"}
+      className="chat-history"
+      zIndex={1000}
+      sx={{
+        py: "16px",
+      }}
     >
       <Stack gap={2}>
         <SearchField

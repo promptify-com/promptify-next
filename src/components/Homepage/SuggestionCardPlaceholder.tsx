@@ -9,7 +9,7 @@ function SuggestionCardPlaceholder({ count = 4 }) {
           key={index}
           bgcolor={"surface.2"}
           borderRadius={"16px"}
-          width={"23%"}
+          width={"100%"}
         >
           <Stack
             direction={"row"}

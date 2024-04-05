@@ -4,16 +4,24 @@ import Storage from "@/common/storage";
 import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import ChatsHistory from "./ChatsHistory";
+import useBrowser from "@/hooks/useBrowser";
+import type { SxProps } from "@mui/material/styles";
 
 interface Props {
   expandedOnHover: boolean;
+  style?: SxProps;
 }
 
-export default function ChatsDrawer({ expandedOnHover }: Props) {
+export default function ChatsDrawer({ expandedOnHover, style = {} }: Props) {
   const dispatch = useAppDispatch();
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const { isMobile } = useBrowser();
 
   const toggleSidebar = () => {
+    if (isMobile) {
+      return;
+    }
+
     dispatch(setStickyChatHistory(!isChatHistorySticky));
   };
 
@@ -29,9 +37,10 @@ export default function ChatsDrawer({ expandedOnHover }: Props) {
   return (
     <DrawerContainer
       title="Chats"
-      expanded={isChatHistorySticky || expandedOnHover}
+      expanded={isMobile ? expandedOnHover : isChatHistorySticky || expandedOnHover}
       toggleExpand={toggleSidebar}
-      sticky={isChatHistorySticky}
+      sticky={isMobile ? false : isChatHistorySticky}
+      style={style}
     >
       <ChatsHistory />
     </DrawerContainer>

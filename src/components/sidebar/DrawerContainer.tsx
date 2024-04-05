@@ -2,24 +2,34 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import { useTheme } from "@mui/material/styles";
-import type { ReactNode } from "react";
-import { KeyboardTab } from "@mui/icons-material";
-import useBrowser from "@/hooks/useBrowser";
-import Close from "@mui/icons-material/Close";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import { useTheme, type SxProps } from "@mui/material/styles";
+import type { ReactNode } from "react";
+import KeyboardTab from "@mui/icons-material/KeyboardTab";
+import ClearRounded from "@mui/icons-material/ClearRounded";
+import useBrowser from "@/hooks/useBrowser";
 
 const drawerWidth = 255;
 
 interface Props {
   title: string;
   expanded: boolean;
-  toggleExpand(): void;
+  toggleExpand: () => void;
+  onClose?: () => void;
   sticky: boolean;
   children?: ReactNode;
+  style?: SxProps;
 }
 
-export default function DrawerContainer({ title, expanded, toggleExpand, sticky, children }: Props) {
+export default function DrawerContainer({
+  title,
+  expanded,
+  toggleExpand,
+  sticky,
+  children,
+  style = {},
+  onClose,
+}: Props) {
   const theme = useTheme();
   const { isMobile } = useBrowser();
 
@@ -53,6 +63,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
             display: "none",
           },
         },
+        ...style,
       }}
     >
       <Stack
@@ -75,7 +86,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
           {title}
         </Typography>
         <IconButton
-          onClick={toggleExpand}
+          onClick={isMobile ? onClose : toggleExpand}
           sx={{
             opacity: 1,
             border: "none",
@@ -89,7 +100,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
             },
           }}
         >
-          {isMobile ? <Close /> : <KeyboardTab />}
+          {isMobile ? <ClearRounded /> : <KeyboardTab />}
         </IconButton>
       </Stack>
       <Divider />

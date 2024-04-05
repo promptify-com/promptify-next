@@ -22,7 +22,6 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
           direction={"row"}
           gap={1}
           alignItems={"center"}
-          flexWrap={"wrap"}
           justifyContent={"space-between"}
         >
           <SuggestionCardPlaceholder count={2 + slice} />
