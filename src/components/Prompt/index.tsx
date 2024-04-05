@@ -98,7 +98,6 @@ function TemplatePage({ template, popup }: Props) {
           md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
         }}
         sx={{
-          bgcolor: "surfaceContainerLowest",
           overflow: { xs: "auto", md: "unset" },
           mt: { xs: theme.custom.headerHeight.xs, md: 0 },
           px: { md: "32px" },
@@ -121,10 +120,16 @@ function TemplatePage({ template, popup }: Props) {
         >
           <Stack>
             {!isMobile && (
-              <Header
-                template={template}
-                close={closeTemplatePopup}
-              />
+              <Stack
+                sx={{
+                  p: "24px 48px",
+                }}
+              >
+                <Header
+                  template={template}
+                  close={closeTemplatePopup}
+                />
+              </Stack>
             )}
             {!isMobile && (
               <Box
