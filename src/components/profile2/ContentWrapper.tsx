@@ -1,8 +1,8 @@
 import { SEO_DESCRIPTION } from "@/common/constants";
-import type { SxProps } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { type ReactNode } from "react";
+import UserLayout from "./UserLayout";
 
 interface Props {
   title: string;
@@ -12,38 +12,40 @@ interface Props {
 
 const ContentWrapper = ({ title, description, children }: Props) => {
   return (
-    <Stack
-      gap={5}
-      sx={{
-        maxWidth: "1184px",
-        width: "70%",
-        m: "auto",
-        p: "40px 20px",
-      }}
-    >
+    <UserLayout title={title}>
       <Stack
-        gap={2}
-        p={"8px 16px"}
+        gap={5}
+        sx={{
+          maxWidth: "1184px",
+          width: { xs: "100%", md: "70%" },
+          m: "auto",
+          p: { xs: "50px 0px", md: "40px 10px" },
+        }}
       >
-        <Typography
-          fontSize={32}
-          fontWeight={400}
-          color={"onSurface"}
+        <Stack
+          gap={2}
+          p={"8px 16px"}
         >
-          {title}
-        </Typography>
-        {description && (
           <Typography
-            fontSize={16}
+            fontSize={32}
             fontWeight={400}
             color={"onSurface"}
           >
-            {description}
+            {title}
           </Typography>
-        )}
+          {description && (
+            <Typography
+              fontSize={16}
+              fontWeight={400}
+              color={"onSurface"}
+            >
+              {description}
+            </Typography>
+          )}
+        </Stack>
+        {children}
       </Stack>
-      {children}
-    </Stack>
+    </UserLayout>
   );
 };
 

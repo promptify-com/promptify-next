@@ -31,27 +31,30 @@ export default function PromptsContainer({
       gap={5}
       sx={{
         maxWidth: "1184px",
-        width: "85%",
-        m: { xs: "10px 0 0 0", md: "auto" },
-        p: "40px 20px",
+        width: { xs: "100%", md: "85%" },
+        m: "auto",
+        p: "40px 16px",
+        ["@media (max-width: 425)"]: {
+          p: "0px 0",
+        },
       }}
     >
       <Stack
-        direction={"row"}
+        direction={{ xs: "column", md: "row" }}
         alignItems={"center"}
         justifyContent={"space-between"}
         gap={1}
         p={"8px 16px"}
       >
         <Typography
-          fontSize={32}
+          fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
           color={"onSurface"}
         >
           {title}
         </Typography>
         <Stack
-          direction={"row"}
+          direction={{ xs: "column", md: "row" }}
           alignItems={"center"}
           gap={1}
         >

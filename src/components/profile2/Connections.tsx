@@ -92,7 +92,7 @@ export const Connections = () => {
           const customConnection = formatConnection(connection);
           return (
             <Stack
-              direction={"row"}
+              direction={{ xs: "column", sm: "row" }}
               alignItems={"center"}
               gap={3}
               key={connection.id}

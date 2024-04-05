@@ -100,7 +100,9 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
       <Stack
         direction={"row"}
         alignItems={"center"}
+        justifyContent={"flex-start"}
         gap={"24px"}
+        width={{ xs: "100%", md: "fit-content" }}
       >
         <Box
           component={Link}
@@ -109,7 +111,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
           sx={{
             zIndex: 0,
             position: "relative",
-            width: { xs: "260px", md: "152px" },
+            width: { xs: "160px", md: "152px" },
             minWidth: "152px",
             height: "113px",
             borderRadius: "24px",
@@ -159,6 +161,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
                 WebkitBoxOrient: "vertical",
                 WebkitLineClamp: 2,
                 overflow: "hidden",
+                minwid: "44.4px",
               }}
             >
               {stripTags(description)}
@@ -351,7 +354,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
 export default TemplateCard;
 
 const btnStyle = {
-  width: { xs: "100%", md: "fit-content" },
+  width: "fit-content",
   border: "none",
   color: "onSurface",
   bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
