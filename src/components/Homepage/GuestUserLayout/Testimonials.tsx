@@ -6,7 +6,8 @@ import CardMedia from "@mui/material/CardMedia";
 import Image from "@/components/design-system/Image";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import { Box } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
+import useBrowser from "@/hooks/useBrowser";
 interface ITestimonial {
   image: string;
   content: string;
@@ -31,65 +32,92 @@ const TestimonialExamples: ITestimonial[] = [
   },
 ];
 
-const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
-  <Card
-    elevation={0}
-    sx={{
-      bgcolor: "#F7F6FE",
-      borderRadius: "24px",
-    }}
-  >
-    <Stack direction={{ md: "row" }}>
-      <CardContent sx={{ flex: 1, padding: { xs: "24px 16px", md: "24px 32px" }, m: 0 }}>
-        <Stack
-          height={"100%"}
-          justifyContent={"space-between"}
-          alignItems={"flex-start"}
-          gap={2}
-        >
-          <Typography
-            fontSize={18}
-            fontWeight={400}
-            color={"#000000"}
+const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => {
+  const { isMobile } = useBrowser();
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        bgcolor: "#F7F6FE",
+        borderRadius: "24px",
+      }}
+    >
+      <Stack direction={"row"}>
+        <CardContent sx={{ flex: 1, padding: { xs: "24px 16px", md: "24px 32px" }, m: 0 }}>
+          <Stack
+            height={"100%"}
+            justifyContent={"space-between"}
+            alignItems={"flex-start"}
+            gap={2}
           >
-            &quot;{testimonial.content}&quot;
-          </Typography>
-          <Stack gap={1}>
             <Typography
-              fontSize={16}
-              fontWeight={500}
-              color={"#2A2A3C"}
+              fontSize={18}
+              fontWeight={400}
+              color={"onSurface"}
+              minHeight={{ xs: "130px", md: "auto" }}
             >
-              {testimonial.name}
+              &quot;{testimonial.content}&quot;
             </Typography>
-            <Typography
-              fontSize={14}
-              fontWeight={500}
-              color={"#2A2A3C"}
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
             >
-              {testimonial.profession}
-            </Typography>
+              <Box
+                width={"60px"}
+                height={"60px"}
+                borderRadius={"60px"}
+                overflow={"hidden"}
+                position={"relative"}
+              >
+                <Image
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  fill
+                  priority={false}
+                />
+              </Box>
+
+              <Stack gap={1}>
+                <Typography
+                  fontSize={16}
+                  fontWeight={500}
+                  color={"secondary.main"}
+                >
+                  {testimonial.name}
+                </Typography>
+                <Typography
+                  fontSize={14}
+                  fontWeight={500}
+                  color={"secondary.main"}
+                >
+                  {testimonial.profession}
+                </Typography>
+              </Stack>
+            </Stack>
           </Stack>
-        </Stack>
-      </CardContent>
-      <CardMedia
-        sx={{
-          zIndex: 1,
-          borderRadius: "16px",
-          width: { xs: "100%", md: "223px" },
-          height: { xs: "200px", md: "312px" },
-        }}
-      >
-        <Image
-          src={testimonial.image}
-          alt={testimonial.name}
-          style={{ borderRadius: "16px", objectFit: "contain", width: "100%", height: "100%" }}
-          priority={false}
-        />
-      </CardMedia>
-    </Stack>
-  </Card>
-);
+        </CardContent>
+        {!isMobile && (
+          <CardMedia
+            sx={{
+              zIndex: 1,
+              borderRadius: "16px",
+              width: { xs: "100%", md: "223px" },
+              height: { xs: "200px", md: "312px" },
+            }}
+          >
+            <Image
+              src={testimonial.image}
+              alt={testimonial.name}
+              style={{ borderRadius: "16px", objectFit: "contain", width: "100%", height: "100%" }}
+              priority={false}
+            />
+          </CardMedia>
+        )}
+      </Stack>
+    </Card>
+  );
+};
 
 const CARDS_GAP = 24;
 const cardWidth = CARDS_GAP / TestimonialExamples.length;
@@ -146,6 +174,7 @@ function Testimonials() {
               sx={{
                 width: { xs: "100%", md: `calc(50% - ${cardWidth}px)` },
                 minWidth: { xs: "100%", md: `calc(50% - ${cardWidth}px)` },
+                mr: idx === 1 ? 3 : 0,
               }}
             >
               <TestimonialCard testimonial={testimonial} />

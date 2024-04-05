@@ -112,7 +112,7 @@ export default function ExplorePage({ categories = [] }: Props) {
           display={"flex"}
           flexDirection={"column"}
           gap={"36px"}
-          mt={{ xs: 2, md: 0 }}
+          mt={{ xs: 5, md: 0 }}
           position={"relative"}
           sx={{
             padding: { xs: 0, md: "32px" },

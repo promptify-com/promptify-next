@@ -18,16 +18,14 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const pathname = router.pathname;
   const theme = useTheme();
   const { isMobile } = useBrowser();
-  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const isPromptsReviewFiltersSticky = useAppSelector(state => state.sidebar.isPromptsReviewFiltersSticky);
+
+  const { isPromptsFiltersSticky, isDocumentsFiltersSticky, isChatHistorySticky, isPromptsReviewFiltersSticky } =
+    useAppSelector(state => state.sidebar);
+
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
   const isPromptPage = pathname.split("/")[1] === "prompt";
-
-  console.log(pathname.split("/"));
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
 

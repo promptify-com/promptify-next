@@ -73,9 +73,10 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
   return (
     <ClientOnly>
       <Grid
+        mt={{ xs: 4, md: 0 }}
         flexDirection="column"
         display={"flex"}
-        gap={"80px"}
+        gap={{ xs: "35px", md: "80px" }}
         mx={{ md: "50px" }}
         maxWidth={{ xs: "90vw", md: "fit-content" }}
       >
