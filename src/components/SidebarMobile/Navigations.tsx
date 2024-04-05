@@ -13,6 +13,7 @@ import TryRounded from "@mui/icons-material/TryRounded";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import Search from "@mui/icons-material/Search";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
+import Grid from "@mui/material/Grid";
 
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
@@ -22,9 +23,9 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { BLOG_URL } from "@/common/constants";
 import { isValidUserFn } from "@/core/store/userSlice";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import CardTemplate from "@/components/common/cards/CardTemplate";
 import EditorIcon from "@/components/builder/Assets/EditorIcon";
 import Book3 from "@/components/SidebarMobile/Icons/Book3";
+import CardTemplateResult from "@/components/common/cards/CardTemplateResult";
 import type { Link } from "@/components/SidebarMobile/Types";
 
 interface Props {
@@ -204,21 +205,23 @@ function Navigations({ onCloseDrawer }: Props) {
               <CardTemplatePlaceholder count={5} />
             </Stack>
           ) : templates?.length !== 0 && !isFetching ? (
-            <Stack
-              width={"100%"}
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"8px"}
+            <Grid
+              container
+              gap={1}
             >
               {templates?.map(template => (
-                <CardTemplate
+                <Grid
                   key={template.id}
-                  template={template}
-                  query={debouncedSearchName}
-                  asResult
-                />
+                  gap={1}
+                  width={"100%"}
+                >
+                  <CardTemplateResult
+                    template={template}
+                    query={debouncedSearchName}
+                  />
+                </Grid>
               ))}
-            </Stack>
+            </Grid>
           ) : (
             <NotFoundIcon />
           )}

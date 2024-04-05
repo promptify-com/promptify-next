@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { AxiosResponse } from "axios";
-import Typography from "@mui/material/Typography";
 
 import ClientOnly from "@/components/base/ClientOnly";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -17,10 +16,8 @@ import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
 import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import CardTemplate from "@/components/common/cards/CardTemplate";
-import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
+import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
-import HomepageTemplates from "./HomepageTemplates";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -92,7 +89,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           showAdsBox
         />
 
-        {/* <Stack mr={{ md: "16px" }}>
+        <Stack mr={{ md: "16px" }}>
           <CategoryCarousel
             categories={categories}
             userScrolled={false}
@@ -101,7 +98,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
             explore
             autoPlay
           />
-        </Stack> */}
+        </Stack>
 
         <Learn />
         <Testimonials />

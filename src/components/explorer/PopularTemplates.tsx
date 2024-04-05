@@ -113,7 +113,6 @@ function PopularTemplates({ catId }: Props) {
             templateLoading={isLoading}
             templates={allTemplates}
             type="popularTemplates"
-            bgColor="surfaceContainerLow"
           />
         </Box>
         <div ref={lastTemplateElementRef}></div>

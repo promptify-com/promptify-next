@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 
 import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -36,7 +36,7 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
           gap={2}
           justifyContent={{ xs: "center", md: "flex-start" }}
         >
-          <LatestTemplatePlaceholder count={5} />
+          <CardTemplatePlaceholder count={5} />
         </Grid>
       ) : (
         <Grid
@@ -69,10 +69,7 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
                 lg={3}
                 xl={2}
               >
-                <CardTemplate
-                  template={template}
-                  vertical
-                />
+                <CardTemplate template={template} />
               </Grid>
             ))}
           </>

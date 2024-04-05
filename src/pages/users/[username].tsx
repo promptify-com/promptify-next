@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { GetServerSideProps } from "next/types";
 import { useRouter } from "next/router";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -7,17 +8,16 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { Layout } from "@/layout";
 import { useGetUserTemplatesQuery } from "@/core/api/user";
-import CardTemplate from "@/components/common/cards/CardTemplate";
-import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
-import UserInformation from "@/components/profile/UserInformation";
-import type { Templates } from "@/core/api/dto/templates";
-import { GetServerSideProps } from "next/types";
+import useBrowser from "@/hooks/useBrowser";
 import { authClient } from "@/common/axios";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import { UserProfile } from "@/core/api/dto/user";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import UserInformation from "@/components/profile/UserInformation";
 import Footer from "@/components/Footer";
-import useBrowser from "@/hooks/useBrowser";
+import type { Templates } from "@/core/api/dto/templates";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
@@ -125,13 +125,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
       ) : (
         <>
           {templatesLoading ? (
-            <Grid
-              container
-              gap={2}
-              justifyContent={"center"}
-            >
-              <LatestTemplatePlaceholder count={10} />
-            </Grid>
+            <CardTemplatePlaceholder count={10} />
           ) : (
             <TemplatesPaginatedList
               loading={isFetching}
@@ -163,10 +157,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                     md={5}
                     lg={3}
                   >
-                    <CardTemplate
-                      template={template}
-                      vertical
-                    />
+                    <CardTemplate template={template} />
                   </Grid>
                 ))}
               </Grid>

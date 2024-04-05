@@ -1,64 +1,31 @@
+import { useRouter } from "next/router";
+import Link from "next/link";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import { alpha } from "@mui/material/styles";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
-import type { Templates } from "@/core/api/dto/templates";
-import { useRouter } from "next/router";
+
+import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { isDesktopViewPort, stripTags } from "@/common/helpers";
-import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
-import Link from "next/link";
+import Image from "@/components/design-system/Image";
+import type { Templates } from "@/core/api/dto/templates";
 
 type CardTemplateProps = {
   template: Templates;
-  query?: string;
-  asResult?: boolean;
-  vertical?: boolean;
-  bgColor?: string;
-  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({
-  template,
-  query,
-  asResult,
-  vertical,
-  bgColor = "surface.2",
-  showTagsOnHover = false,
-}: CardTemplateProps) {
+function CardTemplate({ template }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const isDesktop = isDesktopViewPort();
-
-  const highlightSearchQuery = (text: string) => {
-    if (!query) return text;
-
-    const regex = new RegExp(`(${query})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, idx) =>
-      regex.test(part) ? (
-        <span
-          key={idx}
-          style={{ color: "#375CA9", fontWeight: "bold", textDecoration: "underline" }}
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
 
   return (
     <Link
@@ -72,11 +39,11 @@ function CardTemplate({
     >
       <Card
         sx={{
-          minWidth: { xs: "50%", sm: isDesktop && vertical ? "210px" : "auto" },
-          height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
+          minWidth: { xs: "50%", sm: isDesktop ? "210px" : "auto" },
+          height: isDesktop ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: isDesktop && vertical ? "16px 16px 8px" : "0 0 8px 0",
+          p: isDesktop ? "16px 16px 8px" : "0 0 8px 0",
           bgcolor: "transparent",
           ".tags": {
             display: "none",
@@ -92,16 +59,16 @@ function CardTemplate({
         elevation={0}
       >
         <Stack
-          direction={{ xs: "column", md: vertical ? "column" : "row" }}
-          alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
+          direction={"column"}
+          alignItems={"flex-start"}
           justifyContent={"space-between"}
           gap={{ xs: 0, md: 1 }}
           height={"100%"}
         >
           <Stack
-            direction={vertical ? "column" : "row"}
+            direction={"column"}
             justifyContent={{ xs: "flex-start", md: "space-between" }}
-            alignItems={vertical ? "flex-start" : "center"}
+            alignItems={"flex-start"}
             gap={{ xs: "10px", md: 2 }}
             width={"100%"}
             height={"100%"}
@@ -111,8 +78,8 @@ function CardTemplate({
                 zIndex: 1,
                 borderRadius: "16px",
                 overflow: "hidden",
-                width: vertical ? "100%" : "72px",
-                height: { xs: "135px", sm: vertical ? "160px" : "54px" },
+                width: "100%",
+                height: { xs: "135px", md: "160px" },
               }}
             >
               <Image
@@ -129,7 +96,7 @@ function CardTemplate({
                 fontSize={14}
                 fontWeight={500}
               >
-                {highlightSearchQuery(template.title)}
+                {template.title}
               </Typography>
               {isDesktop && (
                 <Typography
@@ -139,183 +106,97 @@ function CardTemplate({
                     lineHeight: "16.8px",
                     letterSpacing: "0.15px",
                     color: "onSurface",
-                    opacity: vertical ? 0.75 : 1,
+                    opacity: 0.75,
                   }}
                 >
-                  {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
+                  {truncate(stripTags(template.description), { length: 70 })}
                 </Typography>
               )}
             </Stack>
-            {!vertical && template.created_by && (
-              <Image
-                src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-                width={32}
-                height={32}
-                style={{
-                  display: isDesktop ? "none" : asResult ? "none" : "flex",
-                  backgroundColor: theme.palette.surface[5],
-                  borderRadius: "50%",
-                }}
-              />
-            )}
-            {vertical && (
+
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+              width={{ xs: "auto", md: "100%" }}
+              mt={{ xs: "-10px", md: 0 }}
+            >
               <Stack
                 direction={"row"}
                 alignItems={"center"}
-                gap={1}
-                width={{ xs: "auto", md: "100%" }}
-                mt={{ xs: "-10px", md: 0 }}
+                gap={0.5}
+                sx={iconTextStyle}
               >
+                <Favorite />
+                {template.favorites_count || 0}
+              </Stack>
+              {isDesktop && (
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
                   gap={0.5}
                   sx={iconTextStyle}
                 >
-                  <Favorite />
-                  {template.favorites_count || 0}
+                  <Bolt />
+                  {template.likes || template.executions_count || 0}
                 </Stack>
-                {isDesktop && (
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    gap={0.5}
-                    sx={iconTextStyle}
+              )}
+              {template.created_by?.username && (
+                <Link
+                  href={`/users/${template.created_by?.username}`}
+                  onClick={e => e.stopPropagation()}
+                  style={{ textDecoration: "none", marginLeft: "auto" }}
+                >
+                  <Typography
+                    fontSize={13}
+                    fontWeight={400}
+                    color={alpha(theme.palette.onSurface, 0.75)}
                   >
-                    <Bolt />
-                    {template.likes || template.executions_count || 0}
-                  </Stack>
-                )}
-                {template.created_by?.username && (
-                  <Link
-                    href={`/users/${template.created_by?.username}`}
-                    onClick={e => e.stopPropagation()}
-                    style={{ textDecoration: "none", marginLeft: "auto" }}
-                  >
-                    <Typography
-                      fontSize={13}
-                      fontWeight={400}
-                      color={alpha(theme.palette.onSurface, 0.75)}
-                    >
-                      by {template.created_by.first_name || template.created_by.username}
-                    </Typography>
-                  </Link>
-                )}
-              </Stack>
-            )}
-          </Stack>
-          <Stack
-            display={asResult ? "none" : "flex"}
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={{ xs: "end", md: "center" }}
-            width={{ xs: "100%", md: "auto" }}
-            marginTop={{ xs: vertical ? 0 : "10px", md: "0px" }}
-            gap={2}
-          >
-            <Stack
-              direction={"row"}
-              gap={1}
-            >
-              {!vertical && (
-                <>
-                  {template.tags.slice(0, 3).map(tag => (
-                    <Chip
-                      key={tag.id}
-                      clickable
-                      size="small"
-                      label={tag.name}
-                      sx={{
-                        fontSize: { xs: 11, md: 13 },
-                        fontWeight: 400,
-                        bgcolor: "surface.5",
-                        color: "onSurface",
-                      }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        dispatch(setSelectedTag(tag));
-                        router.push("/explore");
-                      }}
-                    />
-                  ))}
-                  <Grid
-                    sx={{
-                      display: "flex",
-                      gap: "0.4em",
-                    }}
-                  >
-                    <Stack
-                      direction={"row"}
-                      alignItems={"center"}
-                      gap={0.5}
-                      sx={{
-                        display: "flex",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        color: "onSurface",
-                      }}
-                    >
-                      <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
-                      {template.favorites_count || 0}
-                    </Stack>
-                  </Grid>
-                  <Image
-                    src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                    alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-                    width={32}
-                    height={32}
-                    style={{
-                      display: isDesktop ? "flex" : "none",
-                      backgroundColor: theme.palette.surface[5],
-                      borderRadius: "50%",
-                    }}
-                  />
-                </>
+                    by {template.created_by.first_name || template.created_by.username}
+                  </Typography>
+                </Link>
               )}
             </Stack>
           </Stack>
 
-          {vertical && (
-            <Stack
-              sx={{
-                position: "absolute",
-                top: "100%",
-                left: 0,
-                right: 0,
-                zIndex: 9999,
-                p: "8px",
-                bgcolor: "surface.2",
-                borderRadius: "0 0 16px 16px",
-                alignItems: "flex-start",
-                alignContent: "flex-start",
-                flexDirection: "row",
-                gap: "8px var(--1, 8px)",
-                flexWrap: "wrap",
-                transition: "background-color 0.3s ease",
-              }}
-              className="tags"
-            >
-              {template.tags.map(tag => (
-                <Chip
-                  onClick={e => {
-                    e.preventDefault();
-                    dispatch(setSelectedTag(tag));
-                    router.push("/explore");
-                  }}
-                  size="small"
-                  label={tag.name}
-                  key={tag.id}
-                  sx={{
-                    fontSize: { xs: 11, md: 13 },
-                    fontWeight: 400,
-                    bgcolor: "white",
-                    color: "onSurface",
-                  }}
-                />
-              ))}
-            </Stack>
-          )}
+          <Stack
+            sx={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              zIndex: 9999,
+              p: "8px",
+              bgcolor: "surface.2",
+              borderRadius: "0 0 16px 16px",
+              alignItems: "flex-start",
+              alignContent: "flex-start",
+              flexDirection: "row",
+              gap: "8px var(--1, 8px)",
+              flexWrap: "wrap",
+              transition: "background-color 0.3s ease",
+            }}
+            className="tags"
+          >
+            {template.tags.map(tag => (
+              <Chip
+                onClick={e => {
+                  e.preventDefault();
+                  dispatch(setSelectedTag(tag));
+                  router.push("/explore");
+                }}
+                size="small"
+                label={tag.name}
+                key={tag.id}
+                sx={{
+                  fontSize: { xs: 11, md: 13 },
+                  fontWeight: 400,
+                  bgcolor: "white",
+                  color: "onSurface",
+                }}
+              />
+            ))}
+          </Stack>
         </Stack>
       </Card>
     </Link>
