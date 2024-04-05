@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { redirectToPath, stripTags } from "@/common/helpers";
+import { stripTags } from "@/common/helpers";
 
 type CardTemplateProps = {
   title: string;
@@ -42,9 +42,6 @@ function CardTemplateResult({ title, description, slug, thumbnail, query }: Card
   return (
     <Link
       href={`/prompt/${slug}`}
-      onClick={() => {
-        redirectToPath(`/prompt/${slug}`);
-      }}
       style={{
         textDecoration: "none",
       }}
