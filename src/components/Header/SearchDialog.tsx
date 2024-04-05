@@ -156,7 +156,10 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                     {templates?.map(template => (
                       <CardTemplateResult
                         key={template.id}
-                        template={template}
+                        title={template.title}
+                        description={template.description}
+                        slug={template.slug}
+                        thumbnail={template.thumbnail}
                         query={debouncedSearchName}
                       />
                     ))}

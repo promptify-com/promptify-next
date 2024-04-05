@@ -216,7 +216,11 @@ function Navigations({ onCloseDrawer }: Props) {
                   width={"100%"}
                 >
                   <CardTemplateResult
-                    template={template}
+                    key={template.id}
+                    title={template.title}
+                    description={template.description}
+                    slug={template.slug}
+                    thumbnail={template.thumbnail}
                     query={debouncedSearchName}
                   />
                 </Grid>

@@ -3,19 +3,21 @@ import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, redirectToPath, stripTags } from "@/common/helpers";
+import { redirectToPath, stripTags } from "@/common/helpers";
 
 type CardTemplateProps = {
-  template: Templates | TemplateExecutionsDisplay;
+  title: string;
+  description: string;
+  thumbnail: string;
+  slug: string;
   query?: string;
 };
 
-function CardTemplateResult({ template, query }: CardTemplateProps) {
+function CardTemplateResult({ title, description, slug, thumbnail, query }: CardTemplateProps) {
   const { truncate } = useTruncate();
-  const isDesktop = isDesktopViewPort();
 
   const highlightSearchQuery = (text: string) => {
     if (!query) return text;
@@ -39,14 +41,12 @@ function CardTemplateResult({ template, query }: CardTemplateProps) {
 
   return (
     <Link
-      href={`/prompt/${template.slug}`}
+      href={`/prompt/${slug}`}
       onClick={() => {
-        redirectToPath(`/prompt/${template.slug}`);
+        redirectToPath(`/prompt/${slug}`);
       }}
       style={{
-        flex: isDesktop ? 1 : "none",
         textDecoration: "none",
-        width: isDesktop ? "auto" : "100%",
       }}
     >
       <Card
@@ -90,8 +90,8 @@ function CardTemplateResult({ template, query }: CardTemplateProps) {
               }}
             >
               <Image
-                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                alt={template.title}
+                src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                alt={title}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
               />
             </CardMedia>
@@ -103,7 +103,7 @@ function CardTemplateResult({ template, query }: CardTemplateProps) {
                 fontSize={14}
                 fontWeight={500}
               >
-                {highlightSearchQuery(template.title)}
+                {highlightSearchQuery(title)}
               </Typography>
               <Typography
                 sx={{
@@ -115,7 +115,7 @@ function CardTemplateResult({ template, query }: CardTemplateProps) {
                   opacity: 1,
                 }}
               >
-                {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
+                {highlightSearchQuery(truncate(stripTags(description), { length: 70 }))}
               </Typography>
             </Stack>
           </Stack>
