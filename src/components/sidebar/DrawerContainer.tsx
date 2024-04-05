@@ -27,7 +27,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
     <SwipeableDrawer
       anchor="left"
       variant={isMobile ? "temporary" : "permanent"}
-      disablePortal
+      {...(isMobile && { disablePortal: true })}
       open={expanded}
       onClose={() => {}}
       onOpen={() => {}}
