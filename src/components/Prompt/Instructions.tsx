@@ -24,7 +24,7 @@ export default function Instructions({ prompts }: Props) {
         Prompt instructions:
       </Typography>
       {prompts.length > 0 ? (
-        <AccordionBox footerText={`Chain of ${prompts.length - 1} more prompts...`}>
+        <AccordionBox footerText={prompts.length > 1 ? `Chain of ${prompts.length - 1} more prompts...` : undefined}>
           <Stack gap={3}>
             {prompts.map(prompt => (
               <Stack

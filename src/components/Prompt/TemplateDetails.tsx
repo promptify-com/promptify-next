@@ -1,30 +1,30 @@
-import { stripTags } from "@/common/helpers";
-import { formatDate } from "@/common/helpers/timeManipulation";
-import { Templates } from "@/core/api/dto/templates";
-import { setSelectedTag } from "@/core/store/filtersSlice";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Collapse, alpha } from "@mui/material";
-import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import Image from "@/components/design-system/Image";
-import { theme } from "@/theme";
-import FavoriteButton from "./FavoriteButton";
-import LikeButton from "./LikeButton";
-import RunButton from "@/components/Prompt/Common/RunButton";
-import { useAppSelector } from "@/hooks/useStore";
 import Tune from "@mui/icons-material/Tune";
+import { Collapse, alpha } from "@mui/material";
 import ContentCopy from "@mui/icons-material/ContentCopy";
-import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
+
 import { setSelectedTemplate } from "@/core/store/chatSlice";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { stripTags } from "@/common/helpers";
+import { formatDate } from "@/common/helpers/timeManipulation";
+import { setSelectedTag } from "@/core/store/filtersSlice";
 import useBrowser from "@/hooks/useBrowser";
-import Link from "next/link";
-import { useState } from "react";
-import Header from "./Common/Header";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { theme } from "@/theme";
+import FavoriteButton from "@/components/Prompt/FavoriteButton";
+import Image from "@/components/design-system/Image";
+import LikeButton from "@/components/Prompt/LikeButton";
+import RunButton from "@/components/Prompt/Common/RunButton";
+import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
+import Header from "@/components/Prompt/Common/Header";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -34,7 +34,7 @@ interface TemplateDetailsProps {
 const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) => {
   const router = useRouter();
   const { isMobile } = useBrowser();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { cloneTemplate } = useCloneTemplate({ template });
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isOwner = currentUser?.is_admin || currentUser?.id === template.created_by.id;
