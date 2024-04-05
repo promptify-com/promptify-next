@@ -55,6 +55,7 @@ export default function DocumentsDrawer({ expandedOnHover = false }: Props) {
         expanded={isExpanded}
         toggleExpand={toggleSidebar}
         sticky={isDocumentsFiltersSticky}
+        onClose={() => dispatch(setStickyDocumentsFilters(false))}
       >
         <DocumentsFilters />
       </DrawerContainer>
