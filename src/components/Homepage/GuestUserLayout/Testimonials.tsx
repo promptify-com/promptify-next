@@ -63,20 +63,22 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => {
               alignItems={"center"}
               gap={2}
             >
-              <Box
-                width={"60px"}
-                height={"60px"}
-                borderRadius={"60px"}
-                overflow={"hidden"}
-                position={"relative"}
-              >
-                <Image
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  fill
-                  priority={false}
-                />
-              </Box>
+              {isMobile && (
+                <Box
+                  width={"60px"}
+                  height={"60px"}
+                  borderRadius={"60px"}
+                  overflow={"hidden"}
+                  position={"relative"}
+                >
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    fill
+                    priority={false}
+                  />
+                </Box>
+              )}
 
               <Stack gap={1}>
                 <Typography
