@@ -61,7 +61,7 @@ const ChatInterface = ({
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      p={{ xs: "48px 8px", md: isChatHistorySticky ? "40px 80px" : "40px 300px" }}
+      p={{ xs: "48px 4px", md: isChatHistorySticky ? "40px 80px" : "40px 300px" }}
       position={"relative"}
       sx={messagesContainerStyle}
     >
