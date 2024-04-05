@@ -94,7 +94,7 @@ function TemplatePage({ template, popup }: Props) {
       <Stack
         direction={{ md: "row" }}
         height={{
-          xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
+          xs: `auto`,
           md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
         }}
         sx={{

@@ -54,7 +54,7 @@ export default function Instructions({ prompts }: Props) {
                   sx={{
                     ml: "8px",
                     p: "16px 16px 16px 32px",
-                    borderLeft: `1px solid ${theme.palette.secondary.main}`,
+                    borderLeft: `1px solid ${theme.palette.secondary.light}`,
                   }}
                 >
                   <Typography

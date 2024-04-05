@@ -107,10 +107,10 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           direction={"row"}
           gap={{ xs: 0.5, md: 2 }}
           sx={{
-            width: "100%",
+            width: "98%",
             minWidth: "fit-content",
             bgcolor: "surfaceContainerLow",
-            p: "4px",
+            p: { md: "4px" },
             borderRadius: "999px",
           }}
         >
@@ -124,6 +124,8 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                 sx={{
                   flex: 1,
                   minWidth: "fit-content",
+                  fontSize: 12,
+
                   p: "8px 16px",
                   color: selected ? "onSecondary" : "onSurface",
                   bgcolor: selected ? "secondary.main" : "transparent",

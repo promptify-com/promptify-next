@@ -11,8 +11,7 @@ import js from "react-syntax-highlighter/dist/cjs/languages/hljs/javascript";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import HTTPSnippet from "httpsnippet";
 import { Templates } from "@/core/api/dto/templates";
-import { RootState } from "@/core/store";
-import { useSelector } from "react-redux";
+
 import useToken from "@/hooks/useToken";
 import useApiAccess from "./Hooks/useApiAccess";
 
@@ -37,7 +36,7 @@ const snippetProps = {
   language: "javascript",
   customStyle: {
     borderRadius: "16px",
-    background: "black",
+    background: "#1B1B1F", //onSurface
     color: "white",
     margin: 0,
     padding: "16px 16px 16px 24px",
@@ -66,7 +65,7 @@ const LanguageSelectorAndCopy = ({
   <Stack
     direction={"row"}
     alignItems={"center"}
-    gap={1}
+    gap={{ xs: 0, md: 1 }}
   >
     {!noSelect && (
       <Select
@@ -100,7 +99,7 @@ const LanguageSelectorAndCopy = ({
     )}
     <Button
       sx={{
-        p: "8px 16px",
+        p: { xs: 0, md: "8px 16px" },
         color: "onSurface",
         fontSize: 14,
         fontWeight: 500,
@@ -182,7 +181,7 @@ export default function ApiAccess({ template }: Props) {
   return (
     <Stack
       gap={2}
-      p={{ xs: "10px 24px", md: "48px" }}
+      p={{ xs: "16px 24px", md: "48px" }}
     >
       <Typography
         fontSize={{ xs: 24, md: 32 }}
@@ -218,7 +217,13 @@ export default function ApiAccess({ template }: Props) {
             }}
           />
         </Stack>
-        <SyntaxHighlighter {...snippetProps}>{output[0]}</SyntaxHighlighter>
+        <Stack
+          overflow={"auto"}
+          sx={{ maxWidth: "90vw" }}
+          boxSizing={"border-box"}
+        >
+          <SyntaxHighlighter {...snippetProps}>{output[0]}</SyntaxHighlighter>
+        </Stack>
       </Box>
       <Box>
         <Stack
@@ -247,10 +252,16 @@ export default function ApiAccess({ template }: Props) {
             noSelect
           />
         </Stack>
-        <SyntaxHighlighter
-          {...snippetProps}
-          showLineNumbers={false}
-        >{`{\n   "template_execution_id": number,   \n}`}</SyntaxHighlighter>
+        <Stack
+          overflow={"auto"}
+          sx={{ maxWidth: "90vw" }}
+          boxSizing={"border-box"}
+        >
+          <SyntaxHighlighter
+            {...snippetProps}
+            showLineNumbers={false}
+          >{`{\n   "template_execution_id": number,   \n}`}</SyntaxHighlighter>
+        </Stack>
       </Box>
       <Box>
         <Stack
@@ -278,7 +289,13 @@ export default function ApiAccess({ template }: Props) {
             }}
           />
         </Stack>
-        <SyntaxHighlighter {...snippetProps}>{output[1]}</SyntaxHighlighter>
+        <Stack
+          overflow={"auto"}
+          sx={{ maxWidth: "90vw" }}
+          boxSizing={"border-box"}
+        >
+          <SyntaxHighlighter {...snippetProps}>{output[1]}</SyntaxHighlighter>
+        </Stack>
       </Box>
     </Stack>
   );
