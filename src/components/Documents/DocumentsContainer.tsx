@@ -58,12 +58,13 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
           <Stack
             direction={"row"}
             flexWrap={"wrap"}
-            gap={2}
           >
             <CardDocumentTemplatePlaceholder
               count={5}
               sx={{
-                height: "315px",
+                height: { xs: 315, md: 331 },
+                width: { xs: "95%", md: 350 },
+                p: "8px",
               }}
             />
           </Stack>

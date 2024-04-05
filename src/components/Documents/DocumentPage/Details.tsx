@@ -6,6 +6,7 @@ import { formatDate } from "@/common/helpers/timeManipulation";
 import InstructionsAccordion from "./InstructionsAccordion";
 import useBrowser from "@/hooks/useBrowser";
 import ActionButtons from "./ActionButtons";
+import Link from "next/link";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -30,55 +31,61 @@ function Details({ document }: Props) {
             Prompt used:
           </Typography>
         )}
-        <Stack
-          direction={"row"}
-          gap={2}
-          sx={{
-            p: "8px",
-            borderRadius: "24px",
-            bgcolor: { xs: "surfaceContainerHigh", md: "surfaceContainerLow" },
-          }}
+        <Link
+          href={`prompt/${template?.slug}`}
+          target="_blank"
+          style={{ textDecoration: "none" }}
         >
-          <Image
-            src={template?.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-            alt={template?.title || "Promptify"}
-            style={{ borderRadius: "16px", objectFit: "cover", width: "103px", height: "77px" }}
-          />
           <Stack
-            flex={1}
-            gap={1}
-            justifyContent={"center"}
+            direction={"row"}
+            gap={2}
+            sx={{
+              p: "8px",
+              borderRadius: "24px",
+              bgcolor: { xs: "surfaceContainerHigh", md: "surfaceContainerLow" },
+            }}
           >
-            <Typography
-              fontSize={16}
-              fontWeight={500}
-              color={"onSurface"}
-              sx={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 2,
-                overflow: "hidden",
-                wordBreak: "break-word",
-              }}
+            <Image
+              src={template?.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={template?.title || "Promptify"}
+              style={{ borderRadius: "16px", objectFit: "cover", width: "103px", height: "77px" }}
+            />
+            <Stack
+              flex={1}
+              gap={1}
+              justifyContent={"center"}
             >
-              {template?.title}
-            </Typography>
-            <Typography
-              fontSize={14}
-              fontWeight={400}
-              color={"secondary.light"}
-              sx={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 1,
-                overflow: "hidden",
-                wordBreak: "break-word",
-              }}
-            >
-              {template?.category.name}
-            </Typography>
+              <Typography
+                fontSize={16}
+                fontWeight={500}
+                color={"onSurface"}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                  wordBreak: "break-word",
+                }}
+              >
+                {template?.title}
+              </Typography>
+              <Typography
+                fontSize={14}
+                fontWeight={400}
+                color={"secondary.light"}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 1,
+                  overflow: "hidden",
+                  wordBreak: "break-word",
+                }}
+              >
+                {template?.category.name}
+              </Typography>
+            </Stack>
           </Stack>
-        </Stack>
+        </Link>
       </Stack>
 
       {isMobile && <ActionButtons document={document} />}

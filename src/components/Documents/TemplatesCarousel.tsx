@@ -93,7 +93,14 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           })}
         >
           {isLoading ? (
-            <CardDocumentTemplatePlaceholder count={5} />
+            <CardDocumentTemplatePlaceholder
+              count={5}
+              sx={{
+                width: { xs: 212, md: 278 },
+                height: { xs: 219, md: 278 },
+                p: "16px 16px 8px",
+              }}
+            />
           ) : (
             templates?.map(template => (
               <Grid
