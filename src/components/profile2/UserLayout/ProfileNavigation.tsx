@@ -35,12 +35,13 @@ const ProfileNavigation = () => {
   const prevItem = flatNavItems[currentIndex - 1];
   const nextItem = flatNavItems[currentIndex + 1];
 
+  const justifyContent = prevItem && nextItem ? "center" : prevItem ? "flex-start" : nextItem ? "flex-end" : "center";
+
   return (
     <Box
       sx={{
         display: "flex",
-        padding: "16px",
-        justifyContent: prevItem ? "flex-start" : nextItem ? "flex-end" : "center",
+        justifyContent: justifyContent,
         alignItems: "flex-start",
         gap: "16px",
         alignSelf: "stretch",
