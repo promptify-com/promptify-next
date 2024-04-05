@@ -3,24 +3,20 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-import { countSelectedFilters } from "@/core/store/filtersSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 
 interface Props {
   expanded: boolean;
   onClick: () => void;
   onClose?: () => void;
+  count: number;
 }
 
-function FilterFloatButton({ expanded, onClick, onClose }: Props) {
-  const dispatch = useAppDispatch();
+function FilterFloatButton({ expanded, onClick, onClose, count }: Props) {
   const theme = useTheme();
-  const filters = useAppSelector(state => state.filters);
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCrossHovered, setIsCrossHovered] = useState(false);
-  const filterCount = countSelectedFilters(filters);
 
   return (
     <Box
@@ -44,7 +40,7 @@ function FilterFloatButton({ expanded, onClick, onClose }: Props) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <>
-        {filterCount !== 0 && (
+        {count !== 0 && (
           <Box
             position={"absolute"}
             top={0}
@@ -76,7 +72,7 @@ function FilterFloatButton({ expanded, onClick, onClose }: Props) {
                 fontSize={"12px"}
                 color={"onPrimary"}
               >
-                {filterCount}
+                {count}
               </Typography>
             )}
           </Box>

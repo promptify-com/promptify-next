@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Templates } from "@/core/api/dto/templates";
-import { ExecutionCard } from "./ExecutionCard";
+import { ExecutionCard } from "../ExecutionCard";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useAppSelector } from "@/hooks/useStore";

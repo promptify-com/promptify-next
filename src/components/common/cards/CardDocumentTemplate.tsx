@@ -5,30 +5,29 @@ import Typography from "@mui/material/Typography";
 import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
 import Link from "next/link";
-import useBrowser from "@/hooks/useBrowser";
 
 type CardDocumentTemplateProps = {
   template: TemplateExecutionsDisplay;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 };
 
-function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
-  const { isMobile } = useBrowser();
-
+function CardDocumentTemplate({ template, onClick }: CardDocumentTemplateProps) {
   return (
     <Link
       href={`/prompt/${template.slug}`}
+      onClick={onClick}
       style={{
         textDecoration: "none",
       }}
     >
       <Card
         sx={{
-          minWidth: isMobile ? "auto" : "246px",
-          height: isMobile ? "calc(100% - 16px)" : "calc(100% - 24px)",
+          minWidth: { xs: "auto", md: "246px" },
+          height: { xs: "calc(100% - 16px)", md: "calc(100% - 24px)" },
           borderRadius: "16px",
           cursor: "pointer",
-          p: isMobile ? "8px" : "16px 16px 8px",
-          bgcolor: isMobile ? "surface.2" : "transparent",
+          p: "16px 16px 8px",
+          bgcolor: "transparent",
           "&:hover": {
             bgcolor: "surface.2",
           },
@@ -36,18 +35,16 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
         elevation={0}
       >
         <Stack
-          direction={isMobile ? "row" : "column"}
-          justifyContent={{ xs: "flex-start", md: "space-between" }}
           alignItems={"flex-start"}
           gap={2}
         >
           <CardMedia
             sx={{
-              zIndex: 1,
               borderRadius: "16px",
               overflow: "hidden",
-              width: { xs: "256px", sm: "100%" },
-              height: { xs: "191px", sm: "191px" },
+              width: { xs: 180, md: "100%" },
+              height: { xs: 135, md: 191 },
+              maxWidth: "100%",
             }}
           >
             <Image
@@ -61,7 +58,7 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
             gap={0.5}
           >
             <Typography
-              fontSize={16}
+              fontSize={{ xs: 14, md: 16 }}
               fontWeight={500}
               color={"onSurface"}
               sx={{
@@ -81,7 +78,7 @@ function CardDocumentTemplate({ template }: CardDocumentTemplateProps) {
                 opacity: 0.75,
               }}
             >
-              {template.executions.length} documents
+              {template.executions?.length} documents
             </Typography>
           </Stack>
         </Stack>

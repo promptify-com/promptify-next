@@ -2,16 +2,16 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Prompts } from "@/core/api/dto/prompts";
+import { Box } from "@mui/material";
 
 interface Props {
   execution: TemplatesExecutions | null;
-  content: string;
-  engineName: string;
+  prompt: Prompts | undefined;
   answers?: IAnswer[];
-  id: number;
 }
 
-function ExecutionContentPreview({ execution, content, engineName, id, answers }: Props) {
+function ExecutionContentPreview({ execution, prompt, answers }: Props) {
   function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
@@ -24,12 +24,13 @@ function ExecutionContentPreview({ execution, content, engineName, id, answers }
       text.replace(dollarWordRegex, (match, index) => {
         parts.push(text.slice(lastIndexDollarWords, index));
         parts.push(
-          <span
+          <Box
+            component={"span"}
             key={`dollar-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600" }}
+            sx={{ color: "primary.main" }}
           >
             {match}
-          </span>,
+          </Box>,
         );
         lastIndexDollarWords = index + match.length;
         return match;
@@ -61,21 +62,23 @@ function ExecutionContentPreview({ execution, content, engineName, id, answers }
 
       if (replacement) {
         parts.push(
-          <span
+          <Box
+            component={"span"}
             key={`placeholder-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+            sx={highlightStyle}
           >
             {typeof replacement === "object" ? JSON.stringify(replacement) : replacement}
-          </span>,
+          </Box>,
         );
       } else {
         parts.push(
-          <span
+          <Box
+            component={"span"}
             key={`placeholder-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+            sx={highlightStyle}
           >
             {match}
-          </span>,
+          </Box>,
         );
       }
 
@@ -88,17 +91,30 @@ function ExecutionContentPreview({ execution, content, engineName, id, answers }
     return parts;
   }
 
-  const updatedContent = replacePlaceholdersWithAnswers(content);
+  const updatedContent = replacePlaceholdersWithAnswers(prompt?.content ?? "");
 
   return (
-    <Stack direction={"column"}>
-      <Typography>
-        Prompt #{id}, {engineName}
+    <Stack
+      gap={1}
+      sx={{
+        p: "16px 24px",
+        borderRadius: "16px",
+        bgcolor: "surfaceContainerLow",
+      }}
+    >
+      <Typography
+        fontSize={14}
+        fontWeight={500}
+        color={"onPrimaryContainer"}
+      >
+        {prompt?.title}, {prompt?.engine.name}
       </Typography>
       <Typography
-        mt={2}
-        fontFamily={"Space Mono"}
-        color={"text.secondary"}
+        fontSize={14}
+        fontWeight={400}
+        color={"onPrimaryContainer"}
+        lineHeight={"160%"}
+        fontFamily={"Roboto, Mono"}
       >
         {updatedContent}
       </Typography>
@@ -107,3 +123,9 @@ function ExecutionContentPreview({ execution, content, engineName, id, answers }
 }
 
 export default ExecutionContentPreview;
+
+const highlightStyle = {
+  color: "primary.main",
+  wordBreak: "break-word",
+  whiteSpace: "pre-wrap",
+};

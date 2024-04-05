@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
-import { resetFilters } from "@/core/store/filtersSlice";
-import FilterFloatButton from "../FilterFloatButton";
+import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
+import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
+
 interface Props {
   expandedOnHover?: boolean;
 }
@@ -16,6 +16,8 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
   const dispatch = useAppDispatch();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const filters = useAppSelector(state => state.filters);
+  const filterCount = countSelectedFilters(filters);
 
   const toggleSidebar = () => {
     dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
@@ -38,13 +40,14 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
       >
         <FilterFloatButton
           expanded={isExpanded}
+          count={filterCount}
           onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
           onClose={() => {
             dispatch(resetFilters());
             dispatch(setStickyPromptsFilters(false));
             Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
           }}
-        />{" "}
+        />
       </Stack>
       {isExpanded && (
         <DrawerContainer

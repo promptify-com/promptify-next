@@ -2,12 +2,12 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
+import useBrowser from "@/hooks/useBrowser";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { useTheme, type SxProps } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import KeyboardTab from "@mui/icons-material/KeyboardTab";
 import ClearRounded from "@mui/icons-material/ClearRounded";
-import useBrowser from "@/hooks/useBrowser";
+import { KeyboardTab } from "@mui/icons-material";
 
 const drawerWidth = 255;
 
