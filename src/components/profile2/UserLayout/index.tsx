@@ -22,7 +22,12 @@ export default function Layout({ children, title }: { children: React.ReactNode;
   return desktopView ? (
     <>{children}</>
   ) : (
-    <Box>
+    <Box
+      pt={3}
+      sx={{
+        bgcolor: "surfaceContainerLow",
+      }}
+    >
       <Box
         sx={{
           display: "flex",
