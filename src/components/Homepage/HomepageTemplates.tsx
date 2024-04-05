@@ -21,7 +21,7 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
   return (
     <Stack gap={"32px"}>
       <Typography
-        fontSize={{ xs: 19, md: 32 }}
+        fontSize={{ xs: 24, md: 32 }}
         fontWeight={400}
         lineHeight={"38.8px"}
         letterSpacing={"0.17px"}

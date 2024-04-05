@@ -8,6 +8,7 @@ import Image from "@/components/design-system/Image";
 import useBrowser from "@/hooks/useBrowser";
 import useToken from "@/hooks/useToken";
 import Link from "next/link";
+import useTruncate from "@/hooks/useTruncate";
 
 interface Props {
   category: Category;
@@ -20,6 +21,7 @@ interface Props {
 export const CategoryCard = ({ category, href, index, priority, min }: Props) => {
   const token = useToken();
   const { isMobile } = useBrowser();
+  const { truncate } = useTruncate();
   const shouldPrioritizeImage = priority ?? token ? false : isMobile ? index === 0 || index === 1 : true;
   return (
     <Link
@@ -31,7 +33,7 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
         title={category.name}
         sx={{
           maxWidth: "200px",
-          width: min ? "156px" : "200px",
+          width: { xs: "100px", md: min ? "156px" : "200px" },
           bgcolor: "transparent",
           borderRadius: "27px",
           overflow: "hidden",
@@ -55,7 +57,7 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
               zIndex: 1,
               borderRadius: "16px",
               width: "100%",
-              height: "200px",
+              height: { xs: "130px", md: "200px" },
             }}
           >
             <Image
@@ -66,7 +68,7 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
             />
           </CardMedia>
 
-          {!min && (
+          {!min && !isMobile && (
             <Typography
               variant="h1"
               fontSize={16}
@@ -86,10 +88,11 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
               fontSize={12}
               lineHeight={"16.8px"}
               component="div"
+              minHeight={{ xs: "35px", md: "fit-content" }}
             >
-              {category.name}
+              {truncate(category.name, { length: isMobile ? 20 : 30 })}
             </Typography>
-            {!min && (
+            {(!min || isMobile) && (
               <Typography
                 variant="body2"
                 color="text.secondary"

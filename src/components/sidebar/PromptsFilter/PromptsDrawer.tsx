@@ -6,13 +6,13 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
-import FilterFloatButton from "@/components/sidebar/PromptsFilter/FilterFloatButton";
-
+import { resetFilters } from "@/core/store/filtersSlice";
+import FilterFloatButton from "../FilterFloatButton";
 interface Props {
-  expandedOnHover: boolean;
+  expandedOnHover?: boolean;
 }
 
-export default function FiltersDrawer({ expandedOnHover }: Props) {
+export default function PromptsDrawer({ expandedOnHover = false }: Props) {
   const dispatch = useAppDispatch();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -36,7 +36,15 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
         onMouseEnter={() => setIsButtonHovered(true)}
         onMouseLeave={() => setIsButtonHovered(false)}
       >
-        <FilterFloatButton expanded={isExpanded} />
+        <FilterFloatButton
+          expanded={isExpanded}
+          onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
+          onClose={() => {
+            dispatch(resetFilters());
+            dispatch(setStickyPromptsFilters(false));
+            Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+          }}
+        />{" "}
       </Stack>
       {isExpanded && (
         <DrawerContainer

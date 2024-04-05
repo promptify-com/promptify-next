@@ -5,8 +5,10 @@ import { useAppSelector } from "@/hooks/useStore";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import ChatsSuggestions from "@/components/common/ChatsSuggestions";
+import useBrowser from "@/hooks/useBrowser";
 
 function SuggestionsSection() {
+  const { isMobile } = useBrowser();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -25,7 +27,7 @@ function SuggestionsSection() {
       >
         <Stack gap={1}>
           <Typography
-            fontSize={32}
+            fontSize={{ xs: 24, md: 32 }}
             fontWeight={400}
             lineHeight={"38.4px"}
             letterSpacing={"0.17px"}
@@ -41,12 +43,14 @@ function SuggestionsSection() {
             Suggestions for you:
           </Typography>
         </Stack>
-        <CarouselButtons
-          scrollPrev={scrollPrev}
-          scrollNext={scrollNext}
-          canScrollNext={true}
-          canScrollPrev={true}
-        />
+        {!isMobile && (
+          <CarouselButtons
+            scrollPrev={scrollPrev}
+            scrollNext={scrollNext}
+            canScrollNext={true}
+            canScrollPrev={true}
+          />
+        )}
       </Stack>
       <ChatsSuggestions carouselRef={carouselRef} />
     </Stack>

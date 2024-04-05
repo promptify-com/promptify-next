@@ -3,18 +3,19 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-
-import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
+import { countSelectedFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
 import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 
-function FilterFloatButton({ expanded = false }) {
+interface Props {
+  expanded: boolean;
+  onClick: () => void;
+  onClose?: () => void;
+}
+
+function FilterFloatButton({ expanded, onClick, onClose }: Props) {
   const dispatch = useAppDispatch();
   const theme = useTheme();
-
-  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const filters = useAppSelector(state => state.filters);
 
   const [isHovered, setIsHovered] = useState(false);
@@ -23,7 +24,7 @@ function FilterFloatButton({ expanded = false }) {
 
   return (
     <Box
-      onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
+      onClick={onClick}
       width={"64px"}
       height={"64px"}
       borderRadius={"16px"}
@@ -32,7 +33,7 @@ function FilterFloatButton({ expanded = false }) {
         position: "fixed",
         cursor: "pointer",
         bottom: "72px",
-        left: expanded ? "410px" : "120px",
+        left: { xs: "82svw", md: expanded ? "410px" : "120px" },
         zIndex: 1220,
         display: "flex",
         alignItems: "center",
@@ -66,10 +67,8 @@ function FilterFloatButton({ expanded = false }) {
                 style={{ color: "white", fontSize: 16 }}
                 onClick={event => {
                   event.stopPropagation();
-                  dispatch(resetFilters());
                   setIsHovered(false);
-                  dispatch(setStickyPromptsFilters(false));
-                  Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+                  onClose?.();
                 }}
               />
             ) : (

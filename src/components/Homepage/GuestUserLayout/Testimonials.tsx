@@ -103,16 +103,13 @@ function Testimonials() {
       gap={4}
     >
       <Stack
-        direction={{ md: "row" }}
-        alignItems={{ md: "center" }}
+        direction={"row"}
+        alignItems={"center"}
         gap={1}
       >
-        <Stack
-          flex={1}
-          gap={1}
-        >
+        <Stack gap={1}>
           <Typography
-            fontSize={{ xs: 28, md: 32 }}
+            fontSize={{ xs: 24, md: 32 }}
             fontWeight={400}
             color={"#2A2A3C"}
           >

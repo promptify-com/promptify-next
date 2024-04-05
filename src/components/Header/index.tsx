@@ -286,9 +286,8 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
           xs: theme.custom.headerHeight.xs,
           md: theme.custom.headerHeight.md,
         },
-        borderBottomRightRadius: { md: isEditor ? "0" : "16px" },
-        borderBottomLeftRadius: { md: isEditor ? "0" : "16px" },
-        borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
+        borderBottomRightRadius: isEditor ? "0" : "16px",
+        borderBottomLeftRadius: isEditor ? "0" : "16px",
       }}
     >
       <Grid

@@ -30,9 +30,11 @@ const thisYear = new Date().getFullYear();
 function Footer() {
   return (
     <Stack
+      mt={{ xs: -3, md: 0 }}
       width={{ md: "95%" }}
       p={{ xs: "24px", sm: 0 }}
       margin={{ md: "auto" }}
+      bgcolor={{ xs: "surfaceContainerLow", md: "surfaceContainerLowest" }}
     >
       <Divider />
       <Stack
@@ -42,7 +44,6 @@ function Footer() {
         justifyContent={"center"}
         alignItems={"center"}
         alignSelf={"stretch"}
-        bgcolor={"surfaceContainerLowest"}
         m={{ sm: "auto", md: 0 }}
         width={{ xs: "100%", sm: "80%", md: "100%" }}
       >

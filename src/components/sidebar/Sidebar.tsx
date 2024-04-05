@@ -20,7 +20,7 @@ import SidebarItem from "@/components/sidebar/SidebarItem";
 import EditorIcon from "@/components/builder/Assets/EditorIcon";
 import type { NavItem } from "@/common/types/sidebar";
 
-const FiltersDrawerLazy = lazy(() => import("./PromptsFilter/FiltersDrawer"), {
+const PromptsDrawerLazy = lazy(() => import("./PromptsFilter/PromptsDrawer"), {
   ssr: false,
 });
 const ChatsDrawerLazy = lazy(() => import("./ChatsHistory/ChatsDrawer"), {
@@ -163,7 +163,7 @@ function Sidebar() {
           <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
-      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={promptFilterExpanded} />}
+      {isPromptsPage && <PromptsDrawerLazy expandedOnHover={promptFilterExpanded} />}
       {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
       {isDocumentsPage && <DocumentsDrawerLazy expandedOnHover={documentsFilterExpanded} />}
       {isPromptsReview && <PromptsReviewDrawerLazy expandedOnHover={promptsReviewFilterExpanded} />}

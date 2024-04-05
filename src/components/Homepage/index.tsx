@@ -77,10 +77,9 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         display={"flex"}
         gap={"80px"}
         mx={{ md: "50px" }}
+        maxWidth={{ xs: "90vw", md: "fit-content" }}
       >
-        <Stack>
-          <SuggestionsSection />
-        </Stack>
+        <SuggestionsSection />
 
         <HomepageTemplates
           title="You may like these prompts:"
