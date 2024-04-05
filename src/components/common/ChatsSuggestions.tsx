@@ -1,3 +1,6 @@
+import { type RefObject } from "react";
+import { useRouter } from "next/router";
+import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import AddCircleOutlineRounded from "@mui/icons-material/AddCircleOutlineRounded";
@@ -5,7 +8,6 @@ import Grid from "@mui/material/Grid";
 import { useGetChatsQuery } from "@/core/api/chats";
 import SuggestionCard, { Avatar } from "@/components/Homepage/SuggestionCard";
 import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlaceholder";
-import { RefObject } from "react";
 
 interface Props {
   carouselRef?: RefObject<HTMLDivElement>;
@@ -14,7 +16,10 @@ interface Props {
 
 function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
   const { data: chats, isLoading } = useGetChatsQuery();
-
+  const router = useRouter();
+  const theme = useTheme();
+  const profilePage = router.pathname === "/profile";
+  const isHomePage = router.pathname === "/";
   return (
     <>
       {isLoading ? (
@@ -22,9 +27,21 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
           direction={"row"}
           gap={1}
           alignItems={"center"}
+          flexWrap={"nowrap"}
           justifyContent={"space-between"}
+          sx={{
+            ...(profilePage && {
+              [theme.breakpoints.down("md")]: {
+                flexWrap: "wrap",
+                flexDirection: "column",
+              },
+            }),
+          }}
         >
-          <SuggestionCardPlaceholder count={2 + slice} />
+          <SuggestionCardPlaceholder
+            count={2 + slice}
+            width={profilePage || isHomePage ? "100%" : "23%"}
+          />
         </Stack>
       ) : (
         <Stack
@@ -35,6 +52,13 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             container
             gap={4}
             flexWrap={"nowrap"}
+            sx={{
+              ...(profilePage && {
+                [theme.breakpoints.down("md")]: {
+                  flexWrap: "wrap",
+                },
+              }),
+            }}
           >
             <Grid
               item
@@ -78,6 +102,13 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
               item
               mr={1}
               xs={12}
+              sx={{
+                ...(profilePage && {
+                  [theme.breakpoints.down("md")]: {
+                    mr: 0,
+                  },
+                }),
+              }}
             >
               <SuggestionCard
                 title="Profile"

@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Skeleton from "@mui/material/Skeleton";
 
-function SuggestionCardPlaceholder({ count = 4 }) {
+function SuggestionCardPlaceholder({ count = 4, width = "23%" }) {
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
@@ -9,7 +9,7 @@ function SuggestionCardPlaceholder({ count = 4 }) {
           key={index}
           bgcolor={"surface.2"}
           borderRadius={"16px"}
-          width={"100%"}
+          width={width}
         >
           <Stack
             direction={"row"}

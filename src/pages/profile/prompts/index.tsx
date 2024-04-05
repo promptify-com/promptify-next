@@ -12,6 +12,7 @@ import { useGetMyTemplatesQuery } from "@/core/api/templates";
 import { SortOption } from "@/components/profile2/Types";
 import { SORTING_OPTIONS } from "@/components/profile2/Constants";
 import type { Templates } from "@/core/api/dto/templates";
+import UserLayout from "@/components/profile2/UserLayout";
 
 function ProfilePrompts() {
   const [sortOption, setSortOption] = useState(SORTING_OPTIONS[0]);
@@ -32,44 +33,46 @@ function ProfilePrompts() {
   return (
     <Protected>
       <Layout>
-        <PromptsContainer
-          title="My prompts:"
-          sortOption={sortOption}
-          setSortAnchor={setSortAnchor}
-          sortOpen={sortOpen}
-          isFetching={isFetching}
-        >
-          <Stack
-            alignItems={"flex-start"}
-            gap={2}
-            px={"16px"}
+        <UserLayout title={"My prompts"}>
+          <PromptsContainer
+            title="My prompts:"
+            sortOption={sortOption}
+            setSortAnchor={setSortAnchor}
+            sortOpen={sortOpen}
+            isFetching={isFetching}
           >
-            {templates?.map(template => (
-              <Box
-                key={template.id}
-                sx={{
-                  width: "100%",
-                  border: "1px solid",
-                  borderColor: "surfaceContainerHighest",
-                  borderRadius: "16px",
-                }}
-              >
-                <TemplateCard
-                  template={template}
-                  manageActions
-                />
-              </Box>
-            ))}
-          </Stack>
-        </PromptsContainer>
+            <Stack
+              alignItems={"flex-start"}
+              gap={2}
+              px={{ xs: 0, md: "16px" }}
+            >
+              {templates?.map(template => (
+                <Box
+                  key={template.id}
+                  sx={{
+                    width: { xs: "92%", md: "100%" },
+                    border: "1px solid",
+                    borderColor: "surfaceContainerHighest",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <TemplateCard
+                    template={template}
+                    manageActions
+                  />
+                </Box>
+              ))}
+            </Stack>
+          </PromptsContainer>
 
-        <PromptsSort
-          sortAnchor={sortAnchor}
-          sortOpen={sortOpen}
-          setSortAnchor={setSortAnchor}
-          handleSelectSort={handleSelectSort}
-          sortOption={sortOption}
-        />
+          <PromptsSort
+            sortAnchor={sortAnchor}
+            sortOpen={sortOpen}
+            setSortAnchor={setSortAnchor}
+            handleSelectSort={handleSelectSort}
+            sortOption={sortOption}
+          />
+        </UserLayout>
       </Layout>
     </Protected>
   );

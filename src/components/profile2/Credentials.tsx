@@ -60,8 +60,9 @@ function Credentials() {
         <Grid
           container
           justifyContent={"space-between"}
-          alignItems={"center"}
-          wrap="nowrap"
+          alignItems={{ xs: "flex-start", md: "center" }}
+          flexDirection={{ xs: "column", md: "row" }}
+          wrap={"nowrap"}
           gap={3}
           key={credential.id}
           sx={{
@@ -74,7 +75,7 @@ function Credentials() {
         >
           <Grid
             item
-            xs={3}
+            sx={{ xs: 12, md: 3 }}
             overflow={"hidden"}
           >
             <Typography
@@ -143,6 +144,7 @@ function Credentials() {
           <Grid
             item
             xs={2}
+            ml={{ xs: "-1em", md: 0 }}
           >
             <Button
               onClick={() => setSelectedCredential(credential)}

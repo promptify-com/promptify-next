@@ -9,10 +9,10 @@ function TemplateCardPlaceholder() {
       direction={{ xs: "column", md: "row" }}
       gap={"24px"}
       sx={{
-        bgcolor: "surfaceContainerLowest",
+        // bgcolor: "surfaceContainerLowest",
         border: "1px solid",
         borderColor: "surfaceDim",
-        width: { xs: "calc(100% - 16px)", md: "calc(100% - 32px)" },
+        width: { xs: "88%", md: "calc(100% - 32px)" },
         p: { xs: "16px 8px", md: "16px" },
         borderRadius: "16px",
         alignItems: "center",
@@ -23,6 +23,7 @@ function TemplateCardPlaceholder() {
         direction={"row"}
         alignItems={"center"}
         gap={"24px"}
+        width={{ xs: "100%", md: "fit-content" }}
       >
         <Box
           sx={{

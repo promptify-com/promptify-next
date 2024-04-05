@@ -44,7 +44,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       direction={"row"}
       sx={{ bgcolor: "surfaceContainerLow" }}
     >
-      <Box width={{ md: isAccountPage ? `calc(100% -  ${AccountSidebarWidth}px)` : "100%" }}>
+      <Box width={{ xs: "100%", md: isAccountPage ? `calc(100% -  ${AccountSidebarWidth}px)` : "100%" }}>
         <Sidebar />
         <Box
           display={"flex"}
@@ -85,7 +85,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           </Box>
         </Box>
       </Box>
-      {isAccountPage && <AccountSidebar />}
+      {isAccountPage && !isMobile && <AccountSidebar />}
     </Stack>
   );
 };
