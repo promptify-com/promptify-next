@@ -85,7 +85,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
                 >
                   <SuggestionCard
                     title="Chats"
-                    description={chat.last_message!}
+                    description={chat.last_message || chat.title || ""}
                     actionLabel="Review"
                     href={`/chat/?ci=${chat.id}`}
                     avatar={
