@@ -64,13 +64,13 @@
     "typescript": "5.4.3",
     "usehooks-ts": "^2.9.1",
     "web-worker": "^1.2.0",
-    "yup": "^1.2.0"
+    "yup": "^1.2.0",
+    "cypress": "^13.7.2",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.4",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "cypress": "^13.7.2",
-    "dotenv": "^16.4.5",
     "eslint": "^8.0.1",
     "eslint-config-next": "13.4.19",
     "eslint-config-prettier": "^9.1.0",
@@ -88,7 +88,7 @@
   "resolutions": {
     "strip-ansi": "6.0.1",
     "listr2": "6.6.0",
-    "cli-table3": "0.5.0",
+    "cli-table3": "0.6.1",
     "string-width": "4.2.3"
   }
 }
