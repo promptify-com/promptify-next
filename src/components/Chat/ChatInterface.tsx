@@ -61,9 +61,20 @@ const ChatInterface = ({
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      p={{ xs: "48px 4px", md: isChatHistorySticky ? "40px 80px" : "40px 300px" }}
       position={"relative"}
-      sx={messagesContainerStyle}
+      sx={{
+        p: {
+          xs: "48px 4px",
+          md: isChatHistorySticky ? "40px 80px" : "40px 300px",
+        },
+        overflowY: "auto",
+        overflowX: "hidden",
+        overscrollBehavior: "contain",
+        scrollBehavior: "smooth",
+        "&::-webkit-scrollbar": {
+          width: "0px",
+        },
+      }}
     >
       <Stack
         direction={"column"}
@@ -128,17 +139,6 @@ const ChatInterface = ({
       </Stack>
     </Stack>
   );
-};
-
-const messagesContainerStyle = {
-  overflowY: "auto",
-  overflowX: "hidden",
-  px: "8px",
-  overscrollBehavior: "contain",
-  scrollBehavior: "smooth",
-  "&::-webkit-scrollbar": {
-    width: "0px",
-  },
 };
 
 export default ChatInterface;

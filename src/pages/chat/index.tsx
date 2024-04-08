@@ -22,7 +22,9 @@ import useBrowser from "@/hooks/useBrowser";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import ChatsHistory from "@/components/sidebar/ChatsHistory/ChatsHistory";
 import Button from "@mui/material/Button";
-import ChatOutlined from "@mui/icons-material/ChatOutlined";
+import { theme } from "@/theme";
+import Box from "@mui/material/Box";
+import Menu from "@mui/icons-material/Menu";
 
 function Chat() {
   const router = useRouter();
@@ -233,150 +235,161 @@ function Chat() {
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        {loadingInitialMessages ? (
-          <Stack
-            direction={"row"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            height={{ xs: "100vh", md: "calc(100vh - 100px)" }}
-            sx={{
-              ...(isMobile && { minWidth: `${window.innerWidth}px` }),
-            }}
-          >
-            <CircularProgress />
-          </Stack>
-        ) : (
-          <Stack
-            sx={{
-              height: { xs: "100vh", md: "calc(100vh - 100px)" },
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              gap: 1,
-            }}
-          >
-            {showLanding ? (
-              <Landing />
-            ) : (
-              <Stack
+        <Box
+          height={{
+            xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
+            md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+          }}
+          mt={{
+            xs: theme.custom.headerHeight.xs,
+            md: 0,
+          }}
+        >
+          {isMobile && (
+            <Box bgcolor={"surfaceContainerLow"}>
+              <Button
+                onClick={() => {
+                  setDisplayChatHistoryOnMobile(true);
+                }}
+                className="chat-hmg-container"
+                startIcon={<Menu />}
                 sx={{
-                  height: {
-                    xs: showChatInput ? "calc(100% - 120px)" : "calc(100% - 60px)",
-                    md: showChatInput ? "calc(100% - 90px)" : "100%",
-                  },
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
+                  position: "sticky",
+                  top: 0,
+                  p: "16px",
+                  color: "secondary.light",
+                  fontSize: 16,
+                  fontWeight: 500,
                 }}
               >
-                <ChatInterface
-                  fetchMoreMessages={loadMoreMessages}
-                  loadingMessages={loadingMoreMessages}
-                  messages={messages}
-                  showGenerateButton={showGenerateButton}
-                  onAbort={abortConnection}
-                  onGenerate={() => {
-                    handleGenerateExecution();
-                  }}
-                  stopScrollingToBottom={stopScrollingToBottom}
-                />
-              </Stack>
-            )}
-            <Stack px={{ md: isChatHistorySticky ? "80px" : "300px" }}>
-              {currentUser?.id ? (
-                <>
-                  {showChatInput && (
-                    <ChatInput
-                      onSubmit={(value: string) => {
-                        handleSubmitInput(value);
-                        setStopScrollingToBottom(false);
-                      }}
-                      disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
-                      isValidating={isValidatingAnswer}
-                      isFadeIn={showLanding}
-                    />
-                  )}
-                </>
-              ) : (
-                <Stack
-                  direction={"column"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                  gap={1}
-                  width={{ md: "100%" }}
-                  p={{ md: "16px 8px 16px 16px" }}
-                >
-                  <SigninButton onClick={() => router.push("/signin")} />
-                </Stack>
-              )}
-            </Stack>
-          </Stack>
-        )}
-
-        {isMobile && (
-          <>
-            <Button
-              onClick={() => {
-                setDisplayChatHistoryOnMobile(true);
-              }}
-              className="chat-hmg-container"
-              startIcon={<ChatOutlined />}
-              sx={{
-                position: "absolute",
-                top: "8%",
-                left: "1%",
-                borderRadius: "16px",
-                p: "16px",
-                bgcolor: "surfaceContainerHighest",
-                color: "onSurface",
-                fontSize: 16,
-                fontWeight: 500,
-              }}
-            >
-              Chats
-            </Button>
-            <DrawerContainer
-              title="Chats"
-              expanded={displayChatHistoryOnMobile}
-              toggleExpand={() => {
-                setDisplayChatHistoryOnMobile(false);
-              }}
-              onClose={() => {
-                setDisplayChatHistoryOnMobile(false);
-              }}
-              sticky={false}
-              style={{
-                zIndex: 50,
-                "& .MuiDrawer-paper": {
-                  my: 0,
-                  px: "10px",
-                  pb: "60px", // for last chat entry to be displayed properly
-                  borderRadius: 0,
-                  height: "100svh",
-                  boxSizing: "border-box",
-                  bgcolor: "surfaceContainerLow",
-                  border: "none",
-                  width: "90%",
-                  left: 0,
-                  position: "absolute",
-                  top: "6%",
-                  transform: displayChatHistoryOnMobile ? "translateX(0)" : "translateX(-90%)",
-                  overflow: "auto",
-                  overscrollBehavior: "contain",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                },
-              }}
-            >
-              <ChatsHistory
+                Chats
+              </Button>
+              <DrawerContainer
+                title="Chats"
+                expanded={displayChatHistoryOnMobile}
+                toggleExpand={() => {
+                  setDisplayChatHistoryOnMobile(false);
+                }}
                 onClose={() => {
                   setDisplayChatHistoryOnMobile(false);
                 }}
-              />
-            </DrawerContainer>
-          </>
-        )}
+                sticky={false}
+                style={{
+                  zIndex: 50,
+                  "& .MuiDrawer-paper": {
+                    my: 0,
+                    px: "10px",
+                    pb: "60px", // for last chat entry to be displayed properly
+                    borderRadius: 0,
+                    height: "100svh",
+                    boxSizing: "border-box",
+                    bgcolor: "surfaceContainerLow",
+                    border: "none",
+                    width: "90%",
+                    left: 0,
+                    position: "absolute",
+                    top: "6%",
+                    transform: displayChatHistoryOnMobile ? "translateX(0)" : "translateX(-90%)",
+                    overflow: "auto",
+                    overscrollBehavior: "contain",
+                    "&::-webkit-scrollbar": {
+                      display: "none",
+                    },
+                  },
+                }}
+              >
+                <ChatsHistory
+                  onClose={() => {
+                    setDisplayChatHistoryOnMobile(false);
+                  }}
+                />
+              </DrawerContainer>
+            </Box>
+          )}
+          {loadingInitialMessages ? (
+            <Stack
+              direction={"row"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              height={{ xs: `calc(100svh - ${theme.custom.headerHeight.xs})`, md: "calc(100vh - 100px)" }}
+              sx={{
+                ...(isMobile && { minWidth: `${window.innerWidth}px` }),
+              }}
+            >
+              <CircularProgress />
+            </Stack>
+          ) : (
+            <Stack
+              justifyContent={"flex-end"}
+              sx={{
+                height: {
+                  xs: `calc(100svh - (${theme.custom.headerHeight.xs} + ${showChatInput ? 60 : 0}px))`,
+                  md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+                },
+              }}
+            >
+              {showLanding ? (
+                <Landing />
+              ) : (
+                <Stack
+                  justifyContent={"flex-end"}
+                  sx={{
+                    height: {
+                      xs: showChatInput ? "calc(100% - 90.5px)" : "100%",
+                      md: showChatInput ? "calc(100% - 128px)" : "100%",
+                    },
+                    px: { xs: "8px", md: 0 },
+                  }}
+                >
+                  <ChatInterface
+                    fetchMoreMessages={loadMoreMessages}
+                    loadingMessages={loadingMoreMessages}
+                    messages={messages}
+                    showGenerateButton={showGenerateButton}
+                    onAbort={abortConnection}
+                    onGenerate={() => {
+                      handleGenerateExecution();
+                    }}
+                    stopScrollingToBottom={stopScrollingToBottom}
+                  />
+                </Stack>
+              )}
+              <Stack
+                sx={{
+                  px: { md: isChatHistorySticky ? "80px" : "300px" },
+                  pb: { md: showChatInput ? "24px" : 0 },
+                }}
+              >
+                {currentUser?.id ? (
+                  <>
+                    {showChatInput && (
+                      <ChatInput
+                        onSubmit={(value: string) => {
+                          handleSubmitInput(value);
+                          setStopScrollingToBottom(false);
+                        }}
+                        disabled={isValidatingAnswer || disableChatInput || isInputDisabled || isGenerating}
+                        isValidating={isValidatingAnswer}
+                        isFadeIn={showLanding}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <Stack
+                    direction={"column"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    gap={1}
+                    width={{ md: "100%" }}
+                    p={{ md: "16px 8px 16px 16px" }}
+                  >
+                    <SigninButton onClick={() => router.push("/signin")} />
+                  </Stack>
+                )}
+              </Stack>
+            </Stack>
+          )}
+        </Box>
       </Layout>
     </ThemeProvider>
   );

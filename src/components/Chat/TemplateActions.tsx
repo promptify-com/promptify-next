@@ -19,7 +19,8 @@ import Popper from "@mui/material/Popper";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { useAppDispatch } from "@/hooks/useStore";
 import { useCreateChatMutation } from "@/core/api/chats";
-import { setAnswers, setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   template: Templates;
@@ -29,6 +30,7 @@ interface Props {
 
 function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
   const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
   const [createChat] = useCreateChatMutation();
   const [actionsOpened, setActionsOpened] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +95,7 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
           sx={{ zIndex: 1200 }}
           open={actionsOpened}
           anchorEl={actionsAnchorRef.current}
-          placement={"bottom-end"}
+          placement={isMobile ? "right-start" : "bottom-end"}
           transition
         >
           {({ TransitionProps }) => (
