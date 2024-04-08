@@ -1,0 +1,35 @@
+name: Run Cypress Tests on PR Merge to Staging
+
+# Triggers the workflow on pull request merges to the staging branch
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  run-cypress-tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Specify your project's Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          command: yarn cypress:run
+          # Optional configurations:
+          working-directory: ./ # Set this to the directory where your cypress.json is located, if it's not the root
+          # browser: chrome # Uncomment if you want to specify a browser
+          # headless: true # For headless testing, though `cypress run` defaults to headless
+          # record: true # If you want to record test results on Cypress Dashboard, requires setting CYPRESS_RECORD_KEY in secrets
+        # Optional: Use this if you need to specify environment variables
+        # env:
+          # CYPRESS_BASE_URL: http://localhost:3000 # Example environment variable

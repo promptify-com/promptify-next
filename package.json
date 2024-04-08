@@ -9,7 +9,8 @@
     "lint": "eslint \"*/**/*.{ts,tsx}\"",
     "prepare": "husky install",
     "prettier:fix": "prettier src/**/*.{ts,tsx} --write",
-    "analyze:bundle": "source-map-explorer '.next/static/chunks/pages/prompt/*.js'"
+    "analyze:bundle": "source-map-explorer '.next/static/chunks/pages/prompt/*.js'",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -68,6 +69,8 @@
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.4",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "cypress": "^13.7.2",
+    "dotenv": "^16.4.5",
     "eslint": "^8.0.1",
     "eslint-config-next": "13.4.19",
     "eslint-config-prettier": "^9.1.0",
@@ -83,6 +86,9 @@
     "source-map-explorer": "^2.5.3"
   },
   "resolutions": {
-    "strip-ansi": "6.0.1"
+    "strip-ansi": "6.0.1",
+    "listr2": "6.6.0",
+    "cli-table3": "0.3.1",
+    "string-width": "4.2.3"
   }
 }

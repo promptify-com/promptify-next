@@ -41,7 +41,10 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   const showTestimonials = observers.learnObserver?.isIntersecting;
 
   return (
-    <Stack mx={{ md: "50px" }}>
+    <Stack
+      mx={{ md: "50px" }}
+      data-testid="guest-main-container"
+    >
       <Landing />
       <CategoryCarousel
         categories={_categories}
