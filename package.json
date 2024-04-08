@@ -88,7 +88,7 @@
   "resolutions": {
     "strip-ansi": "6.0.1",
     "listr2": "6.6.0",
-    "cli-table3": "0.3.1",
+    "cli-table3": "0.5.0",
     "string-width": "4.2.3"
   }
 }

@@ -3051,7 +3051,7 @@ cli-cursor@^4.0.0:
   dependencies:
     restore-cursor "^4.0.0"
 
-cli-table3@0.3.1, cli-table3@~0.6.1:
+cli-table3@0.5.0, cli-table3@~0.6.1:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/cli-table3/-/cli-table3-0.5.0.tgz#adb2f025715f4466e67629783c8d73e9030eb4bd"
   integrity sha512-c7YHpUyO1SaKaO7kYtxd5NZ8FjAmSK3LpKkuzdwn+2CwpFxBpdoQLm+OAnnCfoEl7onKhN9PKQi1lsHuAIUqGQ==
