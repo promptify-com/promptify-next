@@ -89,12 +89,6 @@ function DocumentsPage() {
     });
   }, [templatesExecutions, filter.status]);
 
-  const sortedTemplates = [...(templates ?? [])].sort(
-    ({ executions: executionsA = [] }, { executions: executionsB = [] }) => {
-      return executionsB.length - executionsA.length;
-    },
-  );
-
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   const hasNext = Boolean(fetchExecutions?.next && filteredExecutions.length);
@@ -159,7 +153,7 @@ function DocumentsPage() {
             </Breadcrumbs>
           ) : (
             <TemplatesCarousel
-              templates={sortedTemplates}
+              templates={templates}
               isLoading={isTemplatesLoading}
             />
           )}
