@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
-
 import { useAppSelector } from "@/hooks/useStore";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import ChatOptions from "@/components/Chat/ChatOptions";

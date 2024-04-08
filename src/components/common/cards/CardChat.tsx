@@ -134,8 +134,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
                 fontSize={14}
                 fontWeight={500}
                 color={"onSurface"}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 1,
+                  overflow: "hidden",
+                  wordBreak: "break-all",
+                }}
               >
                 {chat.title}
               </Typography>
@@ -143,9 +148,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
                 fontSize={13}
                 fontWeight={400}
                 color={"onSurface"}
-                whiteSpace={"nowrap"}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 1,
+                  overflow: "hidden",
+                  wordBreak: "break-all",
+                }}
               >
                 {chat.last_message}
               </Typography>

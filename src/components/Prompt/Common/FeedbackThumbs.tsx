@@ -4,14 +4,13 @@ import TagFacesSharp from "@mui/icons-material/TagFacesSharp";
 import MoodBadSharp from "@mui/icons-material/MoodBadSharp";
 import Button from "@mui/material/Button";
 import Replay from "@mui/icons-material/Replay";
-
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { useAppDispatch } from "@/hooks/useStore";
-import { setAnswers } from "@/core/store/chatSlice";
+import { setAnswers, setSelectedTemplate } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import CustomTooltip from "./CustomTooltip";
 import { setToast } from "@/core/store/toastSlice";
-import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { FeedbackType, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   variant: "button" | "icon";
@@ -48,6 +47,7 @@ export default function FeedbackThumbs({ vertical, execution, variant, noRepeat 
   const handleRepeat = () => {
     const { parameters } = execution;
     dispatch(setRepeatedExecution(execution));
+    dispatch(setSelectedTemplate(execution.template as Templates));
 
     const newAnswers = parameters
       ? Object.keys(parameters)
