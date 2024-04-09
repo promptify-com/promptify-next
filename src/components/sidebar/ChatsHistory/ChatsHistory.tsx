@@ -91,7 +91,7 @@ export default function ChatsHistory({ onClose }: Props) {
     search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
   const emptyChats = chats?.length === 0;
 
-  const CardsPlaceholder = <ChatCardPlaceholder count={3} />;
+  const CardsPlaceholder = <ChatCardPlaceholder count={6} />;
 
   return (
     <Stack
