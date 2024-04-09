@@ -21,6 +21,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         gap={{ xs: "35px", md: "80px" }}
         mx={{ md: "50px" }}
         maxWidth={{ xs: "90vw", md: "fit-content" }}
+        data-cy="logged-in-main-container"
       >
         <SuggestionsSection />
 
