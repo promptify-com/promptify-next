@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
-import { setSelectedChat } from "@/core/store/chatSlice";
+import { setChats, setSelectedChat } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import useBrowser from "@/hooks/useBrowser";
 
@@ -38,7 +38,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
-  const selectedChat = useAppSelector(state => state.chat.selectedChat);
+  const { selectedChat, chats } = useAppSelector(state => state.chat);
   const [deleteChat] = useDeleteChatMutation();
   const [updateChat] = useUpdateChatMutation();
   const [duplicateChat] = useDuplicateChatMutation();
@@ -47,8 +47,15 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
     if (title === chat.title) return;
 
     try {
-      await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } });
+      const updatedChat = await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } }).unwrap();
       setRenameAllow(false);
+      dispatch(
+        setChats(
+          chats.map(_chat => ({
+            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
+          })),
+        ),
+      );
       dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
@@ -61,6 +68,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
       if (selectedChat?.id === chat.id) {
         dispatch(setSelectedChat(undefined));
       }
+      dispatch(setChats(chats.filter(_chat => _chat.id !== chat.id)));
       dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));

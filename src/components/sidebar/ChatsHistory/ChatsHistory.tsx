@@ -7,7 +7,7 @@ import SearchField from "@/components/common/forms/SearchField";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
-import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setChats, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
@@ -21,11 +21,15 @@ interface Props {
 export default function ChatsHistory({ onClose }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [search, setSearch] = useState("");
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const { selectedChat, chats } = useAppSelector(state => state.chat);
+  const { chats: fetchedChats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
-  const { chats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
+  useEffect(() => {
+    dispatch(setChats(fetchedChats));
+  }, [fetchedChats]);
+
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
       return {} as Record<number, IChat>;
@@ -53,6 +57,7 @@ export default function ChatsHistory({ onClose }: Props) {
         title: "Welcome",
       }).unwrap();
       handleClickChat(newChat);
+      dispatch(setChats([newChat, ...chats]));
       dispatch(setInitialChat(false));
       dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
     } catch (_) {

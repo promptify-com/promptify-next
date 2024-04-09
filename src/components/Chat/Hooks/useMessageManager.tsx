@@ -19,6 +19,7 @@ import {
   setParamsValues,
   clearParameterSelection,
   setSelectedTemplate,
+  setChats,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
@@ -37,6 +38,7 @@ const useMessageManager = () => {
   const [createChat] = useCreateChatMutation();
 
   const {
+    chats,
     selectedTemplate,
     isSimulationStreaming,
     selectedChat,
@@ -178,6 +180,7 @@ const useMessageManager = () => {
       const newChat = await createChat({
         title: "Welcome",
       }).unwrap();
+      dispatch(setChats([newChat, ...chats]));
       dispatch(setSelectedChat(newChat));
       // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
       setTimeout(() => dispatch(setInitialChat(false)), 1000);
