@@ -23,4 +23,3 @@ jobs:
           record: false
           parallel: false
           auto-cancel-after-failures: 3
-        env:
