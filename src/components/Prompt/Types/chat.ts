@@ -13,6 +13,7 @@ export type MessageType =
   | "spark"
   | "html"
   | "credentials"
+  | "credsForm"
   | "suggestion"
   | "template"
   | "questionInput"

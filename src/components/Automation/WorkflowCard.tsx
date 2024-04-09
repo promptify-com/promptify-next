@@ -6,6 +6,9 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setSelectedWorkflow } from "@/core/store/chatSlice";
+import { useUpdateChatMutation } from "@/core/api/chats";
 import type { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
@@ -17,7 +20,29 @@ interface Props {
 }
 
 function WorkflowCard({ workflow, onScrollToBottom }: Props) {
+  const dispatch = useAppDispatch();
+  const [updateChat] = useUpdateChatMutation();
+
+  const { selectedChat } = useAppSelector(state => state.chat);
+
   const { image, name, description } = workflow;
+
+  const handleSelectWorkflow = () => {
+    if (!selectedChat) {
+      return;
+    }
+    try {
+      updateChat({
+        id: selectedChat.id,
+        data: { title: name, thumbnail: image },
+      });
+    } catch (err) {
+      console.error("Error updating chat: ", err);
+    }
+
+    dispatch(setSelectedWorkflow(workflow));
+    onScrollToBottom?.();
+  };
 
   return (
     <Stack
@@ -107,7 +132,7 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
           variant="text"
           startIcon={<PlayArrow />}
           sx={btnStyle}
-          onClick={() => {}}
+          onClick={handleSelectWorkflow}
         >
           Run Workflow
         </Button>

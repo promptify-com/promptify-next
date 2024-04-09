@@ -35,7 +35,10 @@ const useWorkflow = (workflow: IWorkflow) => {
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
 
-    if (selectedWorkflowId.toString() in storedWorkflows) return;
+    if (selectedWorkflowId.toString() in storedWorkflows) {
+      webhookPathRef.current = storedWorkflows[selectedWorkflowId].webhookPath;
+      return;
+    }
 
     try {
       const response = await createWorkflow(selectedWorkflowId).unwrap();

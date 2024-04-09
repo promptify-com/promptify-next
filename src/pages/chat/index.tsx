@@ -56,6 +56,7 @@ function Chat() {
     queueSavedMessages,
     setQueueSavedMessages,
     resetStates,
+    executeWorkflow,
   } = useMessageManager();
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template: selectedTemplate,
@@ -278,6 +279,7 @@ function Chat() {
                   onGenerate={() => {
                     handleGenerateExecution();
                   }}
+                  onExecuteWorkflow={executeWorkflow}
                   stopScrollingToBottom={stopScrollingToBottom}
                 />
               </Stack>

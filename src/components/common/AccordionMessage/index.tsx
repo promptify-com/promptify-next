@@ -9,34 +9,24 @@ import Fade from "@mui/material/Fade";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import AccordionMessageHeader from "@/components/common/AccordionMessage/Header";
-import ClientOnly from "@/components/base/ClientOnly";
-import { timeAgo } from "@/common/helpers/timeManipulation";
+
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   messageType: MessageType;
-  messageTimestamp: string | Date;
   children: ReactNode;
-  template: Templates;
+  template?: Templates;
   abortGenerating?: () => void;
   messages?: IMessage[];
 }
 
-export default function AccordionMessage({
-  messageType,
-  messageTimestamp,
-  children,
-  template,
-  messages = [],
-  abortGenerating,
-}: Props) {
+export default function AccordionMessage({ messageType, children, template, messages = [], abortGenerating }: Props) {
   const dispatch = useAppDispatch();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [expanded, setExpanded] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
   const accordionRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -44,26 +34,7 @@ export default function AccordionMessage({
       id={`accordion-${messageType === "spark" ? "execution" : "input"}`}
       width={"100%"}
       position={"relative"}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      {isHovered && (
-        <ClientOnly>
-          <Typography
-            sx={{
-              position: "absolute",
-              top: -20,
-              opacity: 0.5,
-              left: 2,
-              zIndex: 999,
-            }}
-            fontSize={12}
-            variant="caption"
-          >
-            Promptify {timeAgo(messageTimestamp)}
-          </Typography>
-        </ClientOnly>
-      )}
       <Stack
         direction={"row"}
         position={"relative"}
@@ -89,7 +60,7 @@ export default function AccordionMessage({
             >
               <AccordionMessageHeader
                 type={messageType}
-                template={template}
+                template={template!}
                 isExpanded={expanded}
                 onCancel={abortGenerating}
                 messages={messages}

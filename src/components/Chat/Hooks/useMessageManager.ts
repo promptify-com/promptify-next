@@ -29,17 +29,18 @@ import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/cha
 import type { PromptParams } from "@/core/api/dto/prompts";
 import { Templates } from "@/core/api/dto/templates";
 import { IWorkflow } from "@/components/Automation/types";
+import useChatWorkflow from "./useChatWorkflow";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
-
   const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
   const [createChat] = useCreateChatMutation();
 
   const {
     selectedTemplate,
+    selectedWorkflow,
     isSimulationStreaming,
     selectedChat,
     inputs,
@@ -59,6 +60,8 @@ const useMessageManager = () => {
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
+
+  const { processWorflowData, executeWorkflow } = useChatWorkflow({ setMessages, setIsValidatingAnswer });
 
   useEffect(() => {
     if (!parameterSelected) {
@@ -104,7 +107,9 @@ const useMessageManager = () => {
         text: welcomeMessage.text,
         template: selectedTemplate,
       });
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "credsForm").concat([runMessage, formMessage]),
+      );
     } else {
       dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
       const headerWithTextMessage = createMessage({
@@ -138,7 +143,7 @@ const useMessageManager = () => {
   };
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
-    if (!selectedTemplate || !selectedChatOption) {
+    if (!selectedTemplate || !selectedChatOption || selectedWorkflow) {
       return [[], [], false];
     }
 
@@ -156,6 +161,13 @@ const useMessageManager = () => {
 
     return [inputs, params, promptHasContent];
   }, [selectedTemplate, selectedChatOption, repeatedExecution]);
+
+  useEffect(() => {
+    if (!selectedWorkflow) {
+      return;
+    }
+    processWorflowData();
+  }, [selectedWorkflow]);
 
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
@@ -348,6 +360,7 @@ const useMessageManager = () => {
     queueSavedMessages,
     setQueueSavedMessages,
     resetStates,
+    executeWorkflow,
   };
 };
 

@@ -99,7 +99,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
                 {showAccordionMessage(msg) && (
                   <AccordionMessage
                     messageType={msg.type}
-                    messageTimestamp={msg.createdAt}
                     template={template}
                   >
                     <AccordionContentAutomation

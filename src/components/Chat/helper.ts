@@ -45,7 +45,7 @@ export function extractWorkflowIDs(message: string) {
   //     ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
   //     .filter(Boolean) ?? []
   // );
-  return [11, 10];
+  return [11, 10, 4, 7];
 }
 
 export function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {

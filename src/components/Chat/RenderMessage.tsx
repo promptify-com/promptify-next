@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Fade from "@mui/material/Fade";
 
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import TemplateSuggestions from "@/components/Chat/Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
@@ -13,15 +13,17 @@ import ReadyMessage from "@/components/Chat/Messages/ReadyMessage";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
+import CredentialsMessage from "./Messages/CredentialsMessage";
 
 interface Props {
   message: IMessage;
   onScrollToBottom: (force?: boolean) => void;
   onGenerate: () => void;
   onAbort: () => void;
+  onExecuteWorkflow?: () => void;
 }
 
-function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props) {
+function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
   const dispatch = useAppDispatch();
   return (
     <>
@@ -72,6 +74,13 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
             />
           </Stack>
         </Fade>
+      )}
+
+      {(message.type === "credsForm" || message.type === "credentials") && (
+        <CredentialsMessage
+          message={message}
+          onExecuteWorkflow={onExecuteWorkflow}
+        />
       )}
       {message.type === "template" && (
         <Fade
