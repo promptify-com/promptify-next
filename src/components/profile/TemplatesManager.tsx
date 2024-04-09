@@ -14,7 +14,6 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Search from "@mui/icons-material/Search";
-
 import { useDeleteTemplateMutation, useGetMyTemplatesQuery } from "@/core/api/templates";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -24,7 +23,7 @@ import { TemplateStatusArray } from "@/common/constants";
 import TemplateManagerItem from "./TemplateManagerItem";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
+import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import type { LowercaseTemplateStatus, Templates } from "@/core/api/dto/templates";
 import type { FormType } from "@/common/types/template";
 
@@ -236,7 +235,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
                   <Typography variant="body1">No templates found.</Typography>
                 </Box>
               ) : (
-                <TemplatesInfiniteScroll
+                <InfiniteScrollContainer
                   loading={isFetching}
                   onLoadMore={handleNextPage}
                   hasMore={hasMore}
@@ -248,7 +247,7 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
                       onOpenDelete={() => openDeletionModal(template)}
                     />
                   ))}
-                </TemplatesInfiniteScroll>
+                </InfiniteScrollContainer>
               )}
             </Box>
           )}

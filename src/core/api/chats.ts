@@ -8,17 +8,28 @@ import {
   ISaveChatInput,
   ISaveChatSuggestions,
   ISaveChatTemplate,
+  IChatPagination,
+  IPaginateParams,
 } from "./dto/chats";
+
+const getSearchParams = (params: IPaginateParams) => {
+  const searchParams = new URLSearchParams();
+
+  params.limit && searchParams.append("limit", String(params.limit));
+  params.offset && searchParams.append("offset", String(params.offset));
+
+  return searchParams.toString();
+};
 
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getChats: builder.query<IChat[], void>({
-        query: () => ({
-          url: `/api/chat/chats`,
+      getChats: builder.query<IChatPagination, IPaginateParams>({
+        query: (params: IPaginateParams) => ({
+          url: `/api/chat/chats?${getSearchParams(params)}`,
           method: "get",
+          providesTags: ["Chats"],
         }),
-        providesTags: ["Chats"],
       }),
       getChatById: builder.query<IChat, number>({
         query: (id: number) => ({
@@ -36,8 +47,8 @@ export const chatsApi = baseApi.injectEndpoints({
           try {
             const newChat = await queryFulfilled;
             dispatch(
-              chatsApi.util.updateQueryData("getChats", undefined, _chats => {
-                _chats.unshift(newChat.data);
+              chatsApi.util.updateQueryData("getChats", {}, _chats => {
+                _chats.results.unshift(newChat.data);
                 return _chats;
               }),
             );
@@ -51,8 +62,8 @@ export const chatsApi = baseApi.injectEndpoints({
         }),
         async onQueryStarted(id, { dispatch, queryFulfilled }) {
           const patchResult = dispatch(
-            chatsApi.util.updateQueryData("getChats", undefined, _chats => {
-              return _chats.filter(chat => chat.id !== id);
+            chatsApi.util.updateQueryData("getChats", {}, _chatsPagination => {
+              return { ..._chatsPagination, results: _chatsPagination.results.filter(chat => chat.id !== id) };
             }),
           );
 
@@ -71,13 +82,16 @@ export const chatsApi = baseApi.injectEndpoints({
         }),
         async onQueryStarted({ id: chatId, data: chatData }, { dispatch, queryFulfilled }) {
           const patchResult = dispatch(
-            chatsApi.util.updateQueryData("getChats", undefined, _chats => {
-              return _chats.map(_chat => ({
-                id: _chat.id,
-                created_at: _chat.created_at,
-                updated_at: new Date().toISOString(),
-                ...(_chat.id === chatId ? chatData : _chat),
-              }));
+            chatsApi.util.updateQueryData("getChats", {}, _chatsPagination => {
+              return {
+                ..._chatsPagination,
+                results: _chatsPagination.results.map(_chat => ({
+                  id: _chat.id,
+                  created_at: _chat.created_at,
+                  updated_at: new Date().toISOString(),
+                  ...(_chat.id === chatId ? chatData : _chat),
+                })),
+              };
             }),
           );
 
@@ -97,9 +111,9 @@ export const chatsApi = baseApi.injectEndpoints({
           try {
             const newChat = await queryFulfilled;
             dispatch(
-              chatsApi.util.updateQueryData("getChats", undefined, _chats => {
-                _chats.unshift(newChat.data);
-                return _chats;
+              chatsApi.util.updateQueryData("getChats", {}, _chatsPagination => {
+                _chatsPagination.results.unshift(newChat.data);
+                return _chatsPagination;
               }),
             );
           } catch {}

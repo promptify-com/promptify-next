@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useCreateChatMutation, useGetChatsQuery } from "@/core/api/chats";
+import { useCreateChatMutation } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +11,8 @@ import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
+import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
+import { useChatsPaginator } from "@/components/Chat/Hooks/useChatsPaginator";
 
 interface Props {
   onClose?: () => void;
@@ -22,7 +24,8 @@ export default function ChatsHistory({ onClose }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [search, setSearch] = useState("");
-  const { data: chats, isLoading: loadingChats } = useGetChatsQuery();
+
+  const { chats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
       return {} as Record<number, IChat>;
@@ -87,6 +90,8 @@ export default function ChatsHistory({ onClose }: Props) {
     search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
   const emptyChats = chats?.length === 0;
 
+  const CardsPlaceholder = <ChatCardPlaceholder count={3} />;
+
   return (
     <Stack
       gap={4}
@@ -126,17 +131,24 @@ export default function ChatsHistory({ onClose }: Props) {
         >
           Recent:
         </Typography>
-        {loadingChats ? (
-          <ChatCardPlaceholder count={3} />
+        {isChatsLoading ? (
+          CardsPlaceholder
         ) : filteredChats && filteredChats?.length > 0 ? (
-          filteredChats.map(chat => (
-            <ChatCard
-              key={chat.id}
-              chat={chat}
-              onClick={() => handleClickChat(chat)}
-              active={chat.id === selectedChat?.id}
-            />
-          ))
+          <InfiniteScrollContainer
+            loading={isChatsFetching}
+            onLoadMore={handleNextPage}
+            hasMore={hasMore}
+            placeholder={CardsPlaceholder}
+          >
+            {filteredChats.map(chat => (
+              <ChatCard
+                key={chat.id}
+                chat={chat}
+                onClick={() => handleClickChat(chat)}
+                active={chat.id === selectedChat?.id}
+              />
+            ))}
+          </InfiniteScrollContainer>
         ) : (
           <>
             <Typography

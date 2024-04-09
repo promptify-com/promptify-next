@@ -23,7 +23,6 @@ const useApiAccess = (template: Templates) => {
       const _promptId = _param.prompt;
       const promptParams = { ...promptsData[_promptId]?.prompt_params };
 
-      promptParams[_param.parameter.id] = "";
       promptsData[_promptId] = {
         prompt: _promptId,
         prompt_params: promptParams,
