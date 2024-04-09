@@ -102,6 +102,7 @@ function TemplatePage({ template, popup }: Props) {
           mt: { xs: theme.custom.headerHeight.xs, md: 0 },
           px: { md: "32px" },
         }}
+        data-cy="main-container-prompt-template"
       >
         <Box
           ref={tabsRef}

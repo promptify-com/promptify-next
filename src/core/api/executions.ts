@@ -27,12 +27,6 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Executions"],
       }),
-      getLatestExecutedTemplates: builder.query<Templates[], void>({
-        query: () => ({
-          url: "/api/meta/templates/last_executed",
-          method: "get",
-        }),
-      }),
       exportExecution: builder.query<ResponseType, { id: number; fileType: "word" | "pdf" }>({
         query: ({ id, fileType }: { id: number; fileType: "word" | "pdf" }) => ({
           url: `/api/meta/template-executions/${id}/export/?file_format=${fileType}`,
@@ -91,5 +85,4 @@ export const {
   useDeleteExecutionFavoriteMutation,
   useExecutionFavoriteMutation,
   useStopExecutionMutation,
-  useGetLatestExecutedTemplatesQuery,
 } = executionsApi;

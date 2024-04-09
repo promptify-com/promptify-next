@@ -20,9 +20,8 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
       width={"100%"}
       flexDirection={"column"}
       gap={"8px"}
-      px={{ xs: "8px", md: 0 }}
-      pb={{ xs: "20px", md: 0 }}
       sx={{
+        p: { xs: "8px 8px 20px", md: 0 },
         opacity: isFadeIn ? 0 : 1,
         animation: isFadeIn ? `${fadeIn} 0.5s ease-in 1.6s forwards` : "none",
       }}

@@ -1,0 +1,26 @@
+name: Run Cypress Tests on PR Merge to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  run-cypress-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          install-command: yarn --frozen-lockfile
+          start: yarn dev
+          browser: chrome
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 120
+        env:
+          NEXT_PUBLIC_API_URL: "https://promptify.adtitan.io"
+          NEXT_PUBLIC_N8N_CHAT_BASE_URL: "https://automation.promptify.com"
+          LOGIN_TOKEN: ${{ secrets.LOGIN_TOKEN }}

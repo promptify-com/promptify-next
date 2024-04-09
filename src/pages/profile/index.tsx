@@ -11,7 +11,7 @@ import { useTheme } from "@mui/material/styles";
 import { isDesktopViewPort } from "@/common/helpers";
 import UserLayout from "@/components/profile2/UserLayout";
 
-const Profile = () => {
+function Profile() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const theme = useTheme();
   const desktopView = isDesktopViewPort();
@@ -95,7 +95,7 @@ const Profile = () => {
       </Layout>
     </Protected>
   );
-};
+}
 
 export async function getServerSideProps() {
   return {

@@ -110,7 +110,7 @@ export const templatesApi = baseApi.injectEndpoints({
       }),
       getExecutedTemplates: builder.query<TemplateExecutionsDisplay[], void>({
         query: () => ({
-          url: "/api/meta/template-executions/me",
+          url: "/api/meta/templates/last_executed",
           method: "get",
         }),
       }),

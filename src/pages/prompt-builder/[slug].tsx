@@ -1,7 +1,9 @@
 import PromptBuilder from "@/components/builder/PromptBuilder";
 import { BUILDER_DESCRIPTION } from "@/common/constants";
 
-export const PromptBuilderPage = () => <PromptBuilder />;
+function PromptBuilderPage() {
+  return <PromptBuilder />;
+}
 
 export async function getServerSideProps() {
   return {
@@ -11,4 +13,5 @@ export async function getServerSideProps() {
     },
   };
 }
+
 export default PromptBuilderPage;

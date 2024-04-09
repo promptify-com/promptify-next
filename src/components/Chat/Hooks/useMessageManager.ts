@@ -24,12 +24,13 @@ import {
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
+import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { Templates } from "@/core/api/dto/templates";
-import { IWorkflow } from "@/components/Automation/types";
-import useChatWorkflow from "./useChatWorkflow";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IWorkflow } from "@/components/Automation/types";
+import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -62,6 +63,7 @@ const useMessageManager = () => {
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
 
   const { processWorflowData, executeWorkflow } = useChatWorkflow({ setMessages, setIsValidatingAnswer });
+  const inputStyle = currentUser?.preferences?.input_style ?? selectedChatOption;
 
   useEffect(() => {
     if (!parameterSelected) {
@@ -143,7 +145,7 @@ const useMessageManager = () => {
   };
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
-    if (!selectedTemplate || !selectedChatOption || selectedWorkflow) {
+    if (!selectedTemplate || !inputStyle) {
       return [[], [], false];
     }
 
@@ -158,6 +160,10 @@ const useMessageManager = () => {
 
     const questions = prepareQuestions(inputs, params);
     setQuestions(questions);
+
+    if (!repeatedExecution) {
+      dispatch(setRepeatedExecution(null));
+    }
 
     return [inputs, params, promptHasContent];
   }, [selectedTemplate, selectedChatOption, repeatedExecution]);

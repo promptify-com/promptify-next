@@ -71,6 +71,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
     <Dialog
       open
       onClose={() => onClose()}
+      disableScrollLock
     >
       <Grid width={{ md: "369px" }}>
         <Typography
