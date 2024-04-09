@@ -179,7 +179,6 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             className="actions-menu"
             sx={{
               border: "none",
-              ...(isMobile && { bgcolor: "action.hover" }),
               ":hover": {
                 bgcolor: "action.hover",
               },

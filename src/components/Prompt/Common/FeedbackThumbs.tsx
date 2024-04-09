@@ -48,7 +48,7 @@ export default function FeedbackThumbs({ vertical, execution, variant, noRepeat 
   const handleRepeat = () => {
     const { parameters } = execution;
     dispatch(setRepeatedExecution(execution));
-    if (!selectedTemplate) {
+    if (selectedTemplate?.id !== execution.template?.id) {
       dispatch(setSelectedTemplate(execution.template as Templates));
     }
 
