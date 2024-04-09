@@ -24,4 +24,3 @@ jobs:
           parallel: false
           auto-cancel-after-failures: 3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
