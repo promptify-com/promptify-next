@@ -17,7 +17,10 @@ export function useChatsPaginator() {
   } = useGetChatsQuery({ limit: PAGINATION_LIMIT, offset });
 
   useEffect(() => {
-    dispatch(setChats(chats.concat(fetchedChats?.results ?? [])));
+    if (!fetchedChats?.results?.length) {
+      return;
+    }
+    dispatch(setChats(chats.concat(fetchedChats?.results)));
   }, [fetchedChats?.results]);
 
   const handleNextPage = () => {

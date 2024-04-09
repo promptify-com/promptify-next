@@ -79,6 +79,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
     handleCloseActions();
     try {
       const newChat = await duplicateChat(chat.id).unwrap();
+      dispatch(setChats([newChat, ...chats]));
       dispatch(setSelectedChat(newChat));
       dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
     } catch (_) {

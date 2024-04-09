@@ -1,4 +1,5 @@
 import { baseApi } from "./api";
+import { IPagination, IPaginateParams } from "./dto";
 import {
   BatchingRequest,
   IChat,
@@ -8,8 +9,6 @@ import {
   ISaveChatInput,
   ISaveChatSuggestions,
   ISaveChatTemplate,
-  IChatPagination,
-  IPaginateParams,
 } from "./dto/chats";
 
 const getSearchParams = (params: IPaginateParams) => {
@@ -24,7 +23,7 @@ const getSearchParams = (params: IPaginateParams) => {
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getChats: builder.query<IChatPagination, IPaginateParams>({
+      getChats: builder.query<IPagination<IChat>, IPaginateParams>({
         query: (params: IPaginateParams) => ({
           url: `/api/chat/chats?${getSearchParams(params)}`,
           method: "get",
@@ -43,36 +42,12 @@ export const chatsApi = baseApi.injectEndpoints({
           method: "post",
           data,
         }),
-        async onQueryStarted(chat, { dispatch, queryFulfilled }) {
-          try {
-            const newChat = await queryFulfilled;
-            dispatch(
-              chatsApi.util.updateQueryData("getChats", {}, _chats => {
-                _chats.results.unshift(newChat.data);
-                return _chats;
-              }),
-            );
-          } catch {}
-        },
       }),
       deleteChat: builder.mutation({
         query: (id: number) => ({
           url: `/api/chat/chats/${id}`,
           method: "delete",
         }),
-        async onQueryStarted(id, { dispatch, queryFulfilled }) {
-          const patchResult = dispatch(
-            chatsApi.util.updateQueryData("getChats", {}, _chatsPagination => {
-              return { ..._chatsPagination, results: _chatsPagination.results.filter(chat => chat.id !== id) };
-            }),
-          );
-
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        },
       }),
       updateChat: builder.mutation<IChat, { id: number; data: IChatPartial }>({
         query: ({ id, data }: { data: IChatPartial; id: number }) => ({
@@ -80,44 +55,12 @@ export const chatsApi = baseApi.injectEndpoints({
           method: "put",
           data,
         }),
-        async onQueryStarted({ id: chatId, data: chatData }, { dispatch, queryFulfilled }) {
-          const patchResult = dispatch(
-            chatsApi.util.updateQueryData("getChats", {}, _chatsPagination => {
-              return {
-                ..._chatsPagination,
-                results: _chatsPagination.results.map(_chat => ({
-                  id: _chat.id,
-                  created_at: _chat.created_at,
-                  updated_at: new Date().toISOString(),
-                  ...(_chat.id === chatId ? chatData : _chat),
-                })),
-              };
-            }),
-          );
-
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        },
       }),
       duplicateChat: builder.mutation<IChat, number>({
         query: (id: number) => ({
           url: `/api/chat/chats/${id}/duplicate`,
           method: "post",
         }),
-        async onQueryStarted(_id, { dispatch, queryFulfilled }) {
-          try {
-            const newChat = await queryFulfilled;
-            dispatch(
-              chatsApi.util.updateQueryData("getChats", {}, _chatsPagination => {
-                _chatsPagination.results.unshift(newChat.data);
-                return _chatsPagination;
-              }),
-            );
-          } catch {}
-        },
       }),
       saveChatInput: builder.mutation<void, ISaveChatInput>({
         query: ({ chat, text, type, sender }) => ({

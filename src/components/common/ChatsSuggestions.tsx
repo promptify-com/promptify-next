@@ -15,7 +15,7 @@ interface Props {
 }
 
 function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
-  const { data: chats, isLoading } = useGetChatsQuery({ limit: slice ?? 2 });
+  const { data: chats, isLoading } = useGetChatsQuery({ limit: slice });
   const router = useRouter();
   const theme = useTheme();
   const profilePage = router.pathname === "/profile";

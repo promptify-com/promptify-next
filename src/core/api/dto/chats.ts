@@ -12,18 +12,6 @@ export interface IChat {
 
 export type ChatOption = "qa" | "form";
 
-export interface IChatPagination {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: IChat[];
-}
-
-export interface IPaginateParams {
-  limit?: number;
-  offset?: number;
-}
-
 export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
 
 type Sender = "system" | "user";
