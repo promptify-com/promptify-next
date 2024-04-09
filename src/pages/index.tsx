@@ -11,7 +11,7 @@ import HomepageLayout from "@/components/Homepage";
 import Footer from "@/components/Footer";
 import type { Category } from "@/core/api/dto/templates";
 
-const HomePage = ({ categories }: { categories: Category[] }) => {
+function HomePage({ categories }: { categories: Category[] }) {
   const isValidUser = useAppSelector(isValidUserFn);
   const { isMobile } = useBrowser();
 
@@ -27,7 +27,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
       </Box>
     </Layout>
   );
-};
+}
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader("Cache-Control", "public, maxage=1800, stale-while-revalidate=30");

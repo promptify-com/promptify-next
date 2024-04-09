@@ -54,13 +54,9 @@ module.exports = {
         "@next/next/no-img-element": "error",
         "react-hooks/rules-of-hooks": "off",
         "@next/next/inline-script-id": "off",
-        'react/function-component-definition': "off",
-        // [
-        // 'error',
-        // {
-        //   'namedComponents': 'function-declaration'
-        // }
-        // ],
+        'react/function-component-definition': ['error', {
+            'namedComponents': 'function-declaration'
+        }],
         "no-restricted-imports": ["error", {
             "paths": ["@mui/material", "!@mui/material/*", "@mui/icons-material", "@mui/icons-material/*"], 
             "patterns": ["@mui/material/[a-zA-Z]+", "@mui/icons-material/[a-zA-Z]+"] 
