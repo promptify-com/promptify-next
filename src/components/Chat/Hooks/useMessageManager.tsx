@@ -26,6 +26,7 @@ import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteract
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import { setRepeatedExecution } from "@/core/store/executionsSlice";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -56,6 +57,8 @@ const useMessageManager = () => {
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
+
+  const inputStyle = currentUser?.preferences?.input_style ?? selectedChatOption;
 
   useEffect(() => {
     if (!parameterSelected) {
@@ -135,7 +138,7 @@ const useMessageManager = () => {
   };
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
-    if (!selectedTemplate || !selectedChatOption) {
+    if (!selectedTemplate || !inputStyle) {
       return [[], [], false];
     }
 
@@ -150,6 +153,10 @@ const useMessageManager = () => {
 
     const questions = prepareQuestions(inputs, params);
     setQuestions(questions);
+
+    if (!repeatedExecution) {
+      dispatch(setRepeatedExecution(null));
+    }
 
     return [inputs, params, promptHasContent];
   }, [selectedTemplate, selectedChatOption, repeatedExecution]);

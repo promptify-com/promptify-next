@@ -11,7 +11,6 @@ import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
-import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   onClose?: () => void;
@@ -19,7 +18,6 @@ interface Props {
 
 export default function ChatsHistory({ onClose }: Props) {
   const router = useRouter();
-  const { isMobile } = useBrowser();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const selectedChat = useAppSelector(state => state.chat.selectedChat);

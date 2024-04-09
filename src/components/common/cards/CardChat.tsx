@@ -44,6 +44,8 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [duplicateChat] = useDuplicateChatMutation();
 
   const handleUpdateChat = async (title: string) => {
+    if (title === chat.title) return;
+
     try {
       await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } });
       setRenameAllow(false);
@@ -134,8 +136,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
                 fontSize={14}
                 fontWeight={500}
                 color={"onSurface"}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 1,
+                  overflow: "hidden",
+                  wordBreak: "break-all",
+                }}
               >
                 {chat.title}
               </Typography>
@@ -143,9 +150,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
                 fontSize={13}
                 fontWeight={400}
                 color={"onSurface"}
-                whiteSpace={"nowrap"}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 1,
+                  overflow: "hidden",
+                  wordBreak: "break-all",
+                }}
               >
                 {chat.last_message}
               </Typography>
@@ -170,7 +181,6 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
             className="actions-menu"
             sx={{
               border: "none",
-              ...(isMobile && { bgcolor: "action.hover" }),
               ":hover": {
                 bgcolor: "action.hover",
               },

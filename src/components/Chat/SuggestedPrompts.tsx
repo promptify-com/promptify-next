@@ -9,7 +9,7 @@ function SuggestedPrompts() {
   const dispatch = useAppDispatch();
   const prompts = [
     "Explain me how Promptify works",
-    "What is difference between LLM models?",
+    "What is the difference between LLM models?",
     "How to plan my exercise schedule?",
   ];
 

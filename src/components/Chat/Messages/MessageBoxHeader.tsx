@@ -32,7 +32,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
       bgcolor={"surface.2"}
       p={{ xs: "8px 16px", md: "16px 24px" }}
       borderRadius={"24px"}
-      direction={{ xs: "column", md: "row" }}
+      direction={{ xs: !showHeaderActions ? "row" : "column", md: "row" }}
       alignItems={{ md: "center" }}
       justifyContent={"space-between"}
       gap={2}

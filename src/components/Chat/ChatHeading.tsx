@@ -11,8 +11,10 @@ interface Props {
 function ChatHeading({ title, thumbnail }: Props) {
   return (
     <Stack
-      p={1}
-      height={"230px"}
+      sx={{
+        height: { xs: 120, md: 230 },
+        p: "8px",
+      }}
     >
       <Stack
         direction={"row"}
