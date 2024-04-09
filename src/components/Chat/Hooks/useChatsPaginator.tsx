@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGetChatsQuery } from "@/core/api/chats";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setChats } from "@/core/store/chatSlice";
 
 const PAGINATION_LIMIT = 10;
@@ -8,6 +8,7 @@ const PAGINATION_LIMIT = 10;
 export function useChatsPaginator() {
   const dispatch = useAppDispatch();
   const [offset, setOffset] = useState(0);
+  const chats = useAppSelector(state => state.chat.chats);
 
   const {
     data: fetchedChats,
@@ -16,7 +17,7 @@ export function useChatsPaginator() {
   } = useGetChatsQuery({ limit: PAGINATION_LIMIT, offset });
 
   useEffect(() => {
-    dispatch(setChats(fetchedChats?.results ?? []));
+    dispatch(setChats(chats.concat(fetchedChats?.results ?? [])));
   }, [fetchedChats?.results]);
 
   const handleNextPage = () => {
