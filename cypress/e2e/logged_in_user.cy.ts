@@ -8,6 +8,6 @@ describe("Logged-in User Page Tests", () => {
   });
 
   it("Main container of logged-in user exists", () => {
-    cy.get('[data-testid="logged-in-main-container"]').should("exist");
+    cy.get('[data-cy="logged-in-main-container"]').should("exist");
   });
 });
