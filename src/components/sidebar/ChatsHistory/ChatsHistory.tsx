@@ -24,11 +24,7 @@ export default function ChatsHistory({ onClose }: Props) {
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { selectedChat, chats } = useAppSelector(state => state.chat);
-  const { chats: fetchedChats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
-
-  useEffect(() => {
-    dispatch(setChats(fetchedChats));
-  }, [fetchedChats]);
+  const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {

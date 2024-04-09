@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useGetChatsQuery } from "@/core/api/chats";
-import { IChat } from "@/core/api/dto/chats";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setChats } from "@/core/store/chatSlice";
 
 const PAGINATION_LIMIT = 10;
 
 export function useChatsPaginator() {
+  const dispatch = useAppDispatch();
   const [offset, setOffset] = useState(0);
-  const [chats, setChats] = useState<IChat[]>([]);
 
   const {
     data: fetchedChats,
@@ -15,9 +16,7 @@ export function useChatsPaginator() {
   } = useGetChatsQuery({ limit: PAGINATION_LIMIT, offset });
 
   useEffect(() => {
-    if (fetchedChats?.results) {
-      setChats(prevTemplates => prevTemplates.concat(fetchedChats?.results));
-    }
+    dispatch(setChats(fetchedChats?.results ?? []));
   }, [fetchedChats?.results]);
 
   const handleNextPage = () => {
@@ -29,7 +28,7 @@ export function useChatsPaginator() {
   const hasMore = !!fetchedChats?.next;
 
   return {
-    chats,
+    chats: fetchedChats?.results ?? [],
     isChatsLoading,
     isChatsFetching,
     hasMore,
