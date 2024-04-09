@@ -23,3 +23,6 @@ jobs:
           record: false
           parallel: false
           auto-cancel-after-failures: 3
+        env:
+          NEXT_PUBLIC_API_URL: "https://promptify.adtitan.io"
+          NEXT_PUBLIC_N8N_CHAT_BASE_URL: "https://automation.promptify.com"
