@@ -78,7 +78,7 @@ function CardDocumentTemplate({ template, onClick }: CardDocumentTemplateProps) 
                 opacity: 0.75,
               }}
             >
-              {template.executions?.length} documents
+              {template.self_executions_count} documents
             </Typography>
           </Stack>
         </Stack>
