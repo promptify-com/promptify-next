@@ -5,9 +5,6 @@ on:
     branches-ignore:
       - staging
       - main
-    types:
-      - opened
-      - reopened
 
 jobs:
   linter-build:
