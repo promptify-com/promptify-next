@@ -94,7 +94,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   return (
     <Stack
       mx={{ md: "50px" }}
-      data-testid="guest-main-container"
+      data-cy="guest-main-container"
     >
       <Landing />
       <CategoryCarousel
