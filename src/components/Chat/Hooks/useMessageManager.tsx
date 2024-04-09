@@ -58,7 +58,7 @@ const useMessageManager = () => {
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
 
-  const inputStyle = currentUser?.preferences.input_style ?? selectedChatOption;
+  const inputStyle = currentUser?.preferences?.input_style ?? selectedChatOption;
 
   useEffect(() => {
     if (!parameterSelected) {
@@ -154,7 +154,9 @@ const useMessageManager = () => {
     const questions = prepareQuestions(inputs, params);
     setQuestions(questions);
 
-    dispatch(setRepeatedExecution(null));
+    if (!repeatedExecution) {
+      dispatch(setRepeatedExecution(null));
+    }
 
     return [inputs, params, promptHasContent];
   }, [selectedTemplate, selectedChatOption, repeatedExecution]);
