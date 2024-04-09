@@ -1,5 +1,6 @@
 import { authClient } from "@/common/axios";
 import { IEditTemplate } from "@/common/types/editTemplate";
+import { IWorkflow } from "@/components/Automation/types";
 import { Templates } from "@/core/api/dto/templates";
 
 export const updateTemplate = async (id: number, data: IEditTemplate) => {
@@ -44,6 +45,12 @@ export const getTemplateBySlug = async (slug: string): Promise<Templates> => {
 
 export const getTemplateById = async (id: number): Promise<Templates> => {
   return await authClient.get(`/api/meta/templates/${id}/`).then(response => {
+    return response.data;
+  });
+};
+
+export const getWorkflowById = async (id: number): Promise<IWorkflow> => {
+  return await authClient.get(`/api/n8n/workflows/${id}/`).then(response => {
     return response.data;
   });
 };

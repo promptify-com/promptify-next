@@ -1,10 +1,11 @@
 import { n8nClient as ApiClient } from "@/common/axios";
-import { getTemplateById } from "@/hooks/api/templates";
+import { getTemplateById, getWorkflowById } from "@/hooks/api/templates";
 import { randomId } from "@/common/helpers";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { CreateMessageProps, IQuestion } from "../Prompt/Types/chat";
+import type { IWorkflow } from "@/components/Automation/types";
 
 interface SendMessageResponse {
   output?: string;
@@ -37,12 +38,28 @@ export function extractTemplateIDs(message: string) {
   // return [450, 451, 127, 137, 138, 119];
 }
 
-export async function fetchData(ids: number[]) {
+export function extractWorkflowIDs(message: string) {
+  // return (
+  //   message
+  //     .match(/(workflow([\_\s*]*?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)/gi)
+  //     ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
+  //     .filter(Boolean) ?? []
+  // );
+  return [11, 10];
+}
+
+export function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {
+  if (!data.length) return false;
+
+  return "favorites_count" in data[0];
+}
+
+export async function fetchData(ids: number[], isTemplate: boolean) {
   if (!ids.length) {
     return [];
   }
 
-  const data = await Promise.allSettled(ids.map(id => getTemplateById(id)));
+  const data = await Promise.allSettled(ids.map(id => (isTemplate ? getTemplateById(id) : getWorkflowById(id))));
 
   const filteredData = data
     .map(_data => {
@@ -50,7 +67,7 @@ export async function fetchData(ids: number[]) {
         return _data.value;
       }
     })
-    .filter(_data => _data?.id) as Templates[];
+    .filter(_data => _data?.id) as IWorkflow[] | Templates[];
 
   return filteredData;
 }
@@ -89,6 +106,8 @@ export const createMessage = ({
   templates = [],
   template,
   isLatestExecution,
+  workflows,
+  isWorfkflowSuggestion,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -104,6 +123,8 @@ export const createMessage = ({
   templates,
   template,
   isLatestExecution,
+  workflows,
+  isWorfkflowSuggestion,
 });
 
 export const suggestionsMessageText = (content?: string) => {

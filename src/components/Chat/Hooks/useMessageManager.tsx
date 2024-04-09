@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   createMessage,
   extractTemplateIDs,
+  extractWorkflowIDs,
   fetchData,
   prepareQuestions,
   sendMessageAPI,
@@ -26,6 +27,8 @@ import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteract
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import { Templates } from "@/core/api/dto/templates";
+import { IWorkflow } from "@/components/Automation/types";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -201,23 +204,36 @@ const useMessageManager = () => {
 
       try {
         const sendMessageResponse = await sendMessageAPI(input);
+        console.log(sendMessageResponse);
 
         if (sendMessageResponse.message) {
           botMessage.text = sendMessageResponse.message;
         } else {
           const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
+          const workflowIDs = extractWorkflowIDs(sendMessageResponse.output!);
 
-          if (!templateIDs.length) {
+          if (!templateIDs.length && !workflowIDs.length) {
             botMessage.text = sendMessageResponse.output!;
           } else {
             if (!!templateIDs.length) {
-              const templates = await fetchData(templateIDs);
+              const templates = (await fetchData(templateIDs, true)) as Templates[];
               const suggestionsMessage = createMessage({
                 type: "suggestion",
                 templates,
                 text: suggestionsMessageText(sendMessageResponse.output)!,
               });
               saveChatSuggestions(templateIDs, suggestionsMessage.text, chatId);
+              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
+            } else if (!!workflowIDs.length) {
+              const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+
+              const suggestionsMessage = createMessage({
+                type: "suggestion",
+                workflows,
+                isWorfkflowSuggestion: true,
+                text: suggestionsMessageText(sendMessageResponse.output)!,
+              });
+
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
           }

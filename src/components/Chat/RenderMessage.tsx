@@ -12,6 +12,7 @@ import TextMessage from "@/components/Chat/Messages/TextMessage";
 import ReadyMessage from "@/components/Chat/Messages/ReadyMessage";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
 
 interface Props {
   message: IMessage;
@@ -33,7 +34,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
 
       {message.type === "html" && <HtmlMessage message={message} />}
 
-      {message.type === "suggestion" && !!message.templates?.length && (
+      {message.type === "suggestion" && (!!message.templates?.length || !!message.workflows?.length) && (
         <Fade
           in={true}
           unmountOnExit
@@ -41,10 +42,17 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            <TemplateSuggestions
-              message={message}
-              scrollToBottom={onScrollToBottom}
-            />
+            {message.isWorfkflowSuggestion ? (
+              <WorkflowSuggestions
+                message={message}
+                scrollToBottom={onScrollToBottom}
+              />
+            ) : (
+              <TemplateSuggestions
+                message={message}
+                scrollToBottom={onScrollToBottom}
+              />
+            )}
           </Stack>
         </Fade>
       )}
