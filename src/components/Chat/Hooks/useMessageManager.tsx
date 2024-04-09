@@ -57,6 +57,8 @@ const useMessageManager = () => {
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
 
+  const inputStyle = currentUser?.preferences.input_style ?? selectedChatOption;
+
   useEffect(() => {
     if (!parameterSelected) {
       return;
@@ -135,7 +137,7 @@ const useMessageManager = () => {
   };
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
-    if (!selectedTemplate || !selectedChatOption) {
+    if (!selectedTemplate || !inputStyle) {
       return [[], [], false];
     }
 
