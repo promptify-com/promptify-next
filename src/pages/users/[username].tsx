@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
-
 import { Layout } from "@/layout";
 import { useGetUserTemplatesQuery } from "@/core/api/user";
 import useBrowser from "@/hooks/useBrowser";
@@ -14,7 +13,7 @@ import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import { UserProfile } from "@/core/api/dto/user";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import PaginatedList from "@/components/PaginatedList";
 import UserInformation from "@/components/profile/UserInformation";
 import Footer from "@/components/Footer";
 import type { Templates } from "@/core/api/dto/templates";
@@ -133,7 +132,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
           {templatesLoading ? (
             <CardTemplatePlaceholder count={10} />
           ) : (
-            <TemplatesPaginatedList
+            <PaginatedList
               loading={isFetching}
               hasNext={!!templates?.next}
               onNextPage={handleNextPage}
@@ -167,7 +166,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                   </Grid>
                 ))}
               </Grid>
-            </TemplatesPaginatedList>
+            </PaginatedList>
           )}
         </>
       )}
