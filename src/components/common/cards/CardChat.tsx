@@ -44,6 +44,8 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [duplicateChat] = useDuplicateChatMutation();
 
   const handleUpdateChat = async (title: string) => {
+    if (title === chat.title) return;
+
     try {
       await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } });
       setRenameAllow(false);

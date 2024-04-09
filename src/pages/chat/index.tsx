@@ -78,7 +78,9 @@ function Chat() {
     }
   };
   const handleTitleChat = async () => {
-    if (!selectedChat || !selectedTemplate?.title) return;
+    const title = selectedTemplate?.title;
+
+    if (!selectedChat || !title || selectedChat.title === title) return;
 
     try {
       updateChat({

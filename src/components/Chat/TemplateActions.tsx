@@ -95,7 +95,7 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
           sx={{ zIndex: 1200 }}
           open={actionsOpened}
           anchorEl={actionsAnchorRef.current}
-          placement={isMobile ? "right-start" : "bottom-end"}
+          placement={isMobile ? "bottom" : "bottom-end"}
           transition
         >
           {({ TransitionProps }) => (
