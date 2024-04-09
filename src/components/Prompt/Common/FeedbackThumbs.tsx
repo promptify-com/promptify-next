@@ -5,7 +5,7 @@ import MoodBadSharp from "@mui/icons-material/MoodBadSharp";
 import Button from "@mui/material/Button";
 import Replay from "@mui/icons-material/Replay";
 import { useUpdateExecutionMutation } from "@/core/api/executions";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setSelectedTemplate } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import CustomTooltip from "./CustomTooltip";
@@ -24,6 +24,7 @@ export default function FeedbackThumbs({ vertical, execution, variant, noRepeat 
   const dispatch = useAppDispatch();
 
   const [feedback, setFeedback] = useState(execution.feedback);
+  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
 
   const liked = feedback === "LIKED";
   const disliked = feedback === "DISLIKED";
@@ -47,7 +48,9 @@ export default function FeedbackThumbs({ vertical, execution, variant, noRepeat 
   const handleRepeat = () => {
     const { parameters } = execution;
     dispatch(setRepeatedExecution(execution));
-    dispatch(setSelectedTemplate(execution.template as Templates));
+    if (!selectedTemplate) {
+      dispatch(setSelectedTemplate(execution.template as Templates));
+    }
 
     const newAnswers = parameters
       ? Object.keys(parameters)
