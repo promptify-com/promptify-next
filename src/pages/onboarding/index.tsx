@@ -8,7 +8,7 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 
 const thisYear = new Date().getFullYear();
 
-const SignUp = () => {
+function Onboarding() {
   const [step, setStep] = useState(1);
   const [questions] = useQuestions();
 
@@ -98,7 +98,7 @@ const SignUp = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export async function getServerSideProps() {
   return {
@@ -109,4 +109,4 @@ export async function getServerSideProps() {
     },
   };
 }
-export default SignUp;
+export default Onboarding;

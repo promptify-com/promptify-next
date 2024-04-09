@@ -13,7 +13,7 @@ import AccountSidebar from "@/components/profile2/AccountSidebar";
 import useBrowser from "./hooks/useBrowser";
 import Footer from "./components/Footer";
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = router.pathname;
   const theme = useTheme();
@@ -88,4 +88,4 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       {isAccountPage && !isMobile && <AccountSidebar />}
     </Stack>
   );
-};
+}

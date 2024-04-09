@@ -12,7 +12,7 @@ import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
 import { redirectToPath } from "@/common/helpers";
 import { SEO_DESCRIPTION } from "@/common/constants";
 
-const Login = () => {
+function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const saveToken = useToken();
   const isValidUser = useSelector(isValidUserFn);
@@ -43,7 +43,7 @@ const Login = () => {
       <Box>{isLoading ? <SigninPlaceholder /> : <LoginLayout preLogin={preLogin} />}</Box>
     </>
   );
-};
+}
 
 export async function getStaticProps() {
   return {
