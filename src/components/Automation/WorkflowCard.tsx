@@ -14,9 +14,6 @@ import type { IWorkflow } from "@/components/Automation/types";
 interface Props {
   workflow: IWorkflow;
   onScrollToBottom?: () => void;
-  manageActions?: boolean;
-  isEditor?: boolean;
-  displayCreatorAvatar?: boolean;
 }
 
 function WorkflowCard({ workflow, onScrollToBottom }: Props) {
