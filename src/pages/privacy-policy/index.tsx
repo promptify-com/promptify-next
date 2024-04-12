@@ -70,9 +70,12 @@ export default function NotFound() {
               },
               "& h1,& h2,& h3, & h4": {
                 fontWeight: 500,
+                mb: "10px",
               },
               "& h2": {
                 fontSize: 20,
+                mt: "30px",
+                mb: "20px",
               },
               "& h3": {
                 fontSize: 16,
@@ -90,14 +93,15 @@ export default function NotFound() {
             }}
           >
             <Box component={"p"}>
-              Promptify LLC, along with its affiliates ("Promptify", "Promptify.com", "we", "us" or "our"), respects
-              your privacy and is dedicated to safeguarding any information we gather from you or about you. This
-              Privacy Policy outlines how we handle Personal Information that we accumulate when you use our website,
-              applications, and services (collectively, "Services"). This policy does not apply to content that we
-              process on behalf of our business customers, such as through our API. Such data usage is governed by the
-              customer agreements for access and use of these offerings. To understand how we gather and utilize
-              training information for the development of our language models that power ChatGPT and other Services, and
-              to know your choices regarding that information, please refer to this help center article.
+              Promptify LLC, along with its affiliates (&quot;Promptify&quot;, &quot;Promptify.com&quot;,
+              &quot;we&quot;, &quot;us&quot; or &quot;our&quot;), respects your privacy and is dedicated to safeguarding
+              any information we gather from you or about you. This Privacy Policy outlines how we handle Personal
+              Information that we accumulate when you use our website, applications, and services (collectively,
+              &quot;Services&quot;). This policy does not apply to content that we process on behalf of our business
+              customers, such as through our API. Such data usage is governed by the customer agreements for access and
+              use of these offerings. To understand how we gather and utilize training information for the development
+              of our language models that power ChatGPT and other Services, and to know your choices regarding that
+              information, please refer to this help center article.
               <br />
               <br />
               To understand how we gather and utilize training information for the development of our language models
@@ -115,23 +119,23 @@ export default function NotFound() {
             <Box component={"h4"}>Account Details</Box>
             <Box component={"p"}>
               We collect information associated with your account, including your name, contact information, account
-              credentials, payment card information, and transaction history, termed as "Account Information."
+              credentials, payment card information, and transaction history, termed as &quot;Account Information.&quot;
             </Box>
             <Box component={"h4"}>User Content:</Box>
             <Box component={"p"}>
               We collect Personal Information included in the input, file uploads, or feedback that you provide to our
-              Services ("Content").Communication Data: If you interact with us, we collect your name, contact details,
-              and the content of any messages you send, referred to as "Communication Information."
+              Services (&quot;Content&quot;).Communication Data: If you interact with us, we collect your name, contact
+              details, and the content of any messages you send, referred to as &quot;Communication Information.&quot;
             </Box>
             <Box component={"h4"}>Social Media Details:</Box>
             <Box component={"p"}>
               We maintain pages on social media platforms like Google, Gmail, Discord, Github, Instagram, Facebook,
               Medium, Twitter, YouTube, Microsoft and LinkedIn. When you engage with our social media pages, we collect
-              Personal Information that you choose to provide to us, such as your contact details ("Social
-              Information"). Additionally, the companies hosting our social media pages may provide us with aggregate
-              information and analytics regarding our social media activity.Information We Receive Automatically: When
-              you visit, use, or interact with our Services, we receive information about your visit, use, or
-              interactions, known as "Technical Information":
+              Personal Information that you choose to provide to us, such as your contact details (&quot;Social
+              Information&quot;). Additionally, the companies hosting our social media pages may provide us with
+              aggregate information and analytics regarding our social media activity.Information We Receive
+              Automatically: When you visit, use, or interact with our Services, we receive information about your
+              visit, use, or interactions, known as &quot;Technical Information&quot;:
             </Box>
             <Box component={"h4"}>Log Data:</Box>
             <Box component={"p"}>
@@ -140,20 +144,20 @@ export default function NotFound() {
               our website.Usage Data: We may automatically gather information about your usage of the Services, such as
               the types of content you view or engage with, the features you use, the actions you take, your time zone,
               country, dates and times of access, user agent and version, type of computer or mobile device, and your
-              computer connection.Device Information: Includes the device's name, operating system, device identifiers,
-              and the browser you are using. The collected information may vary depending on the type of device you use
-              and its settings.
+              computer connection.Device Information: Includes the device&apos;s name, operating system, device
+              identifiers, and the browser you are using. The collected information may vary depending on the type of
+              device you use and its settings.
             </Box>
             <Box component={"h4"}>Cookies:</Box>
             <Box>
-              We use cookies to operate and administer our Services, and to improve your user experience. A "cookie" is
-              a piece of information sent to your browser by a website you visit. You can set your browser to accept all
-              cookies, reject all cookies, or notify you whenever a cookie is offered so you can decide each time
-              whether to accept it. However, refusing a cookie may, in some cases, prevent you from using or negatively
-              affect the display or function of a website or certain areas or features of a website. For more
-              information on cookies, please visit All About Cookies.Analytics: We may use a variety of online analytics
-              products that use cookies to help us analyze how users use our Services and to enhance your experience
-              when using the Services.
+              We use cookies to operate and administer our Services, and to improve your user experience. A
+              &quot;cookie&quot; is a piece of information sent to your browser by a website you visit. You can set your
+              browser to accept all cookies, reject all cookies, or notify you whenever a cookie is offered so you can
+              decide each time whether to accept it. However, refusing a cookie may, in some cases, prevent you from
+              using or negatively affect the display or function of a website or certain areas or features of a website.
+              For more information on cookies, please visit All About Cookies.Analytics: We may use a variety of online
+              analytics products that use cookies to help us analyze how users use our Services and to enhance your
+              experience when using the Services.
               <br />
               <br />
               <Box component={"ul"}>
@@ -240,30 +244,30 @@ export default function NotFound() {
                 <Box component={"li"}>The right to object to how we process your Personal Information.</Box>
                 <Box component={"li"}>The ability to lodge a complaint with your local data protection authority.</Box>
                 <Box component={"li"}>
-                  Some of these rights can be exercised through your Promptify account. If you're unable to exercise
-                  your rights through your account, please direct your request to our designated email.
+                  Some of these rights can be exercised through your Promptify account. If you&apos;re unable to
+                  exercise your rights through your account, please direct your request to our designated email.
                 </Box>
               </Box>
               <br />
-              <b>A Note on Accuracy:</b> Services like ours generate responses by interpreting a user's request and
+              <b>A Note on Accuracy:</b> Services like ours generate responses by interpreting a user&apos;s request and
               predicting the words most likely to appear next. In certain cases, the words most likely to appear next
-              may not be the most factually accurate. Therefore, you shouldn't rely on the factual accuracy of our model
-              outputs. If you notice any factual inaccuracies about you in the model outputs and would like us to
+              may not be the most factually accurate. Therefore, you shouldn&apos;t rely on the factual accuracy of our
+              model outputs. If you notice any factual inaccuracies about you in the model outputs and would like us to
               correct them, you may submit a correction request to our designated email. Due to the technical complexity
               of our models, we might not always be able to correct inaccuracies. In such cases, you may request that we
-              remove your Personal Information from the model's output by completing a specific form.
+              remove your Personal Information from the model&apos;s output by completing a specific form.
               <br />
               <br />
-              For information on exercising your rights in relation to data we've collected from the internet to train
-              our models, please refer to this help center article.
+              For information on exercising your rights in relation to data we&apos;ve collected from the internet to
+              train our models, please refer to this help center article.
             </Box>
             <Box component={"h2"}>5. Additional Disclosures for U.S. States</Box>
             <Box>
               The following table offers more details about the categories of Personal Information we gather and how we
               disclose that information. You can find further information about the Personal Information we collect in
-              the section "Personal Information We Collect" above, our use of Personal Information in the "How We Use
-              Personal Information" section above, and our retention of Personal Information in the "Security and
-              Retention" section below.
+              the section &quot;Personal Information We Collect&quot; above, our use of Personal Information in the
+              &quot;How We Use Personal Information&quot; section above, and our retention of Personal Information in
+              the &quot;Security and Retention&quot; section below.
               <br />
               <br />
               Category of Personal InformationDisclosure of Personal InformationIdentifiers, such as your name, contact
@@ -286,7 +290,7 @@ export default function NotFound() {
               <Box component={"ul"}>
                 <Box component={"li"}>
                   You have the right to know how we process your Personal Information, and to access the specific pieces
-                  of Personal Information we've collected from you;
+                  of Personal Information we&apos;ve collected from you;
                 </Box>
                 <Box component={"li"}>You have the right to request the deletion of your Personal Information;</Box>
                 <Box component={"li"}>
@@ -296,9 +300,10 @@ export default function NotFound() {
                   You have the right to not be discriminated against when exercising any of your privacy rights.
                 </Box>
                 <Box component={"li"}>
-                  At Promptify LLC, we don't "sell" Personal Information or "share" Personal Information for
-                  cross-contextual behavioral advertising (in compliance with definitions under local law). Furthermore,
-                  we don't process sensitive Personal Information to infer characteristics about a user.
+                  At Promptify LLC, we don&apos;t &quot;sell&quot; Personal Information or &quot;share&quot; Personal
+                  Information for cross-contextual behavioral advertising (in compliance with definitions under local
+                  law). Furthermore, we don&apos;t process sensitive Personal Information to infer characteristics about
+                  a user.
                 </Box>
               </Box>
               How to Exercise Your Rights: To exercise the privacy rights outlined above, you can submit a request to{" "}
@@ -307,7 +312,7 @@ export default function NotFound() {
               <Box component={"h3"}>Verification:</Box>
               We may ask you to verify your credentials to protect your Personal Information from unauthorized access,
               alteration, or deletion. This verification will be necessary when submitting a request to access, correct,
-              or delete Personal Information. If you don't have an account with us, or if we suspect fraudulent or
+              or delete Personal Information. If you don&apos;t have an account with us, or if we suspect fraudulent or
               malicious activity, we may request additional Personal Information and proof of residency for verification
               purposes. If we cannot verify your identity, we may be unable to fulfill your request.
               <Box component={"h3"}>Authorized Agents:</Box>
@@ -341,9 +346,9 @@ export default function NotFound() {
               We adopt commercially reasonable measures - technical, administrative, and organizational - to safeguard
               Personal Information online and offline against loss, misuse, and unauthorized access, alteration, or
               destruction. However, remember that no Internet or email transmission is ever fully secure or error-free.
-              Hence, take special care when deciding what information you send us via the Service or email. We can't be
-              held responsible for the circumvention of any privacy settings or security measures in the Service or
-              third-party websites.
+              Hence, take special care when deciding what information you send us via the Service or email. We
+              can&apos;t be held responsible for the circumvention of any privacy settings or security measures in the
+              Service or third-party websites.
               <br />
               <br />
               We retain your Personal Information only as long as necessary to provide our Service, or for other valid
@@ -389,8 +394,8 @@ export default function NotFound() {
               matters. You can contact them at <a href="mailto:eu-privacy@promptify.com">eu-privacy@promptify.com</a>.
               <Box component={"h4"}>Data Transfers:</Box>
               <Box component={"p"}>
-                As needed, we'll use appropriate safeguards for transferring Personal Information outside of the EEA,
-                Switzerland, and the UK. We will only transfer Personal Information using a legally valid transfer
+                As needed, we&apos;ll use appropriate safeguards for transferring Personal Information outside of the
+                EEA, Switzerland, and the UK. We will only transfer Personal Information using a legally valid transfer
                 mechanism. For more details on these safeguards and to get a copy of them, please contact us at the
                 provided contact details.
               </Box>
@@ -408,13 +413,13 @@ export default function NotFound() {
             </Box>
             <Box component={"h2"}>10. Changes to the Privacy Policy</Box>
             <Box component={"p"}>
-              We may make changes to this Privacy Policy as needed. Whenever we do, we'll post the updated version right
-              here, unless another kind of notice is needed by the law.
+              We may make changes to this Privacy Policy as needed. Whenever we do, we&apos;ll post the updated version
+              right here, unless another kind of notice is needed by the law.
             </Box>
             <Box component={"h2"}>11. How to Contact Us</Box>
             <Box component={"p"}>
-              If you have questions or concerns that we haven't covered in this Privacy Policy, please contact{" "}
-              <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>. We're here to help!
+              If you have questions or concerns that we haven&apos;t covered in this Privacy Policy, please contact{" "}
+              <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>. We&apos;re here to help!
             </Box>
           </Stack>
         </Stack>
