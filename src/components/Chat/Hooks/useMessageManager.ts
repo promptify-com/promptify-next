@@ -222,8 +222,6 @@ const useMessageManager = () => {
 
       try {
         const sendMessageResponse = await sendMessageAPI(input);
-        console.log(sendMessageResponse);
-
         if (sendMessageResponse.message) {
           botMessage.text = sendMessageResponse.message;
         } else {
