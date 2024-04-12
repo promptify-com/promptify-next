@@ -10,7 +10,7 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { LogoApp } from "@/assets/icons/LogoApp";
 
 const Links = [
-  { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
+  { title: "Privacy Policy", href: "/privacy-policy" },
   { title: "Terms of Use", href: "https://blog.promptify.com/post/terms-of-use" },
   { title: "Support", href: "#" },
 ];
