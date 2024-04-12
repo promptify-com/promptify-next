@@ -31,7 +31,10 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
     try {
       updateChat({
         id: selectedChat.id,
-        data: { title: name, thumbnail: image },
+        data: {
+          title: name,
+          thumbnail: image && image.length <= 200 ? image : "",
+        },
       });
     } catch (err) {
       console.error("Error updating chat: ", err);
