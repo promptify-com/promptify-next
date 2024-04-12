@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from "react";
 import { Button, Grid } from "@mui/material";
 import ArrowLeft from "@mui/icons-material/ArrowLeft";
 
-interface TemplatesPaginatedListProps {
+interface PaginatedListProps {
   children: ReactNode;
   hasNext?: boolean;
   hasPrev?: boolean;
@@ -15,7 +15,7 @@ interface TemplatesPaginatedListProps {
   variant?: "text" | "contained" | "outlined";
 }
 
-const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
+const PaginatedList: FC<PaginatedListProps> = ({
   hasNext,
   hasPrev,
   onNextPage,
@@ -67,4 +67,4 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
   );
 };
 
-export default TemplatesPaginatedList;
+export default PaginatedList;

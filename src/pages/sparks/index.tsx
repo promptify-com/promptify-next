@@ -8,7 +8,7 @@ import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import type { ExecutionsFilterParams, TemplatesExecutions } from "@/core/api/dto/templates";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import PaginatedList from "@/components/PaginatedList";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
 import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
@@ -157,7 +157,7 @@ function DocumentsPage() {
               isLoading={isTemplatesLoading}
             />
           )}
-          <TemplatesPaginatedList
+          <PaginatedList
             loading={isExecutionsFetching}
             hasNext={hasNext}
             onNextPage={handleNextPage}
@@ -176,7 +176,7 @@ function DocumentsPage() {
               executions={filteredExecutions}
               isLoading={isTemplatesLoading || isExecutionsLoading}
             />
-          </TemplatesPaginatedList>
+          </PaginatedList>
         </Stack>
       </Layout>
     </Protected>

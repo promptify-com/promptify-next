@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
-import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setChatMode, setChats, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
@@ -39,7 +39,7 @@ function Chat() {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
+  const { chats, selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
     state => state.chat,
   );
   const [createChat] = useCreateChatMutation();
@@ -73,6 +73,7 @@ function Chat() {
         thumbnail: selectedTemplate.thumbnail,
       }).unwrap();
       dispatch(setSelectedChat(newChat));
+      dispatch(setChats([newChat, ...chats]));
     } catch (err) {
       console.error("Error creating a new chat: ", err);
     }
@@ -83,10 +84,17 @@ function Chat() {
     if (!selectedChat || !title || selectedChat.title === title) return;
 
     try {
-      updateChat({
+      const updatedChat = await updateChat({
         id: selectedChat.id,
         data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
-      });
+      }).unwrap();
+      dispatch(
+        setChats(
+          chats.map(_chat => ({
+            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
+          })),
+        ),
+      );
     } catch (err) {
       console.error("Error updating chat: ", err);
     }

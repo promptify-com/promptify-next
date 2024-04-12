@@ -2,10 +2,10 @@ import { FC, ReactNode, useRef, useCallback } from "react";
 import Grid from "@mui/material/Grid";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { isDesktopViewPort } from "@/common/helpers";
-import TemplatesPaginatedList from "./TemplatesPaginatedList";
+import PaginatedList from "./PaginatedList";
 import ArrowRight from "@mui/icons-material/ArrowRight";
 
-interface TemplatesInfiniteScrollProps {
+interface InfiniteScrollContainerProps {
   loading: boolean;
   onLoadMore: () => void;
   children: ReactNode;
@@ -13,9 +13,10 @@ interface TemplatesInfiniteScrollProps {
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onLoadLess?: () => void;
+  placeholder?: ReactNode;
 }
 
-const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
+const InfiniteScrollContainer: FC<InfiniteScrollContainerProps> = ({
   loading,
   onLoadMore,
   children,
@@ -23,6 +24,7 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
   isInfiniteScrolling = true,
   hasPrev,
   onLoadLess = () => {},
+  placeholder,
 }) => {
   const observer = useRef<IntersectionObserver | null>(null);
   const isMobile = !isDesktopViewPort();
@@ -48,6 +50,8 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
     [loading, hasMore],
   );
 
+  const PlaceholderElement = placeholder ?? <CardTemplatePlaceholder count={5} />;
+
   return (
     <Grid
       display={"flex"}
@@ -57,11 +61,11 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
       {isInfiniteScrolling ? (
         <>
           {children}
-          {loading && <CardTemplatePlaceholder count={5} />}
+          {loading && PlaceholderElement}
           <div ref={lastTemplateElementRef}></div>
         </>
       ) : (
-        <TemplatesPaginatedList
+        <PaginatedList
           hasNext={hasMore}
           hasPrev={hasPrev}
           canBeShown={hasMore || hasPrev}
@@ -70,11 +74,11 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
           loading={loading}
           endIcon={<ArrowRight />}
         >
-          {loading ? <CardTemplatePlaceholder count={5} /> : <>{children}</>}
-        </TemplatesPaginatedList>
+          {loading ? PlaceholderElement : <>{children}</>}
+        </PaginatedList>
       )}
     </Grid>
   );
 };
 
-export default TemplatesInfiniteScroll;
+export default InfiniteScrollContainer;

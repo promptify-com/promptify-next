@@ -6,7 +6,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import lazy from "next/dynamic";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
-
 import { Layout } from "@/layout";
 import useBrowser from "@/hooks/useBrowser";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
@@ -20,7 +19,7 @@ import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import Footer from "@/components/Footer";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import PaginatedList from "@/components/PaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
@@ -200,7 +199,7 @@ export default function ExplorePage({ categories = [] }: Props) {
                   No templates found. Please adjust your filters.
                 </Typography>
               ) : (
-                <TemplatesPaginatedList
+                <PaginatedList
                   loading={isFetching}
                   hasNext={!!hasMore}
                   onNextPage={handleNextPage}
@@ -230,7 +229,7 @@ export default function ExplorePage({ categories = [] }: Props) {
                       </Grid>
                     ))}
                   </Grid>
-                </TemplatesPaginatedList>
+                </PaginatedList>
               )}
             </Box>
           )}

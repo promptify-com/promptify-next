@@ -17,9 +17,9 @@ import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useCreateChatMutation } from "@/core/api/chats";
-import { setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
+import { setChats, setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
@@ -34,6 +34,8 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
   const [createChat] = useCreateChatMutation();
   const [actionsOpened, setActionsOpened] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
+
+  const chats = useAppSelector(state => state.chat.chats);
 
   const { saveFavorite, templateData } = useSaveFavoriteTemplate(template);
 
@@ -68,6 +70,7 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
         title: template.title ?? "Welcome",
         thumbnail: template.thumbnail,
       }).unwrap();
+      dispatch(setChats([newChat, ...chats]));
 
       return newChat;
     } catch (err) {

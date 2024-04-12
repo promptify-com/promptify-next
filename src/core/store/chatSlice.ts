@@ -6,7 +6,6 @@ import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IChat, ChatOption } from "@/core/api/dto/chats";
-import Storage from "@/common/storage";
 
 export interface ExecutionsProps {
   answers: IAnswer[];
@@ -25,6 +24,7 @@ export interface ExecutionsProps {
   initialChat: boolean;
   parameterSelected: string | null;
   currentExecutionDetails: { id: number | null; isFavorite: boolean };
+  chats: IChat[];
 }
 
 const initialState: ExecutionsProps = {
@@ -44,6 +44,7 @@ const initialState: ExecutionsProps = {
   parameterSelected: null,
   currentExecutionDetails: { id: null, isFavorite: false },
   selectedChatOption: null,
+  chats: [],
 };
 
 export const chatSlice = createSlice({
@@ -104,6 +105,9 @@ export const chatSlice = createSlice({
     setCurrentExecutionDetails: (state, action) => {
       state.currentExecutionDetails = action.payload;
     },
+    setChats: (state, action: PayloadAction<IChat[]>) => {
+      state.chats = action.payload;
+    },
   },
 });
 
@@ -126,6 +130,7 @@ export const {
   updateParameterSelection,
   clearParameterSelection,
   setCurrentExecutionDetails,
+  setChats,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
