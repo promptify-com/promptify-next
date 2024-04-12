@@ -58,23 +58,20 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer }: Props) => {
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedWorkflow?.name}"` });
 
     setMessages(prevMessages => {
-      const filteredMessages = [...prevMessages];
-      const lastMessageIndex = prevMessages.length - 1;
-      let suggestionsIndex = -1;
-
-      for (let i = 0; i < filteredMessages.length; i++) {
-        if (prevMessages[i].type === "suggestion") {
-          suggestionsIndex = i;
+      let lastSuggestionWorkflowIndex = -1;
+      for (let i = prevMessages.length - 1; i >= 0; i--) {
+        if (prevMessages[i].type === "suggestion-workflows") {
+          lastSuggestionWorkflowIndex = i;
           break;
         }
       }
-      if (suggestionsIndex !== -1 && suggestionsIndex < lastMessageIndex) {
-        filteredMessages.splice(suggestionsIndex + 1, lastMessageIndex - suggestionsIndex);
-      }
+
+      const filteredMessages = prevMessages.slice(0, lastSuggestionWorkflowIndex + 1);
+
       return filteredMessages.concat(runMessage);
     });
-    const initialWorkflowMessages: IMessage[] = [];
 
+    const initialWorkflowMessages: IMessage[] = [];
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
     const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
 
@@ -84,10 +81,11 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer }: Props) => {
     }
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    if ((requiresAuthentication || requiresOauth) && !areAllCredentialsStored) {
+    if (!areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true, text: "" });
       initialWorkflowMessages.push(credMessage);
     }
+
     const formMessage = createMessage({
       type: "credsForm",
       noHeader: true,
