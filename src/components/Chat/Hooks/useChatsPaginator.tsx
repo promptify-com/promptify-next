@@ -21,6 +21,10 @@ export function useChatsPaginator() {
       return;
     }
     dispatch(setChats(chats.concat(fetchedChats?.results)));
+
+    return () => {
+      dispatch(setChats([]));
+    };
   }, [fetchedChats?.results]);
 
   const handleNextPage = () => {
