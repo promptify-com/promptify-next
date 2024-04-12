@@ -26,7 +26,7 @@ export default function Page({ category }: { category: Category }) {
   };
 
   return (
-    <Layout>
+    <Layout footer>
       <Box
         mt={{ xs: 7, md: -2 }}
         padding={{ xs: "4px 0px", md: "0px 8px" }}
