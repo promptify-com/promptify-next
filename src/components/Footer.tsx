@@ -96,7 +96,7 @@ function Footer() {
                   <Link
                     href={link.href}
                     style={{ textDecoration: "none" }}
-                    target="_blank"
+                    target={link.href === "/privacy-policy" ? "_self" : "_blank"}
                   >
                     <Typography
                       sx={{

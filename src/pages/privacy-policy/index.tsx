@@ -2,14 +2,21 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import defaultAvatar from "@/assets/images/default-avatar.jpg";
 import { Layout } from "@/layout";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import { theme } from "@/theme";
+import Image from "@/components/design-system/Image";
+import Head from "next/head";
 
-export default function NotFound() {
+export default function PrivacyPolicy() {
   return (
     <Layout footer>
+      <Head>
+        <link
+          rel="preconnect"
+          href="https://uploads-ssl.webflow.com"
+        />
+      </Head>
       <Box
         sx={{
           p: "60px 24px",
@@ -42,7 +49,9 @@ export default function NotFound() {
             }}
           >
             <Avatar
-              src={defaultAvatar.src}
+              src={
+                "https://uploads-ssl.webflow.com/64673fe1e776c1f6717e2155/64673ffe22dd1cc63b39a91f_Artboard%201%201.jpg"
+              }
               alt={"Promptify"}
               sx={{
                 width: 24,
@@ -52,6 +61,14 @@ export default function NotFound() {
             />
             Promptify
           </Stack>
+          <Image
+            src={
+              "https://uploads-ssl.webflow.com/6465f8bcee5ad19ad3069e03/64a2eec38bc0a8ba203d175a_promptify_term_of_use.png"
+            }
+            alt="Privacy Policy"
+            style={{ width: "100%", height: "auto" }}
+            priority
+          />
           <Typography
             fontSize={12}
             fontWeight={400}
@@ -429,7 +446,7 @@ export default function NotFound() {
   );
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return {
     props: {
       title: "Privacy Policy",
