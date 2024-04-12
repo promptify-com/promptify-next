@@ -60,7 +60,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            <TemplateSuggestions
+            <WorkflowSuggestions
               message={message}
               scrollToBottom={onScrollToBottom}
             />

@@ -163,9 +163,9 @@ const useSaveChatInteractions = () => {
       case "suggestion":
         return {
           ...baseMessage,
-          templates: suggestionMessage.templates,
+          data: suggestionMessage.templates,
           text: suggestionMessage.text,
-          type: "suggestion",
+          type: "suggestion-templates",
         };
 
       case "template":
