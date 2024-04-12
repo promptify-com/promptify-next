@@ -14,7 +14,8 @@ export type MessageType =
   | "html"
   | "credentials"
   | "credsForm"
-  | "suggestion"
+  | "suggestion-templates"
+  | "suggestion-workflows"
   | "template"
   | "questionInput"
   | "questionParam"
@@ -37,10 +38,8 @@ export interface IMessage {
   isEditable?: boolean;
   questionIndex?: number;
   questionInputName?: string;
-  templates?: Templates[];
   executionId?: number;
-  workflows?: IWorkflow[];
-  isWorfkflowSuggestion?: boolean;
+  data?: Templates[] | IWorkflow[];
 }
 
 export interface IAnswer {
@@ -77,10 +76,8 @@ export interface CreateMessageProps {
   isRequired?: boolean;
   questionIndex?: number;
   questionInputName?: string;
-  templates?: Templates[];
   executionId?: number;
   template?: Templates;
   isLatestExecution?: boolean;
-  workflows?: IWorkflow[];
-  isWorfkflowSuggestion?: boolean;
+  data?: Templates[] | IWorkflow[];
 }

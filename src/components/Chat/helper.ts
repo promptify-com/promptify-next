@@ -103,11 +103,9 @@ export const createMessage = ({
   questionInputName,
   text,
   executionId,
-  templates = [],
   template,
   isLatestExecution,
-  workflows,
-  isWorfkflowSuggestion,
+  data,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -120,11 +118,9 @@ export const createMessage = ({
   questionIndex,
   questionInputName,
   executionId,
-  templates,
   template,
   isLatestExecution,
-  workflows,
-  isWorfkflowSuggestion,
+  data,
 });
 
 export const suggestionsMessageText = (content?: string) => {

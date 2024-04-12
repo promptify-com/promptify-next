@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import TemplateCard from "@/components/common/TemplateCard";
 import Typography from "@mui/material/Typography";
+
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import WorkflowCard from "@/components/Automation/WorkflowCard";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   message: IMessage;
@@ -14,7 +15,7 @@ interface Props {
 
 function WorkflowSuggestions({ message, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-  const workflows = message.workflows || [];
+  const workflows = message.data || [];
 
   if (!workflows.length) {
     return null;
@@ -55,7 +56,7 @@ function WorkflowSuggestions({ message, scrollToBottom }: Props) {
           {workflows?.slice(0, visibleCount).map(workflow => (
             <WorkflowCard
               key={workflow.id}
-              workflow={workflow}
+              workflow={workflow as IWorkflow}
               onScrollToBottom={scrollToBottom}
             />
           ))}

@@ -236,8 +236,8 @@ const useMessageManager = () => {
             if (!!templateIDs.length) {
               const templates = (await fetchData(templateIDs, true)) as Templates[];
               const suggestionsMessage = createMessage({
-                type: "suggestion",
-                templates,
+                type: "suggestion-templates",
+                data: templates,
                 text: suggestionsMessageText(sendMessageResponse.output)!,
               });
               saveChatSuggestions(templateIDs, suggestionsMessage.text, chatId);
@@ -246,9 +246,8 @@ const useMessageManager = () => {
               const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
 
               const suggestionsMessage = createMessage({
-                type: "suggestion",
-                workflows,
-                isWorfkflowSuggestion: true,
+                type: "suggestion-workflows",
+                data: workflows,
                 text: suggestionsMessageText(sendMessageResponse.output)!,
               });
 

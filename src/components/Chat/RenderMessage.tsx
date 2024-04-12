@@ -36,7 +36,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
 
       {message.type === "html" && <HtmlMessage message={message} />}
 
-      {message.type === "suggestion" && (!!message.templates?.length || !!message.workflows?.length) && (
+      {message.type === "suggestion-templates" && !!message.data?.length && (
         <Fade
           in={true}
           unmountOnExit
@@ -44,17 +44,26 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
         >
           <Stack>
-            {message.isWorfkflowSuggestion ? (
-              <WorkflowSuggestions
-                message={message}
-                scrollToBottom={onScrollToBottom}
-              />
-            ) : (
-              <TemplateSuggestions
-                message={message}
-                scrollToBottom={onScrollToBottom}
-              />
-            )}
+            <TemplateSuggestions
+              message={message}
+              scrollToBottom={onScrollToBottom}
+            />
+          </Stack>
+        </Fade>
+      )}
+
+      {message.type === "suggestion-workflows" && !!message.data?.length && (
+        <Fade
+          in={true}
+          unmountOnExit
+          timeout={800}
+          onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
+        >
+          <Stack>
+            <TemplateSuggestions
+              message={message}
+              scrollToBottom={onScrollToBottom}
+            />
           </Stack>
         </Fade>
       )}

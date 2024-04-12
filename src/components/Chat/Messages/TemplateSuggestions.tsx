@@ -5,6 +5,7 @@ import TemplateCard from "@/components/common/TemplateCard";
 import Typography from "@mui/material/Typography";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   message: IMessage;
@@ -13,7 +14,7 @@ interface Props {
 
 function TemplateSuggestions({ message, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-  const templates = message.templates || [];
+  const templates = message.data || [];
 
   if (!templates.length) {
     return null;
@@ -52,7 +53,7 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
           {templates?.slice(0, visibleCount).map(template => (
             <TemplateCard
               key={template.id}
-              template={template}
+              template={template as Templates}
               onScrollToBottom={scrollToBottom}
             />
           ))}
