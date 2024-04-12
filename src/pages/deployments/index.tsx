@@ -36,7 +36,7 @@ function Deployments() {
   return (
     <>
       <Seo title={"Deployments"} />
-      <Layout>
+      <Layout footer>
         <Protected>
           <Box
             mt={{ xs: 7, md: 0 }}

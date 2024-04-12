@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Box, Grid } from "@mui/material";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
+import Footer from "./components/Footer";
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export const Layout = ({ children, footer = false }: { children: ReactNode; footer?: boolean }) => {
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
@@ -42,6 +43,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               gap={"16px"}
             >
               {children}
+              {footer && <Footer />}
             </Grid>
           </Box>
         </Box>

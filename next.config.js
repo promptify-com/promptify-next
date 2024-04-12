@@ -23,6 +23,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "assets-global.website-files.com",
       },
+      {
+        protocol: "https",
+        hostname: "uploads-ssl.webflow.com",
+      },
     ],
     minimumCacheTTL: 3600,
   },

@@ -30,7 +30,7 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   ];
 
   return (
-    <Layout>
+    <Layout footer>
       <Box
         mt={{ xs: 7, md: 0 }}
         padding={{ xs: "4px 0px", md: "0px 8px" }}
