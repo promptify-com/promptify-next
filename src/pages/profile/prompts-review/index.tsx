@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
 import Protected from "@/components/Protected";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import TemplateCard from "@/components/common/TemplateCard";
 import ArrowRight from "@mui/icons-material/ArrowRight";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import PaginatedList from "@/components/PaginatedList";
 import PromptsSort from "@/components/profile2/MyPrompts/PromptsSort";
 import PromptsContainer from "@/components/profile2/MyPrompts/PromptsContainer";
-
 import { Layout } from "@/layout";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import { SORTING_OPTIONS } from "@/components/profile2/Constants";
@@ -56,7 +54,7 @@ function ProfilePromptsReview() {
           sortOpen={sortOpen}
           isFetching={isFetching}
         >
-          <TemplatesPaginatedList
+          <PaginatedList
             loading={isFetching}
             hasNext={!!hasMore}
             onNextPage={handleNextPage}
@@ -87,7 +85,7 @@ function ProfilePromptsReview() {
                 </Box>
               ))}
             </Stack>
-          </TemplatesPaginatedList>
+          </PaginatedList>
         </PromptsContainer>
 
         <PromptsSort

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
+import PaginatedList from "@/components/PaginatedList";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 
 import type { FilterParams, Templates } from "@/core/api/dto/templates";
@@ -92,7 +92,7 @@ function PopularTemplates({ catId }: Props) {
           Most popular templates:
         </Typography>
       </Stack>
-      <TemplatesPaginatedList
+      <PaginatedList
         loading={isFetching}
         hasNext={!!data?.next}
         onNextPage={handleNextPage}
@@ -116,7 +116,7 @@ function PopularTemplates({ catId }: Props) {
           />
         </Box>
         <div ref={lastTemplateElementRef}></div>
-      </TemplatesPaginatedList>
+      </PaginatedList>
     </Stack>
   );
 }

@@ -6,11 +6,9 @@ import { GetServerSideProps } from "next/types";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import TemplatePage from "@/components/Prompt";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import Dialog from "@mui/material/Dialog";
-import IconButton from "@mui/material/IconButton";
-import Close from "@mui/icons-material/Close";
-import { useState } from "react";
-import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
+import { useEffect } from "react";
+import { useAppDispatch } from "@/hooks/useStore";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface TemplateProps {
   fetchedTemplate: Templates;
@@ -18,61 +16,20 @@ interface TemplateProps {
 }
 
 function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
-  const [openExecution, setOpenExecution] = useState(!!hashedExecution);
+  const dispatch = useAppDispatch();
 
-  const closeExecution = () => {
-    setOpenExecution(false);
-  };
+  useEffect(() => {
+    if (!!hashedExecution) {
+      dispatch(
+        updatePopupTemplate({
+          data: { ...hashedExecution, template: fetchedTemplate },
+        }),
+      );
+    }
+  }, []);
 
   return (
     <Layout>
-      {hashedExecution && (
-        <Dialog
-          open={openExecution}
-          onClose={closeExecution}
-          disableScrollLock
-          sx={{
-            ".MuiPaper-root": {
-              height: "90svh",
-              width: "90svw",
-              maxWidth: "1184px",
-              position: "relative",
-              overscrollBehavior: "contain",
-              scrollBehavior: "smooth",
-              borderRadius: "16px",
-              "&::-webkit-scrollbar": {
-                width: "0px",
-              },
-            },
-          }}
-        >
-          <IconButton
-            aria-label="close"
-            onClick={closeExecution}
-            sx={{
-              position: "sticky",
-              top: "8px",
-              right: "20px",
-              ml: "auto",
-              zIndex: 999,
-              width: "fit-content",
-              color: "action.active",
-              border: "none",
-              ":hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-          >
-            <Close />
-          </IconButton>
-          <ExecutionCard
-            execution={hashedExecution}
-            promptsData={fetchedTemplate.prompts}
-            showPreview={false}
-            noRepeat
-          />
-        </Dialog>
-      )}
       <TemplatePage template={fetchedTemplate} />
     </Layout>
   );

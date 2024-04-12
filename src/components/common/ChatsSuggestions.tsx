@@ -15,11 +15,12 @@ interface Props {
 }
 
 function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
-  const { data: chats, isLoading } = useGetChatsQuery();
+  const { data: chats, isLoading } = useGetChatsQuery({ limit: slice });
   const router = useRouter();
   const theme = useTheme();
   const profilePage = router.pathname === "/profile";
   const isHomePage = router.pathname === "/";
+
   return (
     <>
       {isLoading ? (
@@ -76,7 +77,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
                 href="/chat"
               />
             </Grid>
-            {chats?.slice(0, slice).map(chat => {
+            {chats?.results.map(chat => {
               return (
                 <Grid
                   key={chat.id}

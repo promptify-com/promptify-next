@@ -6,11 +6,10 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import FilterList from "@mui/icons-material/FilterList";
 import Close from "@mui/icons-material/Close";
-
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
+import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { TemplatesFilter } from "@/components/explorer/TemplatesFilter";
 import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 
@@ -115,7 +114,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
             WebkitOverflowScrolling: { xs: "touch", md: "initial" },
           }}
         >
-          <TemplatesInfiniteScroll
+          <InfiniteScrollContainer
             loading={isLoading}
             onLoadMore={onNextPage}
             hasMore={hasMore}
@@ -146,7 +145,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                   );
                 })}
             </Grid>
-          </TemplatesInfiniteScroll>
+          </InfiniteScrollContainer>
 
           {!isLoading && !templates?.length && (
             <Grid
