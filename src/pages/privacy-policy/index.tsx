@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
 import { Layout } from "@/layout";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import { theme } from "../../theme";
+import { theme } from "@/theme";
 
 export default function NotFound() {
   return (
@@ -71,17 +71,18 @@ export default function NotFound() {
               "& h1,& h2,& h3, & h4": {
                 fontWeight: 500,
                 mb: "10px",
+                lineHeight: "140%",
               },
               "& h2": {
-                fontSize: 20,
+                fontSize: { xs: 24, md: 20 },
                 mt: "30px",
                 mb: "20px",
               },
               "& h3": {
-                fontSize: 16,
+                fontSize: { xs: 20, md: 16 },
               },
               "& h4": {
-                fontSize: 14,
+                fontSize: { xs: 20, md: 14 },
               },
               "& a": {
                 textDecoration: "none",
