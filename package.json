@@ -13,15 +13,14 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@fontsource/poppins": "^4.5.10",
     "@fontsource/space-mono": "^4.5.12",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@mui/icons-material": "^5.15.14",
     "@mui/lab": "5.0.0-alpha.169",
     "@mui/material": "5.15.14",
-    "@mui/styles": "^5.14.9",
     "@netlify/plugin-nextjs": "4.40.1",
     "@react-oauth/google": "^0.11.0",
     "@reduxjs/toolkit": "^1.9.5",
