@@ -60,7 +60,7 @@ const useMessageManager = () => {
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
 
-  const inputStyle = currentUser?.preferences?.input_style ?? selectedChatOption;
+  const inputStyle = currentUser?.preferences?.input_style || selectedChatOption;
 
   useEffect(() => {
     if (!parameterSelected) {
