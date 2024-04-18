@@ -19,7 +19,8 @@ export type MessageType =
   | "template"
   | "questionInput"
   | "questionParam"
-  | "readyMessage";
+  | "readyMessage"
+  | "workflowExecution";
 
 export interface IMessage {
   id: number;

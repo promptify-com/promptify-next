@@ -14,6 +14,7 @@ import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
 import CredentialsMessage from "./Messages/CredentialsMessage";
+import { ExecutionMessage } from "../Automation/ExecutionMessage";
 
 interface Props {
   message: IMessage;
@@ -25,6 +26,8 @@ interface Props {
 
 function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
   const dispatch = useAppDispatch();
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
   return (
     <>
       {message.type === "text" && (
@@ -142,6 +145,9 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           content={message.text}
           onGenerate={onGenerate}
         />
+      )}
+      {message.type === "workflowExecution" && generatedExecution && (
+        <ExecutionMessage execution={generatedExecution} />
       )}
     </>
   );

@@ -64,7 +64,12 @@ const useMessageManager = () => {
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
 
-  const { processWorflowData, executeWorkflow } = useChatWorkflow({ setMessages, setIsValidatingAnswer });
+  const { processWorflowData, executeWorkflow } = useChatWorkflow({
+    setMessages,
+    setIsValidatingAnswer,
+    queueSavedMessages,
+    setQueueSavedMessages,
+  });
   const inputStyle = currentUser?.preferences?.input_style ?? selectedChatOption;
 
   useEffect(() => {

@@ -17,10 +17,10 @@ export function useChatsPaginator() {
   } = useGetChatsQuery({ limit: PAGINATION_LIMIT, offset });
 
   useEffect(() => {
-    if (!fetchedChats?.results?.length) {
+    if (!isChatsLoading && !fetchedChats?.results?.length) {
       return;
     }
-    dispatch(setChats(chats.concat(fetchedChats?.results)));
+    dispatch(setChats(chats.concat(fetchedChats?.results ?? [])));
 
     return () => {
       dispatch(setChats([]));

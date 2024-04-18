@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { N8N_RESPONSE_REGEX, oAuthTypeMapping } from "@/components/Automation/helpers";
@@ -13,19 +13,24 @@ import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import useSaveChatInteractions from "./useSaveChatInteractions";
 
 interface Props {
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
   setIsValidatingAnswer: Dispatch<SetStateAction<boolean>>;
+  queueSavedMessages: IMessage[];
+  setQueueSavedMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
-const useChatWorkflow = ({ setMessages, setIsValidatingAnswer }: Props) => {
+const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessages, setQueueSavedMessages }: Props) => {
   const dispatch = useAppDispatch();
 
-  const selectedWorkflow = useAppSelector(state => state.chat.selectedWorkflow);
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat);
+  const { generatedExecution } = useAppSelector(state => state.executions);
 
   const { createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(selectedWorkflow ?? ({} as IWorkflow));
+  const { processQueuedMessages } = useSaveChatInteractions();
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { streamExecutionHandler } = useGenerateExecution({});
@@ -56,6 +61,8 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer }: Props) => {
 
   function prepareWorkflowMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedWorkflow?.name}"` });
+
+    setQueueSavedMessages(prevMessages => prevMessages.concat(runMessage));
 
     setMessages(prevMessages => {
       let lastSuggestionWorkflowIndex = -1;
@@ -122,6 +129,12 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer }: Props) => {
             failedExecutionHandler();
           } else {
             streamExecutionHandler(response);
+            const executionMessage = createMessage({
+              type: "workflowExecution",
+              text: "",
+            });
+            setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(executionMessage));
+            setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
           }
         }
       }
@@ -136,6 +149,17 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer }: Props) => {
     dispatch(setToast(EXECUTE_ERROR_TOAST));
     dispatch(setGeneratedExecution(null));
   };
+
+  useEffect(() => {
+    if (generatedExecution?.data?.length && queueSavedMessages.length) {
+      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
+
+      if (allPromptsCompleted && selectedChat) {
+        processQueuedMessages(queueSavedMessages, selectedChat?.id, generatedExecution.id as number);
+        setQueueSavedMessages([]);
+      }
+    }
+  }, [generatedExecution]);
 
   return { processWorflowData, executeWorkflow };
 };

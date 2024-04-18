@@ -88,7 +88,7 @@ const useSaveChatInteractions = () => {
     queueSavedMessages: IMessage[],
     chatId: number,
     executionId: number,
-    templateId: number,
+    templateId?: number,
   ) => {
     saveBatchingMessages(
       queueSavedMessages.map(message => {
@@ -110,12 +110,13 @@ const useSaveChatInteractions = () => {
           case "template":
             _message = {
               chat: chatId,
-              template: templateId,
+              template: templateId as number,
               text: message.text,
               message_type: "template",
             } satisfies ISaveChatTemplate;
             break;
           case "spark":
+          case "workflowExecution":
             _message = {
               chat: chatId,
               execution: executionId,
