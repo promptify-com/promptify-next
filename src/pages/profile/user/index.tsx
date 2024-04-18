@@ -289,7 +289,7 @@ function ProfilePrompts() {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
               >
-                <DialogTitle id="alert-dialog-title">{"Confirm Account Deletion"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">Confirm Account Deletion</DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
                     Are you sure you want to delete your account? This operation is permanent.
