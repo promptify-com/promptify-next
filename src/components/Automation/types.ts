@@ -132,5 +132,6 @@ export interface IStoredWorkflows {
   [key: string]: {
     webhookPath: string;
     workflow?: IWorkflowCreateResponse;
+    id: string;
   };
 }
