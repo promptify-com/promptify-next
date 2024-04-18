@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-
 import {
   useCreateUserWorkflowMutation,
   useGetWorkflowByIdQuery,
   useUpdateWorkflowMutation,
 } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { clearExecutionsStates } from "@/core/store/executionsSlice";
-import { clearChatStates, setAreCredentialsStored } from "@/core/store/chatSlice";
+import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
@@ -137,11 +135,6 @@ const useWorkflow = (workflow: IWorkflow) => {
     const response = await ApiClient.post(`/webhook/${webhookPathRef.current}`, inputsData);
     return response.data;
   }
-
-  useEffect(() => {
-    dispatch(clearChatStates());
-    dispatch(clearExecutionsStates());
-  }, []);
 
   useEffect(() => {
     if (!workflow && data) {
