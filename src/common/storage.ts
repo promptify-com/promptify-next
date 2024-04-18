@@ -30,10 +30,6 @@ export default class Storage {
     if (!isBrowser()) {
       return null;
     }
-    for (const key in localStorage) {
-      if (key.startsWith(LCL_STR_KEY)) {
-        localStorage.removeItem(key);
-      }
-    }
+    localStorage.clear();
   }
 }
