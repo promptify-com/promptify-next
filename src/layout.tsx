@@ -13,7 +13,7 @@ import AccountSidebar from "@/components/profile2/AccountSidebar";
 import useBrowser from "./hooks/useBrowser";
 import Footer from "./components/Footer";
 
-export function Layout({ children }: { children: ReactNode }) {
+export function Layout({ children, footer = false }: { children: ReactNode; footer?: boolean }) {
   const router = useRouter();
   const pathname = router.pathname;
   const theme = useTheme();
@@ -37,7 +37,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 
-  const showFooter = isMobile && !isChatPage && !isPromptPage;
+  const showFooter = footer || (isMobile && !isChatPage && !isPromptPage);
 
   return (
     <Stack

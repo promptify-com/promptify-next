@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 function ProfilePreferences() {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [chatOption, setChatOption] = useState<ChatOption>((currentUser?.preferences?.input_style as ChatOption) ?? "");
+  const [chatOption, setChatOption] = useState<ChatOption>((currentUser?.preferences?.input_style as ChatOption) || "");
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
   const handleChangeInputStyle = async (data: UpdateUserPreferences) => {
     if (!currentUser || isLoadingPreferences) return;
@@ -42,7 +42,7 @@ function ProfilePreferences() {
   };
 
   useEffect(() => {
-    setChatOption((currentUser?.preferences?.input_style as ChatOption) ?? "");
+    setChatOption((currentUser?.preferences?.input_style as ChatOption) || "");
   }, [currentUser]);
 
   const isBlue = currentUser?.preferences?.theme === "blue";
