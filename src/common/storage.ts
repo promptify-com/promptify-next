@@ -25,4 +25,15 @@ export default class Storage {
     }
     localStorage.removeItem(`${LCL_STR_KEY}${key}`);
   }
+
+  static clear() {
+    if (!isBrowser()) {
+      return null;
+    }
+    for (const key in localStorage) {
+      if (key.startsWith(LCL_STR_KEY)) {
+        localStorage.removeItem(key);
+      }
+    }
+  }
 }
