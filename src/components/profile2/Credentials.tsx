@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { formatDate } from "@/common/helpers/timeManipulation";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredential } from "@/components/Automation/types";
-import { useDeleteCredentialMutation } from "@/core/api/workflows";
+import type {
+  ICredential,
+  INodeCredentials,
+  IStoredWorkflows,
+  IWorkflowCreateResponse,
+} from "@/components/Automation/types";
+import { useDeleteCredentialMutation, useUpdateWorkflowMutation, workflowsApi } from "@/core/api/workflows";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
@@ -11,12 +16,25 @@ import Stack from "@mui/material/Stack";
 import Image from "@/components/design-system/Image";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Storage from "@/common/storage";
+
+function recreateNodeCredentials(nodeCredentials: INodeCredentials) {
+  const _newCredentials = {} as INodeCredentials;
+
+  for (const provider in nodeCredentials) {
+    _newCredentials[provider] = { id: nodeCredentials[provider].id, name: nodeCredentials[provider].name };
+  }
+
+  return _newCredentials;
+}
 
 function Credentials() {
   const dispatch = useAppDispatch();
   const [selectedCredential, setSelectedCredential] = useState<ICredential | null>(null);
   const [deleteCredential] = useDeleteCredentialMutation();
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
+  const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const { credentials, setCredentials, initializeCredentials, removeCredential } = useCredentials();
 
@@ -36,15 +54,50 @@ function Credentials() {
 
     try {
       await deleteCredential(selectedCredential.id);
-    } catch (_) {
-      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
-      return;
+
+      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+
+      if (!!Object.values(storedWorkflows).length) {
+        for (const _workflowId in storedWorkflows) {
+          const _workflow = await getWorkflow(storedWorkflows[_workflowId].id).unwrap();
+          let credentialFound = false;
+          const _updatedWorkflow = {
+            ..._workflow,
+            nodes: _workflow.nodes.map(node => ({
+              ...node,
+              ...(node.credentials && { credentials: recreateNodeCredentials(node.credentials) }),
+            })),
+          };
+
+          _updatedWorkflow.nodes.forEach(node => {
+            if (!node.credentials) {
+              return;
+            }
+
+            if (node.credentials[selectedCredential.type]) {
+              node.credentials[selectedCredential.type].name = "to_be_deleted";
+              credentialFound = true;
+            }
+          });
+
+          if (credentialFound) {
+            await updateWorkflow({ workflowId: Number(_workflowId), data: _updatedWorkflow });
+          }
+        }
+      }
+
+      removeCredential(selectedCredential.id);
+      dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
+    } catch (err) {
+      dispatch(
+        setToast({
+          message: "Something went wrong please try again. " + (err as { message: string }).message,
+          severity: "error",
+        }),
+      );
     } finally {
       setSelectedCredential(null);
     }
-
-    removeCredential(selectedCredential.id);
-    dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
   };
 
   if (!credentials.length) {

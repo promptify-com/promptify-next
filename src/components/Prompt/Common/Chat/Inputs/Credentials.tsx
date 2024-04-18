@@ -45,7 +45,6 @@ function Credentials({ input }: Props) {
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
-
   const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
     useCredentials();
 
@@ -55,6 +54,7 @@ function Credentials({ input }: Props) {
   const isOauthCredential = credential?.name.includes("OAuth2");
 
   const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
 
@@ -103,7 +103,12 @@ function Credentials({ input }: Props) {
 
   const updateWorkflowAndStorage = async () => {
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-    const workflow = storedWorkflows[workflowId].workflow;
+    let workflow = storedWorkflows[workflowId].workflow;
+
+    if (!workflow) {
+      const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
+      workflow = JSON.parse(JSON.stringify(_workflow));
+    }
 
     (workflow?.nodes ?? []).forEach(node => attachCredentialsToNode(node));
 
@@ -119,6 +124,7 @@ function Credentials({ input }: Props) {
 
         storedWorkflows[workflowId] = {
           webhookPath: storedWorkflows[workflowId].webhookPath,
+          id: storedWorkflows[workflowId].id,
         };
 
         Storage.set("workflows", JSON.stringify(storedWorkflows));
