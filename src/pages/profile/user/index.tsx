@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import { SEO_DESCRIPTION } from "@/common/constants";
@@ -13,20 +14,51 @@ import Box from "@mui/material/Box";
 import StackedInput from "@/components/common/forms/StackedInput";
 import { useFormik } from "formik";
 import { IEditProfile } from "@/common/types";
-import { useUpdateUserPreferencesMutation, useUpdateUserProfileMutation } from "@/core/api/user";
+import { useDeleteUserMutation, useUpdateUserPreferencesMutation, useUpdateUserProfileMutation } from "@/core/api/user";
 import { updateUser } from "@/core/store/userSlice";
 import useToken from "@/hooks/useToken";
 import Button from "@mui/material/Button";
 import SectionWrapper from "@/components/profile2/SectionWrapper";
 import { setToast } from "@/core/store/toastSlice";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import useLogout from "@/hooks/useLogout";
 
 function ProfilePrompts() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const dispatch = useAppDispatch();
   const token = useToken();
+  const logout = useLogout();
+
+  const [open, setOpen] = useState(false);
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
   const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
+
+  const handleDeleteAccount = async () => {
+    setOpen(false);
+
+    try {
+      if (!token) return;
+      await deleteUser(token).unwrap();
+      dispatch(setToast({ message: "Your account has been successfully deleted.", severity: "success" }));
+      await logout();
+    } catch (error) {
+      dispatch(setToast({ message: "Failed to delete the account. Please try again.", severity: "error" }));
+    }
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleTogglePublic = async (checked: boolean) => {
     if (!currentUser || isLoadingPreferences) return;
@@ -238,9 +270,7 @@ function ProfilePrompts() {
               noBorder
             >
               <Button
-                onClick={() => {
-                  console.log("delete account");
-                }}
+                onClick={handleClickOpen}
                 sx={{
                   border: "1px solid",
                   borderColor: "surfaceContainerHigh",
@@ -252,6 +282,36 @@ function ProfilePrompts() {
               >
                 Delete account
               </Button>
+
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">{"Confirm Account Deletion"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to delete your account? This operation is permanent.
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={handleClose}
+                    color="primary"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleDeleteAccount}
+                    color="error"
+                    autoFocus
+                    disabled={isDeleting}
+                  >
+                    Delete Account
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </SectionWrapper>
           </Stack>
         </ContentWrapper>
