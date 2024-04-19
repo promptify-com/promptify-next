@@ -30,7 +30,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const inputs = useAppSelector(state => state.chat.inputs);
+  const { inputs, areCredentialsStored } = useAppSelector(state => state.chat);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,7 +40,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   });
 
   const hasInputs = inputs.length > 0;
-  const allowNoInputsRun = !hasInputs && currentUser?.id && !isGenerating && !isValidating;
+  const allowNoInputsRun = areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isValidating;
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
