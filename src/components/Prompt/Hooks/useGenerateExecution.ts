@@ -35,6 +35,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const [stopExecution] = useStopExecutionMutation();
 
   const { answers, inputs, paramsValues } = useAppSelector(state => state.chat);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [disableChatInput, setDisableChatInput] = useState(false);
@@ -43,6 +44,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     data: [],
   });
   const abortController = useRef(new AbortController());
+  const generatingCompleted = useRef(false);
 
   const { preparePromptsData } = useChatBox();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
@@ -85,15 +87,19 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const streamExecutionHandler = async (response: string) => {
     let executionMatch;
     let regex = new RegExp(N8N_RESPONSE_REGEX);
+
+    dispatch(setGeneratedExecution({ hasNext: true } as PromptLiveResponse));
+    generatingCompleted.current = false;
     while ((executionMatch = regex.exec(response)) !== null) {
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
 
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
       await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
     }
+    generatingCompleted.current = true;
   };
 
-  const fetchExecution = ({
+  const fetchExecution = async ({
     endpoint,
     method,
     body,
@@ -106,7 +112,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     streamExecution?: IStreamExecution;
     onGenerateExecution?: (executionId: number) => void;
   }) => {
-    fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
+    await fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
       method,
       headers: {
         Authorization: `Token ${token}`,
@@ -246,7 +252,12 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
   useEffect(() => {
     if (generatingResponse.connectionOpened) {
-      dispatch(setGeneratedExecution(generatingResponse));
+      dispatch(
+        setGeneratedExecution({
+          ...generatingResponse,
+          hasNext: generatingCompleted.current ? false : generatingResponse.hasNext,
+        }),
+      );
     }
   }, [generatingResponse]);
 

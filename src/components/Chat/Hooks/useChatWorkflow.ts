@@ -129,12 +129,6 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
             failedExecutionHandler();
           } else {
             streamExecutionHandler(response);
-            const executionMessage = createMessage({
-              type: "workflowExecution",
-              text: "",
-            });
-            setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(executionMessage));
-            setQueueSavedMessages(prevMessages => prevMessages.concat(executionMessage));
           }
         }
       }
@@ -151,13 +145,20 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   };
 
   useEffect(() => {
-    if (generatedExecution?.data?.length && queueSavedMessages.length) {
-      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
+    const generatedContent = generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "";
 
-      if (allPromptsCompleted && selectedChat) {
-        processQueuedMessages(queueSavedMessages, selectedChat?.id, generatedExecution.id as number);
-        setQueueSavedMessages([]);
-      }
+    if (selectedChat && generatedExecution?.hasNext === false) {
+      const executionMessage = createMessage({
+        type: "html",
+        text: generatedContent,
+      });
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(executionMessage));
+      processQueuedMessages(
+        queueSavedMessages.concat(executionMessage),
+        selectedChat.id,
+        generatedExecution.id as number,
+      );
+      setQueueSavedMessages([]);
     }
   }, [generatedExecution]);
 

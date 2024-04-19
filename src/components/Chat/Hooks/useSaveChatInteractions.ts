@@ -116,13 +116,21 @@ const useSaveChatInteractions = () => {
             } satisfies ISaveChatTemplate;
             break;
           case "spark":
-          case "workflowExecution":
             _message = {
               chat: chatId,
               execution: executionId,
               type: isInputStyleQA ? "qa" : "form",
               message_type: "execution",
             } satisfies ISaveChatExecutions;
+            break;
+          case "html":
+            _message = {
+              chat: chatId,
+              text: message.text,
+              type: "html",
+              sender: "system",
+              message_type: "message",
+            } satisfies ISaveChatInput;
             break;
           default:
             throw Error(`Provided type "${message.type}" is not supported!`);

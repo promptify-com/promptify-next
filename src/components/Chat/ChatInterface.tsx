@@ -8,6 +8,7 @@ import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import CircularProgress from "@mui/material/CircularProgress";
+import { createMessage } from "./helper";
 
 interface Props {
   messages: IMessage[];
@@ -57,6 +58,13 @@ const ChatInterface = ({
   const showChatOptions = Boolean(selectedTemplate && !currentUser?.preferences?.input_style && !selectedChatOption);
   const showRunButton =
     showGenerateButton && (currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa");
+
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const generatedExecutionMessage: IMessage = createMessage({
+    type: "html",
+    text: generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "",
+  });
 
   return (
     <Stack
@@ -121,6 +129,15 @@ const ChatInterface = ({
               />
             </Fragment>
           ))}
+          {generatedExecutionMessage && isGenerating && (
+            <RenderMessage
+              message={generatedExecutionMessage}
+              onScrollToBottom={scrollToBottom}
+              onGenerate={onGenerate}
+              onAbort={onAbort}
+              onExecuteWorkflow={onExecuteWorkflow}
+            />
+          )}
 
           {showChatOptions && <ChatOptions />}
         </Stack>
