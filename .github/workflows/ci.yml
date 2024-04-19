@@ -2,9 +2,8 @@ name: Lint and build current commit
 
 on:
   pull_request:
-    branches-ignore:
-      - staging
-      - main
+    branches:
+      - '*'
 
 jobs:
   linter-build:
