@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -24,6 +24,7 @@ interface CategoryCarouselProps {
   gap?: number;
   explore?: boolean;
   href?: string;
+  priority?: boolean;
 }
 
 function CategoryCarousel({
@@ -34,6 +35,7 @@ function CategoryCarousel({
   gap = 5,
   explore,
   href,
+  priority,
 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
   const {
@@ -120,18 +122,18 @@ function CategoryCarousel({
             direction={"row"}
           >
             {categories.map(category => (
-              <Box key={category.id}>
+              <Fragment key={category.id}>
                 {explore ? (
                   <ExploreCardCategory category={category} />
                 ) : (
                   <CategoryCard
                     category={category}
-                    priority={false}
+                    priority={priority}
                     href={`/explore/${category.slug}`}
                     min={isMobile}
                   />
                 )}
-              </Box>
+              </Fragment>
             ))}
           </Stack>
         </Stack>

@@ -9,6 +9,7 @@ import useBrowser from "@/hooks/useBrowser";
 import useToken from "@/hooks/useToken";
 import Link from "next/link";
 import useTruncate from "@/hooks/useTruncate";
+import Box from "@mui/material/Box";
 
 interface Props {
   category: Category;
@@ -52,21 +53,24 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
             },
           }}
         >
-          <CardMedia
+          <Box
             sx={{
               zIndex: 1,
               borderRadius: "16px",
               width: "100%",
               height: { xs: "130px", md: "200px" },
+              position: "relative",
             }}
           >
             <Image
               src={category.image}
               alt={category.name}
-              style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+              fill
+              sizes="100%"
+              style={{ borderRadius: "16px", objectFit: "cover" }}
               priority={shouldPrioritizeImage}
             />
-          </CardMedia>
+          </Box>
 
           {!min && !isMobile && (
             <Typography

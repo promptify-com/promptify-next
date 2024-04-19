@@ -36,6 +36,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           <CategoryCarousel
             categories={categories}
             userScrolled={false}
+            priority={false}
             href="/explore"
             gap={1}
             explore

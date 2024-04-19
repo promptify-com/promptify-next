@@ -75,6 +75,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => {
                     src={testimonial.image}
                     alt={testimonial.name}
                     fill
+                    sizes="60px"
                     priority={false}
                   />
                 </Box>

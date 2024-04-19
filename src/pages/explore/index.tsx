@@ -166,6 +166,7 @@ export default function ExplorePage({ categories = [] }: Props) {
                 <CategoryCarousel
                   categories={categories}
                   userScrolled={hasUserScrolled}
+                  priority={true}
                   onClick={() => {
                     setSeeAll(true);
                   }}
