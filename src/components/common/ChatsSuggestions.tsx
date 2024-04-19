@@ -64,6 +64,9 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             <Grid
               item
               xs={12}
+              sx={{
+                maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+              }}
             >
               <SuggestionCard
                 title="Chats"
