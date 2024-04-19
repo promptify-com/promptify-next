@@ -87,7 +87,7 @@ const useSaveChatInteractions = () => {
   const processQueuedMessages = async (
     queueSavedMessages: IMessage[],
     chatId: number,
-    executionId: number,
+    executionId?: number,
     templateId?: number,
   ) => {
     saveBatchingMessages(
@@ -118,7 +118,7 @@ const useSaveChatInteractions = () => {
           case "spark":
             _message = {
               chat: chatId,
-              execution: executionId,
+              execution: executionId as number,
               type: isInputStyleQA ? "qa" : "form",
               message_type: "execution",
             } satisfies ISaveChatExecutions;

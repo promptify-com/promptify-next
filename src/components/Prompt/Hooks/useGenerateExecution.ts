@@ -255,7 +255,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       dispatch(
         setGeneratedExecution({
           ...generatingResponse,
-          hasNext: generatingCompleted.current ? false : generatingResponse.hasNext,
+          hasNext: !generatingCompleted.current,
         }),
       );
     }

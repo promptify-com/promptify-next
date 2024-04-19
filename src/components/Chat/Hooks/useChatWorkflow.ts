@@ -14,6 +14,7 @@ import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useSaveChatInteractions from "./useSaveChatInteractions";
+import { useDeleteExecutionMutation } from "@/core/api/executions";
 
 interface Props {
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
@@ -28,6 +29,8 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat);
   const { generatedExecution } = useAppSelector(state => state.executions);
+
+  const [deleteExecution] = useDeleteExecutionMutation();
 
   const { createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(selectedWorkflow ?? ({} as IWorkflow));
   const { processQueuedMessages } = useSaveChatInteractions();
@@ -64,19 +67,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
 
     setQueueSavedMessages(prevMessages => prevMessages.concat(runMessage));
 
-    setMessages(prevMessages => {
-      let lastSuggestionWorkflowIndex = -1;
-      for (let i = prevMessages.length - 1; i >= 0; i--) {
-        if (prevMessages[i].type === "suggestion-workflows") {
-          lastSuggestionWorkflowIndex = i;
-          break;
-        }
-      }
-
-      const filteredMessages = prevMessages.slice(0, lastSuggestionWorkflowIndex + 1);
-
-      return filteredMessages.concat(runMessage);
-    });
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(runMessage));
 
     const initialWorkflowMessages: IMessage[] = [];
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
@@ -125,9 +116,14 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
             setMessages(prevMessages =>
               prevMessages.filter(msg => msg.type !== "credsForm").concat([responseMessage, formMessage]),
             );
+            if (selectedChat) {
+              processQueuedMessages(queueSavedMessages.concat(responseMessage), selectedChat.id);
+              setQueueSavedMessages([]);
+            }
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
+            setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm"));
             streamExecutionHandler(response);
           }
         }
@@ -148,17 +144,15 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
     const generatedContent = generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "";
 
     if (selectedChat && generatedExecution?.hasNext === false) {
+      const executionId = generatedExecution.id as number;
       const executionMessage = createMessage({
         type: "html",
         text: generatedContent,
       });
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(executionMessage));
-      processQueuedMessages(
-        queueSavedMessages.concat(executionMessage),
-        selectedChat.id,
-        generatedExecution.id as number,
-      );
+      processQueuedMessages(queueSavedMessages.concat(executionMessage), selectedChat.id, executionId);
       setQueueSavedMessages([]);
+      deleteExecution(executionId);
     }
   }, [generatedExecution]);
 
