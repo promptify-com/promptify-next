@@ -1,12 +1,13 @@
 import { useState, type FC } from "react";
+import { useRouter } from "next/router";
+import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
+
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { useRouter } from "next/router";
 import { isDesktopViewPort } from "@/common/helpers";
-import SocialButtons from "./SocialMediaAuth";
-import Stack from "@mui/material/Stack";
+import SocialButtons from "@/components/login/SocialMediaAuth";
 import backgroundImage from "@/assets/images/signup.webp";
 
 interface IProps {
@@ -37,10 +38,10 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
       }}
     >
       <Stack
+        direction={"row"}
         sx={{
-          display: "flex",
-          padding: "var(--1, 8px)",
-          justifyContent: "flex-start",
+          padding: "8px",
+          justifyContent: "center",
           alignItems: "center",
           alignSelf: "stretch",
           flex: 3,
@@ -48,7 +49,8 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           pt: { xs: "40px", sm: "40px", md: "48px" },
         }}
       >
-        <Box
+        <Stack
+          gap={3}
           sx={{
             width: { xs: "271", sm: "471px" },
             alignSelf: "stretch",
@@ -56,10 +58,8 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
         >
           <Typography
             sx={{
-              color: "var(--onPrimary, #FFF)",
+              color: "onPrimary",
               textAlign: "center",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
               fontSize: { xs: "24px", sm: "32px", md: "48px" },
               fontStyle: "normal",
               fontWeight: 500,
@@ -73,10 +73,8 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           {desktopView && (
             <Typography
               sx={{
-                color: "var(--onPrimary, #FFF)",
+                color: "onPrimary",
                 textAlign: "center",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Poppins",
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -87,7 +85,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               The ultimate ChatGPT and AI-driven content generation and idea inspiration platform
             </Typography>
           )}
-        </Box>
+        </Stack>
       </Stack>
 
       <Stack
@@ -109,10 +107,10 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
         <Box
           sx={{
             display: "flex",
-            padding: "var(--3, 24px) var(--none, 0px)",
+            padding: "24px 0px",
             justifyContent: "center",
             alignItems: "center",
-            gap: "var(--borderRadius, 4px)",
+            gap: "4px",
             alignSelf: "stretch",
           }}
         >
@@ -125,7 +123,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           </Box>
           <Typography
             sx={{
-              color: "#1B1B1F",
+              color: "onSurface",
               fontSize: { xs: "25px", md: "32px" },
               fontStyle: "normal",
               fontWeight: "500",
@@ -150,22 +148,20 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           <Box
             sx={{
               display: "flex",
-              padding: "var(--none, 0px) var(--2, 16px)",
+              padding: "0px 16px",
               flexDirection: "column",
               alignItems: "center",
-              gap: "var(--3, 24px)",
+              gap: "24px",
               alignSelf: "stretch",
             }}
           >
             {desktopView && (
               <Typography
                 sx={{
-                  fontStyle: "normal",
                   fontWeight: 300,
                   fontSize: { xs: "18px", sm: "28px", m: "38px", lg: "48px" },
                   lineHeight: { xs: "28px", sm: "52.8px" },
-                  color: "var(--onSurface, #1B1B1F))",
-                  fontFamily: "Poppins",
+                  color: "onSurface",
                   textAlign: "center",
                   letterSpacing: "0.17px",
                 }}
@@ -175,12 +171,11 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
             )}
             <Typography
               sx={{
-                fontStyle: "normal",
                 fontWeight: 400,
                 fontSize: "16px",
                 letterSpacing: "0.17px",
                 lineHeight: "25.6px",
-                color: "var(--onSurface, var(--onSurface, #1B1B1F))",
+                color: "onSurface",
               }}
             >
               Please, register via social network
@@ -190,11 +185,11 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           <Box
             sx={{
               display: "flex",
-              padding: "var(--none, 0px) var(--2, 16px)",
+              padding: "0px 16px",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: "var(--2, 16px)",
+              gap: "16px",
               width: { xs: "100%", md: "60%", lg: "70%" },
             }}
           >
@@ -212,7 +207,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                gap: "var(--1, 8px)",
+                gap: "8px",
                 alignSelf: "stretch",
               }}
             >
@@ -228,7 +223,6 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               />
               <Typography
                 sx={{
-                  fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: 400,
                   fontSize: "16px",
@@ -272,15 +266,13 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
             p: "48px 0",
             justifyContent: "center",
             alignItems: "center",
-            gap: "var(--3, 24px)",
+            gap: "24px",
             alignSelf: "stretch",
           }}
         >
           <Typography
             sx={{
-              color: "var(--secondary-light, var(--secondary, #575E71))",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
+              color: "secondary.light",
               fontSize: "14px",
               fontStyle: "normal",
               fontWeight: "400",
