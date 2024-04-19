@@ -12,11 +12,18 @@ import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import Image from "@/components/design-system/Image";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { ThemeProvider } from "@mui/material/styles";
-import Footer from "@/components/Footer";
-import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
+import lazy from "next/dynamic";
+
+const FiltersSelected = lazy(() => import("@/components/explorer/FiltersSelected").then(mod => mod.FiltersSelected), {
+  ssr: false,
+});
+
+const Footer = lazy(() => import("@/components/Footer"), {
+  ssr: false,
+});
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -85,6 +92,7 @@ export default function Page({ category }: { category: Category }) {
                 fontSize: 16,
                 fontWeight: 400,
                 p: "8px",
+                fontDisplay: "swap",
               }}
             >
               {category.name}
@@ -121,6 +129,7 @@ export default function Page({ category }: { category: Category }) {
                   letterSpacing: "0.17px",
                   color: "onSurface",
                   fontFeatureSettings: "'clig' off, 'liga' off",
+                  fontDisplay: "swap",
                 }}
               >
                 {category.name}
@@ -133,6 +142,7 @@ export default function Page({ category }: { category: Category }) {
                   letterSpacing: "0.17px",
                   color: "onSurface",
                   fontFeatureSettings: "'clig' off, 'liga' off",
+                  fontDisplay: "swap",
                 }}
               >
                 {category.description}
