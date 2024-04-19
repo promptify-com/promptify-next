@@ -27,3 +27,7 @@ jobs:
 
       - name: Build the project
         run: yarn build
+        env:
+          NEXT_PUBLIC_API_URL: "https://api.promptify.com"
+          NEXT_PUBLIC_N8N_CHAT_BASE_URL: "https://automation.promptify.com"
+          LOGIN_TOKEN: ${{ secrets.LOGIN_TOKEN }}
