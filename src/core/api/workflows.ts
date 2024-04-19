@@ -19,7 +19,7 @@ export const workflowsApi = baseApi.injectEndpoints({
         query: workflowsId => ({
           url: `/api/n8n/workflows/${workflowsId}/`,
           method: "get",
-          keepUnusedDataFor: 60 * 60,
+          keepUnusedDataFor: 21600,
         }),
       }),
       createUserWorkflow: builder.mutation<IWorkflowCreateResponse, number>({
@@ -27,6 +27,13 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${workflowId}/create/`,
           method: "post",
           data: { active: true },
+        }),
+      }),
+      getWorkflow: builder.query<IWorkflowCreateResponse, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/get_workflow`,
+          method: "get",
+          keepUnusedDataFor: 21600,
         }),
       }),
 
@@ -75,4 +82,5 @@ export const {
   useDeleteCredentialMutation,
   useUpdateWorkflowMutation,
   useGetAuthUrlQuery,
+  useGetWorkflowQuery,
 } = workflowsApi;

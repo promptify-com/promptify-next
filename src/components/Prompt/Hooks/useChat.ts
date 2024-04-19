@@ -51,6 +51,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }
   }, [tmpMessages]);
 
+  // TODO: this gets complicated, needs to be simplified
   const showGenerate = isVariantB
     ? !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required))
     : !isSimulationStreaming &&
@@ -187,6 +188,8 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       dispatch(setIsSimulationStreaming(true));
       setMessages(currentMessages => currentMessages.concat(nextQueuedMessage));
       addToQueuedMessages(queuedMessages);
+    } else {
+      dispatch(setIsSimulationStreaming(false));
     }
   };
 
@@ -239,7 +242,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
   }
 
-  const allRequiredInputsAnswered = (): boolean => {
+  function allRequiredInputsAnswered(): boolean {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
 
     if (!requiredQuestionNames.length) {
@@ -249,7 +252,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
 
     return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
-  };
+  }
 
   function handleExecutionHashed() {
     if (router.query?.hash && !sparkHashQueryParam) {

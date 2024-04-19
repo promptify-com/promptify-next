@@ -35,7 +35,9 @@ const useWorkflow = (workflow: IWorkflow) => {
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
 
-    if (selectedWorkflowId.toString() in storedWorkflows) return;
+    if (selectedWorkflowId.toString() in storedWorkflows && storedWorkflows[selectedWorkflowId.toString()].id) {
+      return;
+    }
 
     try {
       const response = await createWorkflow(selectedWorkflowId).unwrap();
@@ -66,6 +68,7 @@ const useWorkflow = (workflow: IWorkflow) => {
 
           storedWorkflows[selectedWorkflowId] = {
             webhookPath: webhookPathRef.current,
+            id: response.id!,
           };
 
           const filteredNodes = updatedNodes
@@ -92,6 +95,7 @@ const useWorkflow = (workflow: IWorkflow) => {
         } else {
           storedWorkflows[selectedWorkflowId] = {
             webhookPath: webhookPathRef.current,
+            id: response.id!,
           };
         }
 
@@ -108,9 +112,9 @@ const useWorkflow = (workflow: IWorkflow) => {
       : ((Storage.get("workflows") || {}) as IStoredWorkflows);
 
     if (_storedWorkflows[workflowId] && "workflow" in _storedWorkflows[workflowId]) {
-      const webhookPath = _storedWorkflows[workflowId].webhookPath;
+      const { webhookPath, id } = _storedWorkflows[workflowId];
 
-      storedWorkflows[workflowId] = { webhookPath };
+      storedWorkflows[workflowId] = { webhookPath, id };
       Storage.set("workflows", JSON.stringify(storedWorkflows));
     }
   }
