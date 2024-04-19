@@ -53,6 +53,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             container
             gap={4}
             flexWrap={"nowrap"}
+            justifyContent={"center"}
             sx={{
               ...(profilePage && {
                 [theme.breakpoints.down("md")]: {
@@ -64,6 +65,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             <Grid
               item
               xs={12}
+              md={4}
               sx={{
                 maxWidth: { xs: "290px", md: "330px", xl: "100%" },
               }}
@@ -86,6 +88,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
                   key={chat.id}
                   item
                   xs={12}
+                  md={4}
                   sx={{
                     maxWidth: { xs: "290px", md: "330px", xl: "100%" },
                   }}
@@ -109,6 +112,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
               item
               mr={1}
               xs={12}
+              md={4}
               sx={{
                 ...(profilePage && {
                   [theme.breakpoints.down("md")]: {
