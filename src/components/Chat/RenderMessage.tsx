@@ -1,6 +1,5 @@
 import Stack from "@mui/material/Stack";
 import Fade from "@mui/material/Fade";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import TemplateSuggestions from "@/components/Chat/Messages/TemplateSuggestions";
@@ -14,7 +13,7 @@ import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
 import CredentialsMessage from "./Messages/CredentialsMessage";
-import { ExecutionMessage } from "../Automation/ExecutionMessage";
+import { createMessage } from "./helper";
 
 interface Props {
   message: IMessage;
@@ -27,6 +26,10 @@ interface Props {
 function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
   const dispatch = useAppDispatch();
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const generatedExecutionMessage: IMessage = createMessage({
+    type: "html",
+    text: generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "",
+  });
 
   return (
     <>
@@ -146,9 +149,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           onGenerate={onGenerate}
         />
       )}
-      {message.type === "workflowExecution" && generatedExecution && (
-        <ExecutionMessage execution={generatedExecution} />
-      )}
+      {message.type === "workflowExecution" && <HtmlMessage message={generatedExecutionMessage} />}
     </>
   );
 }

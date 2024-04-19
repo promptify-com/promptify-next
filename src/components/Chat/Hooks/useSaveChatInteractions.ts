@@ -124,6 +124,7 @@ const useSaveChatInteractions = () => {
             } satisfies ISaveChatExecutions;
             break;
           case "html":
+          case "workflowExecution":
             _message = {
               chat: chatId,
               text: message.text,

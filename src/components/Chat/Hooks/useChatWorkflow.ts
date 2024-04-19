@@ -123,7 +123,11 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
-            setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm"));
+            const executionMessage = createMessage({
+              type: "workflowExecution",
+              text: "",
+            });
+            setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(executionMessage));
             streamExecutionHandler(response);
           }
         }
@@ -149,7 +153,9 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
         type: "html",
         text: generatedContent,
       });
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(executionMessage));
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => !["credsForm", "workflowExecution"].includes(msg.type)).concat(executionMessage),
+      );
       processQueuedMessages(queueSavedMessages.concat(executionMessage), selectedChat.id, executionId);
       setQueueSavedMessages([]);
       deleteExecution(executionId);

@@ -88,7 +88,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     let executionMatch;
     let regex = new RegExp(N8N_RESPONSE_REGEX);
 
-    dispatch(setGeneratedExecution({ hasNext: true } as PromptLiveResponse));
+    dispatch(setGeneratedExecution({ data: [], created_at: new Date(), hasNext: true }));
     generatingCompleted.current = false;
     while ((executionMatch = regex.exec(response)) !== null) {
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
