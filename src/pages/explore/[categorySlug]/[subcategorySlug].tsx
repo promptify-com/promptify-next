@@ -7,11 +7,18 @@ import SubCategoryCard from "@/components/common/cards/CardSubcategory";
 import type { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
-import Breadcrumb from "@/components/design-system/Breadcrumb";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import lazy from "next/dynamic";
+
+const Breadcrumb = lazy(() => import("@/components/design-system/Breadcrumb"), {
+  ssr: false,
+});
+
+const FiltersSelected = lazy(() => import("@/components/explorer/FiltersSelected").then(mod => mod.FiltersSelected), {
+  ssr: false,
+});
 
 interface CategoryOrSubcategory {
   category: Category;
