@@ -31,7 +31,12 @@ const nextConfig = {
     minimumCacheTTL: 3600,
   },
   poweredByHeader: false,
+  productionBrowserSourceMaps: true,
 };
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
 
 if (process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.SENTRY_AUTH_TOKEN) {
   const { withSentryConfig } = require("@sentry/nextjs");
@@ -47,5 +52,5 @@ if (process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SENTRY_DSN 
     authToken: process.env.SENTRY_AUTH_TOKEN,
   });
 } else {
-  module.exports = nextConfig;
+  module.exports = withBundleAnalyzer(nextConfig);
 }

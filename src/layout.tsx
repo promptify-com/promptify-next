@@ -9,9 +9,13 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Header } from "@/components/Header";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { AccountSidebarWidth } from "@/components/profile2/Constants";
-import AccountSidebar from "@/components/profile2/AccountSidebar";
 import useBrowser from "./hooks/useBrowser";
 import Footer from "./components/Footer";
+import lazy from "next/dynamic";
+
+const AccountSidebar = lazy(() => import("@/components/profile2/AccountSidebar"), {
+  ssr: false,
+});
 
 export function Layout({ children, footer = false }: { children: ReactNode; footer?: boolean }) {
   const router = useRouter();

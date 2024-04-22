@@ -6,13 +6,25 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import FilterList from "@mui/icons-material/FilterList";
 import Close from "@mui/icons-material/Close";
-import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
-import CardTemplate from "@/components/common/cards/CardTemplate";
-import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { TemplatesFilter } from "@/components/explorer/TemplatesFilter";
 import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import lazy from "next/dynamic";
 
+const InfiniteScrollContainer = lazy(() => import("@/components/InfiniteScrollContainer"), {
+  ssr: false,
+});
+
+const CardTemplatePlaceholder = lazy(() => import("@/components/placeholders/CardTemplatePlaceHolder"), {
+  ssr: false,
+});
+
+const CardTemplate = lazy(() => import("@/components/common/cards/CardTemplate"), {
+  ssr: false,
+});
+
+const NotFoundIcon = lazy(() => import("@/assets/icons/NotFoundIcon").then(mod => mod.NotFoundIcon), {
+  ssr: false,
+});
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
   isLoading?: boolean;
@@ -99,7 +111,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
       )}
 
       {!isNotLoading ? (
-        <CardTemplatePlaceholder count={5} />
+        <CardTemplatePlaceholder count={4} />
       ) : (
         <Grid
           display={"flex"}
