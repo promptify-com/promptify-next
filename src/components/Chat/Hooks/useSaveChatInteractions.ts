@@ -28,9 +28,7 @@ const useSaveChatInteractions = () => {
   const [saveBatchingMessages] = useBatchingMessagesMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const selectedChatOption = useAppSelector(state => state.chat.selectedChatOption);
-
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
-
   const saveTextMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
     try {
