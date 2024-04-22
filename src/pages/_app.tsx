@@ -17,7 +17,6 @@ import Storage from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
-import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
 import type { User } from "@/core/api/dto/user";
 
 function App({ Component, ...rest }: AppProps) {
@@ -122,7 +121,6 @@ function App({ Component, ...rest }: AppProps) {
         />
         <Toaster />
         <Component {...pageProps} />
-        <TemplateDocumentModal />
       </ThemeProvider>
     </Provider>
   );
