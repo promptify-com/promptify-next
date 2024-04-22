@@ -22,7 +22,6 @@
     "@mui/lab": "5.0.0-alpha.169",
     "@mui/material": "5.15.14",
     "@netlify/plugin-nextjs": "4.40.1",
-    "@next/bundle-analyzer": "^14.2.2",
     "@react-oauth/google": "^0.11.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "7.91.0",
@@ -84,7 +83,8 @@
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "prettier": "3.0.2",
-    "source-map-explorer": "^2.5.3"
+    "source-map-explorer": "^2.5.3",
+    "@next/bundle-analyzer": "^14.2.2"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",

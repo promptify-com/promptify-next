@@ -7,13 +7,16 @@ import Stack from "@mui/material/Stack";
 
 import { useAppSelector } from "@/hooks/useStore";
 import { Header } from "@/components/Header";
-import Sidebar from "@/components/sidebar/Sidebar";
 import { AccountSidebarWidth } from "@/components/profile2/Constants";
 import useBrowser from "./hooks/useBrowser";
 import Footer from "./components/Footer";
 import lazy from "next/dynamic";
 
 const AccountSidebar = lazy(() => import("@/components/profile2/AccountSidebar"), {
+  ssr: false,
+});
+
+const Sidebar = lazy(() => import("@/components/sidebar/Sidebar"), {
   ssr: false,
 });
 
@@ -49,7 +52,7 @@ export function Layout({ children, footer = false }: { children: ReactNode; foot
       sx={{ bgcolor: "surfaceContainerLow" }}
     >
       <Box width={{ xs: "100%", md: isAccountPage ? `calc(100% -  ${AccountSidebarWidth}px)` : "100%" }}>
-        <Sidebar />
+        {!isMobile && <Sidebar />}
         <Box
           display={"flex"}
           flexDirection={"column"}
