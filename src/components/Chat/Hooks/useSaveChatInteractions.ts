@@ -31,6 +31,7 @@ const useSaveChatInteractions = () => {
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
   const saveTextMessage = async (message: IMessage, chatId: number) => {
     const { type, text, fromUser } = message;
+
     try {
       await saveChatInput({
         chat: chatId,
