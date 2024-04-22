@@ -5,7 +5,7 @@ import Menu from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
-import { setChatMode, setChats, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
@@ -17,7 +17,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { chatsApi } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
@@ -25,6 +25,7 @@ import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import ChatsHistory from "@/components/sidebar/ChatsHistory/ChatsHistory";
 import Button from "@mui/material/Button";
 import { theme } from "@/theme";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 function Chat() {
   const router = useRouter();
@@ -39,11 +40,11 @@ function Chat() {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const { chats, selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
+  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
     state => state.chat,
   );
-  const [createChat] = useCreateChatMutation();
-  const [updateChat] = useUpdateChatMutation();
+  const { createChat } = useChatsManager();
+  const { updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
   const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();
   const {
@@ -65,40 +66,21 @@ function Chat() {
   });
   const dynamicTheme = useDynamicColors(selectedTemplate, selectedChat?.thumbnail);
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
+
   const handleCreateChat = async () => {
     if (!selectedTemplate) return;
 
-    try {
-      const newChat = await createChat({
-        title: selectedTemplate.title ?? "Welcome",
-        thumbnail: selectedTemplate.thumbnail,
-      }).unwrap();
-      dispatch(setSelectedChat(newChat));
-      dispatch(setChats([newChat, ...chats]));
-    } catch (err) {
-      console.error("Error creating a new chat: ", err);
-    }
+    const newChat = await createChat({
+      data: { title: selectedTemplate.title ?? "Welcome", thumbnail: selectedTemplate.thumbnail },
+    });
+    dispatch(setSelectedChat(newChat));
   };
   const handleTitleChat = async () => {
     const title = selectedTemplate?.title;
 
     if (!selectedChat || !title || selectedChat.title === title) return;
 
-    try {
-      const updatedChat = await updateChat({
-        id: selectedChat.id,
-        data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
-      }).unwrap();
-      dispatch(
-        setChats(
-          chats.map(_chat => ({
-            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
-          })),
-        ),
-      );
-    } catch (err) {
-      console.error("Error updating chat: ", err);
-    }
+    updateChat(selectedChat.id, { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail });
   };
   const loadInitialMessages = async () => {
     if (!selectedChat?.id) {

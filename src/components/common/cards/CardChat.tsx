@@ -14,14 +14,13 @@ import FileCopyOutlined from "@mui/icons-material/FileCopyOutlined";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
-import { useDeleteChatMutation, useDuplicateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
-import { setChats, setSelectedChat } from "@/core/store/chatSlice";
+import { setSelectedChat } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import useBrowser from "@/hooks/useBrowser";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   chat: IChat;
@@ -38,53 +37,27 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
-  const { selectedChat, chats } = useAppSelector(state => state.chat);
-  const [deleteChat] = useDeleteChatMutation();
-  const [updateChat] = useUpdateChatMutation();
-  const [duplicateChat] = useDuplicateChatMutation();
+  const { selectedChat } = useAppSelector(state => state.chat);
+
+  const { updateChat, deleteChat, duplicateChat } = useChatsManager();
 
   const handleUpdateChat = async (title: string) => {
     if (title === chat.title) return;
-
-    try {
-      const updatedChat = await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } }).unwrap();
-      setRenameAllow(false);
-      dispatch(
-        setChats(
-          chats.map(_chat => ({
-            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
-          })),
-        ),
-      );
-      dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
-    }
+    await updateChat(chat.id, { title, thumbnail: chat.thumbnail }, true);
+    setRenameAllow(false);
   };
 
   const handleDeleteChat = async () => {
-    try {
-      await deleteChat(chat.id);
-      if (selectedChat?.id === chat.id) {
-        dispatch(setSelectedChat(undefined));
-      }
-      dispatch(setChats(chats.filter(_chat => _chat.id !== chat.id)));
-      dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    const deleted = await deleteChat(chat.id);
+    if (deleted && selectedChat?.id === chat.id) {
+      dispatch(setSelectedChat(undefined));
     }
   };
 
   const handleDuplicateChat = async () => {
     handleCloseActions();
-    try {
-      const newChat = await duplicateChat(chat.id).unwrap();
-      dispatch(setChats([newChat, ...chats]));
-      dispatch(setSelectedChat(newChat));
-      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not duplicated! Please try again.", severity: "error", duration: 6000 }));
-    }
+    const newChat = await duplicateChat(chat.id);
+    dispatch(setSelectedChat(newChat));
   };
 
   return (

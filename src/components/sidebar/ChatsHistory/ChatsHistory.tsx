@@ -1,18 +1,17 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useCreateChatMutation } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setToast } from "@/core/store/toastSlice";
-import { setChats, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { useChatsPaginator } from "@/components/Chat/Hooks/useChatsPaginator";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   onClose?: () => void;
@@ -41,23 +40,17 @@ export default function ChatsHistory({ onClose }: Props) {
     );
   }, [chats]);
 
-  const [createChat] = useCreateChatMutation();
+  const { createChat } = useChatsManager();
 
   const handleNewChat = async () => {
     if (!currentUser?.id) {
       return router.push("/signin");
     }
 
-    try {
-      const newChat = await createChat({
-        title: "Welcome",
-      }).unwrap();
+    const newChat = await createChat({ toast: true });
+    if (newChat) {
       handleClickChat(newChat);
-      dispatch(setChats([newChat, ...chats]));
       dispatch(setInitialChat(false));
-      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not created! Please try again.", severity: "error", duration: 6000 }));
     }
   };
 

@@ -17,10 +17,10 @@ import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { useCreateChatMutation } from "@/core/api/chats";
-import { setChats, setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 import useBrowser from "@/hooks/useBrowser";
+import useChatsManager from "./Hooks/useChatsManager";
 
 interface Props {
   template: Templates;
@@ -31,12 +31,10 @@ interface Props {
 function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const [createChat] = useCreateChatMutation();
   const [actionsOpened, setActionsOpened] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
-  const chats = useAppSelector(state => state.chat.chats);
-
+  const { createChat } = useChatsManager();
   const { saveFavorite, templateData } = useSaveFavoriteTemplate(template);
 
   const handleViewPromptInfo = () => {
@@ -47,9 +45,16 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
     setActionsOpened(false);
 
     if (newChat) {
-      const _newChat = await handleCreateChat(template);
-      dispatch(setSelectedChat(_newChat));
-      dispatch(setInitialChat(false));
+      const _newChat = await createChat({
+        data: {
+          title: template.title ?? "Welcome",
+          thumbnail: template.thumbnail,
+        },
+      });
+      if (_newChat) {
+        dispatch(setSelectedChat(_newChat));
+        dispatch(setInitialChat(false));
+      }
     }
 
     setTimeout(() => {
@@ -61,21 +66,6 @@ function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
       setTimeout(() => {
         onScrollToBottom(true);
       }, 100);
-    }
-  };
-
-  const handleCreateChat = async (template: Templates) => {
-    try {
-      const newChat = await createChat({
-        title: template.title ?? "Welcome",
-        thumbnail: template.thumbnail,
-      }).unwrap();
-      dispatch(setChats([newChat, ...chats]));
-
-      return newChat;
-    } catch (err) {
-      console.error("Error creating a new chat: ", err);
-      throw err;
     }
   };
 

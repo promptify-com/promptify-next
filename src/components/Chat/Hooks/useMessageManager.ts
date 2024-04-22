@@ -20,10 +20,8 @@ import {
   setParamsValues,
   clearParameterSelection,
   setSelectedTemplate,
-  setChats,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
-import { useCreateChatMutation } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import type { IPromptInput } from "@/common/types/prompt";
@@ -32,16 +30,16 @@ import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IWorkflow } from "@/components/Automation/types";
 import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
+import useChatsManager from "./useChatsManager";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
   const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
-  const [createChat] = useCreateChatMutation();
+  const { createChat } = useChatsManager();
 
   const {
-    chats,
     selectedTemplate,
     selectedWorkflow,
     isSimulationStreaming,
@@ -70,7 +68,8 @@ const useMessageManager = () => {
     queueSavedMessages,
     setQueueSavedMessages,
   });
-  const inputStyle = currentUser?.preferences?.input_style ?? selectedChatOption;
+
+  const inputStyle = currentUser?.preferences?.input_style || selectedChatOption;
 
   useEffect(() => {
     if (!parameterSelected) {
@@ -195,18 +194,17 @@ const useMessageManager = () => {
   };
 
   const createNewChat = async () => {
-    try {
-      const newChat = await createChat({
+    const _newChat = await createChat({
+      data: {
         title: "Welcome",
-      }).unwrap();
-      dispatch(setChats([newChat, ...chats]));
-      dispatch(setSelectedChat(newChat));
+      },
+    });
+    if (_newChat) {
+      dispatch(setSelectedChat(_newChat));
       // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
       setTimeout(() => dispatch(setInitialChat(false)), 1000);
-      return newChat;
-    } catch (err) {
-      console.error("Error creating a new chat: ", err);
     }
+    return _newChat;
   };
 
   const automationSubmitMessage = async (input: string) => {

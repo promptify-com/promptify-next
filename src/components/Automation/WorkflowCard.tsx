@@ -3,13 +3,12 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
-
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setSelectedWorkflow } from "@/core/store/chatSlice";
-import { useUpdateChatMutation } from "@/core/api/chats";
 import type { IWorkflow } from "@/components/Automation/types";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   workflow: IWorkflow;
@@ -18,7 +17,8 @@ interface Props {
 
 function WorkflowCard({ workflow, onScrollToBottom }: Props) {
   const dispatch = useAppDispatch();
-  const [updateChat] = useUpdateChatMutation();
+
+  const { updateChat } = useChatsManager();
 
   const { selectedChat } = useAppSelector(state => state.chat);
 
@@ -28,18 +28,8 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
     if (!selectedChat) {
       return;
     }
-    try {
-      updateChat({
-        id: selectedChat.id,
-        data: {
-          title: name,
-          thumbnail: image && image.length <= 200 ? image : "",
-        },
-      });
-    } catch (err) {
-      console.error("Error updating chat: ", err);
-    }
 
+    updateChat(selectedChat.id, { title: name, thumbnail: image });
     dispatch(setSelectedWorkflow(workflow));
     onScrollToBottom?.();
   };
