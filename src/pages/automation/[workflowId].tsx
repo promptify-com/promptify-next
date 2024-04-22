@@ -59,7 +59,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     messageAnswersForm,
   });
 
-  const processData = async () => {
+  const processData = async (skipInitialMessages: boolean = false) => {
     if (selectedWorkflow?.data) {
       const { nodes } = selectedWorkflow.data;
       const credentialsInput = await extractCredentialsInputFromNodes(nodes);
@@ -79,7 +79,11 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
         }));
 
       dispatch(setInputs(inputs));
-      initialMessages({ questions: inputs });
+
+      if (!skipInitialMessages) {
+        initialMessages({ questions: inputs });
+      }
+
       prepareAndQueueMessages(credentialsInput, nodes);
     }
   };
@@ -189,6 +193,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
               showGenerate={showGenerate}
               onGenerate={executeWorkflow}
               isValidating={isValidatingAnswer}
+              processData={processData}
             />
           </Stack>
 
