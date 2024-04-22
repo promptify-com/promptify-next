@@ -53,7 +53,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             container
             gap={4}
             flexWrap={"nowrap"}
-            justifyContent={isHomePage ? "flex-start" : "space-between"}
+            justifyContent={isHomePage ? "flex-start" : "center"}
             sx={{
               ...(profilePage && {
                 [theme.breakpoints.down("md")]: {
