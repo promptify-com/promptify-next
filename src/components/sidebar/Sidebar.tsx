@@ -44,7 +44,7 @@ function Sidebar() {
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
-  const isValidUser = useAppSelector(isValidUserFn);
+  const isValidUser = true; //useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
       name: "Home",
@@ -111,7 +111,7 @@ function Sidebar() {
     external: true,
     reload: false,
   };
-
+  console.log("Sidebar rerenders");
   if (isMobile) {
     return null;
   }
@@ -123,8 +123,8 @@ function Sidebar() {
 
   return (
     <Grid
-      onMouseEnter={() => setMouseHover(true)}
-      onMouseLeave={() => setMouseHover(false)}
+      // onMouseEnter={() => setMouseHover(true)}
+      // onMouseLeave={() => setMouseHover(false)}
       className="main-sidebar"
       sx={{
         display: { xs: "none", md: "flex" },

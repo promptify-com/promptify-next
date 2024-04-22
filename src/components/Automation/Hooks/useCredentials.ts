@@ -17,7 +17,7 @@ const useCredentials = () => {
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );
-  const { credentialsInput, areCredentialsStored } = useAppSelector(state => state.chat);
+  const { credentialsInput } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
   const initializeCredentials = (): Promise<ICredential[]> => {
