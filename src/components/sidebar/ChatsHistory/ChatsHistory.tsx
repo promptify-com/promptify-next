@@ -7,12 +7,13 @@ import SearchField from "@/components/common/forms/SearchField";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
-import { setChats, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { useChatsPaginator } from "@/components/Chat/Hooks/useChatsPaginator";
+import { updateChatsList } from "@/components/Chat/helper";
 
 interface Props {
   onClose?: () => void;
@@ -23,8 +24,8 @@ export default function ChatsHistory({ onClose }: Props) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { selectedChat, chats } = useAppSelector(state => state.chat);
-  const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
+  const selectedChat = useAppSelector(state => state.chat.selectedChat);
+  const { chats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -52,8 +53,9 @@ export default function ChatsHistory({ onClose }: Props) {
       const newChat = await createChat({
         title: "Welcome",
       }).unwrap();
+
       handleClickChat(newChat);
-      dispatch(setChats([newChat, ...chats]));
+      updateChatsList(dispatch, router, newChat, "ADD");
       dispatch(setInitialChat(false));
       dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
     } catch (_) {
@@ -79,7 +81,7 @@ export default function ChatsHistory({ onClose }: Props) {
       router.replace(
         {
           pathname: router.pathname,
-          query: undefined,
+          query: { ch_o: router.query.ch_o },
         },
         undefined,
         { scroll: false, shallow: true },
@@ -87,10 +89,10 @@ export default function ChatsHistory({ onClose }: Props) {
     }
   }, [router, loadedChats]);
 
-  const filteredChats =
-    search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
-  const emptyChats = chats?.length === 0;
-
+  const filteredChats = useMemo(() => {
+    return search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
+  }, [search, chats]);
+  const emptyChats = filteredChats?.length === 0;
   const CardsPlaceholder = <ChatCardPlaceholder count={6} />;
 
   return (

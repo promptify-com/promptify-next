@@ -15,7 +15,7 @@ const getSearchParams = (params: IPaginateParams) => {
   const searchParams = new URLSearchParams();
 
   params.limit && searchParams.append("limit", String(params.limit));
-  params.offset && searchParams.append("offset", String(params.offset));
+  (params.offset || params.offset === 0) && searchParams.append("offset", String(params.offset));
 
   return searchParams.toString();
 };
@@ -40,7 +40,10 @@ export const chatsApi = baseApi.injectEndpoints({
         query: (data: IChat) => ({
           url: `/api/chat/chats`,
           method: "post",
-          data,
+          data: {
+            title: data.title,
+            thumbnail: data.thumbnail,
+          },
         }),
       }),
       deleteChat: builder.mutation({
