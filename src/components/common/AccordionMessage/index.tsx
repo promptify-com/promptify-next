@@ -14,6 +14,7 @@ import { timeAgo } from "@/common/helpers/timeManipulation";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 
 interface Props {
   messageType: MessageType;
@@ -34,7 +35,8 @@ export default function AccordionMessage({
 }: Props) {
   const dispatch = useAppDispatch();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-
+  const areCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
+  const { isAutomationPage } = useVariant();
   const [expanded, setExpanded] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const accordionRef = useRef<HTMLDivElement>(null);
@@ -87,17 +89,19 @@ export default function AccordionMessage({
               onChange={(_, state) => setExpanded(state)}
               sx={{ p: 0, flex: 1 }}
             >
-              <AccordionMessageHeader
-                type={messageType}
-                template={template}
-                isExpanded={expanded}
-                onCancel={abortGenerating}
-                messages={messages}
-              />
+              {isAutomationPage && areCredentialsStored ? null : (
+                <AccordionMessageHeader
+                  type={messageType}
+                  template={template}
+                  isExpanded={expanded}
+                  onCancel={abortGenerating}
+                  messages={messages}
+                />
+              )}
 
               <AccordionDetails
                 sx={{
-                  mt: -4,
+                  mt: isAutomationPage && areCredentialsStored ? 0 : -4,
                   p: { xs: "32px 8px 10px 8px", md: "32px 16px 12px 16px" },
                   bgcolor: "surface.2",
                   overflow: "hidden",

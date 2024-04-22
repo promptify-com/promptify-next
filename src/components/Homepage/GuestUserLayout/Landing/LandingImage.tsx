@@ -32,7 +32,7 @@ function LandingImage() {
         }}
       >
         <Image
-          src={require("./empower-2.jpeg")}
+          src={require("./empower-2.webp")}
           alt={"Promptify"}
           priority={true}
           fill
@@ -55,7 +55,7 @@ function LandingImage() {
         }}
       >
         <Image
-          src={require("./empower-1.jpeg")}
+          src={require("./empower-1.webp")}
           alt={"Promptify"}
           priority={true}
           fill
