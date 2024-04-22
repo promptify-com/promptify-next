@@ -11,14 +11,20 @@ import Stack from "@mui/material/Stack";
 import Image from "@/components/design-system/Image";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 
 function Credentials() {
   const dispatch = useAppDispatch();
   const [selectedCredential, setSelectedCredential] = useState<ICredential | null>(null);
   const [deleteCredential] = useDeleteCredentialMutation();
 
-  const { credentials, setCredentials, initializeCredentials, removeCredential } = useCredentials();
+  const {
+    credentials,
+    setCredentials,
+    initializeCredentials,
+    removeCredential,
+    updateWorkflowAfterCredentialsDeletion,
+  } = useCredentials();
 
   useEffect(() => {
     // if credentials already in local storage, no http call will be triggered, we're safe here.
@@ -36,15 +42,20 @@ function Credentials() {
 
     try {
       await deleteCredential(selectedCredential.id);
-    } catch (_) {
-      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
-      return;
+      await updateWorkflowAfterCredentialsDeletion(selectedCredential.type);
+
+      removeCredential(selectedCredential.id);
+      dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
+    } catch (err) {
+      dispatch(
+        setToast({
+          message: "Something went wrong please try again. " + (err as { message: string }).message,
+          severity: "error",
+        }),
+      );
     } finally {
       setSelectedCredential(null);
     }
-
-    removeCredential(selectedCredential.id);
-    dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
   };
 
   if (!credentials.length) {

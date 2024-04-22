@@ -13,13 +13,14 @@ export const workflowsApi = baseApi.injectEndpoints({
         query: enable => ({
           url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
+          keepUnusedDataFor: 21600,
         }),
       }),
       getWorkflowById: builder.query<IWorkflow, number>({
         query: workflowsId => ({
           url: `/api/n8n/workflows/${workflowsId}/`,
           method: "get",
-          keepUnusedDataFor: 60 * 60,
+          keepUnusedDataFor: 21600,
         }),
       }),
       createUserWorkflow: builder.mutation<IWorkflowCreateResponse, number>({
@@ -29,11 +30,19 @@ export const workflowsApi = baseApi.injectEndpoints({
           data: { active: true },
         }),
       }),
+      getWorkflow: builder.query<IWorkflowCreateResponse, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/get_workflow`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+      }),
 
       getCredentials: builder.query<ICredential[], void>({
         query: () => ({
           url: `/api/n8n/workflows/credentials/`,
           method: "get",
+          keepUnusedDataFor: 21600,
         }),
       }),
       createCredentials: builder.mutation<ICredential, CreateCredentialPayload>({
@@ -75,4 +84,5 @@ export const {
   useDeleteCredentialMutation,
   useUpdateWorkflowMutation,
   useGetAuthUrlQuery,
+  useGetWorkflowQuery,
 } = workflowsApi;

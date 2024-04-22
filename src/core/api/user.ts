@@ -45,6 +45,16 @@ export const userApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      deleteUser: builder.mutation<void, string>({
+        query: (token: string) => ({
+          url: "/api/me/",
+          method: "delete",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        }),
+      }),
     };
   },
 });
@@ -55,4 +65,5 @@ export const {
   useUpdateUserPreferencesMutation,
   useGetUserDetailsQuery,
   useGetUserTemplatesQuery,
+  useDeleteUserMutation,
 } = userApi;
