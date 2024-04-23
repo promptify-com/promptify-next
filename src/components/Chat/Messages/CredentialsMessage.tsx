@@ -43,7 +43,7 @@ function CredentialsMessage({ message, onExecuteWorkflow }: Props) {
       >
         {text}
       </Typography>
-      {!hasInputs ? (
+      {!hasInputs && text !== "" ? (
         <RunButton
           title={`Run workflow`}
           onClick={() => onExecuteWorkflow?.()}
