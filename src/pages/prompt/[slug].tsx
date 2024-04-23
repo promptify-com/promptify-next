@@ -9,6 +9,7 @@ import { getExecutionByHash } from "@/hooks/api/executions";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/hooks/useStore";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
 
 interface TemplateProps {
   fetchedTemplate: Templates;
@@ -31,6 +32,7 @@ function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
   return (
     <Layout>
       <TemplatePage template={fetchedTemplate} />
+      <TemplateDocumentModal />
     </Layout>
   );
 }

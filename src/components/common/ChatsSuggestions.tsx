@@ -29,7 +29,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
           gap={1}
           alignItems={"center"}
           flexWrap={"nowrap"}
-          justifyContent={"space-between"}
+          justifyContent={isHomePage ? "flex-start" : "space-between"}
           sx={{
             ...(profilePage && {
               [theme.breakpoints.down("md")]: {
@@ -53,7 +53,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             container
             gap={4}
             flexWrap={"nowrap"}
-            justifyContent={"center"}
+            justifyContent={isHomePage ? "flex-start" : "center"}
             sx={{
               ...(profilePage && {
                 [theme.breakpoints.down("md")]: {
@@ -110,10 +110,11 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
             })}
             <Grid
               item
-              mr={1}
+              mr={2}
               xs={12}
               md={4}
               sx={{
+                maxWidth: { xs: "290px", md: "330px", xl: "100%" },
                 ...(profilePage && {
                   [theme.breakpoints.down("md")]: {
                     mr: 0,
