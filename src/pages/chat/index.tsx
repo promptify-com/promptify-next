@@ -47,8 +47,7 @@ function Chat() {
   const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
     state => state.chat,
   );
-  const { createChat } = useChatsManager();
-  const { updateChat } = useChatsManager();
+  const { createChat, updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
   const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();
   const {

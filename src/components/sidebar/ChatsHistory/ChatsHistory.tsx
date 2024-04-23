@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
@@ -17,13 +17,13 @@ interface Props {
   onClose?: () => void;
 }
 
-export default function ChatsHistory({ onClose }: Props) {
+function ChatsHistory({ onClose }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedChat = useAppSelector(state => state.chat.selectedChat);
-  const { chats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
+  const { chats, selectedChat } = useAppSelector(state => state.chat);
+  const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -163,3 +163,5 @@ export default function ChatsHistory({ onClose }: Props) {
     </Stack>
   );
 }
+
+export default memo(ChatsHistory);

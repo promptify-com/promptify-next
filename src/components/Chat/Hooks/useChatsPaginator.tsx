@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useGetChatsQuery } from "@/core/api/chats";
 import { useRouter } from "next/router";
 import { CHATS_LIST_PAGINATION_LIMIT } from "@/components/Chat/Constants";
-import type { IChat } from "@/core/api/dto/chats";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setChats } from "@/core/store/chatSlice";
 
 export function useChatsPaginator() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [offset, setOffset] = useState(0);
-  const [results, setResults] = useState<IChat[]>([]);
+  const chats = useAppSelector(state => state.chat.chats);
 
   const {
     data: fetchedChats,
@@ -25,8 +27,11 @@ export function useChatsPaginator() {
     if (!fetchedChats?.results?.length) {
       return;
     }
+    dispatch(setChats(chats.concat(fetchedChats?.results)));
 
-    setResults(results.concat(fetchedChats?.results));
+    return () => {
+      dispatch(setChats([]));
+    };
   }, [fetchedChats?.results]);
 
   const handleNextPage = () => {
@@ -46,7 +51,6 @@ export function useChatsPaginator() {
   const hasMore = !!fetchedChats?.next;
 
   return {
-    chats: results,
     isChatsLoading,
     isChatsFetching,
     hasMore,

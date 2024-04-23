@@ -12,14 +12,13 @@ import Stack from "@mui/material/Stack";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
 import FileCopyOutlined from "@mui/icons-material/FileCopyOutlined";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { useState } from "react";
+import { memo, useState } from "react";
 import Edit from "@mui/icons-material/Edit";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
 import { setSelectedChat } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import useBrowser from "@/hooks/useBrowser";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
@@ -28,9 +27,8 @@ interface Props {
   onClick?(): void;
 }
 
-export const ChatCard = ({ chat, active, onClick }: Props) => {
+export const ChatCard = memo(({ chat, active, onClick }: Props) => {
   const dispatch = useAppDispatch();
-  const { isMobile } = useBrowser();
   const [actionsMenuAnchor, setActionsMenuAnchor] = useState<null | HTMLElement>(null);
   const handleOpenActions = (e: React.MouseEvent<HTMLElement>) => setActionsMenuAnchor(e.currentTarget);
   const handleCloseActions = () => setActionsMenuAnchor(null);
@@ -72,7 +70,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
         overflow: "hidden",
         cursor: onClick ? "pointer" : "default",
         ".actions-menu": {
-          opacity: isMobile ? 1 : 0,
+          opacity: { sm: 1, md: 0 },
           transition: "opacity 0.3s ease",
         },
         "&:hover": {
@@ -223,7 +221,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
       )}
     </Card>
   );
-};
+});
 
 const menuItemStyle = {
   gap: 2,
