@@ -6,11 +6,6 @@ import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { CreateMessageProps, IQuestion } from "../Prompt/Types/chat";
 import type { IWorkflow } from "@/components/Automation/types";
-import { chatsApi } from "@/core/api/chats";
-import { CHATS_LIST_PAGINATION_LIMIT } from "./Constants";
-import type { NextRouter } from "next/router";
-import type { IChat } from "@/core/api/dto/chats";
-import type { AppDispatcher } from "@/hooks/useStore";
 
 interface SendMessageResponse {
   output?: string;
@@ -138,32 +133,3 @@ export const suggestionsMessageText = (content?: string) => {
     .replace(/((\,\d+)|#\d+|([\(]?id:\s*\d+[\)]?))/gi, "")
     .trim();
 };
-
-export function updateChatsList(
-  dispatch: AppDispatcher,
-  router: NextRouter,
-  chat: IChat,
-  op: "ADD" | "UPDATE" | "DELETE",
-) {
-  dispatch(
-    chatsApi.util.updateQueryData(
-      "getChats",
-      { limit: CHATS_LIST_PAGINATION_LIMIT, offset: Number(router.query.ch_o || 0) },
-      chats => {
-        return {
-          count: chats.count,
-          next: chats.next,
-          previous: chats.previous,
-          results:
-            op === "ADD"
-              ? [chat, ...chats.results]
-              : op === "DELETE"
-              ? chats.results.filter(_chat => _chat.id !== chat.id)
-              : op === "UPDATE"
-              ? chats.results.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
-              : chats.results,
-        };
-      },
-    ),
-  );
-}

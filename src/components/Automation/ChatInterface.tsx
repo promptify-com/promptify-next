@@ -75,7 +75,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
     async function updateRefreshButtons() {
       const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
 
-      if (workflowId && storedWorkflows[workflowId].id) {
+      if (workflowId && storedWorkflows[workflowId]?.id) {
         const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
         const clonedWorkflow = structuredClone(_workflow);
         const listedCredentials: IAvailableCredentials[] = [];
