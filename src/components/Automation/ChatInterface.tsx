@@ -20,7 +20,7 @@ import Storage from "@/common/storage";
 import { useRouter } from "next/router";
 import { workflowsApi } from "@/core/api/workflows";
 
-import RetryCredentials from "@/components/RetryCredentials";
+import RefreshCredentials from "@/components/RefreshCredentials";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -167,7 +167,8 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
           )}
           {availableCredentials.length > 0 &&
             availableCredentials.map((_credential, idx) => (
-              <RetryCredentials
+              <RefreshCredentials
+                key={idx}
                 credential={_credential}
                 showLabel
                 onClick={() => {

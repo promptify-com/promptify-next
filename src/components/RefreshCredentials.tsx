@@ -17,7 +17,7 @@ interface Props {
   showLabel?: boolean;
 }
 
-function RetryCredentials({ credential, showLabel = false, onClick }: Props) {
+function RefreshCredentials({ credential, showLabel = false, onClick }: Props) {
   const dispatch = useAppDispatch();
   const { removeCredential, updateWorkflowAfterCredentialsDeletion } = useCredentials();
   const [deleteCredential] = useDeleteCredentialMutation();
@@ -78,4 +78,4 @@ function RetryCredentials({ credential, showLabel = false, onClick }: Props) {
   );
 }
 
-export default RetryCredentials;
+export default RefreshCredentials;

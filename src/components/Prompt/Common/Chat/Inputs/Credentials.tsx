@@ -27,8 +27,7 @@ import type { ICredential, ICredentialProperty, IStoredWorkflows } from "@/compo
 import type { IPromptInput } from "@/common/types/prompt";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import Stack from "@mui/material/Stack";
-import { useTheme } from "@mui/system";
-import RetryCredentials from "@/components/RetryCredentials";
+import RefreshCredentials from "@/components/RefreshCredentials";
 
 interface Props {
   input: IPromptInput;
@@ -274,7 +273,7 @@ function Credentials({ input }: Props) {
                     return null;
                   }
                   return (
-                    <RetryCredentials
+                    <RefreshCredentials
                       credential={_credential}
                       onClick={() => {
                         setOAuthConnected(false);
