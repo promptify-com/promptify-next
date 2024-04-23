@@ -129,6 +129,7 @@ export const {
   updateParameterSelection,
   clearParameterSelection,
   setCurrentExecutionDetails,
+  setSelectedWorkflow,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
