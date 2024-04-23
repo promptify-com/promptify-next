@@ -17,10 +17,12 @@ import useLogout from "@/hooks/useLogout";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
 import { profileLinks } from "@/common/constants";
 import type { ProfileLink } from "./SidebarMobile/Types";
+import useBrowser from "@/hooks/useBrowser";
 
 export const ProfileMenu = () => {
   const router = useRouter();
   const logout = useLogout();
+  const { isMobile } = useBrowser();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -40,38 +42,40 @@ export const ProfileMenu = () => {
 
   return (
     <Box>
-      <Box
-        ref={menuAnchorRef}
-        onClick={() => setIsMenuShown(!isMenuShown)}
-        sx={{
-          borderRadius: { xs: "24px", sm: "36px" },
-          p: "3px",
-          bgcolor: isMenuShown ? "surfaceContainerHigh" : "transparent",
-          ":hover": {
-            bgcolor: "surfaceContainerHigh",
-          },
-        }}
-      >
-        <Avatar
-          src={currentUser?.avatar ?? defaultAvatar.src}
-          alt={currentUser?.first_name ?? "Promptify"}
+      {!isMobile && (
+        <Box
+          ref={menuAnchorRef}
+          onClick={() => setIsMenuShown(!isMenuShown)}
           sx={{
-            ml: "auto",
-            cursor: "pointer",
-            bgcolor: "black",
             borderRadius: { xs: "24px", sm: "36px" },
-            width: { xs: "24px", sm: "40px" },
-            height: { xs: "24px", sm: "40px" },
-            fontStyle: "normal",
-            textAlign: "center",
-            fontWeight: 400,
-            fontSize: { sm: "30px" },
-            textTransform: "capitalize",
-            lineHeight: "20px",
-            letterSpacing: "0.14px",
+            p: "3px",
+            bgcolor: isMenuShown ? "surfaceContainerHigh" : "transparent",
+            ":hover": {
+              bgcolor: "surfaceContainerHigh",
+            },
           }}
-        />
-      </Box>
+        >
+          <Avatar
+            src={currentUser?.avatar ?? defaultAvatar.src}
+            alt={currentUser?.first_name ?? "Promptify"}
+            sx={{
+              ml: "auto",
+              cursor: "pointer",
+              bgcolor: "black",
+              borderRadius: { xs: "24px", sm: "36px" },
+              width: { xs: "24px", sm: "40px" },
+              height: { xs: "24px", sm: "40px" },
+              fontStyle: "normal",
+              textAlign: "center",
+              fontWeight: 400,
+              fontSize: { sm: "30px" },
+              textTransform: "capitalize",
+              lineHeight: "20px",
+              letterSpacing: "0.14px",
+            }}
+          />
+        </Box>
+      )}
       <Popper
         open={isMenuShown}
         anchorEl={menuAnchorRef.current}

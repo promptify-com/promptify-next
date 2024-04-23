@@ -19,7 +19,7 @@ import Footer from "@/components/Footer";
 import type { Templates } from "@/core/api/dto/templates";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
-const PAGINATION_LIMIT = 12;
+const PAGINATION_LIMIT = 8;
 
 function ProfilePage({ user = initialUser }: { user: UserProfile }) {
   const router = useRouter();
@@ -152,6 +152,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                 container
                 spacing={1}
                 px={{ xs: "16px", md: 0 }}
+                sx={{ minHeight: "400px", minWidth: "300px" }}
               >
                 {allTemplates?.map(template => (
                   <Grid

@@ -86,6 +86,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
                 alt={template.title}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                priority={true}
               />
             </CardMedia>
             <Stack

@@ -46,6 +46,8 @@ function Footer() {
         alignSelf={"stretch"}
         m={{ sm: "auto", md: 0 }}
         width={{ xs: "100%", sm: "80%", md: "100%" }}
+        minHeight={"100px"}
+        minWidth={"300px"}
       >
         <Stack
           display={"flex"}

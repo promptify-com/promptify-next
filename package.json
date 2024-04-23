@@ -69,6 +69,7 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.2",
     "@next/eslint-plugin-next": "^14.1.4",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "eslint": "^8.0.1",
@@ -83,8 +84,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "prettier": "3.0.2",
-    "source-map-explorer": "^2.5.3",
-    "@next/bundle-analyzer": "^14.2.2"
+    "source-map-explorer": "^2.5.3"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
