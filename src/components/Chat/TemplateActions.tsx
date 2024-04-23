@@ -18,9 +18,12 @@ import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { useAppDispatch } from "@/hooks/useStore";
+import useChatsManager from "./Hooks/useChatsManager";
+import { useCreateChatMutation } from "@/core/api/chats";
 import { setInitialChat, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 import useBrowser from "@/hooks/useBrowser";
-import useChatsManager from "./Hooks/useChatsManager";
+import { useRouter } from "next/router";
+import { updateChatsList } from "./helper";
 
 interface Props {
   template: Templates;
@@ -29,6 +32,7 @@ interface Props {
 }
 
 function TemplateActions({ template, onScrollToBottom, onlyNew }: Props) {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const [actionsOpened, setActionsOpened] = useState(false);

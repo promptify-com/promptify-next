@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-
 import {
   createMessage,
   extractTemplateIDs,
@@ -34,7 +33,6 @@ import useChatsManager from "./useChatsManager";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
-
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
   const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
   const { createChat } = useChatsManager();

@@ -22,10 +22,14 @@ import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteract
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
-import ChatsHistory from "@/components/sidebar/ChatsHistory/ChatsHistory";
 import Button from "@mui/material/Button";
 import { theme } from "@/theme";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
+import lazy from "next/dynamic";
+
+const ChatsHistoryLazy = lazy(() => import("@/components/sidebar/ChatsHistory/ChatsHistory"), {
+  ssr: false,
+});
 
 function Chat() {
   const router = useRouter();
@@ -71,7 +75,7 @@ function Chat() {
     if (!selectedTemplate) return;
 
     const newChat = await createChat({
-      data: { title: selectedTemplate.title ?? "Welcome", thumbnail: selectedTemplate.thumbnail },
+      data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
     });
     dispatch(setSelectedChat(newChat));
   };
@@ -291,7 +295,7 @@ function Chat() {
                   },
                 }}
               >
-                <ChatsHistory
+                <ChatsHistoryLazy
                   onClose={() => {
                     setDisplayChatHistoryOnMobile(false);
                   }}

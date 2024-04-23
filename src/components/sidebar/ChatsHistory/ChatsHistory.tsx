@@ -22,8 +22,8 @@ export default function ChatsHistory({ onClose }: Props) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { selectedChat, chats } = useAppSelector(state => state.chat);
-  const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
+  const selectedChat = useAppSelector(state => state.chat.selectedChat);
+  const { chats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -72,7 +72,7 @@ export default function ChatsHistory({ onClose }: Props) {
       router.replace(
         {
           pathname: router.pathname,
-          query: undefined,
+          query: { ch_o: router.query.ch_o },
         },
         undefined,
         { scroll: false, shallow: true },
@@ -80,10 +80,10 @@ export default function ChatsHistory({ onClose }: Props) {
     }
   }, [router, loadedChats]);
 
-  const filteredChats =
-    search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
-  const emptyChats = chats?.length === 0;
-
+  const filteredChats = useMemo(() => {
+    return search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
+  }, [search, chats]);
+  const emptyChats = filteredChats?.length === 0;
   const CardsPlaceholder = <ChatCardPlaceholder count={6} />;
 
   return (

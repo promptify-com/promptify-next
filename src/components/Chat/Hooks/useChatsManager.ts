@@ -1,17 +1,19 @@
-import type { IChatPartial } from "@/core/api/dto/chats";
-import { setChats } from "@/core/store/chatSlice";
+import type { IChat, IChatPartial } from "@/core/api/dto/chats";
 import { setToast } from "@/core/store/toastSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch } from "@/hooks/useStore";
 import {
+  chatsApi,
   useCreateChatMutation,
   useDeleteChatMutation,
   useDuplicateChatMutation,
   useUpdateChatMutation,
 } from "@/core/api/chats";
+import { CHATS_LIST_PAGINATION_LIMIT } from "@/components/Chat/Constants";
+import { useRouter } from "next/router";
 
 const useChatsManager = () => {
   const dispatch = useAppDispatch();
-  const chats = useAppSelector(state => state.chat.chats);
+  const router = useRouter();
 
   const [createChatAction] = useCreateChatMutation();
   const [updateChatAction] = useUpdateChatMutation();
@@ -24,7 +26,9 @@ const useChatsManager = () => {
         title: data?.title || "Welcome",
         thumbnail: data?.thumbnail || "",
       }).unwrap();
-      dispatch(setChats([newChat, ...chats]));
+
+      updateChatsList(newChat, "ADD");
+
       if (toast) {
         dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
       }
@@ -43,13 +47,9 @@ const useChatsManager = () => {
         id,
         data: { title: data.title, thumbnail: data.thumbnail },
       }).unwrap();
-      dispatch(
-        setChats(
-          chats.map(_chat => ({
-            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
-          })),
-        ),
-      );
+
+      updateChatsList(updatedChat, "UPDATE");
+
       if (toast) {
         dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
       }
@@ -61,10 +61,12 @@ const useChatsManager = () => {
     }
   };
 
-  const deleteChat = async (id: number) => {
+  const deleteChat = async (chat: IChat) => {
     try {
-      await deleteChatAction(id);
-      dispatch(setChats(chats.filter(_chat => _chat.id !== id)));
+      await deleteChatAction(chat.id);
+
+      updateChatsList(chat, "DELETE");
+
       dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
       return true;
     } catch (err) {
@@ -74,16 +76,42 @@ const useChatsManager = () => {
     }
   };
 
-  const duplicateChat = async (id: number) => {
+  const duplicateChat = async (chat: IChat) => {
     try {
-      const newChat = await duplicateChatAction(id).unwrap();
-      dispatch(setChats([newChat, ...chats]));
+      const newChat = await duplicateChatAction(chat.id).unwrap();
+
+      updateChatsList(newChat, "ADD");
+
       dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
       return newChat;
     } catch (err) {
       console.error("Error duplicating chat: ", err);
       dispatch(setToast({ message: "Chat not duplicated! Please try again.", severity: "error", duration: 6000 }));
     }
+  };
+
+  const updateChatsList = (chat: IChat, op: "ADD" | "UPDATE" | "DELETE") => {
+    dispatch(
+      chatsApi.util.updateQueryData(
+        "getChats",
+        { limit: CHATS_LIST_PAGINATION_LIMIT, offset: Number(router.query.ch_o || 0) },
+        chats => {
+          return {
+            count: chats.count,
+            next: chats.next,
+            previous: chats.previous,
+            results:
+              op === "ADD"
+                ? [chat, ...chats.results]
+                : op === "DELETE"
+                ? chats.results.filter(_chat => _chat.id !== chat.id)
+                : op === "UPDATE"
+                ? chats.results.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
+                : chats.results,
+          };
+        },
+      ),
+    );
   };
 
   return {

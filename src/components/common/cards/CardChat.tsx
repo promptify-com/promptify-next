@@ -48,7 +48,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   };
 
   const handleDeleteChat = async () => {
-    const deleted = await deleteChat(chat.id);
+    const deleted = await deleteChat(chat);
     if (deleted && selectedChat?.id === chat.id) {
       dispatch(setSelectedChat(undefined));
     }
@@ -56,7 +56,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
 
   const handleDuplicateChat = async () => {
     handleCloseActions();
-    const newChat = await duplicateChat(chat.id);
+    const newChat = await duplicateChat(chat);
     dispatch(setSelectedChat(newChat));
   };
 

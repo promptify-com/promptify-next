@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { getTemplateById } from "@/hooks/api/templates";
+import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
 
 interface Props {
   executions: ExecutionWithTemplate[] | undefined;
@@ -105,6 +106,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
           </Stack>
         )}
       </Grid>
+      <TemplateDocumentModal />
     </Stack>
   );
 }
