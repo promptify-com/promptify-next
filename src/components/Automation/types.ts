@@ -135,3 +135,9 @@ export interface IStoredWorkflows {
     id: string;
   };
 }
+
+export interface IAvailableCredentials {
+  id: string;
+  name: string;
+  type: string;
+}
