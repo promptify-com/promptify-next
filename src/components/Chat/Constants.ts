@@ -26,3 +26,5 @@ export const CHAT_OPTIONS_MAPPING = {
   qa: CHAT_OPTIONS[0].label,
   form: CHAT_OPTIONS[1].label,
 };
+
+export const CHATS_LIST_PAGINATION_LIMIT = 10;

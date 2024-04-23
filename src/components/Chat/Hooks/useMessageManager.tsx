@@ -7,6 +7,7 @@ import {
   prepareQuestions,
   sendMessageAPI,
   suggestionsMessageText,
+  updateChatsList,
 } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import {
@@ -19,7 +20,6 @@ import {
   setParamsValues,
   clearParameterSelection,
   setSelectedTemplate,
-  setChats,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import { useCreateChatMutation } from "@/core/api/chats";
@@ -28,17 +28,17 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
+import { useRouter } from "next/router";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
   const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
   const [createChat] = useCreateChatMutation();
 
   const {
-    chats,
     selectedTemplate,
     isSimulationStreaming,
     selectedChat,
@@ -180,7 +180,8 @@ const useMessageManager = () => {
       const newChat = await createChat({
         title: "Welcome",
       }).unwrap();
-      dispatch(setChats([newChat, ...chats]));
+
+      updateChatsList(dispatch, router, newChat, "ADD");
       dispatch(setSelectedChat(newChat));
       // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
       setTimeout(() => dispatch(setInitialChat(false)), 1000);
