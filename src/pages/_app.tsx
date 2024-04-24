@@ -83,11 +83,10 @@ function App({ Component, ...rest }: AppProps) {
               dangerouslySetInnerHTML={{
                 __html: `(function(w,d,s,l){
                   w[l]=w[l]||[];
-                  function gtag(){w[l].push(arguments);}
-                  var f=d.getElementsByTagName(s)[0],
-                  j=d.createElement(s),j.defer;
+                  var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.defer;
                   j.src='https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}';
                   f.parentNode.insertBefore(j,f);
+                  function gtag(){w[l].push(arguments);}
                   gtag('js', new Date());
                   gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {page_path: window.location.pathname});
                 })(window,document,'script','dataLayer');`,
