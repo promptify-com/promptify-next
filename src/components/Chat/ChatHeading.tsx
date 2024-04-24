@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
+import { useState } from "react";
 
 interface Props {
   title: string;
@@ -9,6 +10,8 @@ interface Props {
 }
 
 function ChatHeading({ title, thumbnail }: Props) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <Stack
       sx={{
@@ -32,10 +35,11 @@ function ChatHeading({ title, thumbnail }: Props) {
           }}
         >
           <Image
-            src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            src={!imgError ? thumbnail : require("@/assets/images/default-thumbnail.jpg")}
             alt={"Image 1"}
             priority={true}
             fill
+            onError={() => setImgError(true)}
             style={{
               objectFit: "cover",
             }}

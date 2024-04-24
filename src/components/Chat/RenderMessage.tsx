@@ -26,6 +26,7 @@ interface Props {
 function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
   const dispatch = useAppDispatch();
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const areCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
   const generatedExecutionMessage: IMessage = createMessage({
     type: "html",
     text: generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "",
@@ -91,14 +92,14 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         </Fade>
       )}
 
-      {message.type === "credsForm" && (
+      {message.type === "credsForm" && areCredentialsStored && (
         <CredentialsMessage
           message={message}
           onExecuteWorkflow={onExecuteWorkflow}
           showRunButton
         />
       )}
-      {message.type === "credentials" && (
+      {message.type === "credentials" && !areCredentialsStored && (
         <CredentialsMessage
           message={message}
           onExecuteWorkflow={onExecuteWorkflow}

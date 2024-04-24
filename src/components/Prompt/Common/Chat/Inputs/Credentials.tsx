@@ -9,7 +9,6 @@ import FormControl from "@mui/material/FormControl";
 import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { object, string } from "yup";
-import RefreshIcon from "@mui/icons-material/RefreshRounded";
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
@@ -42,6 +41,7 @@ function Credentials({ input }: Props) {
   const router = useRouter();
   const workflowId = router.query.workflowId as string;
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const selectedWorkflow = useAppSelector(state => state.chat.selectedWorkflow);
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
@@ -102,11 +102,12 @@ function Credentials({ input }: Props) {
   );
 
   const updateWorkflowAndStorage = async () => {
+    const selectedWorkflowId = selectedWorkflow?.id.toString() ?? workflowId;
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-    let workflow = storedWorkflows[workflowId]?.workflow;
+    let workflow = storedWorkflows[selectedWorkflowId]?.workflow;
 
     if (!workflow) {
-      const _workflow = await getWorkflow(storedWorkflows[workflowId]?.id).unwrap();
+      const _workflow = await getWorkflow(storedWorkflows[selectedWorkflowId]?.id).unwrap();
       workflow = JSON.parse(JSON.stringify(_workflow));
     }
 
@@ -118,13 +119,13 @@ function Credentials({ input }: Props) {
     if (areAllCredentialsStored && workflow) {
       try {
         await updateWorkflow({
-          workflowId: parseInt(workflowId),
+          workflowId: parseInt(selectedWorkflowId),
           data: workflow,
         });
 
-        storedWorkflows[workflowId] = {
-          webhookPath: storedWorkflows[workflowId].webhookPath,
-          id: storedWorkflows[workflowId]?.id,
+        storedWorkflows[selectedWorkflowId] = {
+          webhookPath: storedWorkflows[selectedWorkflowId].webhookPath,
+          id: storedWorkflows[selectedWorkflowId]?.id,
         };
 
         Storage.set("workflows", JSON.stringify(storedWorkflows));
