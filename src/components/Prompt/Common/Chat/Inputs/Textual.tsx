@@ -1,9 +1,6 @@
-import { useEffect, useRef } from "react";
-import Edit from "@mui/icons-material/Edit";
+import { useRef } from "react";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-
-import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
@@ -17,14 +14,12 @@ interface Props {
 function Textual({ input, value, onChange }: Props) {
   const type = input.type;
 
-  const { isVariantB, isAutomationPage } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const areAllCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
-  const spanRef = useRef<HTMLDivElement | null>(null);
 
-  const disableInput = Boolean(isGenerating || (!areAllCredentialsStored && isAutomationPage));
+  const disableInput = Boolean(isGenerating || !areAllCredentialsStored);
 
   return (
     <Stack

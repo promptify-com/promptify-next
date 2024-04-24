@@ -91,7 +91,14 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         </Fade>
       )}
 
-      {(message.type === "credsForm" || message.type === "credentials") && (
+      {message.type === "credsForm" && (
+        <CredentialsMessage
+          message={message}
+          onExecuteWorkflow={onExecuteWorkflow}
+          showRunButton
+        />
+      )}
+      {message.type === "credentials" && (
         <CredentialsMessage
           message={message}
           onExecuteWorkflow={onExecuteWorkflow}

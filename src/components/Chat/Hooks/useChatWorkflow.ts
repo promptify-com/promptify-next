@@ -67,11 +67,22 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
 
     setQueueSavedMessages(prevMessages => prevMessages.concat(runMessage));
 
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(runMessage));
+    setMessages(prevMessages =>
+      prevMessages.filter(msg => !["credsForm", "credentials"].includes(msg.type)).concat(runMessage),
+    );
 
     const initialWorkflowMessages: IMessage[] = [];
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
     const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
+
+    const readyMessage = createMessage({
+      type: "text",
+      noHeader: true,
+      text: `Hi, ${
+        currentUser?.first_name ?? currentUser?.username ?? "There"
+      }! Ready to work on ${selectedWorkflow?.name}.`,
+    });
+    initialWorkflowMessages.push(readyMessage);
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {
@@ -87,9 +98,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
     const formMessage = createMessage({
       type: "credsForm",
       noHeader: true,
-      text: `Hi, ${
-        currentUser?.first_name ?? currentUser?.username ?? "There"
-      }! Ready to work on ${selectedWorkflow?.name}.`,
+      text: " ",
     });
     initialWorkflowMessages.push(formMessage);
 

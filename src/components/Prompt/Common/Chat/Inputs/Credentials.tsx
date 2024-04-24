@@ -103,10 +103,10 @@ function Credentials({ input }: Props) {
 
   const updateWorkflowAndStorage = async () => {
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-    let workflow = storedWorkflows[workflowId].workflow;
+    let workflow = storedWorkflows[workflowId]?.workflow;
 
     if (!workflow) {
-      const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
+      const _workflow = await getWorkflow(storedWorkflows[workflowId]?.id).unwrap();
       workflow = JSON.parse(JSON.stringify(_workflow));
     }
 
@@ -124,7 +124,7 @@ function Credentials({ input }: Props) {
 
         storedWorkflows[workflowId] = {
           webhookPath: storedWorkflows[workflowId].webhookPath,
-          id: storedWorkflows[workflowId].id,
+          id: storedWorkflows[workflowId]?.id,
         };
 
         Storage.set("workflows", JSON.stringify(storedWorkflows));
