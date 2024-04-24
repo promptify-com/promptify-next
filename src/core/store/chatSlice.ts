@@ -16,7 +16,6 @@ export interface ExecutionsProps {
   credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
   tmpMessages?: IMessage[];
-  MessageSenderValue: string;
   selectedTemplate?: Templates;
   selectedChatOption?: ChatOption | null;
   selectedChat?: IChat;
@@ -35,7 +34,6 @@ const initialState: ExecutionsProps = {
   credentialsInput: [],
   areCredentialsStored: false,
   tmpMessages: [],
-  MessageSenderValue: "",
   selectedTemplate: undefined,
   selectedChat: undefined,
   chatMode: "automation",
@@ -76,9 +74,6 @@ export const chatSlice = createSlice({
     setTmpMessages: (state, action: PayloadAction<IMessage[]>) => {
       state.tmpMessages = action.payload;
     },
-    setMessageSenderValue: (state, action: PayloadAction<string>) => {
-      state.MessageSenderValue = action.payload;
-    },
     setSelectedTemplate: (state, action: PayloadAction<Templates | undefined>) => {
       state.selectedTemplate = action.payload;
     },
@@ -116,7 +111,6 @@ export const {
   clearChatStates,
   setAreCredentialsStored,
   setTmpMessages,
-  setMessageSenderValue,
   setSelectedTemplate,
   setSelectedChat,
   setSelectedChatOption,
