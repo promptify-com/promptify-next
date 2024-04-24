@@ -1,8 +1,8 @@
-import { useRef, Fragment } from "react";
+import { useRef, Fragment, useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/common/AccordionMessage";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
@@ -15,6 +15,17 @@ import AccordionContentAutomation from "@/components/common/AccordionMessage/Acc
 import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { IStoredWorkflows } from "./types";
+import Storage from "@/common/storage";
+import { useRouter } from "next/router";
+import { useDeleteCredentialMutation, workflowsApi } from "@/core/api/workflows";
+import BaseButton from "../base/BaseButton";
+import Link from "next/link";
+import { useTheme } from "@mui/material/styles";
+import RefreshIcon from "@mui/icons-material/RefreshRounded";
+import useCredentials from "./Hooks/useCredentials";
+import { setToast } from "@/core/store/toastSlice";
+import { Typography } from "@mui/material";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -24,28 +35,76 @@ interface Props {
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
+  processData: (skipInitialMessages?: boolean) => Promise<void>;
 }
 
-export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating }: Props) => {
+interface IAvailableCredentials {
+  id: string;
+  name: string;
+  type: string;
+}
+
+export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
+  const router = useRouter();
+  const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const inputs = useAppSelector(state => state.chat.inputs);
-
+  const { inputs, areCredentialsStored } = useAppSelector(state => state.chat);
+  const workflowId = router.query?.workflowId as string;
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
+  const [deleteCredential] = useDeleteCredentialMutation();
+  const { updateWorkflowAfterCredentialsDeletion, removeCredential } = useCredentials();
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
   });
 
   const hasInputs = inputs.length > 0;
-  const allowNoInputsRun = !hasInputs && currentUser?.id && !isGenerating && !isValidating;
+  const allowNoInputsRun = areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isValidating;
 
-  const showAccordionMessage = (message: IMessage): boolean => {
+  function showAccordionMessage(message: IMessage): boolean {
     const type = message.type;
     return Boolean(type === "credentials" || (type === "form" && hasInputs));
-  };
+  }
+
+  useEffect(() => {
+    async function updateRefreshButtons() {
+      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+
+      if (workflowId && storedWorkflows[workflowId].id) {
+        const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
+        const clonedWorkflow = structuredClone(_workflow);
+        const listedCredentials: IAvailableCredentials[] = [];
+
+        clonedWorkflow.nodes.forEach(node => {
+          if (
+            !node.credentials ||
+            Object.keys(node.credentials).length === 0 ||
+            node.type === "n8n-nodes-promptify.promptify" ||
+            node.type === "n8n-nodes-base.openAi"
+          ) {
+            return;
+          }
+
+          for (const credentialsType in node.credentials) {
+            listedCredentials.push({
+              id: node.credentials[credentialsType].id,
+              name: node.credentials[credentialsType].name?.replace("Credentials", "")?.trim(),
+              type: credentialsType,
+            });
+          }
+        });
+
+        setAvailableCredentials(listedCredentials);
+      }
+    }
+
+    updateRefreshButtons();
+  }, [areCredentialsStored]);
 
   return (
     <Stack
@@ -121,6 +180,55 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
               </Fragment>
             ))
           )}
+          {availableCredentials.length > 0 &&
+            availableCredentials.map((_credential, idx) => (
+              <Stack
+                key={`${_credential.id}_${idx}`}
+                sx={{ flexDirection: "row", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    color: theme.palette.common.black,
+                  }}
+                >
+                  {_credential.name}:{" "}
+                </Typography>
+                <BaseButton
+                  color="custom"
+                  variant="text"
+                  sx={{
+                    border: "1px solid",
+                    borderRadius: "8px",
+                    borderColor: "secondary.main",
+                    color: "secondary.main",
+                    p: "3px 12px",
+                    ml: "5px",
+                    fontSize: { xs: 11, md: 14 },
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                  disabled
+                >
+                  Connected
+                </BaseButton>
+                <Link
+                  href="#"
+                  style={{ textDecoration: "none", color: theme.palette.common.black, height: "24px" }}
+                  onClick={async e => {
+                    e.preventDefault();
+
+                    await deleteCredential(_credential.id);
+                    await updateWorkflowAfterCredentialsDeletion(_credential.type);
+                    dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
+                    removeCredential(_credential.id);
+                    processData(true);
+                  }}
+                >
+                  <RefreshIcon />
+                </Link>
+              </Stack>
+            ))}
           {allowNoInputsRun && (
             <RunButton
               title="Run workflow"

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
-import { setChatMode, setChats, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
@@ -20,11 +20,16 @@ import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteract
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
-import ChatsHistory from "@/components/sidebar/ChatsHistory/ChatsHistory";
 import Button from "@mui/material/Button";
 import { theme } from "@/theme";
 import Box from "@mui/material/Box";
 import Menu from "@mui/icons-material/Menu";
+import { updateChatsList } from "@/components/Chat/helper";
+import lazy from "next/dynamic";
+
+const ChatsHistoryLazy = lazy(() => import("@/components/sidebar/ChatsHistory/ChatsHistory"), {
+  ssr: false,
+});
 
 function Chat() {
   const router = useRouter();
@@ -39,7 +44,7 @@ function Chat() {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const { chats, selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
+  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
     state => state.chat,
   );
   const [createChat] = useCreateChatMutation();
@@ -72,8 +77,9 @@ function Chat() {
         title: selectedTemplate.title ?? "Welcome",
         thumbnail: selectedTemplate.thumbnail,
       }).unwrap();
+
+      updateChatsList(dispatch, router, newChat, "ADD");
       dispatch(setSelectedChat(newChat));
-      dispatch(setChats([newChat, ...chats]));
     } catch (err) {
       console.error("Error creating a new chat: ", err);
     }
@@ -88,13 +94,8 @@ function Chat() {
         id: selectedChat.id,
         data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
       }).unwrap();
-      dispatch(
-        setChats(
-          chats.map(_chat => ({
-            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
-          })),
-        ),
-      );
+
+      updateChatsList(dispatch, router, updatedChat, "UPDATE");
     } catch (err) {
       console.error("Error updating chat: ", err);
     }
@@ -308,7 +309,7 @@ function Chat() {
                   },
                 }}
               >
-                <ChatsHistory
+                <ChatsHistoryLazy
                   onClose={() => {
                     setDisplayChatHistoryOnMobile(false);
                   }}

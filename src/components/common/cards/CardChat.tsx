@@ -19,9 +19,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
-import { setChats, setSelectedChat } from "@/core/store/chatSlice";
+import { setSelectedChat } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import useBrowser from "@/hooks/useBrowser";
+import { updateChatsList } from "@/components/Chat/helper";
+import { useRouter } from "next/router";
 
 interface Props {
   chat: IChat;
@@ -31,6 +33,7 @@ interface Props {
 
 export const ChatCard = ({ chat, active, onClick }: Props) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { isMobile } = useBrowser();
   const [actionsMenuAnchor, setActionsMenuAnchor] = useState<null | HTMLElement>(null);
   const handleOpenActions = (e: React.MouseEvent<HTMLElement>) => setActionsMenuAnchor(e.currentTarget);
@@ -38,7 +41,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
-  const { selectedChat, chats } = useAppSelector(state => state.chat);
+  const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [deleteChat] = useDeleteChatMutation();
   const [updateChat] = useUpdateChatMutation();
   const [duplicateChat] = useDuplicateChatMutation();
@@ -48,14 +51,9 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
 
     try {
       const updatedChat = await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } }).unwrap();
+
       setRenameAllow(false);
-      dispatch(
-        setChats(
-          chats.map(_chat => ({
-            ...(_chat.id === updatedChat.id ? updatedChat : _chat),
-          })),
-        ),
-      );
+      updateChatsList(dispatch, router, updatedChat, "UPDATE");
       dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
@@ -68,10 +66,13 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
       if (selectedChat?.id === chat.id) {
         dispatch(setSelectedChat(undefined));
       }
-      dispatch(setChats(chats.filter(_chat => _chat.id !== chat.id)));
+
+      updateChatsList(dispatch, router, chat, "DELETE");
       dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    } finally {
+      setConfirmDelete(false);
     }
   };
 
@@ -79,7 +80,8 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
     handleCloseActions();
     try {
       const newChat = await duplicateChat(chat.id).unwrap();
-      dispatch(setChats([newChat, ...chats]));
+
+      updateChatsList(dispatch, router, newChat, "ADD");
       dispatch(setSelectedChat(newChat));
       dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
     } catch (_) {

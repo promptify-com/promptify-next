@@ -67,7 +67,7 @@ function AdsBox() {
         </Button>
       </Stack>
       <Image
-        src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.png")}
+        src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.webp")}
         alt={"Promptify"}
         fill
         priority={false}

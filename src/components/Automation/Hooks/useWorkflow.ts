@@ -36,6 +36,7 @@ const useWorkflow = (workflow: IWorkflow) => {
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
 
     if (selectedWorkflowId.toString() in storedWorkflows && storedWorkflows[selectedWorkflowId.toString()].id) {
+      webhookPathRef.current = storedWorkflows[selectedWorkflowId].webhookPath;
       return;
     }
 

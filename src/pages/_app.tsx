@@ -17,7 +17,6 @@ import Storage from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
-import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
 import type { User } from "@/core/api/dto/user";
 
 function App({ Component, ...rest }: AppProps) {
@@ -80,24 +79,21 @@ function App({ Component, ...rest }: AppProps) {
           <>
             <Script
               strategy="lazyOnload"
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
               defer
+              dangerouslySetInnerHTML={{
+                __html: `(function(w,d,s,l){
+                  w[l]=w[l]||[];
+                  var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.defer;
+                  j.src='https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}';
+                  f.parentNode.insertBefore(j,f);
+                  function gtag(){w[l].push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {page_path: window.location.pathname});
+                })(window,document,'script','dataLayer');`,
+              }}
             />
             <Script
               strategy="lazyOnload"
-              defer
-            >
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
-                page_path: window.location.pathname,
-                });
-            `}
-            </Script>
-            <Script
-              strategy="afterInteractive"
               defer
               dangerouslySetInnerHTML={{
                 __html: `
@@ -105,7 +101,7 @@ function App({ Component, ...rest }: AppProps) {
                 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
                 h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
                 a=o.getElementsByTagName('head')[0];
-                r=o.createElement('script');r.async=1;
+                r=o.createElement('script');r.defer;
                 r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
                 a.appendChild(r);
               })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
@@ -122,7 +118,6 @@ function App({ Component, ...rest }: AppProps) {
         />
         <Toaster />
         <Component {...pageProps} />
-        <TemplateDocumentModal />
       </ThemeProvider>
     </Provider>
   );

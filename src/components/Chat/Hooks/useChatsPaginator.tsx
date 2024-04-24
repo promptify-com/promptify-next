@@ -1,35 +1,35 @@
 import { useEffect, useState } from "react";
 import { useGetChatsQuery } from "@/core/api/chats";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setChats } from "@/core/store/chatSlice";
-
-const PAGINATION_LIMIT = 10;
+import { useRouter } from "next/router";
+import { CHATS_LIST_PAGINATION_LIMIT } from "@/components/Chat/Constants";
 
 export function useChatsPaginator() {
-  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [offset, setOffset] = useState(0);
-  const chats = useAppSelector(state => state.chat.chats);
 
   const {
     data: fetchedChats,
     isLoading: isChatsLoading,
     isFetching: isChatsFetching,
-  } = useGetChatsQuery({ limit: PAGINATION_LIMIT, offset });
+  } = useGetChatsQuery({ limit: CHATS_LIST_PAGINATION_LIMIT, offset });
 
   useEffect(() => {
-    if (!fetchedChats?.results?.length) {
-      return;
-    }
-    dispatch(setChats(chats.concat(fetchedChats?.results)));
-
-    return () => {
-      dispatch(setChats([]));
-    };
-  }, [fetchedChats?.results]);
+    router.replace({ pathname: router.pathname, query: { ...router.query, ch_o: 0 } }, undefined, {
+      shallow: true,
+    });
+  }, []);
 
   const handleNextPage = () => {
     if (!!fetchedChats?.next) {
-      setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
+      setOffset(prevOffset => {
+        const nextOffset = prevOffset + CHATS_LIST_PAGINATION_LIMIT;
+
+        router.replace({ pathname: router.pathname, query: { ...router.query, ch_o: nextOffset } }, undefined, {
+          shallow: true,
+        });
+
+        return nextOffset;
+      });
     }
   };
 
