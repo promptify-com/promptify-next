@@ -11,9 +11,10 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 interface Props {
   message: IMessage;
   onExecuteWorkflow?: () => void;
+  showRunButton?: boolean;
 }
 
-function CredentialsMessage({ message, onExecuteWorkflow }: Props) {
+function CredentialsMessage({ message, onExecuteWorkflow, showRunButton }: Props) {
   const { inputs, answers } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -43,7 +44,8 @@ function CredentialsMessage({ message, onExecuteWorkflow }: Props) {
       >
         {text}
       </Typography>
-      {!hasInputs && text !== "" ? (
+
+      {showRunButton && !hasInputs ? (
         <RunButton
           title={`Run workflow`}
           onClick={() => onExecuteWorkflow?.()}
@@ -59,6 +61,7 @@ function CredentialsMessage({ message, onExecuteWorkflow }: Props) {
               mt={"-10px"}
               bgcolor={"surface.1"}
               borderRadius={"8px"}
+              overflow={"hidden"}
               position={"relative"}
             >
               {(type === "credsForm" || type === "credentials") && <Form messageType={type} />}

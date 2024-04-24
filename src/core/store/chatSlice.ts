@@ -25,6 +25,7 @@ export interface ExecutionsProps {
   initialChat: boolean;
   parameterSelected: string | null;
   currentExecutionDetails: { id: number | null; isFavorite: boolean };
+  chats: IChat[];
 }
 
 const initialState: ExecutionsProps = {
@@ -44,6 +45,8 @@ const initialState: ExecutionsProps = {
   parameterSelected: null,
   currentExecutionDetails: { id: null, isFavorite: false },
   selectedChatOption: null,
+  selectedWorkflow: undefined,
+  chats: [],
 };
 
 export const chatSlice = createSlice({
@@ -107,6 +110,9 @@ export const chatSlice = createSlice({
     setCurrentExecutionDetails: (state, action) => {
       state.currentExecutionDetails = action.payload;
     },
+    setChats: (state, action) => {
+      state.chats = action.payload;
+    },
   },
 });
 
@@ -130,6 +136,7 @@ export const {
   clearParameterSelection,
   setCurrentExecutionDetails,
   setSelectedWorkflow,
+  setChats,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

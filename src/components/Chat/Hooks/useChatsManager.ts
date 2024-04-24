@@ -1,19 +1,17 @@
 import type { IChat, IChatPartial } from "@/core/api/dto/chats";
 import { setToast } from "@/core/store/toastSlice";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import {
-  chatsApi,
   useCreateChatMutation,
   useDeleteChatMutation,
   useDuplicateChatMutation,
   useUpdateChatMutation,
 } from "@/core/api/chats";
-import { CHATS_LIST_PAGINATION_LIMIT } from "@/components/Chat/Constants";
-import { useRouter } from "next/router";
+import { setChats } from "@/core/store/chatSlice";
 
 const useChatsManager = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
+  const chats = useAppSelector(state => state.chat.chats);
 
   const [createChatAction] = useCreateChatMutation();
   const [updateChatAction] = useUpdateChatMutation();
@@ -92,24 +90,14 @@ const useChatsManager = () => {
 
   const updateChatsList = (chat: IChat, op: "ADD" | "UPDATE" | "DELETE") => {
     dispatch(
-      chatsApi.util.updateQueryData(
-        "getChats",
-        { limit: CHATS_LIST_PAGINATION_LIMIT, offset: Number(router.query.ch_o || 0) },
-        chats => {
-          return {
-            count: chats.count,
-            next: chats.next,
-            previous: chats.previous,
-            results:
-              op === "ADD"
-                ? [chat, ...chats.results]
-                : op === "DELETE"
-                ? chats.results.filter(_chat => _chat.id !== chat.id)
-                : op === "UPDATE"
-                ? chats.results.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
-                : chats.results,
-          };
-        },
+      setChats(
+        op === "ADD"
+          ? [chat, ...chats]
+          : op === "DELETE"
+          ? chats.filter(_chat => _chat.id !== chat.id)
+          : op === "UPDATE"
+          ? chats.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
+          : chats,
       ),
     );
   };

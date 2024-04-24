@@ -9,7 +9,6 @@ import FormControl from "@mui/material/FormControl";
 import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { object, string } from "yup";
-import RefreshIcon from "@mui/icons-material/RefreshRounded";
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
@@ -26,9 +25,8 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import type { ICredential, ICredentialProperty, IStoredWorkflows } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import Link from "next/link";
 import Stack from "@mui/material/Stack";
-import { useTheme } from "@mui/system";
+import RefreshCredentials from "@/components/RefreshCredentials";
 
 interface Props {
   input: IPromptInput;
@@ -43,18 +41,12 @@ function Credentials({ input }: Props) {
   const router = useRouter();
   const workflowId = router.query.workflowId as string;
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const theme = useTheme();
+  const selectedWorkflow = useAppSelector(state => state.chat.selectedWorkflow);
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
-  const {
-    credentialsInput,
-    updateCredentials,
-    checkAllCredentialsStored,
-    checkCredentialInserted,
-    removeCredential,
-    updateWorkflowAfterCredentialsDeletion,
-  } = useCredentials();
+  const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
+    useCredentials();
   const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
@@ -110,11 +102,12 @@ function Credentials({ input }: Props) {
   );
 
   const updateWorkflowAndStorage = async () => {
+    const selectedWorkflowId = selectedWorkflow?.id.toString() ?? workflowId;
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-    let workflow = storedWorkflows[workflowId].workflow;
+    let workflow = storedWorkflows[selectedWorkflowId]?.workflow;
 
     if (!workflow) {
-      const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
+      const _workflow = await getWorkflow(storedWorkflows[selectedWorkflowId]?.id).unwrap();
       workflow = JSON.parse(JSON.stringify(_workflow));
     }
 
@@ -126,13 +119,13 @@ function Credentials({ input }: Props) {
     if (areAllCredentialsStored && workflow) {
       try {
         await updateWorkflow({
-          workflowId: parseInt(workflowId),
+          workflowId: parseInt(selectedWorkflowId),
           data: workflow,
         });
 
-        storedWorkflows[workflowId] = {
-          webhookPath: storedWorkflows[workflowId].webhookPath,
-          id: storedWorkflows[workflowId].id,
+        storedWorkflows[selectedWorkflowId] = {
+          webhookPath: storedWorkflows[selectedWorkflowId].webhookPath,
+          id: storedWorkflows[selectedWorkflowId]?.id,
         };
 
         Storage.set("workflows", JSON.stringify(storedWorkflows));
@@ -268,58 +261,51 @@ function Credentials({ input }: Props) {
   };
 
   return (
-    <>
+    <Stack py={"5px"}>
       {currentUser?.id ? (
         isOauthCredential ? (
-          <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-            <BaseButton
-              onClick={handleOauthConnect}
-              color="custom"
-              variant="text"
-              sx={{
-                border: "1px solid",
-                borderRadius: "8px",
-                borderColor: "secondary.main",
-                color: "secondary.main",
-                p: "3px 12px",
-                fontSize: { xs: 11, md: 14 },
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
-              }}
-              disabled={oAuthConnected}
-            >
-              {oAuthConnected ? "Connected" : "Connect"}
-            </BaseButton>{" "}
-            {oAuthConnected && (
-              <Link
-                href="#"
-                style={{ textDecoration: "none", color: theme.palette.common.black, height: "24px" }}
-                onClick={async e => {
-                  e.preventDefault();
-
-                  if (!credential) {
-                    return;
-                  }
-
+          <>
+            {oAuthConnected ? (
+              <>
+                {() => {
                   const _credentials = (Storage.get("credentials") || []) as ICredential[];
-                  const _credential = _credentials.find(cred => cred.type === credential.name);
-
+                  const _credential = _credentials.find(cred => cred.type === credential?.name);
                   if (!_credential) {
-                    return;
+                    return null;
                   }
-
-                  await deleteCredential(_credential.id);
-                  await updateWorkflowAfterCredentialsDeletion(_credential.type);
-                  dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
-                  removeCredential(_credential.id);
-                  setOAuthConnected(false);
+                  return (
+                    <RefreshCredentials
+                      credential={_credential}
+                      onClick={() => {
+                        setOAuthConnected(false);
+                      }}
+                    />
+                  );
                 }}
-              >
-                <RefreshIcon />
-              </Link>
+              </>
+            ) : (
+              <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
+                <BaseButton
+                  onClick={handleOauthConnect}
+                  color="custom"
+                  variant="text"
+                  sx={{
+                    border: "1px solid",
+                    borderRadius: "8px",
+                    borderColor: "secondary.main",
+                    color: "secondary.main",
+                    p: "3px 12px",
+                    fontSize: { xs: 11, md: 14 },
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  {"Connect"}
+                </BaseButton>
+              </Stack>
             )}
-          </Stack>
+          </>
         ) : (
           <BaseButton
             size="small"
@@ -413,7 +399,7 @@ function Credentials({ input }: Props) {
           </DialogContent>
         </Dialog>
       )}
-    </>
+    </Stack>
   );
 }
 

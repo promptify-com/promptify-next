@@ -1,8 +1,7 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { N8N_RESPONSE_REGEX, oAuthTypeMapping } from "@/components/Automation/helpers";
-import { setAreCredentialsStored, setChatMode, setInputs } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { createMessage } from "@/components/Chat/helper";
@@ -65,9 +64,19 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   function prepareWorkflowMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const runMessage = createMessage({ type: "text", fromUser: true, text: `Run "${selectedWorkflow?.name}"` });
 
-    setQueueSavedMessages(prevMessages => prevMessages.concat(runMessage));
+    const readyMessage = createMessage({
+      type: "html",
+      noHeader: true,
+      text: `Hi, ${
+        currentUser?.first_name ?? currentUser?.username ?? "There"
+      }! Ready to work on ${selectedWorkflow?.name}.`,
+    });
 
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "credsForm").concat(runMessage));
+    setQueueSavedMessages(prevMessages => prevMessages.concat([runMessage, readyMessage]));
+
+    setMessages(prevMessages =>
+      prevMessages.filter(msg => !["credsForm", "credentials"].includes(msg.type)).concat([runMessage, readyMessage]),
+    );
 
     const initialWorkflowMessages: IMessage[] = [];
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
@@ -87,9 +96,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
     const formMessage = createMessage({
       type: "credsForm",
       noHeader: true,
-      text: `Hi, ${
-        currentUser?.first_name ?? currentUser?.username ?? "There"
-      }! Ready to work on ${selectedWorkflow?.name}.`,
+      text: " ",
     });
     initialWorkflowMessages.push(formMessage);
 

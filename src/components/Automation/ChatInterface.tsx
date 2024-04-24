@@ -2,7 +2,7 @@ import { useRef, Fragment, useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/common/AccordionMessage";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
@@ -15,17 +15,12 @@ import AccordionContentAutomation from "@/components/common/AccordionMessage/Acc
 import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import { IStoredWorkflows } from "./types";
+import { IAvailableCredentials, IStoredWorkflows } from "./types";
 import Storage from "@/common/storage";
 import { useRouter } from "next/router";
-import { useDeleteCredentialMutation, workflowsApi } from "@/core/api/workflows";
-import BaseButton from "../base/BaseButton";
-import Link from "next/link";
-import { useTheme } from "@mui/material/styles";
-import RefreshIcon from "@mui/icons-material/RefreshRounded";
-import useCredentials from "./Hooks/useCredentials";
-import { setToast } from "@/core/store/toastSlice";
-import { Typography } from "@mui/material";
+import { workflowsApi } from "@/core/api/workflows";
+
+import RefreshCredentials from "@/components/RefreshCredentials";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -38,16 +33,8 @@ interface Props {
   processData: (skipInitialMessages?: boolean) => Promise<void>;
 }
 
-interface IAvailableCredentials {
-  id: string;
-  name: string;
-  type: string;
-}
-
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
   const router = useRouter();
-  const theme = useTheme();
-  const dispatch = useAppDispatch();
   const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution } = useAppSelector(state => state.executions);
@@ -56,8 +43,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const workflowId = router.query?.workflowId as string;
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
-  const [deleteCredential] = useDeleteCredentialMutation();
-  const { updateWorkflowAfterCredentialsDeletion, removeCredential } = useCredentials();
+
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
@@ -181,52 +167,14 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
           )}
           {availableCredentials.length > 0 &&
             availableCredentials.map((_credential, idx) => (
-              <Stack
-                key={`${_credential.id}_${idx}`}
-                sx={{ flexDirection: "row", alignItems: "center" }}
-              >
-                <Typography
-                  sx={{
-                    color: theme.palette.common.black,
-                  }}
-                >
-                  {_credential.name}:{" "}
-                </Typography>
-                <BaseButton
-                  color="custom"
-                  variant="text"
-                  sx={{
-                    border: "1px solid",
-                    borderRadius: "8px",
-                    borderColor: "secondary.main",
-                    color: "secondary.main",
-                    p: "3px 12px",
-                    ml: "5px",
-                    fontSize: { xs: 11, md: 14 },
-                    ":hover": {
-                      bgcolor: "action.hover",
-                    },
-                  }}
-                  disabled
-                >
-                  Connected
-                </BaseButton>
-                <Link
-                  href="#"
-                  style={{ textDecoration: "none", color: theme.palette.common.black, height: "24px" }}
-                  onClick={async e => {
-                    e.preventDefault();
-
-                    await deleteCredential(_credential.id);
-                    await updateWorkflowAfterCredentialsDeletion(_credential.type);
-                    dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
-                    removeCredential(_credential.id);
-                    processData(true);
-                  }}
-                >
-                  <RefreshIcon />
-                </Link>
-              </Stack>
+              <RefreshCredentials
+                key={idx}
+                credential={_credential}
+                showLabel
+                onClick={() => {
+                  processData(true);
+                }}
+              />
             ))}
           {allowNoInputsRun && (
             <RunButton
