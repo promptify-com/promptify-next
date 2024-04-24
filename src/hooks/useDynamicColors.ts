@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { type Palette, createTheme, useTheme } from "@mui/material/styles";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -54,7 +54,7 @@ export const useDynamicColors = (image: string | undefined) => {
       });
   };
 
-  const dynamicTheme = createTheme({ ...theme, palette });
+  const dynamicTheme = useMemo(() => createTheme({ ...theme, palette }), [theme, palette]);
 
   return dynamicTheme;
 };
