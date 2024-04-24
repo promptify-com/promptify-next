@@ -47,6 +47,10 @@ function Seo({ title, description, image, meta_keywords }: Props) {
         rel="preconnect"
         href="https://promptify.s3.amazonaws.com"
       />
+      <link
+        rel="preconnect"
+        href="https://static.hotjar.com"
+      />
     </Head>
   );
 }
