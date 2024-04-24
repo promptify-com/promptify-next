@@ -67,7 +67,7 @@ function Chat() {
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template: selectedTemplate,
   });
-  const dynamicTheme = useDynamicColors(selectedTemplate, selectedChat?.thumbnail);
+  const dynamicTheme = useDynamicColors(selectedChat?.thumbnail);
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
   const handleCreateChat = async () => {
     if (!selectedTemplate) return;

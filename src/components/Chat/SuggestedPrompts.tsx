@@ -1,14 +1,20 @@
 import Stack from "@mui/material/Stack";
 import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import Typography from "@mui/material/Typography";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setMessageSenderValue } from "@/core/store/chatSlice";
 import { fadeIn } from "@/theme/animations";
+import { useRouter } from "next/router";
 
 function SuggestedPrompts() {
-  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const handleClickPrompt = (prompt: string) => {
+    router.replace({ pathname: router.pathname, query: { ...router.query, prompt } }, undefined, {
+      shallow: true,
+    });
+  };
+
   const prompts = [
-    "Explain me how Promptify works",
+    "Explain to me how Promptify works",
     "What is the difference between LLM models?",
     "How to plan my exercise schedule?",
   ];
@@ -43,7 +49,7 @@ function SuggestedPrompts() {
               bgcolor: "action.hover",
             },
           }}
-          onClick={() => dispatch(setMessageSenderValue(prompt))}
+          onClick={() => handleClickPrompt(prompt)}
         >
           <EmojiObjectsOutlinedIcon />
           <Typography
