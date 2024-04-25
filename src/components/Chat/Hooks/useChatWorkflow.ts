@@ -127,7 +127,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
               processQueuedMessages(queueSavedMessages.concat(responseMessage), selectedChat.id);
               setQueueSavedMessages([]);
             }
-          } else if (!match[2] || match[2] === "undefined") {
+          } else if (!match[2] || isNaN(+match[2])) {
             failedExecutionHandler();
           } else {
             const executionMessage = createMessage({
@@ -149,6 +149,14 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   const failedExecutionHandler = () => {
     dispatch(setToast(EXECUTE_ERROR_TOAST));
     dispatch(setGeneratedExecution(null));
+    const formMessage = createMessage({
+      type: "credsForm",
+      noHeader: true,
+      text: "",
+    });
+    setMessages(prevMessages =>
+      prevMessages.filter(msg => !["workflowExecution", "credsForm"].includes(msg.type)).concat(formMessage),
+    );
   };
 
   useEffect(() => {
@@ -160,8 +168,15 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
         type: "html",
         text: generatedContent,
       });
+      const formMessage = createMessage({
+        type: "credsForm",
+        noHeader: true,
+        text: "",
+      });
       setMessages(prevMessages =>
-        prevMessages.filter(msg => !["credsForm", "workflowExecution"].includes(msg.type)).concat(executionMessage),
+        prevMessages
+          .filter(msg => !["credsForm", "workflowExecution"].includes(msg.type))
+          .concat([executionMessage, formMessage]),
       );
       processQueuedMessages(queueSavedMessages.concat(executionMessage), selectedChat.id, executionId);
       setQueueSavedMessages([]);
