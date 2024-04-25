@@ -127,7 +127,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
               processQueuedMessages(queueSavedMessages.concat(responseMessage), selectedChat.id);
               setQueueSavedMessages([]);
             }
-          } else if (!match[2] || match[2] === "undefined" || isNaN(+match[2])) {
+          } else if (!match[2] || isNaN(+match[2])) {
             failedExecutionHandler();
           } else {
             const executionMessage = createMessage({
