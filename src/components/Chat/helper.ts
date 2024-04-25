@@ -1,5 +1,5 @@
 import { n8nClient as ApiClient } from "@/common/axios";
-import { getTemplateById } from "@/hooks/api/templates";
+import { getTemplateById, getWorkflowById } from "@/hooks/api/templates";
 import { randomId } from "@/common/helpers";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
@@ -10,6 +10,7 @@ import { CHATS_LIST_PAGINATION_LIMIT } from "./Constants";
 import type { NextRouter } from "next/router";
 import type { IChat } from "@/core/api/dto/chats";
 import type { AppDispatcher } from "@/hooks/useStore";
+import type { IWorkflow } from "@/components/Automation/types";
 
 interface SendMessageResponse {
   output?: string;
@@ -39,15 +40,29 @@ export function extractTemplateIDs(message: string) {
   const mergedIds = new Set([...tplIds, ...tplIds2]);
 
   return Array.from(mergedIds)?.map(n => +n) ?? [450, 451, 127, 137, 138];
-  // return [450, 451, 127, 137, 138, 119];
 }
 
-export async function fetchData(ids: number[]) {
+export function extractWorkflowIDs(message: string) {
+  return (
+    message
+      .match(/(workflow([\_\s*]*?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)/gi)
+      ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
+      .filter(Boolean) ?? []
+  );
+}
+
+export function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {
+  if (!data.length) return false;
+
+  return "favorites_count" in data[0];
+}
+
+export async function fetchData(ids: number[], isTemplate: boolean) {
   if (!ids.length) {
     return [];
   }
 
-  const data = await Promise.allSettled(ids.map(id => getTemplateById(id)));
+  const data = await Promise.allSettled(ids.map(id => (isTemplate ? getTemplateById(id) : getWorkflowById(id))));
 
   const filteredData = data
     .map(_data => {
@@ -55,7 +70,7 @@ export async function fetchData(ids: number[]) {
         return _data.value;
       }
     })
-    .filter(_data => _data?.id) as Templates[];
+    .filter(_data => _data?.id) as IWorkflow[] | Templates[];
 
   return filteredData;
 }
@@ -91,9 +106,9 @@ export const createMessage = ({
   questionInputName,
   text,
   executionId,
-  templates = [],
   template,
   isLatestExecution,
+  data,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -106,9 +121,9 @@ export const createMessage = ({
   questionIndex,
   questionInputName,
   executionId,
-  templates,
   template,
   isLatestExecution,
+  data,
 });
 
 export const suggestionsMessageText = (content?: string) => {

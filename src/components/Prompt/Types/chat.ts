@@ -1,6 +1,7 @@
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
 import { IParameters } from "@/common/types";
+import { IWorkflow } from "@/components/Automation/types";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
@@ -12,11 +13,14 @@ export type MessageType =
   | "spark"
   | "html"
   | "credentials"
-  | "suggestion"
+  | "credsForm"
+  | "templates_suggestion"
+  | "workflows_suggestion"
   | "template"
   | "questionInput"
   | "questionParam"
-  | "readyMessage";
+  | "readyMessage"
+  | "workflowExecution";
 
 export interface IMessage {
   id: number;
@@ -35,8 +39,8 @@ export interface IMessage {
   isEditable?: boolean;
   questionIndex?: number;
   questionInputName?: string;
-  templates?: Templates[];
   executionId?: number;
+  data?: Templates[] | IWorkflow[];
 }
 
 export interface IAnswer {
@@ -73,8 +77,8 @@ export interface CreateMessageProps {
   isRequired?: boolean;
   questionIndex?: number;
   questionInputName?: string;
-  templates?: Templates[];
   executionId?: number;
   template?: Templates;
   isLatestExecution?: boolean;
+  data?: Templates[] | IWorkflow[];
 }

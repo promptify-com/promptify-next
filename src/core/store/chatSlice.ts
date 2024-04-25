@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { ChatMode, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import type { ICredentialInput } from "@/components/Automation/types";
+import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IChat, ChatOption } from "@/core/api/dto/chats";
 
@@ -16,14 +16,15 @@ export interface ExecutionsProps {
   credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
   tmpMessages?: IMessage[];
-  MessageSenderValue: string;
   selectedTemplate?: Templates;
   selectedChatOption?: ChatOption | null;
   selectedChat?: IChat;
+  selectedWorkflow?: IWorkflow;
   chatMode: ChatMode;
   initialChat: boolean;
   parameterSelected: string | null;
   currentExecutionDetails: { id: number | null; isFavorite: boolean };
+  chats: IChat[];
 }
 
 const initialState: ExecutionsProps = {
@@ -35,7 +36,6 @@ const initialState: ExecutionsProps = {
   credentialsInput: [],
   areCredentialsStored: false,
   tmpMessages: [],
-  MessageSenderValue: "",
   selectedTemplate: undefined,
   selectedChat: undefined,
   chatMode: "automation",
@@ -43,6 +43,8 @@ const initialState: ExecutionsProps = {
   parameterSelected: null,
   currentExecutionDetails: { id: null, isFavorite: false },
   selectedChatOption: null,
+  selectedWorkflow: undefined,
+  chats: [],
 };
 
 export const chatSlice = createSlice({
@@ -76,11 +78,11 @@ export const chatSlice = createSlice({
     setTmpMessages: (state, action: PayloadAction<IMessage[]>) => {
       state.tmpMessages = action.payload;
     },
-    setMessageSenderValue: (state, action: PayloadAction<string>) => {
-      state.MessageSenderValue = action.payload;
-    },
     setSelectedTemplate: (state, action: PayloadAction<Templates | undefined>) => {
       state.selectedTemplate = action.payload;
+    },
+    setSelectedWorkflow: (state, action: PayloadAction<IWorkflow | undefined>) => {
+      state.selectedWorkflow = action.payload;
     },
     setSelectedChat: (state, action: PayloadAction<IChat | undefined>) => {
       state.selectedChat = action.payload;
@@ -103,6 +105,9 @@ export const chatSlice = createSlice({
     setCurrentExecutionDetails: (state, action) => {
       state.currentExecutionDetails = action.payload;
     },
+    setChats: (state, action) => {
+      state.chats = action.payload;
+    },
   },
 });
 
@@ -116,7 +121,6 @@ export const {
   clearChatStates,
   setAreCredentialsStored,
   setTmpMessages,
-  setMessageSenderValue,
   setSelectedTemplate,
   setSelectedChat,
   setSelectedChatOption,
@@ -125,6 +129,8 @@ export const {
   updateParameterSelection,
   clearParameterSelection,
   setCurrentExecutionDetails,
+  setSelectedWorkflow,
+  setChats,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

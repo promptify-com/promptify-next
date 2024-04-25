@@ -12,18 +12,14 @@ import Stack from "@mui/material/Stack";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
 import FileCopyOutlined from "@mui/icons-material/FileCopyOutlined";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { useState } from "react";
+import { memo, useState } from "react";
 import Edit from "@mui/icons-material/Edit";
-import { useDeleteChatMutation, useDuplicateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
 import { setSelectedChat } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import useBrowser from "@/hooks/useBrowser";
-import { updateChatsList } from "@/components/Chat/helper";
-import { useRouter } from "next/router";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   chat: IChat;
@@ -31,62 +27,35 @@ interface Props {
   onClick?(): void;
 }
 
-export const ChatCard = ({ chat, active, onClick }: Props) => {
+export const ChatCard = memo(({ chat, active, onClick }: Props) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { isMobile } = useBrowser();
   const [actionsMenuAnchor, setActionsMenuAnchor] = useState<null | HTMLElement>(null);
   const handleOpenActions = (e: React.MouseEvent<HTMLElement>) => setActionsMenuAnchor(e.currentTarget);
   const handleCloseActions = () => setActionsMenuAnchor(null);
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
-  const selectedChat = useAppSelector(state => state.chat.selectedChat);
-  const [deleteChat] = useDeleteChatMutation();
-  const [updateChat] = useUpdateChatMutation();
-  const [duplicateChat] = useDuplicateChatMutation();
+  const { selectedChat } = useAppSelector(state => state.chat);
+
+  const { updateChat, deleteChat, duplicateChat } = useChatsManager();
 
   const handleUpdateChat = async (title: string) => {
     if (title === chat.title) return;
-
-    try {
-      const updatedChat = await updateChat({ id: chat.id, data: { title, thumbnail: chat.thumbnail } }).unwrap();
-
-      setRenameAllow(false);
-      updateChatsList(dispatch, router, updatedChat, "UPDATE");
-      dispatch(setToast({ message: "Chat updated successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
-    }
+    await updateChat(chat.id, { title, thumbnail: chat.thumbnail }, true);
+    setRenameAllow(false);
   };
 
   const handleDeleteChat = async () => {
-    try {
-      await deleteChat(chat.id);
-      if (selectedChat?.id === chat.id) {
-        dispatch(setSelectedChat(undefined));
-      }
-
-      updateChatsList(dispatch, router, chat, "DELETE");
-      dispatch(setToast({ message: "Chat deleted successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
-    } finally {
-      setConfirmDelete(false);
+    const deleted = await deleteChat(chat);
+    if (deleted && selectedChat?.id === chat.id) {
+      dispatch(setSelectedChat(undefined));
     }
   };
 
   const handleDuplicateChat = async () => {
     handleCloseActions();
-    try {
-      const newChat = await duplicateChat(chat.id).unwrap();
-
-      updateChatsList(dispatch, router, newChat, "ADD");
-      dispatch(setSelectedChat(newChat));
-      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not duplicated! Please try again.", severity: "error", duration: 6000 }));
-    }
+    const newChat = await duplicateChat(chat);
+    dispatch(setSelectedChat(newChat));
   };
 
   return (
@@ -101,7 +70,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
         overflow: "hidden",
         cursor: onClick ? "pointer" : "default",
         ".actions-menu": {
-          opacity: isMobile ? 1 : 0,
+          opacity: { sm: 1, md: 0 },
           transition: "opacity 0.3s ease",
         },
         "&:hover": {
@@ -252,7 +221,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
       )}
     </Card>
   );
-};
+});
 
 const menuItemStyle = {
   gap: 2,

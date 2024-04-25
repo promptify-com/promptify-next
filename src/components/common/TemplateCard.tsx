@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -5,26 +8,24 @@ import Favorite from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
-import Image from "@/components/design-system/Image";
-import type { Templates } from "@/core/api/dto/templates";
-import TemplateActions from "@/components/Chat/TemplateActions";
-import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setSelectedTemplate, setAnswers, setSelectedChatOption } from "@/core/store/chatSlice";
+import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
+import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import IconButton from "@mui/material/IconButton";
 import Edit from "@mui/icons-material/Edit";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
+import ModeEditOutline from "@mui/icons-material/ModeEditOutline";
+
+import Image from "@/components/design-system/Image";
+import TemplateActions from "@/components/Chat/TemplateActions";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setSelectedTemplate, setAnswers, setSelectedChatOption } from "@/core/store/chatSlice";
 import { getBaseUrl, stripTags } from "@/common/helpers";
 import { useDeleteTemplateMutation } from "@/core/api/templates";
-import { useState } from "react";
-import AddCommentOutlined from "@mui/icons-material/AddCommentOutlined";
 import { setToast } from "@/core/store/toastSlice";
-import Tooltip from "@mui/material/Tooltip";
-import Avatar from "@mui/material/Avatar";
-import ModeEditOutline from "@mui/icons-material/ModeEditOutline";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
-import { useRouter } from "next/router";
 import { getTemplateById } from "@/hooks/api/templates";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   template: Templates;

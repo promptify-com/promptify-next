@@ -2,7 +2,8 @@ import {
   useBatchingMessagesMutation,
   useSaveChatExecutionsMutation,
   useSaveChatInputMutation,
-  useSaveChatSuggestionsMutation,
+  useSaveChatSuggestionsTemplatesMutation,
+  useSaveChatSuggestionsWorkflowsMutation,
   useSaveChatTemplateMutation,
 } from "@/core/api/chats";
 import type { Templates } from "@/core/api/dto/templates";
@@ -22,7 +23,8 @@ import { useAppSelector } from "@/hooks/useStore";
 
 const useSaveChatInteractions = () => {
   const [saveChatInput] = useSaveChatInputMutation();
-  const [saveSuggestions] = useSaveChatSuggestionsMutation();
+  const [saveSuggestionsTemplates] = useSaveChatSuggestionsTemplatesMutation();
+  const [saveSuggestionsWorkflows] = useSaveChatSuggestionsWorkflowsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
   const [saveBatchingMessages] = useBatchingMessagesMutation();
@@ -45,13 +47,19 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatSuggestions = async (templateIds: number[], text: string, chatId: number) => {
+  const saveChatSuggestions = async (type: "TEMPLATE" | "WORKFLOW", ids: number[], text: string, chatId: number) => {
+    const isTemplates = type === "TEMPLATE";
+    const data = {
+      chat: chatId,
+      text,
+      ...(isTemplates ? { templates: ids } : { workflows: ids }),
+    };
     try {
-      await saveSuggestions({
-        chat: chatId,
-        text,
-        templates: templateIds,
-      });
+      if (isTemplates) {
+        await saveSuggestionsTemplates(data);
+      } else {
+        await saveSuggestionsWorkflows(data);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -87,8 +95,8 @@ const useSaveChatInteractions = () => {
   const processQueuedMessages = async (
     queueSavedMessages: IMessage[],
     chatId: number,
-    executionId: number,
-    templateId: number,
+    executionId?: number,
+    templateId?: number,
   ) => {
     saveBatchingMessages(
       queueSavedMessages.map(message => {
@@ -110,7 +118,7 @@ const useSaveChatInteractions = () => {
           case "template":
             _message = {
               chat: chatId,
-              template: templateId,
+              template: templateId as number,
               text: message.text,
               message_type: "template",
             } satisfies ISaveChatTemplate;
@@ -118,10 +126,20 @@ const useSaveChatInteractions = () => {
           case "spark":
             _message = {
               chat: chatId,
-              execution: executionId,
+              execution: executionId as number,
               type: isInputStyleQA ? "qa" : "form",
               message_type: "execution",
             } satisfies ISaveChatExecutions;
+            break;
+          case "html":
+          case "workflowExecution":
+            _message = {
+              chat: chatId,
+              text: message.text,
+              type: "html",
+              sender: "system",
+              message_type: "message",
+            } satisfies ISaveChatInput;
             break;
           default:
             throw Error(`Provided type "${message.type}" is not supported!`);
@@ -160,12 +178,19 @@ const useSaveChatInteractions = () => {
               ? "readyMessage"
               : "questionInput",
         };
-      case "suggestion":
+      case "templates_suggestion":
         return {
           ...baseMessage,
-          templates: suggestionMessage.templates,
+          data: suggestionMessage.templates,
           text: suggestionMessage.text,
-          type: "suggestion",
+          type: "templates_suggestion",
+        };
+      case "workflows_suggestion":
+        return {
+          ...baseMessage,
+          data: suggestionMessage.workflows,
+          text: suggestionMessage.text,
+          type: "workflows_suggestion",
         };
 
       case "template":

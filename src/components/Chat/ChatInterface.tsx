@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
+  onExecuteWorkflow?: () => void;
   showGenerateButton: boolean;
   onAbort: () => void;
   fetchMoreMessages: () => void;
@@ -27,6 +28,7 @@ const ChatInterface = ({
   fetchMoreMessages,
   loadingMessages,
   stopScrollingToBottom,
+  onExecuteWorkflow,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
@@ -115,6 +117,7 @@ const ChatInterface = ({
                 onScrollToBottom={scrollToBottom}
                 onGenerate={onGenerate}
                 onAbort={onAbort}
+                onExecuteWorkflow={onExecuteWorkflow}
               />
             </Fragment>
           ))}
