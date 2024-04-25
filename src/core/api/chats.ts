@@ -77,14 +77,25 @@ export const chatsApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      saveChatSuggestions: builder.mutation<void, ISaveChatSuggestions>({
+      saveChatSuggestionsTemplates: builder.mutation<void, ISaveChatSuggestions>({
         query: ({ chat, text, templates }) => ({
-          url: "/api/chat/suggestions/",
+          url: "/api/chat/templates_suggestions/",
           method: "POST",
           data: {
             chat,
             text,
             templates,
+          },
+        }),
+      }),
+      saveChatSuggestionsWorkflows: builder.mutation<void, ISaveChatSuggestions>({
+        query: ({ chat, text, workflows }) => ({
+          url: "/api/chat/workflows_suggestions/",
+          method: "POST",
+          data: {
+            chat,
+            text,
+            workflows,
           },
         }),
       }),
@@ -135,7 +146,8 @@ export const {
   useUpdateChatMutation,
   useDuplicateChatMutation,
   useSaveChatInputMutation,
-  useSaveChatSuggestionsMutation,
+  useSaveChatSuggestionsTemplatesMutation,
+  useSaveChatSuggestionsWorkflowsMutation,
   useSaveChatExecutionsMutation,
   useSaveChatTemplateMutation,
   useBatchingMessagesMutation,

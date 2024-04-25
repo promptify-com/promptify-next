@@ -1,26 +1,27 @@
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import TemplateCard from "@/components/common/TemplateCard";
 import Typography from "@mui/material/Typography";
+
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
+import WorkflowCard from "@/components/Automation/WorkflowCard";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { Templates } from "@/core/api/dto/templates";
+import type { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   message: IMessage;
   scrollToBottom: () => void;
 }
 
-function TemplateSuggestions({ message, scrollToBottom }: Props) {
+function WorkflowSuggestions({ message, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-  const templates = message.data || [];
+  const workflows = message.data || [];
 
-  if (!templates.length) {
+  if (!workflows.length) {
     return null;
   }
 
-  const pluralTemplates = templates.length > 1;
+  const pluralWorkflows = workflows.length > 1;
 
   return (
     <Stack>
@@ -34,7 +35,9 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
           alignItems={"center"}
           color={"onSurface"}
         >
-          {`I found ${pluralTemplates ? "these" : "this"} prompt${pluralTemplates ? "s" : ""}, following your request:`}
+          {`I found ${pluralWorkflows ? "these" : "this"} workflow${
+            pluralWorkflows ? "s" : ""
+          }, following your request:`}
         </Typography>
       ) : (
         <HtmlMessage message={message} />
@@ -50,15 +53,15 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
           direction={"column"}
           gap={1}
         >
-          {templates?.slice(0, visibleCount).map(template => (
-            <TemplateCard
-              key={template.id}
-              template={template as Templates}
+          {workflows?.slice(0, visibleCount).map(workflow => (
+            <WorkflowCard
+              key={workflow.id}
+              workflow={workflow as IWorkflow}
               onScrollToBottom={scrollToBottom}
             />
           ))}
 
-          {visibleCount < templates.length && (
+          {visibleCount < workflows.length && (
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -67,7 +70,7 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
               <Button
                 variant="text"
                 onClick={() => {
-                  setVisibleCount(templates.length);
+                  setVisibleCount(workflows.length);
                 }}
                 sx={{
                   "&:hover": {
@@ -75,7 +78,7 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
                   },
                 }}
               >
-                and {templates.length - visibleCount} prompts more...
+                and {workflows.length - visibleCount} prompts more...
               </Button>
             </Stack>
           )}
@@ -85,4 +88,4 @@ function TemplateSuggestions({ message, scrollToBottom }: Props) {
   );
 }
 
-export default TemplateSuggestions;
+export default WorkflowSuggestions;
