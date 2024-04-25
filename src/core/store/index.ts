@@ -1,6 +1,5 @@
 import { Action, ConfigureStoreOptions, Middleware, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
-
 import { baseApi } from "@/core/api/api";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
