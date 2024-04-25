@@ -1,7 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Fade from "@mui/material/Fade";
-
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import TemplateSuggestions from "@/components/Chat/Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
@@ -12,16 +11,28 @@ import TextMessage from "@/components/Chat/Messages/TextMessage";
 import ReadyMessage from "@/components/Chat/Messages/ReadyMessage";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
+import CredentialsMessage from "./Messages/CredentialsMessage";
+import { createMessage } from "./helper";
+import Box from "@mui/material/Box";
 
 interface Props {
   message: IMessage;
   onScrollToBottom: (force?: boolean) => void;
   onGenerate: () => void;
   onAbort: () => void;
+  onExecuteWorkflow?: () => void;
 }
 
-function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props) {
+function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
   const dispatch = useAppDispatch();
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const areCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
+  const generatedExecutionMessage: IMessage = createMessage({
+    type: "html",
+    text: generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "",
+  });
+
   return (
     <>
       {message.type === "text" && (
@@ -33,7 +44,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
 
       {message.type === "html" && <HtmlMessage message={message} />}
 
-      {message.type === "suggestion" && !!message.templates?.length && (
+      {message.type === "templates_suggestion" && !!message.data?.length && (
         <Fade
           in={true}
           unmountOnExit
@@ -42,6 +53,22 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
         >
           <Stack>
             <TemplateSuggestions
+              message={message}
+              scrollToBottom={onScrollToBottom}
+            />
+          </Stack>
+        </Fade>
+      )}
+
+      {message.type === "workflows_suggestion" && !!message.data?.length && (
+        <Fade
+          in={true}
+          unmountOnExit
+          timeout={800}
+          onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
+        >
+          <Stack>
+            <WorkflowSuggestions
               message={message}
               scrollToBottom={onScrollToBottom}
             />
@@ -64,6 +91,24 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
             />
           </Stack>
         </Fade>
+      )}
+
+      {message.type === "credsForm" && areCredentialsStored && (
+        <Box mt={-4}>
+          <CredentialsMessage
+            message={message}
+            onExecuteWorkflow={onExecuteWorkflow}
+            showRunButton
+          />
+        </Box>
+      )}
+      {message.type === "credentials" && !areCredentialsStored && (
+        <Box mt={-4}>
+          <CredentialsMessage
+            message={message}
+            onExecuteWorkflow={onExecuteWorkflow}
+          />
+        </Box>
       )}
       {message.type === "template" && (
         <Fade
@@ -117,6 +162,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort }: Props
           onGenerate={onGenerate}
         />
       )}
+      {message.type === "workflowExecution" && <HtmlMessage message={generatedExecutionMessage} />}
     </>
   );
 }

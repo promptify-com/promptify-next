@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-
 import {
   createMessage,
   extractTemplateIDs,
+  extractWorkflowIDs,
   fetchData,
   prepareQuestions,
   sendMessageAPI,
   suggestionsMessageText,
-  updateChatsList,
 } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import {
@@ -22,24 +21,25 @@ import {
   setSelectedTemplate,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
-import { useCreateChatMutation } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
+import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { setRepeatedExecution } from "@/core/store/executionsSlice";
-import { useRouter } from "next/router";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IWorkflow } from "@/components/Automation/types";
+import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
+import useChatsManager from "./useChatsManager";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
-
   const { saveTextMessage, saveChatSuggestions } = useSaveChatInteractions();
-  const [createChat] = useCreateChatMutation();
+  const { createChat } = useChatsManager();
 
   const {
     selectedTemplate,
+    selectedWorkflow,
     isSimulationStreaming,
     selectedChat,
     inputs,
@@ -59,6 +59,13 @@ const useMessageManager = () => {
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [questions, setQuestions] = useState<IQuestion[]>([]);
   const [queueSavedMessages, setQueueSavedMessages] = useState<IMessage[]>([]);
+
+  const { processWorflowData, executeWorkflow } = useChatWorkflow({
+    setMessages,
+    setIsValidatingAnswer,
+    queueSavedMessages,
+    setQueueSavedMessages,
+  });
 
   const inputStyle = currentUser?.preferences?.input_style || selectedChatOption;
 
@@ -106,7 +113,9 @@ const useMessageManager = () => {
         text: welcomeMessage.text,
         template: selectedTemplate,
       });
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "credsForm").concat([runMessage, formMessage]),
+      );
     } else {
       dispatch(setAnswers([])); // clear answers when user repeating execution on QA mode
       const headerWithTextMessage = createMessage({
@@ -163,6 +172,13 @@ const useMessageManager = () => {
     return [inputs, params, promptHasContent];
   }, [selectedTemplate, selectedChatOption, repeatedExecution]);
 
+  useEffect(() => {
+    if (!selectedWorkflow) {
+      return;
+    }
+    processWorflowData();
+  }, [selectedWorkflow]);
+
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
 
@@ -176,19 +192,17 @@ const useMessageManager = () => {
   };
 
   const createNewChat = async () => {
-    try {
-      const newChat = await createChat({
+    const _newChat = await createChat({
+      data: {
         title: "Welcome",
-      }).unwrap();
-
-      updateChatsList(dispatch, router, newChat, "ADD");
-      dispatch(setSelectedChat(newChat));
+      },
+    });
+    if (_newChat) {
+      dispatch(setSelectedChat(_newChat));
       // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
       setTimeout(() => dispatch(setInitialChat(false)), 1000);
-      return newChat;
-    } catch (err) {
-      console.error("Error creating a new chat: ", err);
     }
+    return _newChat;
   };
 
   const automationSubmitMessage = async (input: string) => {
@@ -212,23 +226,32 @@ const useMessageManager = () => {
 
       try {
         const sendMessageResponse = await sendMessageAPI(input);
-
         if (sendMessageResponse.message) {
           botMessage.text = sendMessageResponse.message;
         } else {
           const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
-
-          if (!templateIDs.length) {
+          const workflowIDs = extractWorkflowIDs(sendMessageResponse.output!);
+          if (!templateIDs.length && !workflowIDs.length) {
             botMessage.text = sendMessageResponse.output!;
           } else {
-            if (!!templateIDs.length) {
-              const templates = await fetchData(templateIDs);
+            if (templateIDs.length) {
+              const templates = (await fetchData(templateIDs, true)) as Templates[];
               const suggestionsMessage = createMessage({
-                type: "suggestion",
-                templates,
+                type: "templates_suggestion",
+                data: templates,
                 text: suggestionsMessageText(sendMessageResponse.output)!,
               });
-              saveChatSuggestions(templateIDs, suggestionsMessage.text, chatId);
+              saveChatSuggestions("TEMPLATE", templateIDs, suggestionsMessage.text, chatId);
+              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
+            }
+            if (workflowIDs.length) {
+              const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+              const suggestionsMessage = createMessage({
+                type: "workflows_suggestion",
+                data: workflows,
+                text: suggestionsMessageText(sendMessageResponse.output)!,
+              });
+              saveChatSuggestions("WORKFLOW", workflowIDs, suggestionsMessage.text, chatId);
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
           }
@@ -343,6 +366,7 @@ const useMessageManager = () => {
     queueSavedMessages,
     setQueueSavedMessages,
     resetStates,
+    executeWorkflow,
   };
 };
 

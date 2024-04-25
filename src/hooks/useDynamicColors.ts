@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { type Palette, createTheme, useTheme } from "@mui/material/styles";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
-import { Category, Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 
-export const useDynamicColors = (template: Templates | Category | undefined, image: string | undefined) => {
+export const useDynamicColors = (image: string | undefined) => {
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   useEffect(() => {
-    if (currentUser?.preferences?.theme === "blue" || !template || !image) {
+    if (currentUser?.preferences?.theme === "blue" || !image) {
       return;
     }
 
@@ -55,7 +54,7 @@ export const useDynamicColors = (template: Templates | Category | undefined, ima
       });
   };
 
-  const dynamicTheme = createTheme({ ...theme, palette });
+  const dynamicTheme = useMemo(() => createTheme({ ...theme, palette }), [theme, palette]);
 
   return dynamicTheme;
 };

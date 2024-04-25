@@ -1,31 +1,29 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useCreateChatMutation } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setToast } from "@/core/store/toastSlice";
 import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { useChatsPaginator } from "@/components/Chat/Hooks/useChatsPaginator";
-import { updateChatsList } from "@/components/Chat/helper";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   onClose?: () => void;
 }
 
-export default function ChatsHistory({ onClose }: Props) {
+function ChatsHistory({ onClose }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedChat = useAppSelector(state => state.chat.selectedChat);
-  const { chats, isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
+  const { chats, selectedChat } = useAppSelector(state => state.chat);
+  const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -42,24 +40,17 @@ export default function ChatsHistory({ onClose }: Props) {
     );
   }, [chats]);
 
-  const [createChat] = useCreateChatMutation();
+  const { createChat } = useChatsManager();
 
   const handleNewChat = async () => {
     if (!currentUser?.id) {
       return router.push("/signin");
     }
 
-    try {
-      const newChat = await createChat({
-        title: "Welcome",
-      }).unwrap();
-
+    const newChat = await createChat({ toast: true });
+    if (newChat) {
       handleClickChat(newChat);
-      updateChatsList(dispatch, router, newChat, "ADD");
       dispatch(setInitialChat(false));
-      dispatch(setToast({ message: "Chat added successfully", severity: "success", duration: 6000 }));
-    } catch (_) {
-      dispatch(setToast({ message: "Chat not created! Please try again.", severity: "error", duration: 6000 }));
     }
   };
 
@@ -172,3 +163,5 @@ export default function ChatsHistory({ onClose }: Props) {
     </Stack>
   );
 }
+
+export default memo(ChatsHistory);

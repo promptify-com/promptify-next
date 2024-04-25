@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
+import { clearChatStates, setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
@@ -19,7 +19,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 import { oAuthTypeMapping, N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
-import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { clearExecutionsStates, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 
@@ -88,6 +88,11 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       prepareAndQueueMessages(credentialsInput, nodes);
     }
   };
+
+  useEffect(() => {
+    dispatch(clearChatStates());
+    dispatch(clearExecutionsStates());
+  }, []);
 
   useEffect(() => {
     if (isWorkflowLoading && !selectedWorkflow) {

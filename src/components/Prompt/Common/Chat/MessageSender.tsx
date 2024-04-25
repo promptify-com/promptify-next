@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
-
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setMessageSenderValue } from "@/core/store/chatSlice";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
-import { Stack } from "@mui/material";
-import { BackspaceOutlined } from "@mui/icons-material";
+import Stack from "@mui/material/Stack";
+import BackspaceOutlined from "@mui/icons-material/BackspaceOutlined";
+import { useRouter } from "next/router";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -26,16 +24,22 @@ function MessageSender({
   maxLength,
   loading,
 }: MessageSenderProps) {
-  const dispatch = useAppDispatch();
-  const MessageSenderValue = useAppSelector(state => state.chat.MessageSenderValue);
-
-  const [localValue, setLocalValue] = useState("");
+  const router = useRouter();
+  const queryPrompt = router.query.prompt as string;
+  const [MessageSenderValue, setMessageSenderValue] = useState("");
 
   useEffect(() => {
-    setLocalValue(MessageSenderValue);
-  }, [MessageSenderValue]);
+    if (!queryPrompt) return;
 
-  const resetGlobalValue = () => !!MessageSenderValue && dispatch(setMessageSenderValue(""));
+    setMessageSenderValue(queryPrompt);
+
+    delete router.query.prompt;
+    router.replace({ pathname: router.pathname, query: router.query }, undefined, {
+      shallow: true,
+    });
+  }, [queryPrompt]);
+
+  const resetGlobalValue = () => !!MessageSenderValue && setMessageSenderValue("");
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -44,23 +48,23 @@ function MessageSender({
       resetGlobalValue();
     } else if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
-      setLocalValue(localValue + "\n");
+      setMessageSenderValue(MessageSenderValue + "\n");
     }
   };
 
   const handleChange = (val: string) => {
     if (maxLength && val.length > maxLength) return;
-    setLocalValue(val);
+    setMessageSenderValue(val);
     if (typeof onChange === "function") onChange(val);
   };
 
   const handleSubmit = () => {
-    onSubmit(localValue);
-    setLocalValue("");
+    onSubmit(MessageSenderValue);
+    setMessageSenderValue("");
     resetGlobalValue();
   };
 
-  const hasValue = localValue !== "";
+  const hasValue = MessageSenderValue !== "";
 
   return (
     <Box
@@ -85,7 +89,7 @@ function MessageSender({
         placeholder={placeholder}
         inputProps={{ "aria-label": "Name" }}
         onChange={e => handleChange(e.target.value)}
-        value={localValue}
+        value={MessageSenderValue}
         onKeyPress={handleKeyPress}
       />
 
@@ -102,8 +106,7 @@ function MessageSender({
               color: "text.secondary",
             }}
             onClick={() => {
-              setLocalValue("");
-              dispatch(setMessageSenderValue(""));
+              setMessageSenderValue("");
             }}
           />
         )}

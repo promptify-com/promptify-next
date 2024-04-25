@@ -1,3 +1,4 @@
+import { IWorkflow } from "../../../components/Automation/types";
 import type { Templates, TemplatesExecutions } from "./templates";
 
 export interface IChat {
@@ -32,7 +33,8 @@ export interface ISaveChatTemplate extends ISaveChatMessage {
 }
 export interface ISaveChatSuggestions extends ISaveChatMessage {
   text: string;
-  templates: number[];
+  templates?: number[];
+  workflows?: number[];
 }
 export interface ISaveChatExecutions extends ISaveChatMessage {
   execution: number;
@@ -46,7 +48,7 @@ export interface IMessageResult {
   id: number;
   updated_at: string;
   created_at: string;
-  message_type: "message" | "suggestion" | "execution" | "template";
+  message_type: "message" | "templates_suggestion" | "workflows_suggestion" | "execution" | "template";
   message_object: InputMessage | SuggestionsMessage | ExecutionMessage | TemplateMessage;
 }
 
@@ -65,6 +67,7 @@ export interface SuggestionsMessage {
   updated_at: string;
   sender: Sender;
   templates: Templates[];
+  workflows: IWorkflow[];
   text: string;
 }
 

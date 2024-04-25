@@ -19,6 +19,7 @@ export interface PromptLiveResponse {
   data: PromptLiveResponseData[];
   connectionOpened?: boolean;
   temp_title?: string;
+  hasNext?: boolean;
 }
 export interface IPromptInput {
   name: string;

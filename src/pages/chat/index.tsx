@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Menu from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -15,16 +17,14 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { chatsApi, useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { chatsApi } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import Button from "@mui/material/Button";
 import { theme } from "@/theme";
-import Box from "@mui/material/Box";
-import Menu from "@mui/icons-material/Menu";
-import { updateChatsList } from "@/components/Chat/helper";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 import lazy from "next/dynamic";
 
 const ChatsHistoryLazy = lazy(() => import("@/components/sidebar/ChatsHistory/ChatsHistory"), {
@@ -47,8 +47,7 @@ function Chat() {
   const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
     state => state.chat,
   );
-  const [createChat] = useCreateChatMutation();
-  const [updateChat] = useUpdateChatMutation();
+  const { createChat, updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
   const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();
   const {
@@ -63,42 +62,28 @@ function Chat() {
     queueSavedMessages,
     setQueueSavedMessages,
     resetStates,
+    executeWorkflow,
   } = useMessageManager();
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template: selectedTemplate,
   });
-  const dynamicTheme = useDynamicColors(selectedTemplate, selectedChat?.thumbnail);
+  const dynamicTheme = useDynamicColors(selectedChat?.thumbnail);
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
+
   const handleCreateChat = async () => {
     if (!selectedTemplate) return;
 
-    try {
-      const newChat = await createChat({
-        title: selectedTemplate.title ?? "Welcome",
-        thumbnail: selectedTemplate.thumbnail,
-      }).unwrap();
-
-      updateChatsList(dispatch, router, newChat, "ADD");
-      dispatch(setSelectedChat(newChat));
-    } catch (err) {
-      console.error("Error creating a new chat: ", err);
-    }
+    const newChat = await createChat({
+      data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
+    });
+    dispatch(setSelectedChat(newChat));
   };
   const handleTitleChat = async () => {
     const title = selectedTemplate?.title;
 
     if (!selectedChat || !title || selectedChat.title === title) return;
 
-    try {
-      const updatedChat = await updateChat({
-        id: selectedChat.id,
-        data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
-      }).unwrap();
-
-      updateChatsList(dispatch, router, updatedChat, "UPDATE");
-    } catch (err) {
-      console.error("Error updating chat: ", err);
-    }
+    updateChat(selectedChat.id, { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail });
   };
   const loadInitialMessages = async () => {
     if (!selectedChat?.id) {
@@ -361,6 +346,7 @@ function Chat() {
                     onGenerate={() => {
                       handleGenerateExecution();
                     }}
+                    onExecuteWorkflow={executeWorkflow}
                     stopScrollingToBottom={stopScrollingToBottom}
                   />
                 </Stack>

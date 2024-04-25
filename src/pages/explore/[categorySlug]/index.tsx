@@ -39,7 +39,7 @@ export default function Page({ category }: { category: Category }) {
     initialStatus: "published",
   });
 
-  const dynamicTheme = useDynamicColors(category, category.image);
+  const dynamicTheme = useDynamicColors(category.image);
 
   const goBack = () => {
     router.push("/explore");

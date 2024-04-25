@@ -42,7 +42,7 @@ function TemplatePage({ template, popup }: Props) {
   const tabsRef = useRef<HTMLDivElement>(null);
   const topThreshold = popup ? 24 : 92;
 
-  const dynamicTheme = useDynamicColors(template, template.thumbnail);
+  const dynamicTheme = useDynamicColors(template.thumbnail);
 
   useEffect(() => {
     const handleScroll = () => {
