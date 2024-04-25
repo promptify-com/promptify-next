@@ -5,7 +5,7 @@ const initialState = {
 };
 
 const profileSlice = createSlice({
-  name: "profile2",
+  name: "profile21",
   initialState,
   reducers: {
     showProfileInEditMode: (state, action: PayloadAction<boolean>) => {
