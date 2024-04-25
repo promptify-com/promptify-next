@@ -2,7 +2,8 @@ import {
   useBatchingMessagesMutation,
   useSaveChatExecutionsMutation,
   useSaveChatInputMutation,
-  useSaveChatSuggestionsMutation,
+  useSaveChatSuggestionsTemplatesMutation,
+  useSaveChatSuggestionsWorkflowsMutation,
   useSaveChatTemplateMutation,
 } from "@/core/api/chats";
 import type { Templates } from "@/core/api/dto/templates";
@@ -22,7 +23,8 @@ import { useAppSelector } from "@/hooks/useStore";
 
 const useSaveChatInteractions = () => {
   const [saveChatInput] = useSaveChatInputMutation();
-  const [saveSuggestions] = useSaveChatSuggestionsMutation();
+  const [saveSuggestionsTemplates] = useSaveChatSuggestionsTemplatesMutation();
+  const [saveSuggestionsWorkflows] = useSaveChatSuggestionsWorkflowsMutation();
   const [saveExecutions] = useSaveChatExecutionsMutation();
   const [saveTemplate] = useSaveChatTemplateMutation();
   const [saveBatchingMessages] = useBatchingMessagesMutation();
@@ -45,13 +47,19 @@ const useSaveChatInteractions = () => {
     }
   };
 
-  const saveChatSuggestions = async (templateIds: number[], text: string, chatId: number) => {
+  const saveChatSuggestions = async (type: "TEMPLATE" | "WORKFLOW", ids: number[], text: string, chatId: number) => {
+    const isTemplates = type === "TEMPLATE";
+    const data = {
+      chat: chatId,
+      text,
+      ...(isTemplates ? { templates: ids } : { workflows: ids }),
+    };
     try {
-      await saveSuggestions({
-        chat: chatId,
-        text,
-        templates: templateIds,
-      });
+      if (isTemplates) {
+        await saveSuggestionsTemplates(data);
+      } else {
+        await saveSuggestionsWorkflows(data);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -170,12 +178,19 @@ const useSaveChatInteractions = () => {
               ? "readyMessage"
               : "questionInput",
         };
-      case "suggestion":
+      case "templates_suggestion":
         return {
           ...baseMessage,
           data: suggestionMessage.templates,
           text: suggestionMessage.text,
-          type: "suggestion-templates",
+          type: "templates_suggestion",
+        };
+      case "workflows_suggestion":
+        return {
+          ...baseMessage,
+          data: suggestionMessage.workflows,
+          text: suggestionMessage.text,
+          type: "workflows_suggestion",
         };
 
       case "template":

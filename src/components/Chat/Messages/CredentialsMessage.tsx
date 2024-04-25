@@ -32,10 +32,7 @@ function CredentialsMessage({ message, onExecuteWorkflow, showRunButton }: Props
   const allowGenerate = allRequiredInputsAnswered();
   const hasInputs = inputs.length > 0;
   return (
-    <Stack
-      spacing={1}
-      mt={-4}
-    >
+    <Stack spacing={1}>
       <Typography
         fontSize={16}
         lineHeight={"25.6px"}

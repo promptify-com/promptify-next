@@ -237,20 +237,21 @@ const useMessageManager = () => {
             if (templateIDs.length) {
               const templates = (await fetchData(templateIDs, true)) as Templates[];
               const suggestionsMessage = createMessage({
-                type: "suggestion-templates",
+                type: "templates_suggestion",
                 data: templates,
                 text: suggestionsMessageText(sendMessageResponse.output)!,
               });
-              saveChatSuggestions(templateIDs, suggestionsMessage.text, chatId);
+              saveChatSuggestions("TEMPLATE", templateIDs, suggestionsMessage.text, chatId);
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
             if (workflowIDs.length) {
               const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
               const suggestionsMessage = createMessage({
-                type: "suggestion-workflows",
+                type: "workflows_suggestion",
                 data: workflows,
                 text: suggestionsMessageText(sendMessageResponse.output)!,
               });
+              saveChatSuggestions("WORKFLOW", workflowIDs, suggestionsMessage.text, chatId);
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
           }

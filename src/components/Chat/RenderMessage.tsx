@@ -14,6 +14,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
 import CredentialsMessage from "./Messages/CredentialsMessage";
 import { createMessage } from "./helper";
+import Box from "@mui/material/Box";
 
 interface Props {
   message: IMessage;
@@ -43,7 +44,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
 
       {message.type === "html" && <HtmlMessage message={message} />}
 
-      {message.type === "suggestion-templates" && !!message.data?.length && (
+      {message.type === "templates_suggestion" && !!message.data?.length && (
         <Fade
           in={true}
           unmountOnExit
@@ -59,7 +60,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         </Fade>
       )}
 
-      {message.type === "suggestion-workflows" && !!message.data?.length && (
+      {message.type === "workflows_suggestion" && !!message.data?.length && (
         <Fade
           in={true}
           unmountOnExit
@@ -93,17 +94,21 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
       )}
 
       {message.type === "credsForm" && areCredentialsStored && (
-        <CredentialsMessage
-          message={message}
-          onExecuteWorkflow={onExecuteWorkflow}
-          showRunButton
-        />
+        <Box mt={-4}>
+          <CredentialsMessage
+            message={message}
+            onExecuteWorkflow={onExecuteWorkflow}
+            showRunButton
+          />
+        </Box>
       )}
       {message.type === "credentials" && !areCredentialsStored && (
-        <CredentialsMessage
-          message={message}
-          onExecuteWorkflow={onExecuteWorkflow}
-        />
+        <Box mt={-4}>
+          <CredentialsMessage
+            message={message}
+            onExecuteWorkflow={onExecuteWorkflow}
+          />
+        </Box>
       )}
       {message.type === "template" && (
         <Fade
