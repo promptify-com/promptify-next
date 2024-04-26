@@ -114,7 +114,6 @@ function Credentials({ input }: Props) {
     (workflow?.nodes ?? []).forEach(node => attachCredentialsToNode(node));
 
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-    dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
     if (areAllCredentialsStored && workflow) {
       try {
@@ -133,6 +132,7 @@ function Credentials({ input }: Props) {
         console.error("Error updating workflow:", error);
       }
     }
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
   };
 
   const handleSubmit = async (values: FormValues = {}) => {

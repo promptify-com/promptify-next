@@ -3,7 +3,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { Refresh } from "@mui/icons-material";
-import { theme } from "@/theme";
 import BaseButton from "@/components/base/BaseButton";
 import { useDeleteCredentialMutation } from "@/core/api/workflows";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -37,43 +36,49 @@ function RefreshCredentials({ credential, showLabel = false, onClick }: Props) {
           {credential.name}:
         </Typography>
       )}
-      <BaseButton
-        color="custom"
-        variant="text"
-        sx={{
-          border: "1px solid",
-          borderRadius: "8px",
-          borderColor: "secondary.main",
-          color: "secondary.main",
-          p: "3px 12px",
-          ml: "5px",
-          fontSize: { xs: 11, md: 14 },
-          ":hover": {
-            bgcolor: "action.hover",
-          },
-        }}
-        disabled
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={0.3}
       >
-        Connected
-      </BaseButton>
-      <IconButton
-        sx={{
-          border: "none",
-          ":hover": {
-            bgcolor: "action.hover",
-          },
-        }}
-        onClick={async e => {
-          e.preventDefault();
-          await deleteCredential(credential.id);
-          await updateWorkflowAfterCredentialsDeletion(credential.type);
-          dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
-          removeCredential(credential.id);
-          onClick?.();
-        }}
-      >
-        <Refresh />
-      </IconButton>
+        <BaseButton
+          color="custom"
+          variant="text"
+          sx={{
+            border: "1px solid",
+            borderRadius: "8px",
+            borderColor: "secondary.main",
+            color: "secondary.main",
+            p: "3px 12px",
+            ml: "5px",
+            fontSize: { xs: 11, md: 14 },
+            ":hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+          disabled
+        >
+          Connected
+        </BaseButton>
+        <IconButton
+          sx={{
+            border: "none",
+            ":hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+          onClick={async e => {
+            e.preventDefault();
+            await deleteCredential(credential.id);
+            await updateWorkflowAfterCredentialsDeletion(credential.type);
+            dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
+            removeCredential(credential.id);
+            onClick?.();
+          }}
+        >
+          <Refresh />
+        </IconButton>
+      </Stack>
     </Stack>
   );
 }

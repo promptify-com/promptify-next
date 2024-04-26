@@ -139,7 +139,7 @@ export const attachCredentialsToNode = (node: INode) => {
     const currentCredentials: ICredential[] = (Storage.get("credentials") as unknown as ICredential[]) || [];
 
     const credential = oAuthTypeMapping[type]
-      ? currentCredentials.find(cred => cred.type.includes("OAuth2"))
+      ? currentCredentials.find(cred => cred.type === oAuthTypeMapping[type])
       : currentCredentials.find(cred => cred.type === authType);
 
     if (credential) {
