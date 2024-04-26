@@ -37,6 +37,7 @@ const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnt
           marginLeft: "0.5em",
           ":hover": { color: "tertiary" },
         }}
+        aria-label="Search"
       >
         <Search />
       </IconButton>

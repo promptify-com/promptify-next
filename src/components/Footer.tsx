@@ -97,6 +97,7 @@ function Footer() {
                     href={link.href}
                     style={{ textDecoration: "none" }}
                     target={link.href === "/privacy-policy" ? "_self" : "_blank"}
+                    aria-label={link.title}
                   >
                     <Typography
                       sx={{
@@ -124,6 +125,7 @@ function Footer() {
                   href={link.href}
                   key={index}
                   target="_blank"
+                  aria-label={link.title}
                 >
                   <IconButton
                     sx={{
@@ -132,6 +134,7 @@ function Footer() {
                         bgcolor: "action.hover",
                       },
                     }}
+                    aria-label={link.title}
                   >
                     {link.icon}
                   </IconButton>
