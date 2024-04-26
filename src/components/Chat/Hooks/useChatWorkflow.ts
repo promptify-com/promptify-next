@@ -48,7 +48,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
-        .flatMap(node => node.parameters.fields?.values ?? [])
+        .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
         .map(value => ({
           name: value.name,
           fullName: value.name,
@@ -80,7 +80,12 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
 
     const initialWorkflowMessages: IMessage[] = [];
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
+    const requiresOauth = nodes.some(
+      node =>
+        oAuthTypeMapping[node.type] ||
+        (node.parameters.authentication === "predefinedCredentialType" &&
+          oAuthTypeMapping[node.parameters.nodeCredentialType ?? ""]),
+    );
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {

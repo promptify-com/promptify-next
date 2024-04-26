@@ -106,8 +106,8 @@ function Credentials({ input }: Props) {
     const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
     let workflow = storedWorkflows[selectedWorkflowId]?.workflow;
 
-    if (!workflow) {
-      const _workflow = await getWorkflow(storedWorkflows[selectedWorkflowId]?.id).unwrap();
+    if (!workflow && storedWorkflows[selectedWorkflowId]?.id) {
+      const _workflow = await getWorkflow(storedWorkflows[selectedWorkflowId].id).unwrap();
       workflow = JSON.parse(JSON.stringify(_workflow));
     }
 
@@ -137,6 +137,13 @@ function Credentials({ input }: Props) {
 
   const handleSubmit = async (values: FormValues = {}) => {
     const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
+
+    if (!credential) {
+      dispatch(setToast({ message: "Credential was not found, please try again.", severity: "error" }));
+
+      return;
+    }
+
     const data: Record<string, string> = {};
 
     for (const key in values) {
@@ -144,11 +151,13 @@ function Credentials({ input }: Props) {
         data[key] = values[key];
       }
     }
+
     const payload = {
-      name: `${credential?.displayName} Credentials`,
-      type: credential?.name!,
+      name: `${credential.displayName} Credentials`,
+      type: credential.name,
       data: data,
     };
+
     try {
       const response = await createCredentials(payload).unwrap();
       updateCredentials(response);

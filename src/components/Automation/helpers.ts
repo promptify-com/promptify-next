@@ -46,7 +46,6 @@ export const authTypeMapping: { [key: string]: string } = {
   basicAuth: "httpBasicAuth",
   // Add other mappings here if necessary
 };
-
 export const oAuthTypeMapping: { [key: string]: string } = {
   "n8n-nodes-base.googleCalendar": "googleCalendarOAuth2Api",
   "n8n-nodes-base.gmail": "gmailOAuth2",
@@ -69,6 +68,7 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
 
     if (oAuthTypeMapping[node.type!]) {
       const authType = oAuthTypeMapping[node.type!];
+
       if (authType && creds[authType]) {
         const properties = [
           {
@@ -97,6 +97,7 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     }
 
     const parameters = node.parameters;
+
     if (parameters && parameters.authentication) {
       const authenticationType = parameters.authentication;
       const nodeCredentialType = parameters.nodeCredentialType;
