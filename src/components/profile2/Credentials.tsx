@@ -86,6 +86,7 @@ function Credentials() {
         >
           <Grid
             item
+            xs={4}
             sx={{ xs: 12, md: 3 }}
             overflow={"hidden"}
           >
