@@ -16,7 +16,6 @@ import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types"
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
   const workflowId = router.query?.workflowId as string;
-
   const { data, isLoading: isWorkflowLoading } = useGetWorkflowByIdQuery(parseInt(workflowId), {
     skip: Boolean(workflow.id || !workflowId),
   });

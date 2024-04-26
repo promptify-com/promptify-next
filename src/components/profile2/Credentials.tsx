@@ -17,14 +17,9 @@ function Credentials() {
   const dispatch = useAppDispatch();
   const [selectedCredential, setSelectedCredential] = useState<ICredential | null>(null);
   const [deleteCredential] = useDeleteCredentialMutation();
+  const [credentials, setCredentials] = useState<ICredential[]>([]);
 
-  const {
-    credentials,
-    setCredentials,
-    initializeCredentials,
-    removeCredential,
-    updateWorkflowAfterCredentialsDeletion,
-  } = useCredentials();
+  const { initializeCredentials, removeCredential, updateWorkflowAfterCredentialsDeletion } = useCredentials();
 
   useEffect(() => {
     // if credentials already in local storage, no http call will be triggered, we're safe here.

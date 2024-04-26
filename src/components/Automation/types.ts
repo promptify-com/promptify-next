@@ -12,6 +12,15 @@ interface IParameters {
       stringValue?: string;
     }[];
   };
+
+  assignments?: {
+    assignments: {
+      id: string;
+      name: string;
+      type: string;
+      value: string;
+    }[];
+  };
 }
 
 export interface INode {
