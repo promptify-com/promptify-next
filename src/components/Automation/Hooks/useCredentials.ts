@@ -36,11 +36,10 @@ const useCredentials = () => {
         }
 
         setCredentials(fetchedCredentials);
-
         Storage.set("credentials", JSON.stringify(fetchedCredentials));
+        resolve(fetchedCredentials);
       } catch (error) {
         console.error("Failed fetching Credentials");
-      } finally {
         resolve(credentials);
       }
     });
@@ -73,6 +72,7 @@ const useCredentials = () => {
 
   const updateCredentials = (newCredential: ICredential) => {
     const updatedCredentials = (Storage.get("credentials") as unknown as ICredential[]) || [];
+
     updatedCredentials.push(newCredential);
     setCredentials(updatedCredentials);
     Storage.set("credentials", JSON.stringify(updatedCredentials));
