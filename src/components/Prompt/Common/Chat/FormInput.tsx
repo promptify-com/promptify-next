@@ -91,9 +91,10 @@ function FormInput({ input }: Props) {
             fontSize: { xs: 14, md: 15 },
             fontWeight: 500,
             color: "primary.main",
+            textTransform: "capitalize",
           }}
         >
-          {fullName} {required && <span>*</span>} :
+          {fullName?.replace(/_/g, " ")} {required && <span>*</span>} :
         </InputLabel>
       </Box>
 
