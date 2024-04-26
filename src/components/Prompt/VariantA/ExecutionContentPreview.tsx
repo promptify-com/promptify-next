@@ -112,9 +112,9 @@ function ExecutionContentPreview({ execution, prompt, answers }: Props) {
       <Typography
         fontSize={14}
         fontWeight={400}
-        color={"onPrimaryContainer"}
-        lineHeight={"160%"}
         fontFamily={"Roboto, Mono"}
+        color={"onPrimaryContainer"}
+        whiteSpace={"pre-wrap"}
       >
         {updatedContent}
       </Typography>

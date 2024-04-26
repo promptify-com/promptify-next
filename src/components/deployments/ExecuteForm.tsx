@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import BaseButton from "../base/BaseButton";
 import useToken from "@/hooks/useToken";
@@ -9,6 +8,7 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import MessageSender from "@/components/Prompt/Common/Chat/MessageSender";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+import { ExecutionContent } from "@/components/common/ExecutionContent";
 
 interface ExecuteFormProps {
   onClose: () => void;
@@ -111,56 +111,7 @@ function ExecuteForm({ onClose, deploymentId }: ExecuteFormProps) {
             <ParagraphPlaceholder />
           </Grid>
         )}
-        {html && (
-          <Box
-            ref={executionRefElm}
-            display={"block"}
-            sx={{
-              fontSize: 15,
-              fontWeight: 400,
-              color: "onSurface",
-              wordWrap: "break-word",
-              textAlign: "justify",
-              float: "none",
-              overflowY: "scroll",
-              height: "100%",
-              ".highlight": {
-                backgroundColor: "yellow",
-                color: "black",
-              },
-              pre: {
-                m: "10px 0",
-                borderRadius: "8px",
-                overflow: "hidden",
-                code: {
-                  borderRadius: 0,
-                  m: 0,
-                },
-              },
-              code: {
-                display: "block",
-                bgcolor: "#282a35",
-                color: "common.white",
-                borderRadius: "8px",
-                p: "16px 24px",
-                mb: "10px",
-                overflow: "auto",
-              },
-              ".language-label": {
-                p: "8px 24px",
-                bgcolor: "#4d5562",
-                color: "#ffffff",
-                fontSize: 13,
-              },
-              "& h2": {
-                margin: 0,
-              },
-            }}
-            dangerouslySetInnerHTML={{
-              __html: sanitizeHTML(html),
-            }}
-          />
-        )}
+        {html && <ExecutionContent content={sanitizeHTML(html)} />}
       </Stack>
       <Stack flex={1}>
         <MessageSender
