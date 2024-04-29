@@ -23,11 +23,6 @@
     "@react-oauth/google": "^0.11.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "7.91.0",
-    "@types/node": "20.3.2",
-    "@types/react": "18.2.22",
-    "@types/react-dom": "18.2.7",
-    "@types/react-syntax-highlighter": "^15.5.7",
-    "@types/yup": "^0.32.0",
     "axios": "^1.4.0",
     "draft-js": "^0.11.7",
     "elkjs": "^0.8.2",
@@ -81,7 +76,12 @@
     "prettier": "3.0.2",
     "source-map-explorer": "^2.5.3",
     "cypress": "^13.7.2",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "@types/node": "20.3.2",
+    "@types/react": "18.2.22",
+    "@types/react-dom": "18.2.7",
+    "@types/react-syntax-highlighter": "^15.5.7",
+    "@types/yup": "^0.32.0"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
