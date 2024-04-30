@@ -1,4 +1,5 @@
 import { IBlogPost } from "@/components/Homepage/Types";
+import { ITutorial } from "@/components/Learn/Types";
 
 export const BlogPosts: IBlogPost[] = [
   {
@@ -36,5 +37,14 @@ export const BlogPosts: IBlogPost[] = [
       'The article positions AI content generation as a "robot uprising" with Promptify.com leading the charge. It playfully blends apocalyptic visions and the real benefits of AI, drawing attention to its implications on labor and potential ethical quandaries. It encourages seeing AI as a beneficial tool, not a threat, with mindful use as a precaution against an undesired dystopian future.',
     link: "https://blog.promptify.com/post/rise-of-the-robots-get-your-ai-content-generator-free-at-promptify-com",
     date: "21 June 2023",
+  },
+];
+
+export const Tutorials: ITutorial[] = [
+  {
+    title: "Understanding Editor",
+    image: "",
+    content: "How to create simple prompt apps with Promptify",
+    link: "#",
   },
 ];

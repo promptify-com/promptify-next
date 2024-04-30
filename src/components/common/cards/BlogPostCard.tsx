@@ -17,7 +17,7 @@ interface Props {
   sx?: SxProps;
 }
 function BlogPostCard({ post, min, noLabel, sx }: Props) {
-  const { title, image, content, link } = post;
+  const { title, image, content, link, date } = post;
   const { truncate } = useTruncate();
 
   return (
@@ -108,7 +108,7 @@ function BlogPostCard({ post, min, noLabel, sx }: Props) {
                 opacity: 0.75,
               }}
             >
-              {post.date}
+              {date}
             </Typography>
           </Stack>
         </CardContent>

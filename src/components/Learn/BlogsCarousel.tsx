@@ -21,6 +21,7 @@ function BlogsCarousel() {
         alignItems={"center"}
         gap={1}
         mb={"32px"}
+        px={"16px"}
       >
         <Typography
           flex={1}
