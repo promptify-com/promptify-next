@@ -269,12 +269,22 @@ function Credentials({ input }: Props) {
     }
   };
 
+  function getButtonLabel() {
+    if (isCredentialInserted && !isOauthCredential) {
+      return "Credentials inserted";
+    } else if (isOauthCredential) {
+      return oAuthConnected ? "Connected" : "Connect";
+    } else {
+      return "Insert credentials"; // Non-OAuth credentials
+    }
+  }
+
   return (
     <Stack py={"5px"}>
       {currentUser?.id ? (
         <BaseButton
           size="small"
-          onClick={() => setOpenModal(true)}
+          onClick={isOauthCredential ? handleOauthConnect : () => setOpenModal(true)}
           disabled={isCredentialInserted}
           color="custom"
           variant="text"
@@ -290,7 +300,7 @@ function Credentials({ input }: Props) {
             },
           }}
         >
-          {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
+          {getButtonLabel()}
         </BaseButton>
       ) : (
         <SigninButton onClick={() => router.push("/signin")} />
