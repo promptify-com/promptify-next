@@ -8,19 +8,33 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { theme } from "@/theme";
-import Link from "next/link";
 import Edit from "@mui/icons-material/Edit";
 import { usePrepareExecutionInputs } from "@/components/Documents/Hooks/usePrepareExecutionInputs";
 import useBrowser from "@/hooks/useBrowser";
+import { useAppDispatch } from "@/hooks/useStore";
+import { useRouter } from "next/router";
+import { repeatExecution } from "@/components/Prompt/Utils";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface Props {
   document: ExecutionWithTemplate;
 }
 
 function InstructionsAccordion({ document }: Props) {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const { isMobile } = useBrowser();
-  const template = document.template;
   const { inputs, params } = usePrepareExecutionInputs(document);
+
+  const handleRepeatExecution = async () => {
+    repeatExecution(document, true, dispatch);
+    router.push("/chat");
+    dispatch(
+      updatePopupTemplate({
+        data: null,
+      }),
+    );
+  };
 
   return (
     <Accordion
@@ -86,9 +100,7 @@ function InstructionsAccordion({ document }: Props) {
             </Box>
           )}
           <Button
-            LinkComponent={Link}
-            href={`/prompt-builder/${template?.slug}`}
-            target="_blank"
+            onClick={handleRepeatExecution}
             endIcon={<Edit />}
             variant="contained"
             sx={{
