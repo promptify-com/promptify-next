@@ -149,4 +149,5 @@ export interface IAvailableCredentials {
   id: string;
   name: string;
   type: string;
+  isRefreshed: boolean;
 }

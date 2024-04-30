@@ -6,6 +6,15 @@ import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Add from "@mui/icons-material/Add";
+import { useAppSelector } from "@/hooks/useStore";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { IAvailableCredentials, IStoredWorkflows } from "@/components/Automation/types";
+import { workflowsApi } from "@/core/api/workflows";
+import Storage from "@/common/storage";
+import { RefreshRounded } from "@mui/icons-material";
+import { Menu, MenuItem } from "@mui/material";
+import RefreshCredentials from "@/components/RefreshCredentials";
 
 interface Props {
   title: string;
@@ -13,6 +22,74 @@ interface Props {
 }
 
 function HeaderCreds({ title, isExpanded }: Props) {
+  const router = useRouter();
+  const isGPTPage = router.pathname.includes("automation");
+  const workflowId = router.query?.workflowId as string;
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
+
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setAnchorEl(null);
+  };
+
+  const { areCredentialsStored } = useAppSelector(state => state.chat);
+  useEffect(() => {
+    async function updateRefreshButtons() {
+      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+      if (workflowId && storedWorkflows[workflowId]?.id) {
+        const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
+        const clonedWorkflow = structuredClone(_workflow);
+        const listedCredentials: IAvailableCredentials[] = [];
+
+        clonedWorkflow.nodes.forEach(node => {
+          if (
+            !node.credentials ||
+            Object.keys(node.credentials).length === 0 ||
+            node.type === "n8n-nodes-promptify.promptify" ||
+            node.type === "n8n-nodes-base.openAi"
+          ) {
+            return;
+          }
+
+          for (const credentialsType in node.credentials) {
+            listedCredentials.push({
+              id: node.credentials[credentialsType].id,
+              name: node.credentials[credentialsType].name?.replace("Credentials", "").trim(),
+              type: credentialsType,
+              isRefreshed: false,
+            });
+          }
+        });
+        setAvailableCredentials(listedCredentials);
+      }
+    }
+
+    updateRefreshButtons();
+  }, [areCredentialsStored]);
+
+  const refreshCredential = (credentialId: string) => {
+    setAvailableCredentials(currentCredentials =>
+      currentCredentials.map(cred => (cred.id === credentialId ? { ...cred, isRefreshed: true } : cred)),
+    );
+  };
+
+  useEffect(() => {
+    if (availableCredentials.length > 0) {
+      const allRefreshed = availableCredentials.every(cred => cred.isRefreshed);
+      if (allRefreshed) {
+        setAvailableCredentials([]);
+      }
+    }
+  }, [availableCredentials]);
   return (
     <Stack
       direction={"row"}
@@ -83,6 +160,42 @@ function HeaderCreds({ title, isExpanded }: Props) {
         alignItems={"center"}
         gap={"8px"}
       >
+        {isGPTPage && availableCredentials.length > 0 && (
+          <>
+            <Button
+              startIcon={<RefreshRounded />}
+              onClick={handleClick}
+              sx={{
+                color: "onSurface",
+                fontSize: 15,
+                fontWeight: "500",
+              }}
+            >
+              Refresh
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              sx={{
+                px: "16px",
+              }}
+            >
+              {availableCredentials.map(
+                credential =>
+                  !credential.isRefreshed && (
+                    <RefreshCredentials
+                      key={credential.id}
+                      credential={credential}
+                      onRefresh={() => {
+                        refreshCredential(credential.id);
+                      }}
+                    />
+                  ),
+              )}
+            </Menu>
+          </>
+        )}
         <Stack>
           {isExpanded ? (
             <Tooltip

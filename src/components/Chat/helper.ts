@@ -38,12 +38,13 @@ export function extractTemplateIDs(message: string) {
 }
 
 export function extractWorkflowIDs(message: string) {
-  return (
-    message
-      .match(/(workflow([\_\s*]*?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)/gi)
-      ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
-      .filter(Boolean) ?? []
-  );
+  // return (
+  //   message
+  //     .match(/(workflow([\_\s*]*?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)/gi)
+  //     ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
+  //     .filter(Boolean) ?? []
+  // );
+  return [10, 11, 7]
 }
 
 export function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {

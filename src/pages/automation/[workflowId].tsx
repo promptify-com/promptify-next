@@ -47,6 +47,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     useWorkflow(workflow);
   const {
     messages,
+    setMessages,
     initialMessages,
     validateVary,
     isValidatingAnswer,
@@ -97,7 +98,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
         }));
 
       dispatch(setInputs(inputs));
-
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form" && msg.type !== "credentials"));
       if (!skipInitialMessages) {
         initialMessages({ questions: inputs });
       }
@@ -121,8 +122,8 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const initialQueuedMessages: IMessage[] = [];
 
-    const requiresAuthentication = nodes.some(node => node.parameters?.authentication && !node.credentials);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type] && !node.credentials);
+    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {
@@ -130,7 +131,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     }
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    if ((requiresAuthentication || requiresOauth) && !areAllCredentialsStored) {
+    if (requiresAuthentication || requiresOauth) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialQueuedMessages.push(credMessage);
     }
@@ -216,7 +217,6 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
               showGenerate={showGenerate}
               onGenerate={executeWorkflow}
               isValidating={isValidatingAnswer}
-              processData={processData}
             />
           </Stack>
 

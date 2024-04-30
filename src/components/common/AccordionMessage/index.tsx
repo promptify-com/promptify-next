@@ -26,8 +26,7 @@ interface Props {
 export default function AccordionMessage({ messageType, children, template, messages = [], abortGenerating }: Props) {
   const dispatch = useAppDispatch();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const areCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
-  const { isAutomationPage } = useVariant();
+
   const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);
 
@@ -60,19 +59,17 @@ export default function AccordionMessage({ messageType, children, template, mess
               onChange={(_, state) => setExpanded(state)}
               sx={{ p: 0, flex: 1 }}
             >
-              {isAutomationPage && areCredentialsStored ? null : (
-                <AccordionMessageHeader
-                  type={messageType}
-                  template={template!}
-                  isExpanded={expanded}
-                  onCancel={abortGenerating}
-                  messages={messages}
-                />
-              )}
+              <AccordionMessageHeader
+                type={messageType}
+                template={template!}
+                isExpanded={expanded}
+                onCancel={abortGenerating}
+                messages={messages}
+              />
 
               <AccordionDetails
                 sx={{
-                  mt: isAutomationPage && areCredentialsStored ? 0 : -4,
+                  mt: -4,
                   p: { xs: "32px 8px 10px 8px", md: "32px 16px 12px 16px" },
                   bgcolor: "surface.2",
                   overflow: "hidden",

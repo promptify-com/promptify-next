@@ -62,10 +62,6 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
   ).default as unknown as ICredentialJson;
 
   for (const node of nodes) {
-    if (node.credentials) {
-      continue;
-    }
-
     if (oAuthTypeMapping[node.type!]) {
       const authType = oAuthTypeMapping[node.type!];
 
