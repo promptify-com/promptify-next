@@ -6,14 +6,17 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Image from "@/components/design-system/Image";
-import { IBlogPost } from "./Types";
+import { IBlogPost } from "@/components/Homepage/Types";
 import useTruncate from "@/hooks/useTruncate";
+import { SxProps } from "@mui/material";
 
 interface Props {
   post: IBlogPost;
   min?: boolean;
+  noLabel?: boolean;
+  sx?: SxProps;
 }
-function BlogPostCard({ post, min }: Props) {
+function BlogPostCard({ post, min, noLabel, sx }: Props) {
   const { title, image, content, link } = post;
   const { truncate } = useTruncate();
 
@@ -31,9 +34,7 @@ function BlogPostCard({ post, min }: Props) {
           bgcolor: "transparent",
           borderRadius: "24px",
           overflow: "hidden",
-          "&:hover": {
-            bgcolor: "white",
-          },
+          ...sx,
         }}
       >
         <CardActionArea
@@ -56,21 +57,23 @@ function BlogPostCard({ post, min }: Props) {
               style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
               priority={false}
             />
-            <Typography
-              fontSize={14}
-              fontWeight={400}
-              sx={{
-                position: "absolute",
-                left: "22px",
-                top: "17px",
-                p: "4px 12px",
-                borderRadius: "99px",
-                bgcolor: "#000000CC",
-                color: "#FFFFFF",
-              }}
-            >
-              Blog Post
-            </Typography>
+            {!noLabel && (
+              <Typography
+                fontSize={14}
+                fontWeight={400}
+                sx={{
+                  position: "absolute",
+                  left: "22px",
+                  top: "17px",
+                  p: "4px 12px",
+                  borderRadius: "99px",
+                  bgcolor: "#000000CC",
+                  color: "#FFFFFF",
+                }}
+              >
+                Blog Post
+              </Typography>
+            )}
           </CardMedia>
         </CardActionArea>
         <CardContent sx={{ padding: "8px 0px", m: 0 }}>
@@ -96,6 +99,16 @@ function BlogPostCard({ post, min }: Props) {
               }}
             >
               {truncate(min ? title : content, { length: 160 })}
+            </Typography>
+            <Typography
+              fontSize={14}
+              fontWeight={400}
+              sx={{
+                color: "onSurface",
+                opacity: 0.75,
+              }}
+            >
+              {post.date}
             </Typography>
           </Stack>
         </CardContent>

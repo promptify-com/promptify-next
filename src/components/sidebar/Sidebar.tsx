@@ -5,20 +5,18 @@ import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
-import HelpRounded from "@mui/icons-material/HelpRounded";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import TryRounded from "@mui/icons-material/TryRounded";
-
 import { useTheme } from "@mui/material/styles";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { BLOG_URL } from "@/common/constants";
 import SidebarItem from "@/components/sidebar/SidebarItem";
 import EditorIcon from "@/components/builder/Assets/EditorIcon";
 import type { NavItem } from "@/common/types/sidebar";
+import Book3 from "@/assets/icons/Book3";
 
 const PromptsDrawerLazy = lazy(() => import("./PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -44,6 +42,7 @@ function Sidebar() {
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
+  const isLearnPage = pathname.split("/")[1] === "learn";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -104,11 +103,11 @@ function Sidebar() {
     },
   ];
   const learnHelpNavItem = {
-    name: "Learn & Help",
-    href: BLOG_URL,
-    icon: <HelpRounded />,
-    active: false,
-    external: true,
+    name: "Learn",
+    href: "/learn",
+    icon: <Book3 {...(isLearnPage && { color: theme.palette.primary.main })} />,
+    active: isLearnPage,
+    external: false,
     reload: false,
   };
 

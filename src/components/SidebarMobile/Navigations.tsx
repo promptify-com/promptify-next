@@ -14,7 +14,6 @@ import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import Search from "@mui/icons-material/Search";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import Grid from "@mui/material/Grid";
-
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -24,9 +23,9 @@ import { BLOG_URL } from "@/common/constants";
 import { isValidUserFn } from "@/core/store/userSlice";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import EditorIcon from "@/components/builder/Assets/EditorIcon";
-import Book3 from "@/components/SidebarMobile/Icons/Book3";
 import CardTemplateResult from "@/components/common/cards/CardTemplateResult";
 import type { Link } from "@/components/SidebarMobile/Types";
+import Book3 from "@/assets/icons/Book3";
 
 interface Props {
   onCloseDrawer: () => void;
