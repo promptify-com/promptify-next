@@ -272,71 +272,26 @@ function Credentials({ input }: Props) {
   return (
     <Stack py={"5px"}>
       {currentUser?.id ? (
-        isOauthCredential ? (
-          <>
-            {oAuthConnected ? (
-              <>
-                {() => {
-                  const _credentials = (Storage.get("credentials") || []) as ICredential[];
-                  const _credential = _credentials.find(cred => cred.type === credential?.name);
-                  if (!_credential) {
-                    return null;
-                  }
-                  return (
-                    <RefreshCredentials
-                      credential={_credential}
-                      onClick={() => {
-                        setOAuthConnected(false);
-                      }}
-                    />
-                  );
-                }}
-              </>
-            ) : (
-              <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-                <BaseButton
-                  onClick={handleOauthConnect}
-                  color="custom"
-                  variant="text"
-                  sx={{
-                    border: "1px solid",
-                    borderRadius: "8px",
-                    borderColor: "secondary.main",
-                    color: "secondary.main",
-                    p: "3px 12px",
-                    fontSize: { xs: 11, md: 14 },
-                    ":hover": {
-                      bgcolor: "action.hover",
-                    },
-                  }}
-                >
-                  {"Connect"}
-                </BaseButton>
-              </Stack>
-            )}
-          </>
-        ) : (
-          <BaseButton
-            size="small"
-            onClick={() => setOpenModal(true)}
-            disabled={isCredentialInserted}
-            color="custom"
-            variant="text"
-            sx={{
-              border: "1px solid",
-              borderRadius: "8px",
-              borderColor: "secondary.main",
-              color: "secondary.main",
-              p: "3px 12px",
-              fontSize: { xs: 11, md: 14 },
-              ":hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-          >
-            {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
-          </BaseButton>
-        )
+        <BaseButton
+          size="small"
+          onClick={() => setOpenModal(true)}
+          disabled={isCredentialInserted}
+          color="custom"
+          variant="text"
+          sx={{
+            border: "1px solid",
+            borderRadius: "8px",
+            borderColor: "secondary.main",
+            color: "secondary.main",
+            p: "3px 12px",
+            fontSize: { xs: 11, md: 14 },
+            ":hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
+        </BaseButton>
       ) : (
         <SigninButton onClick={() => router.push("/signin")} />
       )}

@@ -79,8 +79,8 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
     );
 
     const initialWorkflowMessages: IMessage[] = [];
-    const requiresAuthentication = nodes.some(node => node.parameters?.authentication && !node.credentials);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type] && !node.credentials);
+    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {
@@ -88,7 +88,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
     }
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    if (!areAllCredentialsStored) {
+    if (requiresAuthentication) {
       const credMessage = createMessage({ type: "credentials", noHeader: true, text: "" });
       initialWorkflowMessages.push(credMessage);
     }

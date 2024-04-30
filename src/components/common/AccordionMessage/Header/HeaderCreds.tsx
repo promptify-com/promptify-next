@@ -23,7 +23,6 @@ interface Props {
 
 function HeaderCreds({ title, isExpanded }: Props) {
   const router = useRouter();
-  const isGPTPage = router.pathname.includes("automation");
   const workflowId = router.query?.workflowId as string;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -160,7 +159,7 @@ function HeaderCreds({ title, isExpanded }: Props) {
         alignItems={"center"}
         gap={"8px"}
       >
-        {isGPTPage && availableCredentials.length > 0 && (
+        {availableCredentials.length > 0 && (
           <>
             <Button
               startIcon={<RefreshRounded />}

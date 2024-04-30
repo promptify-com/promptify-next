@@ -93,7 +93,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         </Fade>
       )}
 
-      {message.type === "credsForm" && areCredentialsStored && (
+      {message.type === "credsForm" && (
         <Box mt={-4}>
           <CredentialsMessage
             message={message}
@@ -102,7 +102,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           />
         </Box>
       )}
-      {message.type === "credentials" && !areCredentialsStored && (
+      {message.type === "credentials" && (
         <Box mt={-4}>
           <CredentialsMessage
             message={message}
