@@ -87,19 +87,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
           gap={3}
           direction={"column"}
         >
-          {/* {availableCredentials.map(
-            credential =>
-              !credential.isRefreshed && (
-                <RefreshCredentials
-                  key={credential.id}
-                  showLabel
-                  credential={credential}
-                  onClick={() => {
-                    refreshCredential(credential.id);
-                  }}
-                />
-              ),
-          )} */}
           {generatedExecution ? (
             <ExecutionMessage execution={generatedExecution} />
           ) : (
