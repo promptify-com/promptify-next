@@ -206,7 +206,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
               flex: 1,
               color: "var(--onSurface, #1B1B1E)",
               fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
               fontSize: "20px",
               fontStyle: "normal",
               fontWeight: "400",

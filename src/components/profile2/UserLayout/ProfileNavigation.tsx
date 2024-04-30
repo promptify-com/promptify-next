@@ -104,7 +104,6 @@ const btnStyle = {
 
 const btnTypographyStyle = {
   color: "onSurface",
-  fontFamily: "Poppins",
   fontSize: "16px",
   fontWeight: 500,
   lineHeight: "150%",

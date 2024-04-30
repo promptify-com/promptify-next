@@ -58,7 +58,6 @@ export default function Layout({ children, title }: { children: React.ReactNode;
           sx={{
             color: "var(--secondary, var(--secondary, #575E71))",
             fontFeatureSettings: "'clig' off, 'liga' off",
-            fontFamily: "Poppins",
             fontSize: "16px",
             fontStyle: "normal",
             fontWeight: 500,

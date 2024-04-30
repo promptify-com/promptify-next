@@ -137,14 +137,10 @@ export const Connections = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontFamily: "Poppins, Space Mono",
-                    fontSize: "16px",
                     borderRadius: "50%",
                     overflow: "hidden",
                     color: "#fff",
                     backgroundColor: "black",
-                    textTransform: "capitalize",
-                    lineHeight: "47px",
                     textAlign: "center",
                   }}
                 />
