@@ -63,7 +63,6 @@ export const Home = () => {
           >
             <Typography
               sx={{
-                fontFamily: "Poppins",
                 fontStyle: "normal",
                 fontWeight: 500,
                 fontSize: "18px",
@@ -75,7 +74,6 @@ export const Home = () => {
             </Typography>
             <Typography
               sx={{
-                fontFamily: "Poppins",
                 fontStyle: "normal",
                 fontWeight: 400,
                 fontSize: "13px",

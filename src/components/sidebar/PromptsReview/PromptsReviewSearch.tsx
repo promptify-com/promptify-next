@@ -46,7 +46,6 @@ export default function PromptsReviewSearch({ title }: { title: string | null })
             flex: 1,
             fontSize: "13px",
             padding: "0px",
-            fontFamily: "Poppins",
           }}
         />
       </Box>

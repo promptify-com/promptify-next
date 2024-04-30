@@ -86,7 +86,6 @@ function Onboarding() {
           sx={{
             color: "var(--secondary-light, var(--secondary, #575E71))",
             fontFeatureSettings: "'clig' off, 'liga' off",
-            fontFamily: "Poppins",
             fontSize: "14px",
             fontStyle: "normal",
             fontWeight: "400",

@@ -147,7 +147,6 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
           <Google />
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 500,
               fontSize: "15px",
@@ -186,7 +185,6 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
           <LinkedIn sx={{ color: "white" }} />
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 500,
               fontSize: "15px",
@@ -238,7 +236,6 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
           <GitHub sx={{ color: "white" }} />
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 500,
               fontSize: "15px",
@@ -277,7 +274,6 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
           <Microsoft />
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 500,
               fontSize: "15px",
