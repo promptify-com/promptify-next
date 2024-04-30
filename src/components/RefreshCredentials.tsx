@@ -6,7 +6,6 @@ import { useAppDispatch } from "@/hooks/useStore";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setToast } from "@/core/store/toastSlice";
 import type { IAvailableCredentials, ICredential } from "@/components/Automation/types";
-import { RefreshRounded } from "@mui/icons-material";
 
 interface Props {
   credential: IAvailableCredentials | ICredential;

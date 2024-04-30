@@ -1,20 +1,21 @@
-import UnfoldLess from "@mui/icons-material/UnfoldLess";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
 import Add from "@mui/icons-material/Add";
+import RefreshRounded from "@mui/icons-material/RefreshRounded";
+import UnfoldLess from "@mui/icons-material/UnfoldLess";
+
 import { useAppSelector } from "@/hooks/useStore";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { IAvailableCredentials, IStoredWorkflows } from "@/components/Automation/types";
 import { workflowsApi } from "@/core/api/workflows";
 import Storage from "@/common/storage";
-import { RefreshRounded } from "@mui/icons-material";
-import { Menu, MenuItem } from "@mui/material";
 import RefreshCredentials from "@/components/RefreshCredentials";
+import type { IAvailableCredentials, IStoredWorkflows } from "@/components/Automation/types";
 
 interface Props {
   title: string;

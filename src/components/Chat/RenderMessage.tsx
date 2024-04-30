@@ -94,7 +94,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
       )}
 
       {message.type === "credsForm" && (
-        <Box mt={-4}>
+        <Box>
           <CredentialsMessage
             message={message}
             onExecuteWorkflow={onExecuteWorkflow}
