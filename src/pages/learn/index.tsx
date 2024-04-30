@@ -6,10 +6,14 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import { theme } from "@/theme";
 import Head from "next/head";
 import Button from "@mui/material/Button";
-import BlogsCarousel from "../../components/Learn/BlogsCarousel";
+import BlogsCarousel from "@/components/Learn/BlogsCarousel";
 import Grid from "@mui/material/Grid";
 import TutorialCard from "@/components/Learn/TutorialCard";
-import { Tutorials } from "@/components/Learn/Constants";
+import { FAQs, Tutorials } from "@/components/Learn/Constants";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 
 export default function LearnPage() {
   return (
@@ -97,6 +101,76 @@ export default function LearnPage() {
                   </Grid>
                 ))}
               </Grid>
+            </Stack>
+          </Stack>
+          <Stack
+            gap={3}
+            sx={{
+              width: "70%",
+              m: "auto",
+            }}
+          >
+            <Stack
+              textAlign={"center"}
+              gap={2}
+              sx={{
+                p: "8px 16px",
+                width: "70%",
+                m: "auto",
+              }}
+            >
+              <Typography
+                fontSize={32}
+                fontWeight={400}
+                color={"onSurface"}
+              >
+                Frequently Asked Questions
+              </Typography>
+              <Typography
+                fontSize={16}
+                fontWeight={400}
+                color={"onSurface"}
+              >
+                If you have a question that is not addressed here, please feel free to contact us for further
+                assistance.
+              </Typography>
+            </Stack>
+            <Stack
+              gap={2}
+              px={"16px"}
+            >
+              {FAQs.map(faq => (
+                <Accordion
+                  key={faq.question}
+                  elevation={0}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: "surfaceContainerHighest",
+                    borderRadius: "16px !important",
+                    overflow: "hidden",
+                    p: "4px 8px",
+                    color: "onSurface",
+                    m: "0 !important",
+                    ".MuiAccordionSummary-root": {
+                      minHeight: "48px !important",
+                      fontSize: 18,
+                      fontWeight: 400,
+                      color: "onSurface",
+                    },
+                    ".MuiAccordionSummary-content": {
+                      m: "0 !important",
+                    },
+                    ".MuiAccordionDetails-root": {
+                      fontSize: 16,
+                      fontWeight: 400,
+                      color: "onSurface",
+                    },
+                  }}
+                >
+                  <AccordionSummary expandIcon={<ExpandMore />}>{faq.question}</AccordionSummary>
+                  <AccordionDetails>{faq.answer}</AccordionDetails>
+                </Accordion>
+              ))}
             </Stack>
           </Stack>
         </Stack>

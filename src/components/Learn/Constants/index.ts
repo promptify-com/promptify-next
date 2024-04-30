@@ -1,5 +1,5 @@
 import { IBlogPost } from "@/components/Homepage/Types";
-import { ITutorial } from "@/components/Learn/Types";
+import { FAQ, ITutorial } from "@/components/Learn/Types";
 
 export const BlogPosts: IBlogPost[] = [
   {
@@ -46,5 +46,24 @@ export const Tutorials: ITutorial[] = [
     image: "",
     content: "How to create simple prompt apps with Promptify",
     link: "#",
+  },
+];
+
+export const FAQs: FAQ[] = [
+  {
+    question: "Is the app really free to use?",
+    answer: "If you have a question that is not addressed here, please feel free to contact us for further assistance.",
+  },
+  {
+    question: "How do I upgrade to a premium version or remove ads?",
+    answer: "If you have a question that is not addressed here, please feel free to contact us for further assistance.",
+  },
+  {
+    question: "What kind of support or help is available for the app?",
+    answer: "If you have a question that is not addressed here, please feel free to contact us for further assistance.",
+  },
+  {
+    question: "Is my personal information secure when using the app?",
+    answer: "If you have a question that is not addressed here, please feel free to contact us for further assistance.",
   },
 ];

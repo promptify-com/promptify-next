@@ -4,3 +4,8 @@ export interface ITutorial {
   content: string;
   link: string;
 }
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
