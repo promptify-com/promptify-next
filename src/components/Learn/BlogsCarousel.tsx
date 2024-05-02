@@ -9,7 +9,6 @@ import { BLOG_URL } from "@/common/constants";
 import { BlogPosts } from "./Constants";
 import BlogPostCard from "@/components/common/cards/BlogPostCard";
 import Grid from "@mui/material/Grid";
-import { useAppSelector } from "../../hooks/useStore";
 
 function BlogsCarousel() {
   const { isMobile } = useBrowser();
