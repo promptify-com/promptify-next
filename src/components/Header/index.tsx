@@ -245,6 +245,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
     isChatHistorySticky,
     builderSidebarOpen,
     isPromptsReviewFiltersSticky,
+    isLearnSidebarSticky,
   } = useAppSelector(state => state.sidebar);
 
   const isPromptsPage = pathname.split("/")[1] === "explore";
@@ -253,12 +254,15 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
   const isEditor = pathname.split("/")[1] === "prompt-builder";
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
+  const isLearnPage = ["learn", "terms-of-use", "privacy-policy"].includes(pathname.split("/")[1]);
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
     (isDocumentsPage && isDocumentsFiltersSticky) ||
-    (isPromptsReview && isPromptsReviewFiltersSticky);
+    (isPromptsReview && isPromptsReviewFiltersSticky) ||
+    (isDocumentsPage && isDocumentsFiltersSticky) ||
+    (isLearnPage && isLearnSidebarSticky);
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""} ${
     isAccountPage ? `+ ${AccountSidebarWidth}px` : ""
