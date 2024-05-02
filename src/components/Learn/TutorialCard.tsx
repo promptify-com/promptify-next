@@ -56,14 +56,14 @@ function TutorialCard({ tutorial }: Props) {
         <CardContent sx={{ p: "14px 16px 8px !important", m: 0 }}>
           <Stack gap={2}>
             <Typography
-              fontSize={16}
+              fontSize={{ xs: 14, md: 16 }}
               fontWeight={500}
               color={"onSurface"}
             >
               {title}
             </Typography>
             <Typography
-              fontSize={14}
+              fontSize={{ xs: 12, md: 14 }}
               fontWeight={400}
               color={"onSurface"}
               style={{

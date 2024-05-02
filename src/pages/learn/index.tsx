@@ -26,7 +26,7 @@ export default function LearnPage() {
       </Head>
       <Box
         sx={{
-          p: "40px 72px",
+          p: { xs: "40px 20px", md: "40px 72px" },
           mt: { xs: theme.custom.headerHeight.xs, md: 0 },
           scrollBehavior: "smooth",
         }}
@@ -42,11 +42,11 @@ export default function LearnPage() {
             id={"start"}
             gap={3}
             alignItems={"flex-start"}
-            p={"24px 16px"}
+            p={{ xs: "24px 0", md: "24px 16px" }}
           >
             <Stack gap={2}>
               <Typography
-                fontSize={48}
+                fontSize={{ xs: 38, md: 48 }}
                 fontWeight={400}
                 color={"onSurface"}
               >
@@ -76,17 +76,17 @@ export default function LearnPage() {
           >
             <Stack
               gap={2}
-              p={"8px 16px"}
+              p={{ md: "8px 16px" }}
             >
               <Typography
-                fontSize={32}
+                fontSize={{ xs: 26, md: 32 }}
                 fontWeight={400}
                 color={"onSurface"}
               >
                 Tutorials
               </Typography>
               <Typography
-                fontSize={18}
+                fontSize={{ xs: 15, md: 18 }}
                 fontWeight={400}
               >
                 If you have a question that is not addressed here, please feel free to contact us for further
@@ -95,14 +95,15 @@ export default function LearnPage() {
             </Stack>
             <Grid
               container
-              py={"16px"}
+              py={"8px"}
             >
               {Array.from({ length: 4 }).map((_, i) => (
                 <Grid
                   key={i}
                   item
-                  xs={3}
-                  sx={{ p: "16px 16px 8px", ":last-of-type": { pl: 0 } }}
+                  xs={6}
+                  md={3}
+                  sx={{ p: { xs: "8px", md: "16px 16px 8px" } }}
                 >
                   <TutorialCard tutorial={Tutorials[0]} />
                 </Grid>
@@ -113,7 +114,7 @@ export default function LearnPage() {
             id={"faq"}
             gap={3}
             sx={{
-              width: "70%",
+              width: { md: "70%" },
               m: "auto",
             }}
           >
@@ -122,19 +123,19 @@ export default function LearnPage() {
               gap={2}
               sx={{
                 p: "8px 16px",
-                width: "70%",
+                width: { md: "70%" },
                 m: "auto",
               }}
             >
               <Typography
-                fontSize={32}
+                fontSize={{ xs: 26, md: 32 }}
                 fontWeight={400}
                 color={"onSurface"}
               >
                 Frequently Asked Questions
               </Typography>
               <Typography
-                fontSize={16}
+                fontSize={{ xs: 14, md: 16 }}
                 fontWeight={400}
                 color={"onSurface"}
               >
@@ -144,7 +145,7 @@ export default function LearnPage() {
             </Stack>
             <Stack
               gap={2}
-              px={"16px"}
+              px={{ md: "16px" }}
             >
               {FAQs.map(faq => (
                 <Accordion
@@ -160,7 +161,7 @@ export default function LearnPage() {
                     m: "0 !important",
                     ".MuiAccordionSummary-root": {
                       minHeight: "48px !important",
-                      fontSize: 18,
+                      fontSize: { xs: 15, md: 18 },
                       fontWeight: 400,
                       color: "onSurface",
                     },
@@ -168,7 +169,7 @@ export default function LearnPage() {
                       m: "0 !important",
                     },
                     ".MuiAccordionDetails-root": {
-                      fontSize: 16,
+                      fontSize: { xs: 13, md: 16 },
                       fontWeight: 400,
                       color: "onSurface",
                     },

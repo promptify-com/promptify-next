@@ -21,12 +21,14 @@ function BlogsCarousel() {
         direction={"row"}
         alignItems={"center"}
         gap={1}
-        mb={"32px"}
-        px={"16px"}
+        sx={{
+          mb: "32px",
+          px: { md: "16px" },
+        }}
       >
         <Typography
           flex={1}
-          fontSize={{ xs: 24, md: 32 }}
+          fontSize={{ xs: 26, md: 32 }}
           fontWeight={400}
           color={"onSurface"}
           fontFamily={"Poppins"}
@@ -77,9 +79,10 @@ function BlogsCarousel() {
             <Grid
               key={post.title}
               item
-              xs={4}
+              xs={6}
+              md={4}
               sx={{
-                flex: "0 0 calc(33% - 32px)",
+                flex: { xs: "0 0 calc(60% + 32px)", md: "0 0 calc(33% + 32px)" },
                 p: "16px 16px 8px",
                 borderRadius: "24px",
                 ":hover": {
