@@ -30,6 +30,7 @@ export const baseApi = createApi({
     "Feedbacks",
     "PromptsExecutions",
     "Chats",
+    "Credentials",
   ],
   endpoints: () => ({}),
 });

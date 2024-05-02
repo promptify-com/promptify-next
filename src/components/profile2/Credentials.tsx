@@ -40,6 +40,9 @@ function Credentials() {
       await updateWorkflowAfterCredentialsDeletion(selectedCredential.type);
 
       removeCredential(selectedCredential.id);
+      const currentCredentials = credentials;
+      const newCredentials = currentCredentials.filter(credential => credential.id !== selectedCredential.id);
+      setCredentials(newCredentials);
       dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
     } catch (err) {
       dispatch(

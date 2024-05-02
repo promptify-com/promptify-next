@@ -44,6 +44,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "get",
           keepUnusedDataFor: 21600,
         }),
+        providesTags: ["Credentials"],
       }),
       createCredentials: builder.mutation<ICredential, CreateCredentialPayload>({
         query: data => ({
@@ -51,12 +52,14 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "post",
           data,
         }),
+        invalidatesTags: ["Credentials"],
       }),
       deleteCredential: builder.mutation<ICredential, string>({
         query: id => ({
           url: `/api/n8n/workflows/credentials/${id}`,
           method: "delete",
         }),
+        invalidatesTags: ["Credentials"],
       }),
       updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: number; data: IWorkflowCreateResponse }>({
         query: ({ workflowId, data }) => ({
