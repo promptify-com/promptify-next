@@ -43,6 +43,7 @@ function Navigations({ onCloseDrawer }: Props) {
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+  const isLearnPage = ["learn", "terms-of-use", "privacy-policy"].includes(pathname.split("/")[1]);
 
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
     skip: !textInput.length,
@@ -103,9 +104,9 @@ function Navigations({ onCloseDrawer }: Props) {
     {
       label: "Learn",
       icon: <Book3 />,
-      href: BLOG_URL,
-      active: pathname == "/learn",
-      external: true,
+      href: "/learn",
+      active: isLearnPage,
+      external: false,
     },
   ];
 

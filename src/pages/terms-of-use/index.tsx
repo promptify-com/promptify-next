@@ -10,7 +10,7 @@ export default function TermsOfUsePage() {
     <Layout footer>
       <Box
         sx={{
-          p: "40px 72px",
+          p: { xs: "40px 20px", md: "40px 72px" },
           mt: { xs: theme.custom.headerHeight.xs, md: 0 },
         }}
       >
@@ -34,7 +34,7 @@ export default function TermsOfUsePage() {
           }}
         >
           <Typography
-            fontSize={48}
+            fontSize={{ xs: 38, md: 48 }}
             fontWeight={400}
             color={"onSurface"}
           >
@@ -53,7 +53,7 @@ export default function TermsOfUsePage() {
             these terms by using our Services. Our Privacy Policy details how we handle your personal information.
           </Box>
           <Typography
-            fontSize={32}
+            fontSize={{ xs: 26, md: 32 }}
             fontWeight={400}
             color={"onSurface"}
           >
@@ -66,7 +66,7 @@ export default function TermsOfUsePage() {
             outside your organization. You are responsible for activities under your account.
           </Box>
           <Typography
-            fontSize={32}
+            fontSize={{ xs: 26, md: 32 }}
             fontWeight={400}
             color={"onSurface"}
           >
@@ -89,7 +89,7 @@ export default function TermsOfUsePage() {
             (d) Third Parties. We aren&apos;t responsible for third-party products used in connection with our Services.
           </Box>
           <Typography
-            fontSize={32}
+            fontSize={{ xs: 26, md: 32 }}
             fontWeight={400}
             color={"onSurface"}
           >
