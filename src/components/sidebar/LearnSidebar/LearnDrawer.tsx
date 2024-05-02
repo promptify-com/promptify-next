@@ -93,7 +93,7 @@ export default function LearnSidebar({ expandedOnHover = false }: Props) {
               key={navItem.title}
               href={navItem.link}
               scroll={false}
-              className={`item ${router.pathname == navItem.link ? "active" : ""}`}
+              className={`item ${router.asPath == navItem.link ? "active" : ""}`}
             >
               {navItem.title}
             </Link>
