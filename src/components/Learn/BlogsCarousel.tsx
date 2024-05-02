@@ -9,10 +9,11 @@ import { BLOG_URL } from "@/common/constants";
 import { BlogPosts } from "./Constants";
 import BlogPostCard from "@/components/common/cards/BlogPostCard";
 import Grid from "@mui/material/Grid";
+import { useAppSelector } from "../../hooks/useStore";
 
 function BlogsCarousel() {
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
   const { isMobile } = useBrowser();
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
 
   return (
     <Stack gap={3}>
@@ -70,14 +71,15 @@ function BlogsCarousel() {
       >
         <Grid
           container
-          wrap="nowrap"
+          flexWrap="nowrap"
         >
           {BlogPosts.map(post => (
             <Grid
               key={post.title}
               item
-              xs={6}
+              xs={4}
               sx={{
+                flex: "0 0 calc(33% - 32px)",
                 p: "16px 16px 8px",
                 borderRadius: "24px",
                 ":hover": {
@@ -91,7 +93,7 @@ function BlogsCarousel() {
                 noLabel
                 sx={{
                   ".MuiCardContent-root": {
-                    p: "8px 12px",
+                    p: "8px 12px !important",
                   },
                 }}
               />

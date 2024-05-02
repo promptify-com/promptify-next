@@ -4,16 +4,6 @@ import Stack from "@mui/material/Stack";
 import { Layout } from "@/layout";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import { theme } from "@/theme";
-import Head from "next/head";
-import Button from "@mui/material/Button";
-import BlogsCarousel from "@/components/Learn/BlogsCarousel";
-import Grid from "@mui/material/Grid";
-import TutorialCard from "@/components/Learn/TutorialCard";
-import { FAQs, Tutorials } from "@/components/Learn/Constants";
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 
 export default function TermsOfUsePage() {
   return (

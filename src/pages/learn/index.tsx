@@ -93,7 +93,10 @@ export default function LearnPage() {
                 assistance.
               </Typography>
             </Stack>
-            <Grid container>
+            <Grid
+              container
+              py={"16px"}
+            >
               {Array.from({ length: 4 }).map((_, i) => (
                 <Grid
                   key={i}
