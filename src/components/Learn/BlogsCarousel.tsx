@@ -30,7 +30,6 @@ function BlogsCarousel() {
           fontSize={{ xs: 26, md: 32 }}
           fontWeight={400}
           color={"onSurface"}
-          fontFamily={"Poppins"}
           lineHeight={"120%"}
           letterSpacing={"0.17px"}
           fontStyle={"normal"}
