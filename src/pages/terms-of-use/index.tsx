@@ -129,7 +129,7 @@ export default function TermsOfUsePage() {
 export async function getStaticProps() {
   return {
     props: {
-      title: "Learn",
+      title: "Terms of Use",
       description: SEO_DESCRIPTION,
     },
   };

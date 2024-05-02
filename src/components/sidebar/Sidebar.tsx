@@ -30,6 +30,9 @@ const DocumentsDrawerLazy = lazy(() => import("./DocumentsFilter/DocumentsDrawer
 const PromptsReviewDrawerLazy = lazy(() => import("./PromptsReview/PromptsReviewDrawer"), {
   ssr: false,
 });
+const LearnDrawerLazy = lazy(() => import("./LearnSidebar/LearnDrawer"), {
+  ssr: false,
+});
 
 function Sidebar() {
   const router = useRouter();
@@ -42,7 +45,7 @@ function Sidebar() {
   const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
-  const isLearnPage = pathname.split("/")[1] === "learn";
+  const isLearnPage = ["learn", "terms-of-use", "privacy-policy"].includes(pathname.split("/")[1]);
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -119,6 +122,7 @@ function Sidebar() {
   const chatsExpanded = isChatPage && mouseHover;
   const documentsFilterExpanded = isDocumentsPage && mouseHover;
   const promptsReviewFilterExpanded = isPromptsReview && mouseHover;
+  const learnSidebarExpanded = isLearnPage && mouseHover;
 
   return (
     <Grid
@@ -167,6 +171,7 @@ function Sidebar() {
       {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
       {isDocumentsPage && <DocumentsDrawerLazy expandedOnHover={documentsFilterExpanded} />}
       {isPromptsReview && <PromptsReviewDrawerLazy expandedOnHover={promptsReviewFilterExpanded} />}
+      {isLearnPage && <LearnDrawerLazy expandedOnHover={learnSidebarExpanded} />}
     </Grid>
   );
 }

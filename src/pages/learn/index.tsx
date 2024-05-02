@@ -28,6 +28,7 @@ export default function LearnPage() {
         sx={{
           p: "40px 72px",
           mt: { xs: theme.custom.headerHeight.xs, md: 0 },
+          scrollBehavior: "smooth",
         }}
       >
         <Stack
@@ -38,6 +39,7 @@ export default function LearnPage() {
           }}
         >
           <Stack
+            id={"start"}
             gap={3}
             alignItems={"flex-start"}
             p={"24px 16px"}
@@ -64,46 +66,48 @@ export default function LearnPage() {
               Get started guide
             </Button>
           </Stack>
-          <BlogsCarousel />
-          <Stack gap={3}>
+          <Box id={"blog"}>
+            <BlogsCarousel />
+          </Box>
+          <Stack
+            id={"tutorials"}
+            gap={3}
+            alignItems={"flex-start"}
+          >
             <Stack
-              gap={3}
-              alignItems={"flex-start"}
+              gap={2}
+              p={"8px 16px"}
             >
-              <Stack
-                gap={2}
-                p={"8px 16px"}
+              <Typography
+                fontSize={32}
+                fontWeight={400}
+                color={"onSurface"}
               >
-                <Typography
-                  fontSize={32}
-                  fontWeight={400}
-                  color={"onSurface"}
-                >
-                  Tutorials
-                </Typography>
-                <Typography
-                  fontSize={18}
-                  fontWeight={400}
-                >
-                  If you have a question that is not addressed here, please feel free to contact us for further
-                  assistance.
-                </Typography>
-              </Stack>
-              <Grid container>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <Grid
-                    key={i}
-                    item
-                    xs={3}
-                    sx={{ p: "16px 16px 8px", ":last-of-type": { pl: 0 } }}
-                  >
-                    <TutorialCard tutorial={Tutorials[0]} />
-                  </Grid>
-                ))}
-              </Grid>
+                Tutorials
+              </Typography>
+              <Typography
+                fontSize={18}
+                fontWeight={400}
+              >
+                If you have a question that is not addressed here, please feel free to contact us for further
+                assistance.
+              </Typography>
             </Stack>
+            <Grid container>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Grid
+                  key={i}
+                  item
+                  xs={3}
+                  sx={{ p: "16px 16px 8px", ":last-of-type": { pl: 0 } }}
+                >
+                  <TutorialCard tutorial={Tutorials[0]} />
+                </Grid>
+              ))}
+            </Grid>
           </Stack>
           <Stack
+            id={"faq"}
             gap={3}
             sx={{
               width: "70%",

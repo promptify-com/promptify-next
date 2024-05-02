@@ -74,6 +74,7 @@ function BlogsCarousel() {
         >
           {BlogPosts.map(post => (
             <Grid
+              key={post.title}
               item
               xs={6}
               sx={{
@@ -85,7 +86,6 @@ function BlogsCarousel() {
               }}
             >
               <BlogPostCard
-                key={post.title}
                 post={post}
                 min
                 noLabel
