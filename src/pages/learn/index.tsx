@@ -182,7 +182,7 @@ export default function LearnPage() {
 export async function getStaticProps() {
   return {
     props: {
-      title: "Privacy Policy",
+      title: "Learn",
       description: SEO_DESCRIPTION,
     },
   };

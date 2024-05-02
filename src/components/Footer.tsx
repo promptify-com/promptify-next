@@ -11,7 +11,7 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 
 const Links = [
   { title: "Privacy Policy", href: "/privacy-policy" },
-  { title: "Terms of Use", href: "https://blog.promptify.com/post/terms-of-use" },
+  { title: "Terms of Use", href: "/terms-of-use" },
   { title: "Support", href: "#" },
 ];
 
@@ -96,7 +96,6 @@ function Footer() {
                   <Link
                     href={link.href}
                     style={{ textDecoration: "none" }}
-                    target={link.href === "/privacy-policy" ? "_self" : "_blank"}
                   >
                     <Typography
                       sx={{
