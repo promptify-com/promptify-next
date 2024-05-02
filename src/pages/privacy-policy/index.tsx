@@ -7,8 +7,10 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import { theme } from "@/theme";
 import Image from "@/components/design-system/Image";
 import Head from "next/head";
+import { useAppSelector } from "@/hooks/useStore";
 
 export default function PrivacyPolicy() {
+  const isLearnSidebarSticky = useAppSelector(state => state.sidebar.isLearnSidebarSticky);
   return (
     <Layout footer>
       <Head>
@@ -27,7 +29,7 @@ export default function PrivacyPolicy() {
           gap={3}
           sx={{
             maxWidth: "1184px",
-            width: { xs: "100%", md: "50%" },
+            width: { xs: "100%", md: isLearnSidebarSticky ? "80%" : "50%" },
             m: "auto",
           }}
         >

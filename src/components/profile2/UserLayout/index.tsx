@@ -16,7 +16,6 @@ export default function Layout({ children, title }: { children: React.ReactNode;
   const desktopView = isDesktopViewPort();
 
   const toggleDrawer = (open: boolean) => {
-    console.log("toggleDrawer", open);
     setDrawerOpen(open);
   };
   return desktopView ? (
