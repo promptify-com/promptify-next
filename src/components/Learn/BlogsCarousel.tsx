@@ -82,8 +82,8 @@ function BlogsCarousel() {
               xs={6}
               md={4}
               sx={{
-                flex: { xs: "0 0 calc(60% + 32px)", md: "0 0 calc(33% + 32px)" },
-                p: "16px 16px 8px",
+                flex: { xs: "0 0 calc(60% + 16px)", md: "0 0 calc(33% + 32px)" },
+                p: { xs: "8px ", md: "16px 16px 8px" },
                 borderRadius: "24px",
                 ":hover": {
                   bgcolor: "surface.2",
