@@ -17,7 +17,7 @@ import RefreshCredentials from "@/components/RefreshCredentials";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAvailableCredentials } from "@/components/Automation/types";
-import type { IChatSliceState } from "@/core/store/types";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -36,11 +36,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const {
-    inputs = [],
-    areCredentialsStored = false,
-    clonedWorkflow,
-  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  const { inputs = [], areCredentialsStored = false, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
@@ -59,8 +55,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
 
   useEffect(() => {
     async function updateRefreshButtons() {
-      if (clonedWorkflow?.id) {
-        // const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
+      if (clonedWorkflow) {
         const listedCredentials: IAvailableCredentials[] = [];
 
         clonedWorkflow.nodes.forEach(node => {
