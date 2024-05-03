@@ -226,7 +226,6 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
 export async function getServerSideProps({ params }: any) {
   const { workflowId } = params;
-  console.log(workflowId);
   try {
     const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
     const workflow: IWorkflow = res.data;

@@ -3,7 +3,7 @@ import Storage from "@/common/storage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
-import { setAreCredentialsStored, setCredentialsInput } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setClonedWorkflow, setCredentialsInput } from "@/core/store/chatSlice";
 import type {
   ICredential,
   ICredentialInput,
@@ -11,9 +11,12 @@ import type {
   INodeCredentials,
   IStoredWorkflows,
 } from "@/components/Automation/types";
+import { useRouter } from "next/router";
 
 const useCredentials = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const workflowId = router.query.workflowId;
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );
@@ -120,9 +123,10 @@ const useCredentials = () => {
       });
 
       if (credentialFound) {
-        await updateWorkflow({ workflowId: Number(clonedWorkflow.id), data: _updatedWorkflow });
+        await updateWorkflow({ workflowId: Number(workflowId), data: _updatedWorkflow });
         dispatch(setAreCredentialsStored(false));
       }
+      dispatch(setClonedWorkflow(_updatedWorkflow));
     }
   }
 

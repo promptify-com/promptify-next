@@ -2,7 +2,7 @@ import { useRef, Fragment, useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/common/AccordionMessage";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
@@ -18,6 +18,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import { IAvailableCredentials } from "./types";
 
 import RefreshCredentials from "@/components/RefreshCredentials";
+import { workflowsApi } from "@/core/api/workflows";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -31,12 +32,14 @@ interface Props {
 }
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
+  const dispatch = useAppDispatch();
   const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { inputs, areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -54,10 +57,11 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
 
   useEffect(() => {
     async function updateRefreshButtons() {
-      if (clonedWorkflow) {
+      if (clonedWorkflow?.id) {
+        const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
         const listedCredentials: IAvailableCredentials[] = [];
 
-        clonedWorkflow.nodes.forEach(node => {
+        _workflow.nodes.forEach(node => {
           if (
             !node.credentials ||
             Object.keys(node.credentials).length === 0 ||
@@ -75,7 +79,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
             });
           }
         });
-
         setAvailableCredentials(listedCredentials);
       }
     }
