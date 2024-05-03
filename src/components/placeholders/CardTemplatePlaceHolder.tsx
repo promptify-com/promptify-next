@@ -3,6 +3,7 @@ import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+import { Fragment } from "react";
 
 export default function CardTemplatePlaceholder({ count = 12, isVertical = true }) {
   const { isMobile } = useBrowser();
@@ -13,10 +14,9 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
       px={"16px"}
     >
       {Array.from({ length: count }).map((_, index) => (
-        <>
+        <Fragment key={index}>
           {isVertical ? (
             <Grid
-              key={index}
               item
               xs={6}
               sm={6}
@@ -89,7 +89,6 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
             </Grid>
           ) : (
             <Grid
-              key={index}
               item
               xs={12}
               sx={{ mb: 2 }}
@@ -206,9 +205,8 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
               </Card>
             </Grid>
           )}
-        </>
+        </Fragment>
       ))}
-      ;
     </Grid>
   );
 }

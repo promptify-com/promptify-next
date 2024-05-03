@@ -40,7 +40,6 @@ export const Identity = () => {
         >
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 500,
               fontSize: 24,
@@ -55,7 +54,6 @@ export const Identity = () => {
           <Typography
             width={{ xs: "100%", sm: "100%" }}
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 400,
               fontSize: "14px",

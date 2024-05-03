@@ -16,12 +16,20 @@ import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import type {
+  ICredentialInput,
+  INode,
+  IStoredWorkflows,
+  IWorkflow,
+  IWorkflowCreateResponse,
+} from "@/components/Automation/types";
 import { oAuthTypeMapping, N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { clearExecutionsStates, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
+import Storage from "@/common/storage";
+import { workflowsApi } from "@/core/api/workflows";
 
 interface Props {
   workflow: IWorkflow;
@@ -32,15 +40,11 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-
   const { areCredentialsStored } = useAppSelector(state => state.chat);
   const { generatedExecution } = useAppSelector(state => state.executions);
-
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
-
   const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
     useWorkflow(workflow);
-
   const {
     messages,
     initialMessages,
@@ -55,14 +59,27 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   } = useChat({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
-
   const { streamExecutionHandler } = useGenerateExecution({
     messageAnswersForm,
   });
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const processData = async (skipInitialMessages: boolean = false) => {
-    if (selectedWorkflow?.data) {
-      const { nodes } = selectedWorkflow.data;
+    const storedWorkflows = (Storage.get("workflows") ?? {}) as IStoredWorkflows;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    let currentWorkflow = {} as IWorkflowCreateResponse;
+
+    if (storedWorkflows[selectedWorkflow.id]?.id) {
+      currentWorkflow = await getWorkflow(storedWorkflows[selectedWorkflow.id].id).unwrap();
+    }
+
+    if (selectedWorkflow?.data || currentWorkflow.id) {
+      let nodes = currentWorkflow.nodes;
+
+      if (!nodes) {
+        nodes = selectedWorkflow.data.nodes;
+      }
+
       const credentialsInput = await extractCredentialsInputFromNodes(nodes);
 
       if (currentUser?.id) {
@@ -71,7 +88,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
-        .flatMap(node => node.parameters.fields?.values ?? [])
+        .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
         .map(value => ({
           name: value.name,
           fullName: value.name,
@@ -104,8 +121,8 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const initialQueuedMessages: IMessage[] = [];
 
-    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
+    const requiresAuthentication = nodes.some(node => node.parameters?.authentication && !node.credentials);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type] && !node.credentials);
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {

@@ -115,7 +115,6 @@ function DocumentPage({ document }: Props) {
             execution={document}
             promptsData={template?.prompts || []}
             showPreview={showPreviews}
-            noRepeat
           />
         </Box>
       </Stack>

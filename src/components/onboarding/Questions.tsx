@@ -85,7 +85,6 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               color: "var(--onSurface, var(--onSurface, #1B1B1F))",
               textAlign: "center",
               fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
               fontSize: { xs: "12px", md: "24px" },
               fontStyle: "normal",
               fontWeight: "400",
@@ -108,7 +107,6 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
         >
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 500,
               fontSize: "13px",
@@ -126,7 +124,6 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
                 color: "var(--onSurface, var(--onSurface, #1B1B1F))",
                 textAlign: "center",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Poppins",
                 fontSize: { xs: "26px", md: "32px" },
                 fontStyle: "normal",
                 fontWeight: "500",
@@ -212,7 +209,6 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
             <Typography
               sx={{
                 color: "var(--onPrimary, var(--onPrimary, #FFF))",
-                fontFamily: "Poppins",
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: "500",

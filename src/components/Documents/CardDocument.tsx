@@ -19,6 +19,7 @@ import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { formatDate, timeLeft } from "@/common/helpers/timeManipulation";
 import { isImageOutput } from "@/components/Prompt/Utils";
+import { ExecutionContent } from "@/components/common/ExecutionContent";
 
 const EXECUTION_LIFETIME_DAYS = 30;
 
@@ -144,46 +145,7 @@ export default function CardDocument({ execution, onClick }: Props) {
                 />
               </>
             )}
-            {!isImageOutput(firstPromptOutput) && (
-              <Box
-                sx={{
-                  width: "100%",
-                  fontSize: 10,
-                  fontWeight: 30,
-                  lineHeight: "14px",
-                  color: "onSurface",
-                  wordWrap: "break-word",
-                  pre: {
-                    m: "10px 0",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                    code: {
-                      borderRadius: 0,
-                      m: 0,
-                      whiteSpace: "pre-wrap",
-                    },
-                  },
-                  code: {
-                    display: "block",
-                    bgcolor: "#282a35",
-                    color: "common.white",
-                    borderRadius: "8px",
-                    p: "16px 24px",
-                    mb: "10px",
-                    overflow: "auto",
-                  },
-                  ".language-label": {
-                    p: "8px 24px",
-                    bgcolor: "#4d5562",
-                    color: "#ffffff",
-                    fontSize: 8,
-                  },
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: content,
-                }}
-              />
-            )}
+            {!isImageOutput(firstPromptOutput) && <ExecutionContent content={content} />}
           </Stack>
         </Box>
         <Box p={"8px"}>

@@ -75,7 +75,6 @@ function UserInformation({
             color: "onSurface",
             textAlign: "center",
             fontFeatureSettings: "'clig' off, 'liga' off",
-            fontFamily: "Poppins",
             fontSize: "24px",
             fontStyle: "normal",
             fontWeight: 500,

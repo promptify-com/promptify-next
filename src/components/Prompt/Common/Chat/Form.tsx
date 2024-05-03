@@ -49,7 +49,10 @@ function FormFields({ messageType, template }: FormLayoutProps) {
   let lastPromptId: number;
 
   return (
-    <Stack gap={1}>
+    <Stack
+      gap={1}
+      py={"8px"}
+    >
       {localInputs.map((input, index) => {
         const currentPrompt = template?.prompts.find(prompt => prompt.id === input.prompt);
         const shouldDisplayTitleAndEngine = lastPromptId !== input.prompt;

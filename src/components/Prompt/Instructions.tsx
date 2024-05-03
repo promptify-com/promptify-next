@@ -62,7 +62,7 @@ export default function Instructions({ prompts }: Props) {
                     fontWeight={400}
                     color={"onSurface"}
                     fontFamily={"Roboto, Mono"}
-                    lineHeight={"180%"}
+                    whiteSpace={"pre-wrap"}
                   >
                     {prompt.content}
                   </Typography>
