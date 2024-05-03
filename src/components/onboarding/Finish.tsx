@@ -84,7 +84,6 @@ const Finish = () => {
               color: "var(--onSurface, var(--onSurface, #1B1B1F))",
               textAlign: "center",
               fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
               fontSize: { xs: "24px", sm: "32px" },
               fontStyle: "normal",
               fontWeight: "500",
@@ -100,7 +99,6 @@ const Finish = () => {
               color: "var(--onSurface, var(--onSurface, #1B1B1F))",
               textAlign: "center",
               fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
               fontSize: { xs: "14px", sm: "16px" },
               fontStyle: "normal",
               fontWeight: "400",
@@ -212,7 +210,6 @@ const Finish = () => {
                 <Typography
                   sx={{
                     color: "var(--onPrimary, var(--onPrimary, #FFF))",
-                    fontFamily: "Poppins",
                     fontSize: "16px",
                     fontStyle: "normal",
                     fontWeight: "500",
@@ -248,7 +245,6 @@ const listItemStyle = {
   listLabelStyle: {
     color: "var(--secondary, var(--secondary, #575E71))",
     fontFeatureSettings: "'clig' off, 'liga' off",
-    fontFamily: "Poppins",
     fontSize: "14px",
     fontStyle: "normal",
     fontWeight: "500",
@@ -260,7 +256,6 @@ const listItemStyle = {
     "& .MuiInputBase-input": {
       color: "var(--onSurface, #1B1B1F)",
       fontFeatureSettings: "'clig' off, 'liga' off",
-      fontFamily: "Poppins",
       fontSize: "16px",
       fontStyle: "normal",
       fontWeight: "400",

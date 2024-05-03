@@ -237,7 +237,6 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
                 I accept the{" "}
                 <Typography
                   sx={{
-                    fontFamily: "Poppins",
                     fontStyle: "normal",
                     fontWeight: 400,
                     fontSize: "16px",

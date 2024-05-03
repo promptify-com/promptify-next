@@ -99,7 +99,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
       )}
 
       {!isNotLoading ? (
-        <CardTemplatePlaceholder count={5} />
+        <CardTemplatePlaceholder count={8} />
       ) : (
         <Grid
           display={"flex"}

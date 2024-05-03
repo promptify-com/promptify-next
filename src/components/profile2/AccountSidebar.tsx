@@ -62,7 +62,6 @@ export default function AccountSidebar({ closeSidebar }: Props) {
             sx={{
               color: "var(--onSurface, var(--onSurface, #1B1B1F))",
               fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
               fontSize: "18px",
               fontStyle: "normal",
               fontWeight: 500,

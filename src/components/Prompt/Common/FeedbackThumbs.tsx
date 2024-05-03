@@ -6,11 +6,10 @@ import Button from "@mui/material/Button";
 import Replay from "@mui/icons-material/Replay";
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setSelectedTemplate } from "@/core/store/chatSlice";
-import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import CustomTooltip from "./CustomTooltip";
 import { setToast } from "@/core/store/toastSlice";
-import type { FeedbackType, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
+import { repeatExecution } from "@/components/Prompt/Utils";
 
 interface Props {
   variant: "button" | "icon";
@@ -46,28 +45,7 @@ export default function FeedbackThumbs({ vertical, execution, variant, noRepeat 
   };
 
   const handleRepeat = () => {
-    const { parameters } = execution;
-    dispatch(setRepeatedExecution(execution));
-    if (!selectedTemplate) {
-      dispatch(setSelectedTemplate(execution.template as Templates));
-    }
-
-    const newAnswers = parameters
-      ? Object.keys(parameters)
-          .map(promptId => {
-            const param = parameters[promptId];
-            return Object.keys(param).map(inputName => ({
-              inputName: inputName,
-              required: true,
-              question: "",
-              answer: param[inputName],
-              prompt: parseInt(promptId),
-              error: false,
-            }));
-          })
-          .flat()
-      : [];
-    dispatch(setAnswers(newAnswers));
+    repeatExecution(execution, !selectedTemplate, dispatch);
   };
 
   return (

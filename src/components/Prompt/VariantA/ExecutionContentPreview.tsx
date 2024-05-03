@@ -3,16 +3,18 @@ import Typography from "@mui/material/Typography";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { Prompts } from "@/core/api/dto/prompts";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
+import { useMemo } from "react";
 
 interface Props {
   execution: TemplatesExecutions | null;
   prompt: Prompts | undefined;
   answers?: IAnswer[];
+  promptOutputMap: { [key: string]: string };
 }
 
-function ExecutionContentPreview({ execution, prompt, answers }: Props) {
-  function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
+function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }: Props) {
+  const replacePlaceholdersWithAnswers = (content: string) => {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
 
@@ -27,9 +29,9 @@ function ExecutionContentPreview({ execution, prompt, answers }: Props) {
           <Box
             component={"span"}
             key={`dollar-${index}`}
-            sx={{ color: "primary.main" }}
+            sx={{ color: "primary.main", whiteSpace: "pre-wrap" }}
           >
-            {match}
+            {promptOutputMap[match] ?? match}
           </Box>,
         );
         lastIndexDollarWords = index + match.length;
@@ -89,9 +91,12 @@ function ExecutionContentPreview({ execution, prompt, answers }: Props) {
     addColoredDollarWords(content.slice(lastIndex));
 
     return parts;
-  }
+  };
 
-  const updatedContent = replacePlaceholdersWithAnswers(prompt?.content ?? "");
+  const updatedContent = useMemo(
+    () => replacePlaceholdersWithAnswers(prompt?.content ?? ""),
+    [prompt?.content, promptOutputMap],
+  );
 
   return (
     <Stack

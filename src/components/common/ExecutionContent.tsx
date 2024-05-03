@@ -1,50 +1,91 @@
 import Box from "@mui/material/Box";
+import { useEffect } from "react";
 
-export const ExecutionContent = ({ content }: { content: string }) => (
-  <Box
-    sx={{
-      width: "100%",
-      fontSize: { xs: 14, md: 15 },
-      lineHeight: "170%",
-      fontWeight: 400,
-      color: "onSurface",
-      wordWrap: "break-word",
-      textAlign: "justify",
-      float: "none",
-      ".highlight": {
-        backgroundColor: "yellow",
-        color: "black",
-      },
-      code: {
-        bgcolor: "#282a35",
-        color: "common.white",
-        borderRadius: "4px",
-        p: "4px 6px",
-        mb: "10px",
-        overflow: "auto",
-        fontSize: { xs: 12, md: 13 },
-        whiteSpace: "nowrap",
-      },
-      pre: {
-        m: "10px 0",
-        borderRadius: "8px",
-        overflow: "hidden",
-        code: {
-          display: "block",
-          p: "16px 24px",
-          borderRadius: 0,
-          m: 0,
+export const ExecutionContent = ({ content }: { content: string }) => {
+  useEffect(() => {
+    const handleClick = async (event: MouseEvent) => {
+      const clickTarget = event.target as HTMLElement;
+      if (clickTarget.classList.contains("copy-button")) {
+        const codeWrapper = clickTarget.closest("pre") as HTMLElement | null;
+        if (codeWrapper) {
+          const codeElement = codeWrapper.querySelector("code") as HTMLElement | null;
+          if (codeElement) {
+            try {
+              await navigator.clipboard.writeText(codeElement.innerText);
+              clickTarget.innerText = "Copied!";
+              setTimeout(() => (clickTarget.innerText = "Copy code"), 3000);
+            } catch (error) {
+              console.error("Failed to copy code:", error);
+            }
+          }
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        fontSize: { xs: 14, md: 15 },
+        lineHeight: "170%",
+        fontWeight: 400,
+        color: "onSurface",
+        wordWrap: "break-word",
+        textAlign: "justify",
+        float: "none",
+        ".highlight": {
+          backgroundColor: "yellow",
+          color: "black",
         },
-      },
-      ".language-label": {
-        p: "8px 24px",
-        bgcolor: "#4d5562",
-        color: "#ffffff",
-        fontSize: 13,
-      },
-    }}
-    dangerouslySetInnerHTML={{
-      __html: content,
-    }}
-  />
-);
+        pre: {
+          m: "10px 0",
+          borderRadius: "8px",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          code: {
+            display: "block",
+            p: "16px 24px",
+            borderRadius: 0,
+            m: 0,
+          },
+        },
+        code: {
+          bgcolor: "#282a35",
+          color: "common.white",
+          borderRadius: "4px",
+          p: "4px 6px",
+          mb: "10px",
+          overflow: "auto",
+          fontSize: { xs: 12, md: 13 },
+          whiteSpace: "nowrap",
+        },
+        ".code-wrapper-header": {
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          p: "8px 24px",
+          bgcolor: "#4d5562",
+          color: "#ffffff",
+          fontSize: 13,
+        },
+        ".copy-button": {
+          bgcolor: "transparent",
+          color: "#ffffff",
+          border: "none",
+          cursor: "pointer",
+          p: 0,
+          ":hover": {
+            color: "#efefef",
+          },
+        },
+      }}
+      dangerouslySetInnerHTML={{
+        __html: content,
+      }}
+    />
+  );
+};

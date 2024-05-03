@@ -79,7 +79,6 @@ const QuestionCard = ({ name, id, selectedOptionId, setSelectedOptionId }: ICard
 
       <Typography
         sx={{
-          fontFamily: "Poppins",
           fontStyle: "normal",
           fontWeight: 500,
           fontSize: "18px",

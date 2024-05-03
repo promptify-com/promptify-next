@@ -129,7 +129,6 @@ export default function ExplorePage({ categories = [] }: Props) {
                   fontSize={{ xs: 19, md: 32 }}
                   fontWeight={400}
                   color={"onSurface"}
-                  fontFamily={"Poppins"}
                   lineHeight={"120%"}
                   letterSpacing={"0.17px"}
                   fontStyle={"normal"}

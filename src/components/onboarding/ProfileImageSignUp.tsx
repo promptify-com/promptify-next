@@ -192,7 +192,6 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
                 sx={{
                   color: "var(--onSurface, var(--onSurface, #1B1B1F))",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Poppins",
                   fontSize: "14px",
                   fontStyle: "normal",
                   fontWeight: "500",
@@ -215,7 +214,6 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
                 color: "var(--secondary, var(--secondary, #575E71))",
                 textAlign: "right",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Poppins",
                 fontSize: "14px",
                 fontStyle: "normal",
                 fontWeight: "400",
