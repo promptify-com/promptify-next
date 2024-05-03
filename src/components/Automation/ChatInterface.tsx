@@ -15,10 +15,8 @@ import AccordionContentAutomation from "@/components/common/AccordionMessage/Acc
 import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import { IAvailableCredentials, IStoredWorkflows } from "./types";
-import Storage from "@/common/storage";
-import { useRouter } from "next/router";
-import { workflowsApi } from "@/core/api/workflows";
+import { IAvailableCredentials } from "./types";
+
 import RefreshCredentials from "@/components/RefreshCredentials";
 
 const currentDate = getCurrentDateFormatted();
@@ -33,15 +31,12 @@ interface Props {
 }
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
-  const router = useRouter();
   const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { inputs, areCredentialsStored } = useAppSelector(state => state.chat);
-  const workflowId = router.query?.workflowId as string;
+  const { inputs, areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -59,11 +54,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
 
   useEffect(() => {
     async function updateRefreshButtons() {
-      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-
-      if (workflowId && storedWorkflows[workflowId]?.id) {
-        const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
-        const clonedWorkflow = structuredClone(_workflow);
+      if (clonedWorkflow) {
         const listedCredentials: IAvailableCredentials[] = [];
 
         clonedWorkflow.nodes.forEach(node => {
@@ -88,7 +79,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
         setAvailableCredentials(listedCredentials);
       }
     }
-
     updateRefreshButtons();
   }, [areCredentialsStored]);
 

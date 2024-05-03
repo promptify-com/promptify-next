@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { ChatMode, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IChat, ChatOption } from "@/core/api/dto/chats";
 
@@ -25,6 +25,7 @@ export interface ExecutionsProps {
   parameterSelected: string | null;
   currentExecutionDetails: { id: number | null; isFavorite: boolean };
   chats: IChat[];
+  clonedWorkflow?: IWorkflowCreateResponse;
 }
 
 const initialState: ExecutionsProps = {
@@ -45,6 +46,7 @@ const initialState: ExecutionsProps = {
   selectedChatOption: null,
   selectedWorkflow: undefined,
   chats: [],
+  clonedWorkflow: undefined,
 };
 
 export const chatSlice = createSlice({
@@ -108,6 +110,9 @@ export const chatSlice = createSlice({
     setChats: (state, action) => {
       state.chats = action.payload;
     },
+    setClonedWorkflow: (state, action: PayloadAction<IWorkflowCreateResponse | undefined>) => {
+      state.clonedWorkflow = action.payload;
+    },
   },
 });
 
@@ -131,6 +136,7 @@ export const {
   setCurrentExecutionDetails,
   setSelectedWorkflow,
   setChats,
+  setClonedWorkflow,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

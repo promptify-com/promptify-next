@@ -16,20 +16,12 @@ import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type {
-  ICredentialInput,
-  INode,
-  IStoredWorkflows,
-  IWorkflow,
-  IWorkflowCreateResponse,
-} from "@/components/Automation/types";
+import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 import { oAuthTypeMapping, N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { clearExecutionsStates, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
-import Storage from "@/common/storage";
-import { workflowsApi } from "@/core/api/workflows";
 
 interface Props {
   workflow: IWorkflow;
@@ -40,7 +32,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { areCredentialsStored } = useAppSelector(state => state.chat);
+  const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat);
   const { generatedExecution } = useAppSelector(state => state.executions);
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
@@ -62,48 +54,36 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const { streamExecutionHandler } = useGenerateExecution({
     messageAnswersForm,
   });
-  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const processData = async (skipInitialMessages: boolean = false) => {
-    const storedWorkflows = (Storage.get("workflows") ?? {}) as IStoredWorkflows;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    let currentWorkflow = {} as IWorkflowCreateResponse;
+    createWorkflowIfNeeded(selectedWorkflow.id)
+      .then(async createdWorkflow => {
+        if (!createdWorkflow) {
+          return;
+        }
+        const { nodes } = createdWorkflow;
 
-    if (storedWorkflows[selectedWorkflow.id]?.id) {
-      currentWorkflow = await getWorkflow(storedWorkflows[selectedWorkflow.id].id).unwrap();
-    }
+        const credentialsInput = await extractCredentialsInputFromNodes(nodes);
 
-    if (selectedWorkflow?.data || currentWorkflow.id) {
-      let nodes = currentWorkflow.nodes;
+        const inputs: IPromptInput[] = nodes
+          .filter(node => node.type === "n8n-nodes-base.set")
+          .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
+          .map(value => ({
+            name: value.name,
+            fullName: value.name,
+            type: "text",
+            required: true,
+          }));
 
-      if (!nodes) {
-        nodes = selectedWorkflow.data.nodes;
-      }
+        dispatch(setInputs(inputs));
 
-      const credentialsInput = await extractCredentialsInputFromNodes(nodes);
-
-      if (currentUser?.id) {
-        createWorkflowIfNeeded(selectedWorkflow.id);
-      }
-
-      const inputs: IPromptInput[] = nodes
-        .filter(node => node.type === "n8n-nodes-base.set")
-        .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
-        .map(value => ({
-          name: value.name,
-          fullName: value.name,
-          type: "text",
-          required: true,
-        }));
-
-      dispatch(setInputs(inputs));
-
-      if (!skipInitialMessages) {
         initialMessages({ questions: inputs });
-      }
 
-      prepareAndQueueMessages(credentialsInput, nodes);
-    }
+        prepareAndQueueMessages(credentialsInput, nodes);
+      })
+      .catch(error => {
+        console.error("Error handling the workflow creation:", error);
+      });
   };
 
   useEffect(() => {
@@ -112,11 +92,10 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   }, []);
 
   useEffect(() => {
-    if (isWorkflowLoading && !selectedWorkflow) {
-      return;
+    if (selectedWorkflow && !isWorkflowLoading) {
+      processData();
     }
-    processData();
-  }, [selectedWorkflow, isWorkflowLoading, currentUser]);
+  }, [isWorkflowLoading, selectedWorkflow]);
 
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const initialQueuedMessages: IMessage[] = [];
@@ -247,6 +226,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
 export async function getServerSideProps({ params }: any) {
   const { workflowId } = params;
+  console.log(workflowId);
   try {
     const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
     const workflow: IWorkflow = res.data;

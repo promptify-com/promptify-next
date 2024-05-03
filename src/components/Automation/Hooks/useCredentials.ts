@@ -17,7 +17,7 @@ const useCredentials = () => {
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );
-  const { credentialsInput } = useAppSelector(state => state.chat);
+  const { credentialsInput, clonedWorkflow } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
   const initializeCredentials = (): Promise<ICredential[]> => {
@@ -97,35 +97,31 @@ const useCredentials = () => {
   }
 
   async function updateWorkflowAfterCredentialsDeletion(credentialType: string) {
-    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+    if (clonedWorkflow?.id) {
+      const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
+      let credentialFound = false;
+      const _updatedWorkflow = {
+        ..._workflow,
+        nodes: _workflow.nodes.map(node => ({
+          ...node,
+          ...(node.credentials && { credentials: recreateNodeCredentials(node.credentials) }),
+        })),
+      };
 
-    if (!!Object.values(storedWorkflows).length) {
-      for (const _workflowId in storedWorkflows) {
-        const _workflow = await getWorkflow(storedWorkflows[_workflowId].id).unwrap();
-        let credentialFound = false;
-        const _updatedWorkflow = {
-          ..._workflow,
-          nodes: _workflow.nodes.map(node => ({
-            ...node,
-            ...(node.credentials && { credentials: recreateNodeCredentials(node.credentials) }),
-          })),
-        };
-
-        _updatedWorkflow.nodes.forEach(node => {
-          if (!node.credentials) {
-            return;
-          }
-
-          if (node.credentials[credentialType]) {
-            node.credentials[credentialType].name = "to_be_deleted";
-            credentialFound = true;
-          }
-        });
-
-        if (credentialFound) {
-          await updateWorkflow({ workflowId: Number(_workflowId), data: _updatedWorkflow });
-          dispatch(setAreCredentialsStored(false));
+      _updatedWorkflow.nodes.forEach(node => {
+        if (!node.credentials) {
+          return;
         }
+
+        if (node.credentials[credentialType]) {
+          node.credentials[credentialType].name = "to_be_deleted";
+          credentialFound = true;
+        }
+      });
+
+      if (credentialFound) {
+        await updateWorkflow({ workflowId: Number(clonedWorkflow.id), data: _updatedWorkflow });
+        dispatch(setAreCredentialsStored(false));
       }
     }
   }
