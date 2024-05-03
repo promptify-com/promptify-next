@@ -82,6 +82,7 @@ function App({ Component, ...rest }: AppProps) {
     if (viewportMetaTagElement && navigator.userAgent.includes("iPhone")) {
       viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1");
     }
+    document.body.className = `${poppins.variable} font-sans ${spaceMono.variable} font-sans`;
   }, []);
 
   return (
@@ -129,9 +130,7 @@ function App({ Component, ...rest }: AppProps) {
           meta_keywords={pageProps?.meta_keywords}
         />
         <Toaster />
-        <main className={`${poppins.variable} font-sans, ${spaceMono.variable} font-sans`}>
-          <Component {...pageProps} />
-        </main>
+        <Component {...pageProps} />
       </ThemeProvider>
     </Provider>
   );

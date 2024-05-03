@@ -1,5 +1,4 @@
 :root {
-  font-family: var(--font-poppins), sans-serif;
   --font-poppins: 'Poppins', sans-serif; 
   --font-mono: 'Space Mono', monospace;
 }
@@ -17,7 +16,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-poppins), sans-serif;
+  font-family: var(--font-poppins), var(--font-mono), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
