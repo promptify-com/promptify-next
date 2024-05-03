@@ -54,6 +54,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord }) => {
               border: "none",
               ":hover": { color: "tertiary" },
             }}
+            aria-label="Search"
           >
             <SearchIcon />
           </IconButton>

@@ -100,7 +100,7 @@ function PromptContent({ execution, content, engineName, id }: Props) {
       </Typography>
       <Typography
         mt={2}
-        fontFamily={"Space Mono"}
+        fontFamily={"var(--font-mono)"}
         color={"text.secondary"}
       >
         {updatedContent}

@@ -19,7 +19,6 @@ const Help = () => {
         sx={{
           color: "#000",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          fontFamily: "Poppins",
           fontSize: "12px",
           fontStyle: "normal",
           fontWeight: "400",
@@ -35,7 +34,6 @@ const Help = () => {
         sx={{
           color: "#000",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          fontFamily: "Poppins",
           fontSize: "34px",
           fontStyle: "normal",
           fontWeight: "400",
@@ -88,7 +86,6 @@ const Help = () => {
 const typographyStyle = {
   color: "var(--onSurface, #1B1B1E)",
   fontFeatureSettings: "'clig' off, 'liga' off",
-  fontFamily: "Poppins",
   fontSize: "14px",
   fontStyle: "normal",
   fontWeight: 400,

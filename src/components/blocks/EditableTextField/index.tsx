@@ -47,7 +47,7 @@ export const EditableTextField = ({
           display: "flex",
           alignItems: "center",
           alignContent: "center",
-          fontFamily: "Space Mono",
+          fontFamily: "var(--font-mono)",
           wordBreak: "break-word",
         }}
         onClick={handleClick}
@@ -76,7 +76,7 @@ export const EditableTextField = ({
           value={name}
           onChange={event => setName(event.target.value)}
           onBlur={() => setValue(name)}
-          sx={{ width: "300px", color: "black", bgcolor: "#373737", fontFamily: "Space Mono" }}
+          sx={{ width: "300px", color: "black", bgcolor: "#373737", fontFamily: "var(--font-mono)" }}
           onKeyPress={e => {
             if (e.key === "Enter") {
               setValue(name);
