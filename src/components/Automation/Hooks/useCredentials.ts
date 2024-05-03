@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
 import {
-  setAreCredentialsStored,
   setCredentialsInput,
   initialState as initialChatState,
   setClonedWorkflow,
@@ -20,6 +19,8 @@ import { useRouter } from "next/router";
 
 const useCredentials = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const workflowId = router.query.workflowId;
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );

@@ -18,6 +18,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAvailableCredentials } from "@/components/Automation/types";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { workflowsApi } from "@/core/api/workflows";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -38,6 +39,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { inputs = [], areCredentialsStored = false, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -55,10 +57,11 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
 
   useEffect(() => {
     async function updateRefreshButtons() {
-      if (clonedWorkflow) {
+      if (clonedWorkflow?.id) {
+        const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
         const listedCredentials: IAvailableCredentials[] = [];
 
-        clonedWorkflow.nodes.forEach(node => {
+        _workflow.nodes.forEach(node => {
           if (
             !node.credentials ||
             Object.keys(node.credentials).length === 0 ||
