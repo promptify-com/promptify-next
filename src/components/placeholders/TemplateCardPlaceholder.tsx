@@ -9,7 +9,6 @@ function TemplateCardPlaceholder() {
       direction={{ xs: "column", md: "row" }}
       gap={"24px"}
       sx={{
-        // bgcolor: "surfaceContainerLowest",
         border: "1px solid",
         borderColor: "surfaceDim",
         width: { xs: "88%", md: "calc(100% - 32px)" },
