@@ -172,7 +172,6 @@ export default function SocialButtons({
         <Box p={"8px 22px"}>
           <Typography
             sx={{
-              fontFamily: "Poppins",
               fontStyle: "normal",
               fontWeight: 400,
               fontSize: "16px",
@@ -193,7 +192,6 @@ export default function SocialButtons({
         <Google />
         <Typography
           sx={{
-            fontFamily: "Poppins",
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: "15px",
@@ -220,7 +218,6 @@ export default function SocialButtons({
         />
         <Typography
           sx={{
-            fontFamily: "Poppins",
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: "15px",
@@ -253,7 +250,6 @@ export default function SocialButtons({
         <GitHub sx={{ color: "#171515" }} />
         <Typography
           sx={{
-            fontFamily: "Poppins",
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: "15px",
@@ -273,7 +269,6 @@ export default function SocialButtons({
         <Microsoft />
         <Typography
           sx={{
-            fontFamily: "Poppins",
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: "15px",

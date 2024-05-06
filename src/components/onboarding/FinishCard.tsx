@@ -22,7 +22,6 @@ const FinishCard = ({ children, title }: Props) => {
         sx={{
           color: "var(--onSurface, var(--onSurface, #1B1B1F))",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          fontFamily: "Poppins",
           fontSize: { xs: "16px", sm: "20px" },
           fontStyle: "normal",
           fontWeight: "400",

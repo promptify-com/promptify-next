@@ -132,7 +132,6 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           sx={{
             color: "#000",
             fontFeatureSettings: "'clig' off, 'liga' off",
-            fontFamily: "Poppins",
             fontSize: "16px",
             fontStyle: "normal",
             fontWeight: 500,

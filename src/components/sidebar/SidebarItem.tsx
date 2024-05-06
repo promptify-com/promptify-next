@@ -29,7 +29,7 @@ function SidebarItem({ navItem }: Props) {
         disablePadding
         sx={{
           ...(navItem.active && {
-            ".MuiSvgIcon-root": {
+            svg: {
               fill: theme.palette.primary.main,
               transform: "scale(1.1)",
             },
@@ -45,7 +45,7 @@ function SidebarItem({ navItem }: Props) {
           "&:not(.grayedout_link):hover": {
             backgroundColor: "transparent",
             borderRadius: "8px",
-            ".MuiSvgIcon-root": {
+            svg: {
               transform: "scale(1.1)",
               fill: theme.palette.primary.main,
             },

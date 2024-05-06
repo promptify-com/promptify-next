@@ -60,7 +60,7 @@ declare module "@mui/material/styles" {
 
 export const customTheme = {
   typography: {
-    fontFamily: ["Poppins", "Space Mono"].join(","),
+    fontFamily: ["var(--font-poppins)", "var(--font-mono)"].join(","),
   },
   palette: {
     common: { black: "#1D2028", white: "#fff" },

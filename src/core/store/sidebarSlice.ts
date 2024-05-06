@@ -7,6 +7,7 @@ const initialState = {
   isChatHistorySticky: false,
   isDocumentsFiltersSticky: false,
   isPromptsReviewFiltersSticky: false,
+  isLearnSidebarSticky: false,
 };
 
 const sidebarSlice = createSlice({
@@ -48,6 +49,11 @@ const sidebarSlice = createSlice({
         Storage.remove("isPromptsReviewFiltersSticky");
       }
     },
+    setStickyLearnSidebar: (state, action: PayloadAction<boolean>) => {
+      const sticky = action.payload;
+      state.isLearnSidebarSticky = sticky;
+      Storage.set("isLearnSidebarSticky", String(sticky));
+    },
   },
 });
 
@@ -57,6 +63,7 @@ export const {
   setStickyChatHistory,
   setStickyDocumentsFilters,
   setStickyPromptsReviewFilters,
+  setStickyLearnSidebar,
 } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

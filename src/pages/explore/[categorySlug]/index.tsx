@@ -73,6 +73,8 @@ export default function Page({ category }: { category: Category }) {
                 fontSize: 16,
                 fontWeight: 400,
                 opacity: 0.3,
+                transition: "opacity 0.3s ease-in-out",
+                willChange: "opacity",
               }}
             >
               All Categories
@@ -98,12 +100,22 @@ export default function Page({ category }: { category: Category }) {
             gap={3}
             p={{ xs: "24px 16px 40px", md: "24px 24px 40px" }}
           >
-            <Image
-              src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
-              alt={category.name}
-              style={{ objectFit: "cover", minWidth: 168, height: "auto", borderRadius: "50%" }}
-              priority={true}
-            />
+            <Box
+              sx={{
+                width: "100%",
+                minHeight: "192px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
+                alt={category.name}
+                style={{ objectFit: "cover", minWidth: 168, height: "auto", borderRadius: "50%" }}
+                priority={true}
+              />
+            </Box>
             <Stack
               sx={{
                 display: "flex",
@@ -113,30 +125,50 @@ export default function Page({ category }: { category: Category }) {
                 alignSelf: "stretch",
               }}
             >
-              <Typography
+              <Box
                 sx={{
-                  fontSize: 32,
-                  fontWeight: 400,
-                  lineHeight: "120%",
-                  letterSpacing: "0.17px",
-                  color: "onSurface",
-                  fontFeatureSettings: "'clig' off, 'liga' off",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  minHeight: { xs: "50px", md: "38px" },
+                  width: "100%",
                 }}
               >
-                {category.name}
-              </Typography>
-              <Typography
+                <Typography
+                  sx={{
+                    fontSize: 32,
+                    fontWeight: 400,
+                    lineHeight: "120%",
+                    letterSpacing: "0.17px",
+                    color: "onSurface",
+                    fontFeatureSettings: "'clig' off, 'liga' off",
+                  }}
+                >
+                  {category.name}
+                </Typography>
+              </Box>
+
+              <Box
                 sx={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  lineHeight: "160%",
-                  letterSpacing: "0.17px",
-                  color: "onSurface",
-                  fontFeatureSettings: "'clig' off, 'liga' off",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: { xs: "200px", md: "130px" },
+                  width: "100%",
                 }}
               >
-                {category.description}
-              </Typography>{" "}
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 400,
+                    lineHeight: "160%",
+                    letterSpacing: "0.17px",
+                    color: "onSurface",
+                  }}
+                >
+                  {category.description}
+                </Typography>
+              </Box>
             </Stack>
           </Stack>
 
@@ -169,7 +201,10 @@ export default function Page({ category }: { category: Category }) {
             </Box>
           )}
 
-          <Box py={"40px"}>
+          <Box
+            py={"40px"}
+            width={"100%"}
+          >
             <PopularTemplates catId={category?.id} />
           </Box>
           {!isMobile && <Footer />}

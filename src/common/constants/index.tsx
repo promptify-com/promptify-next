@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import Tune from "@mui/icons-material/Tune";
 import Search from "@mui/icons-material/Search";
 import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
@@ -8,7 +7,6 @@ import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
 import PreviewOutlined from "@mui/icons-material/PreviewOutlined";
-
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "@/common/types/deployments";

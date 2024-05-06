@@ -24,7 +24,7 @@ export const Options: React.FC<Props> = ({ options, onSelect, variant, type }) =
     fontSize: 12,
     fontWeight: 500,
     cursor: "pointer",
-    fontFamily: "Space Mono",
+    fontFamily: "var(--font-mono)",
   };
 
   if (!options.length) return;

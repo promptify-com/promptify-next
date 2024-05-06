@@ -5,8 +5,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Support from "@mui/icons-material/Support";
-
-import BlogPostCard from "@/components/Homepage/BlogPostCard";
+import BlogPostCard from "@/components/common/cards/BlogPostCard";
 import { RaisedHand } from "@/assets/icons/RaisedHand";
 import { BlogPosts } from "@/components/Homepage/Constants";
 import { BLOG_URL } from "@/common/constants";

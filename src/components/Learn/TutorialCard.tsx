@@ -6,16 +6,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Image from "@/components/design-system/Image";
-import { IBlogPost } from "./Types";
-import useTruncate from "@/hooks/useTruncate";
+import { ITutorial } from "./Types";
 
 interface Props {
-  post: IBlogPost;
-  min?: boolean;
+  tutorial: ITutorial;
 }
-function BlogPostCard({ post, min }: Props) {
-  const { title, image, content, link } = post;
-  const { truncate } = useTruncate();
+function TutorialCard({ tutorial }: Props) {
+  const { title, image, content, link } = tutorial;
 
   return (
     <Link
@@ -27,13 +24,12 @@ function BlogPostCard({ post, min }: Props) {
         elevation={0}
         title={title}
         sx={{
-          height: "100%",
           bgcolor: "transparent",
+          p: "8px",
+          border: "1px solid",
+          borderColor: "surfaceContainerHighest",
           borderRadius: "24px",
           overflow: "hidden",
-          "&:hover": {
-            bgcolor: "white",
-          },
         }}
       >
         <CardActionArea
@@ -46,48 +42,30 @@ function BlogPostCard({ post, min }: Props) {
               zIndex: 1,
               borderRadius: "24px",
               width: "100%",
-              height: min ? "200px" : "340px",
-              position: "relative",
+              height: 158,
             }}
           >
             <Image
-              src={image}
+              src={image || require("@/assets/images/default-thumbnail.jpg")}
               alt={title}
               style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
               priority={false}
             />
-            <Typography
-              fontSize={14}
-              fontWeight={400}
-              sx={{
-                position: "absolute",
-                left: "22px",
-                top: "17px",
-                p: "4px 12px",
-                borderRadius: "99px",
-                bgcolor: "#000000CC",
-                color: "#FFFFFF",
-              }}
-            >
-              Blog Post
-            </Typography>
           </CardMedia>
         </CardActionArea>
-        <CardContent sx={{ padding: "8px 0px", m: 0 }}>
+        <CardContent sx={{ p: "14px 16px 8px !important", m: 0 }}>
           <Stack gap={2}>
-            {!min && (
-              <Typography
-                fontSize={24}
-                fontWeight={500}
-                color={"#000000"}
-              >
-                {title}
-              </Typography>
-            )}
             <Typography
-              fontSize={14}
+              fontSize={{ xs: 14, md: 16 }}
+              fontWeight={500}
+              color={"onSurface"}
+            >
+              {title}
+            </Typography>
+            <Typography
+              fontSize={{ xs: 12, md: 14 }}
               fontWeight={400}
-              color={"#000000"}
+              color={"onSurface"}
               style={{
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
@@ -95,7 +73,7 @@ function BlogPostCard({ post, min }: Props) {
                 overflow: "hidden",
               }}
             >
-              {truncate(min ? title : content, { length: 160 })}
+              {content}
             </Typography>
           </Stack>
         </CardContent>
@@ -104,4 +82,4 @@ function BlogPostCard({ post, min }: Props) {
   );
 }
 
-export default BlogPostCard;
+export default TutorialCard;
