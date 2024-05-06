@@ -5,8 +5,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Slide from "@mui/material/Slide";
-import Avatar from "@mui/material/Avatar";
-
 import { useTheme } from "@mui/material/styles";
 import useCarousel from "@/hooks/useCarousel";
 import { useAppSelector } from "@/hooks/useStore";
@@ -15,6 +13,7 @@ import ExploreCardCategory from "@/components/common/cards/ExploreCardCategory";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import type { Category } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import Image from "@/components/design-system/Image";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -168,41 +167,45 @@ function CategoryCarousel({
                   direction={"row"}
                   m={"8px"}
                 >
-                  {categories.map(category => (
-                    <Link
-                      key={category.id}
-                      href={`/explore/${category.slug}`}
-                      style={{ textDecoration: "none", margin: "0 4px" }}
-                    >
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        gap={1}
-                        sx={{
-                          minWidth: "224px",
-                          bgcolor: "surfaceContainerLowest",
-                          border: `1px solid ${theme.palette.surfaceContainer}`,
-                          borderRadius: "999px",
-                          p: "4px 12px 4px 4px",
-                          ":hover": { bgcolor: "action.hover" },
-                        }}
+                  {userScrolled &&
+                    categories.map(category => (
+                      <Link
+                        key={category.id}
+                        href={`/explore/${category.slug}`}
+                        style={{ textDecoration: "none", margin: "0 4px" }}
                       >
-                        <Avatar
-                          src={category.image}
-                          alt={category.name}
-                          sx={{ width: 40, height: 40, borderRadius: "50%" }}
-                        />
-                        <Typography
-                          fontSize={14}
-                          fontWeight={500}
-                          color={"onSurface"}
-                          whiteSpace={"nowrap"}
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          gap={1}
+                          sx={{
+                            minWidth: "224px",
+                            bgcolor: "surfaceContainerLowest",
+                            border: `1px solid ${theme.palette.surfaceContainer}`,
+                            borderRadius: "999px",
+                            p: "4px 12px 4px 4px",
+                            ":hover": { bgcolor: "action.hover" },
+                          }}
                         >
-                          {category.name}
-                        </Typography>
-                      </Stack>
-                    </Link>
-                  ))}
+                          <Image
+                            src={category.image}
+                            alt={category.name}
+                            width={40}
+                            height={40}
+                            style={{ borderRadius: "50%" }}
+                            priority={false}
+                          />
+                          <Typography
+                            fontSize={14}
+                            fontWeight={500}
+                            color={"onSurface"}
+                            whiteSpace={"nowrap"}
+                          >
+                            {category.name}
+                          </Typography>
+                        </Stack>
+                      </Link>
+                    ))}
                 </Stack>
               </Stack>
             </CarouselButtons>

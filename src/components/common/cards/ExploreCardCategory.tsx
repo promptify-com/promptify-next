@@ -71,7 +71,7 @@ function ExploreCardCategory({ category }: Props) {
                   src={category.image}
                   alt={category.name}
                   style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
-                  priority={true}
+                  priority={false}
                 />
               </CardMedia>
               <CardContent sx={{ p: "8px 0", m: 0 }}>

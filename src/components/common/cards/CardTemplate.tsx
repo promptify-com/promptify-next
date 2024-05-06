@@ -87,6 +87,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 alt={template.title}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 sizes="(max-width: 600px) 40vw, (max-width: 900px) 35vw, 30vw"
+                priority={false}
               />
             </CardMedia>
             <Stack
