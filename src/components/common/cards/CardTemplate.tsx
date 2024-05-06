@@ -143,19 +143,23 @@ function CardTemplate({ template }: CardTemplateProps) {
                 </Stack>
               )}
               {template.created_by?.username && (
-                <Link
-                  href={`/users/${template.created_by?.username}`}
-                  onClick={e => e.stopPropagation()}
-                  style={{ textDecoration: "none", marginLeft: "auto" }}
+                <Typography
+                  fontSize={13}
+                  fontWeight={400}
+                  color={alpha(theme.palette.onSurface, 0.75)}
+                  sx={{
+                    ml: "auto",
+                    ":hover": {
+                      color: "onSurface",
+                    },
+                  }}
+                  onClick={e => {
+                    e.preventDefault();
+                    router.push(`/users/${template.created_by?.username}`);
+                  }}
                 >
-                  <Typography
-                    fontSize={13}
-                    fontWeight={400}
-                    color={alpha(theme.palette.onSurface, 0.75)}
-                  >
-                    by {template.created_by.first_name || template.created_by.username}
-                  </Typography>
-                </Link>
+                  by {template.created_by.first_name || template.created_by.username}
+                </Typography>
               )}
             </Stack>
           </Stack>
