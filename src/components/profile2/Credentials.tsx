@@ -17,14 +17,9 @@ function Credentials() {
   const dispatch = useAppDispatch();
   const [selectedCredential, setSelectedCredential] = useState<ICredential | null>(null);
   const [deleteCredential] = useDeleteCredentialMutation();
+  const [credentials, setCredentials] = useState<ICredential[]>([]);
 
-  const {
-    credentials,
-    setCredentials,
-    initializeCredentials,
-    removeCredential,
-    updateWorkflowAfterCredentialsDeletion,
-  } = useCredentials();
+  const { initializeCredentials, removeCredential, updateWorkflowAfterCredentialsDeletion } = useCredentials();
 
   useEffect(() => {
     // if credentials already in local storage, no http call will be triggered, we're safe here.
@@ -86,6 +81,7 @@ function Credentials() {
         >
           <Grid
             item
+            xs={4}
             sx={{ xs: 12, md: 3 }}
             overflow={"hidden"}
           >
@@ -125,14 +121,10 @@ function Credentials() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontFamily: "Poppins, Space Mono",
-                  fontSize: "16px",
                   borderRadius: "50%",
                   overflow: "hidden",
                   color: "#fff",
                   backgroundColor: "black",
-                  textTransform: "capitalize",
-                  lineHeight: "47px",
                   textAlign: "center",
                 }}
               />

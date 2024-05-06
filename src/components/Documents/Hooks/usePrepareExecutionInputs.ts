@@ -21,19 +21,22 @@ export const usePrepareExecutionInputs = (execution: ExecutionWithTemplate) => {
         return acc;
       }, {}),
   );
+
   const params = Object.entries(
     Object.values(execution.contextual_overrides ?? {})
       .flatMap(parameters =>
-        parameters.map(({ parameter, score }) => {
-          const promptData = paramsData?.[parameter];
-          if (!promptData) return {};
+        Array.isArray(parameters)
+          ? parameters.map(({ parameter, score }) => {
+              const promptData = paramsData?.[parameter];
+              if (!promptData) return {};
 
-          const paramName = addSpaceBetweenCapitalized(promptData.parameter.name ?? parameter);
-          const paramScore =
-            promptData.parameter.score_descriptions.find(desc => desc.score === score)?.description.split(":")[0] ??
-            score;
-          return { [paramName]: paramScore };
-        }),
+              const paramName = addSpaceBetweenCapitalized(promptData.parameter.name ?? parameter);
+              const paramScore =
+                promptData.parameter.score_descriptions.find(desc => desc.score === score)?.description.split(":")[0] ??
+                score;
+              return { [paramName]: paramScore };
+            })
+          : [],
       )
       .reduce((acc, pair) => ({ ...acc, ...pair }), {}),
   );

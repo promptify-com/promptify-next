@@ -102,7 +102,6 @@ export function TemplatesManager({ type, title, id }: TemplateManagerProps) {
       >
         <Typography
           sx={{
-            fontFamily: "Poppins",
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: { xs: 18, md: 24 },

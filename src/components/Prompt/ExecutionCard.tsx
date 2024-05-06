@@ -14,29 +14,32 @@ import ExecutionContentPreview from "./VariantA/ExecutionContentPreview";
 import { isImageOutput } from "./Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
 import Collapse from "@mui/material/Collapse";
+import { ExecutionContent } from "@/components/common/ExecutionContent";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
   promptsData: Prompts[];
   answers?: IAnswer[];
   showPreview: boolean;
-  noRepeat?: boolean;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers, showPreview, noRepeat }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers, showPreview }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
-  const [elementHeights, setElementHeights] = useState<number[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
+  const promptOutputMap: { [key: string]: string } = {};
 
   promptsData?.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
+    promptOutputMap[prompt.prompt_output_variable] =
+      (execution as TemplatesExecutions).prompt_executions?.find(promptExec => promptExec.prompt === prompt.id)
+        ?.output ?? "";
   });
 
   useEffect(() => {
@@ -44,16 +47,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
       Array.from({ length: sortedPrompts.length }, (_, i) => elementRefs[i] || createRef<HTMLDivElement>()),
     );
   }, [sortedPrompts.length]);
-
-  useEffect(() => {
-    setElementHeights(Array(sortedPrompts.length).fill(0));
-    if (elementRefs.length === sortedPrompts.length) {
-      setTimeout(() => {
-        const heights = elementRefs.map(ref => ref.current?.offsetHeight ?? 0);
-        setElementHeights(heights);
-      }, 300);
-    }
-  }, [elementRefs, execution, promptsData]);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
@@ -146,6 +139,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           prompt={prompt}
                           answers={answers}
                           execution={execution as TemplatesExecutions}
+                          promptOutputMap={promptOutputMap}
                         />
                       </Collapse>
                       <Stack
@@ -185,49 +179,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                                   }}
                                 />
                               )}
-                              <Box
-                                sx={{
-                                  width: "100%",
-                                  fontSize: { xs: 14, md: 15 },
-                                  fontWeight: 400,
-                                  color: "onSurface",
-                                  wordWrap: "break-word",
-                                  textAlign: "justify",
-                                  float: "none",
-                                  ".highlight": {
-                                    backgroundColor: "yellow",
-                                    color: "black",
-                                  },
-                                  pre: {
-                                    m: "10px 0",
-                                    borderRadius: "8px",
-                                    overflow: "hidden",
-                                    code: {
-                                      borderRadius: 0,
-                                      m: 0,
-                                      whiteSpace: "pre-wrap",
-                                    },
-                                  },
-                                  code: {
-                                    display: "block",
-                                    bgcolor: "#282a35",
-                                    color: "common.white",
-                                    borderRadius: "8px",
-                                    p: "16px 24px",
-                                    mb: "10px",
-                                    overflow: "auto",
-                                  },
-                                  ".language-label": {
-                                    p: "8px 24px",
-                                    bgcolor: "#4d5562",
-                                    color: "#ffffff",
-                                    fontSize: 13,
-                                  },
-                                }}
-                                dangerouslySetInnerHTML={{
-                                  __html: sanitizeHTML(exec.content),
-                                }}
-                              />
+                              <ExecutionContent content={sanitizeHTML(exec.content)} />
                             </Stack>
                           </Stack>
                         )}

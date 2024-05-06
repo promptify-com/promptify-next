@@ -81,7 +81,6 @@ function ExploreCardCategory({ category }: Props) {
                   sx={{
                     color: "var(--onSurface, var(--onSurface, #1A1C18))",
                     fontFeatureSettings: "'clig' off, 'liga' off",
-                    fontFamily: "Poppins",
                     fontSize: {
                       xs: "12",
                       md: "16px",
@@ -99,7 +98,6 @@ function ExploreCardCategory({ category }: Props) {
                   sx={{
                     color: "var(--onSurface, var(--onSurface, #1A1C18))",
                     fontFeatureSettings: "'clig' off, 'liga' off",
-                    fontFamily: "Poppins",
                     fontSize: "12px",
                     fontStyle: "normal",
                     fontWeight: 400,

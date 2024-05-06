@@ -48,7 +48,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
-        .flatMap(node => node.parameters.fields?.values ?? [])
+        .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
         .map(value => ({
           name: value.name,
           fullName: value.name,
@@ -79,8 +79,8 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
     );
 
     const initialWorkflowMessages: IMessage[] = [];
-    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
+    const requiresAuthentication = nodes.some(node => node.parameters?.authentication && !node.credentials);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type] && !node.credentials);
 
     let areAllCredentialsStored = true;
     if (requiresAuthentication || requiresOauth) {
@@ -127,7 +127,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
               processQueuedMessages(queueSavedMessages.concat(responseMessage), selectedChat.id);
               setQueueSavedMessages([]);
             }
-          } else if (!match[2] || match[2] === "undefined") {
+          } else if (!match[2] || isNaN(+match[2])) {
             failedExecutionHandler();
           } else {
             const executionMessage = createMessage({
@@ -149,6 +149,14 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   const failedExecutionHandler = () => {
     dispatch(setToast(EXECUTE_ERROR_TOAST));
     dispatch(setGeneratedExecution(null));
+    const formMessage = createMessage({
+      type: "credsForm",
+      noHeader: true,
+      text: "",
+    });
+    setMessages(prevMessages =>
+      prevMessages.filter(msg => !["workflowExecution", "credsForm"].includes(msg.type)).concat(formMessage),
+    );
   };
 
   useEffect(() => {
@@ -160,8 +168,15 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
         type: "html",
         text: generatedContent,
       });
+      const formMessage = createMessage({
+        type: "credsForm",
+        noHeader: true,
+        text: "",
+      });
       setMessages(prevMessages =>
-        prevMessages.filter(msg => !["credsForm", "workflowExecution"].includes(msg.type)).concat(executionMessage),
+        prevMessages
+          .filter(msg => !["credsForm", "workflowExecution"].includes(msg.type))
+          .concat([executionMessage, formMessage]),
       );
       processQueuedMessages(queueSavedMessages.concat(executionMessage), selectedChat.id, executionId);
       setQueueSavedMessages([]);

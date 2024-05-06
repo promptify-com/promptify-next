@@ -19,7 +19,6 @@ import { IAvailableCredentials, IStoredWorkflows } from "./types";
 import Storage from "@/common/storage";
 import { useRouter } from "next/router";
 import { workflowsApi } from "@/core/api/workflows";
-
 import RefreshCredentials from "@/components/RefreshCredentials";
 
 const currentDate = getCurrentDateFormatted();
@@ -50,11 +49,12 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   });
 
   const hasInputs = inputs.length > 0;
-  const allowNoInputsRun = areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isValidating;
+  const allowNoInputsRun =
+    !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isValidating;
 
   function showAccordionMessage(message: IMessage): boolean {
     const type = message.type;
-    return Boolean(type === "credentials" || (type === "form" && hasInputs));
+    return Boolean((type === "credentials" && !areCredentialsStored) || (type === "form" && hasInputs));
   }
 
   useEffect(() => {

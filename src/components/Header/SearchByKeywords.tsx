@@ -23,7 +23,6 @@ const SearchByKeywords = ({ title }: { title: string | null }) => {
           sx={{
             color: "var(--on-background, #1B1B1E)",
             fontSize: "12px",
-            fontFamily: "Poppins",
             fontWeight: 500,
             lineHeight: "22px",
             letterSpacing: "0.46px",
@@ -45,7 +44,6 @@ const SearchByKeywords = ({ title }: { title: string | null }) => {
             sx={{
               color: "var(--on-surface, #1B1B1E)",
               fontSize: "11px",
-              fontFamily: "Poppins",
               fontWeight: 500,
               lineHeight: "166%",
               letterSpacing: "0.4px",
@@ -80,7 +78,6 @@ const SearchByKeywords = ({ title }: { title: string | null }) => {
                 sx={{
                   color: "var(--on-surface, #1B1B1E)",
                   fontSize: "11px",
-                  fontFamily: "Poppins",
                   fontWeight: 500,
                   lineHeight: "166%",
                   letterSpacing: "0.4px",
@@ -118,7 +115,6 @@ const SearchByKeywords = ({ title }: { title: string | null }) => {
               sx={{
                 color: "var(--on-background, #1B1B1E)",
                 fontSize: "16px",
-                fontFamily: "Poppins",
                 fontWeight: 500,
                 lineHeight: "22px",
                 letterSpacing: "0.46px",

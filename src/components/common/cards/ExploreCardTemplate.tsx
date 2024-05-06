@@ -157,7 +157,6 @@ function CardTemplate({
 
                   color: "var(--onSurface, var(--onSurface, #1A1C18))",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Poppins",
                   fontSize: {
                     xs: "12",
                     md: "16px",
@@ -173,7 +172,6 @@ function CardTemplate({
                 sx={{
                   color: "var(--onSurface, var(--onSurface, #1A1C18))",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Poppins",
                   fontSize: "13px",
                   fontStyle: "normal",
                   fontWeight: 400,

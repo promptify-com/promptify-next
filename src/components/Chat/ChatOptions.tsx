@@ -192,7 +192,6 @@ function LabelText() {
         sx={{
           color: "var(--onSurface, var(--onSurface, #1B1B1F))",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          fontFamily: "Poppins",
           fontSize: { sm: "12px", md: "16px" },
           fontStyle: "normal",
           fontWeight: 400,
@@ -208,7 +207,6 @@ function LabelText() {
         sx={{
           color: "var(--secondary-light, var(--secondary, #575E71))",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          fontFamily: "Poppins",
           fontSize: { sm: "12px", md: "16px" },
           fontStyle: "normal",
           fontWeight: 400,

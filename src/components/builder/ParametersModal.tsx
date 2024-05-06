@@ -40,7 +40,7 @@ export default function ParametersModal({ open, selectedNodeData, onClose, onCli
         <Typography
           sx={{
             display: "flex",
-            fontFamily: "Space Mono",
+            fontFamily: "var(--font-mono)",
             fontSize: 22,
             fontWeight: "600",
             alignSelf: "center",
@@ -57,7 +57,7 @@ export default function ParametersModal({ open, selectedNodeData, onClose, onCli
                 disabled={selectedNodeData?.parameters.some(prompt => prompt.parameter_id === parameter.id)}
                 sx={{
                   mt: 2,
-                  fontFamily: "Space Mono",
+                  fontFamily: "var(--font-mono)",
                   fontSize: 16,
                   cursor: "pointer",
                   color: "black",

@@ -19,8 +19,13 @@ export function Layout({ children, footer = false }: { children: ReactNode; foot
   const theme = useTheme();
   const { isMobile } = useBrowser();
 
-  const { isPromptsFiltersSticky, isDocumentsFiltersSticky, isChatHistorySticky, isPromptsReviewFiltersSticky } =
-    useAppSelector(state => state.sidebar);
+  const {
+    isPromptsFiltersSticky,
+    isDocumentsFiltersSticky,
+    isChatHistorySticky,
+    isPromptsReviewFiltersSticky,
+    isLearnSidebarSticky,
+  } = useAppSelector(state => state.sidebar);
 
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
@@ -28,12 +33,14 @@ export function Layout({ children, footer = false }: { children: ReactNode; foot
   const isPromptPage = pathname.split("/")[1] === "prompt";
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isAccountPage = pathname.split("/")[1] === "profile" && !isPromptsReview;
+  const isLearnPage = ["learn", "terms-of-use", "privacy-policy"].includes(pathname.split("/")[1]);
 
   const sidebarExpanded =
     (isPromptsPage && isPromptsFiltersSticky) ||
     (isChatPage && isChatHistorySticky) ||
     (isDocumentsPage && isDocumentsFiltersSticky) ||
-    (isPromptsReview && isPromptsReviewFiltersSticky);
+    (isPromptsReview && isPromptsReviewFiltersSticky) ||
+    (isLearnPage && isLearnSidebarSticky);
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 343px" : ""}`;
 

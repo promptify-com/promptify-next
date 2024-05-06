@@ -5,16 +5,15 @@ import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
-import PromptContent from "./PromptContent";
-import { isImageOutput } from "../Utils";
+import { isImageOutput } from "@/components/Prompt/Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
+import { ExecutionContent } from "@/components/common/ExecutionContent";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -192,48 +191,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                                 }}
                               />
                             )}
-                            <Box
-                              sx={{
-                                width: "100%",
-                                fontSize: { xs: 14, md: 15 },
-                                fontWeight: 400,
-                                color: "onSurface",
-                                wordWrap: "break-word",
-                                textAlign: "justify",
-                                float: "none",
-                                ".highlight": {
-                                  backgroundColor: "yellow",
-                                  color: "black",
-                                },
-                                pre: {
-                                  m: "10px 0",
-                                  borderRadius: "8px",
-                                  overflow: "hidden",
-                                  code: {
-                                    borderRadius: 0,
-                                    m: 0,
-                                  },
-                                },
-                                code: {
-                                  display: "block",
-                                  bgcolor: "#282a35",
-                                  color: "common.white",
-                                  borderRadius: "8px",
-                                  p: "16px 24px",
-                                  mb: "10px",
-                                  overflow: "auto",
-                                },
-                                ".language-label": {
-                                  p: "8px 24px",
-                                  bgcolor: "#4d5562",
-                                  color: "#ffffff",
-                                  fontSize: 13,
-                                },
-                              }}
-                              dangerouslySetInnerHTML={{
-                                __html: sanitizeHTML(exec.content),
-                              }}
-                            />
+                            <ExecutionContent content={sanitizeHTML(exec.content)} />
                           </Stack>
                         </Stack>
                       )}
