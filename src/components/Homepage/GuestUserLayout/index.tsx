@@ -10,7 +10,6 @@ import { redirectToPath } from "@/common/helpers";
 import { client } from "@/common/axios";
 import { useAppDispatch } from "@/hooks/useStore";
 import { userApi } from "@/core/api/user";
-import useBrowser from "@/hooks/useBrowser";
 import Landing from "@/components/Homepage/GuestUserLayout/Landing";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import Services from "@/components/Homepage/GuestUserLayout/Services";
@@ -25,7 +24,6 @@ const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
   const dispatch = useAppDispatch();
-  const { isMobile } = useBrowser();
   const path = getPathURL();
 
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
@@ -34,13 +32,12 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
-  const [loadCarousel, setLoadCarousel] = useState(!isMobile); // Initially load if not mobile
 
-  const carouselObserver = useIntersectionObserver(carouselContainerRef, {});
   const observers = {
     templatesObserver: useIntersectionObserver(templateContainerRef, {}),
     learnObserver: useIntersectionObserver(learnContainerRef, {}),
     testimonialsObserver: useIntersectionObserver(testimonialsContainerRef, {}),
+    carouselObserver: useIntersectionObserver(carouselContainerRef, {}),
   };
   const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery(
     {
@@ -52,15 +49,10 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       skip: !observers.templatesObserver?.isIntersecting,
     },
   );
+
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
   );
-
-  useEffect(() => {
-    if (isMobile && carouselObserver?.isIntersecting) {
-      setLoadCarousel(true);
-    }
-  }, [carouselObserver?.isIntersecting]);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -105,6 +97,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
 
   const showLearn = observers.learnObserver?.isIntersecting;
   const showTestimonials = observers.learnObserver?.isIntersecting;
+  const showCarousel = observers.carouselObserver?.isIntersecting;
 
   return (
     <Stack
@@ -113,7 +106,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
     >
       <Landing />
       <Box ref={carouselContainerRef}>
-        {loadCarousel && (
+        {showCarousel && (
           <CategoryCarousel
             categories={_categories}
             href="/explore"
