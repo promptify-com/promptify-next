@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
-
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import useTruncate from "@/hooks/useTruncate";
@@ -16,6 +15,8 @@ import { isDesktopViewPort, stripTags } from "@/common/helpers";
 import { useAppDispatch } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
+import { useRef } from "react";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 type CardTemplateProps = {
   template: Templates;
@@ -26,6 +27,10 @@ function CardTemplate({ template }: CardTemplateProps) {
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const isDesktop = isDesktopViewPort();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const observer = useIntersectionObserver(containerRef, {});
+
+  const imgPriority = observer?.isIntersecting;
 
   return (
     <Link
@@ -38,6 +43,7 @@ function CardTemplate({ template }: CardTemplateProps) {
       }}
     >
       <Card
+        ref={containerRef}
         sx={{
           minWidth: { xs: "50%", sm: isDesktop ? "210px" : "auto" },
           height: isDesktop ? "calc(100% - 24px)" : "calc(100% - 16px)",
@@ -87,7 +93,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 alt={template.title}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 sizes="(max-width: 600px) 40vw, (max-width: 900px) 35vw, 30vw"
-                priority={false}
+                priority={imgPriority}
               />
             </CardMedia>
             <Stack
@@ -144,19 +150,23 @@ function CardTemplate({ template }: CardTemplateProps) {
                 </Stack>
               )}
               {template.created_by?.username && (
-                <Link
-                  href={`/users/${template.created_by?.username}`}
-                  onClick={e => e.stopPropagation()}
-                  style={{ textDecoration: "none", marginLeft: "auto" }}
+                <Typography
+                  fontSize={13}
+                  fontWeight={400}
+                  color={alpha(theme.palette.onSurface, 0.75)}
+                  sx={{
+                    ml: "auto",
+                    ":hover": {
+                      color: "onSurface",
+                    },
+                  }}
+                  onClick={e => {
+                    e.preventDefault();
+                    router.push(`/users/${template.created_by?.username}`);
+                  }}
                 >
-                  <Typography
-                    fontSize={13}
-                    fontWeight={400}
-                    color={alpha(theme.palette.onSurface, 0.75)}
-                  >
-                    by {template.created_by.first_name || template.created_by.username}
-                  </Typography>
-                </Link>
+                  by {template.created_by.first_name || template.created_by.username}
+                </Typography>
               )}
             </Stack>
           </Stack>

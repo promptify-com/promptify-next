@@ -30,9 +30,12 @@ export function useIntersectionObserver(
 
     const observerParams = { threshold, root, rootMargin };
     const observer = new IntersectionObserver(updateEntry, observerParams);
-    observerRef.current = observer;
 
-    observer.observe(node);
+    setTimeout(() => {
+      observerRef.current = observer;
+
+      observer.observe(node);
+    }, 1000);
 
     return () => observer?.disconnect();
 
