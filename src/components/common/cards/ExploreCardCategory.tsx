@@ -8,29 +8,26 @@ import { Category } from "@/core/api/dto/templates";
 import Typography from "@mui/material/Typography";
 import useBrowser from "@/hooks/useBrowser";
 import { CategoryCard } from "./CardCategory";
-import { useRef } from "react";
+import { memo } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
   category: Category;
+  priority?: boolean;
 }
 
-function ExploreCardCategory({ category }: Props) {
+function ExploreCardCategory({ category, priority }: Props) {
   const { isMobile } = useBrowser(true);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const observer = useIntersectionObserver(containerRef, {});
-
-  const imgPriority = observer?.isIntersecting;
 
   return (
-    <Box ref={containerRef}>
+    <Box>
       <ClientOnly>
         {isMobile ? (
           <CategoryCard
             category={category}
-            priority={imgPriority}
+            priority={priority}
             href={`/explore/${category.slug}`}
             min={!isMobile}
           />
@@ -81,7 +78,7 @@ function ExploreCardCategory({ category }: Props) {
                     src={category.image}
                     alt={category.name}
                     style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
-                    priority={imgPriority}
+                    priority={priority}
                   />
                 </CardMedia>
                 <CardContent sx={{ p: "8px 0", m: 0 }}>
@@ -126,4 +123,4 @@ function ExploreCardCategory({ category }: Props) {
   );
 }
 
-export default ExploreCardCategory;
+export default memo(ExploreCardCategory);

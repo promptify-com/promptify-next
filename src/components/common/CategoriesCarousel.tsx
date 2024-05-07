@@ -117,10 +117,13 @@ function CategoryCarousel({
             ref={carouselContainerRef}
             direction={"row"}
           >
-            {categories.map(category => (
+            {categories.map((category, idx) => (
               <Box key={category.id}>
                 {explore ? (
-                  <ExploreCardCategory category={category} />
+                  <ExploreCardCategory
+                    category={category}
+                    priority={isMobile ? idx < 4 : idx < 5}
+                  />
                 ) : (
                   <CategoryCard
                     category={category}
