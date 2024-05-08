@@ -12,7 +12,7 @@ import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
-  const { data: suggestedTemplates, isLoading } = useGetTemplatesSuggestedQuery(undefined);
+  const { data: suggestedTemplates, isFetching } = useGetTemplatesSuggestedQuery(undefined);
 
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
@@ -41,14 +41,12 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
       >
         <SuggestionsSection />
         <Stack minHeight={"300px"}>
-          {!isLoading && (
-            <HomepageTemplates
-              title="You may like these prompts:"
-              templates={suggestedTemplates || []}
-              templatesLoading={isLoading}
-              showAdsBox
-            />
-          )}
+          <HomepageTemplates
+            title="You may like these prompts:"
+            templates={suggestedTemplates || []}
+            templatesLoading={isFetching}
+            showAdsBox
+          />
         </Stack>
 
         <Stack

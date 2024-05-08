@@ -15,7 +15,7 @@ interface Props {
 }
 
 function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: Props) {
-  if (!templates.length) {
+  if (!templates.length && !templatesLoading) {
     return null;
   }
   return (
