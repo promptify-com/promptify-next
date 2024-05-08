@@ -30,34 +30,28 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
         {title}
       </Typography>
 
-      {templatesLoading ? (
-        <Grid
-          container
-          gap={2}
-          justifyContent={{ xs: "center", md: "flex-start" }}
-        >
-          <CardTemplatePlaceholder count={5} />
-        </Grid>
-      ) : (
-        <Grid
-          container
-          ml={{ md: -2 }}
-          spacing={1}
-        >
-          {showAdsBox && (
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={8}
-              lg={6}
-              xl={4}
-              mb={{ xs: 2, md: 0 }}
-            >
-              <AdsBox />
-            </Grid>
-          )}
+      <Grid
+        container
+        ml={{ md: -2 }}
+        spacing={1}
+      >
+        {showAdsBox && (
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={8}
+            lg={6}
+            xl={4}
+            mb={{ xs: 2, md: 0 }}
+          >
+            <AdsBox />
+          </Grid>
+        )}
 
+        {templatesLoading ? (
+          <CardTemplatePlaceholder count={5} />
+        ) : (
           <>
             {templates?.map(template => (
               <Grid
@@ -73,8 +67,8 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
               </Grid>
             ))}
           </>
-        </Grid>
-      )}
+        )}
+      </Grid>
     </Stack>
   );
 }
