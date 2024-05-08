@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -8,7 +7,7 @@ import Image from "@/components/design-system/Image";
 function AdsBox() {
   const router = useRouter();
   return (
-    <Box
+    <Stack
       sx={{
         position: "relative",
         zIndex: 1,
@@ -16,11 +15,17 @@ function AdsBox() {
         overflow: "hidden",
         width: { xs: "100%", md: "94%" },
         height: "275px",
-        bgcolor: "yellow",
         ml: { xs: 0, md: 2 },
         mt: "16px",
       }}
     >
+      <Image
+        src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.webp")}
+        alt={"Promptify"}
+        fill
+        sizes="(max-width: 600px) 344px, (max-width: 900px) 437px, 437px"
+        priority={true}
+      />
       <Stack
         direction={"column"}
         position={"absolute"}
@@ -65,14 +70,7 @@ function AdsBox() {
           See now
         </Button>
       </Stack>
-      <Image
-        src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.webp")}
-        alt={"Promptify"}
-        fill
-        sizes="(max-width: 600px) 344px, (max-width: 900px) 437px, 437px"
-        priority={true}
-      />
-    </Box>
+    </Stack>
   );
 }
 

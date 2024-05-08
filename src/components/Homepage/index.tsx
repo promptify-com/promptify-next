@@ -66,12 +66,6 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
           )}
         </Stack>
 
-        {/* <Stack minHeight={"600px"}>
-          <Learn />
-        </Stack>
-        <Stack minHeight={"400px"}>
-          <Testimonials />
-        </Stack> */}
         <Stack ref={learnContainerRef}>{showLearn && <Learn />}</Stack>
         <Stack ref={testimonialsContainerRef}>{showTestimonials && <Testimonials />}</Stack>
       </Grid>
