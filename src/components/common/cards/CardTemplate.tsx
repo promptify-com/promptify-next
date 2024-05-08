@@ -155,6 +155,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                   fontSize={13}
                   fontWeight={400}
                   color={alpha(theme.palette.onSurface, 0.75)}
+                  ml={"auto"}
                 >
                   by {template.created_by.first_name || template.created_by.username}
                 </Typography>
