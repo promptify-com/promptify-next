@@ -17,6 +17,7 @@ import useLogout from "@/hooks/useLogout";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
 import { profileLinks } from "@/common/constants";
 import type { ProfileLink } from "./SidebarMobile/Types";
+import Image from "./design-system/Image";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -52,25 +53,25 @@ export const ProfileMenu = () => {
           },
         }}
       >
-        <Avatar
-          src={currentUser?.avatar ?? defaultAvatar.src}
-          alt={currentUser?.first_name ?? "Promptify"}
+        <Stack
           sx={{
             ml: "auto",
             cursor: "pointer",
-            bgcolor: "black",
             borderRadius: { xs: "24px", sm: "36px" },
             width: { xs: "24px", sm: "40px" },
             height: { xs: "24px", sm: "40px" },
-            fontStyle: "normal",
-            textAlign: "center",
-            fontWeight: 400,
-            fontSize: { sm: "30px" },
-            textTransform: "capitalize",
-            lineHeight: "20px",
-            letterSpacing: "0.14px",
+            position: "relative",
+            overflow: "hidden",
           }}
-        />
+        >
+          <Image
+            fill
+            priority={true}
+            sizes="(max-width: 600px) 24px, (max-width: 900px) 40px, 40px"
+            src={currentUser?.avatar ?? defaultAvatar.src}
+            alt={currentUser?.first_name ?? "Promptify"}
+          />
+        </Stack>
       </Box>
       <Popper
         open={isMenuShown}
