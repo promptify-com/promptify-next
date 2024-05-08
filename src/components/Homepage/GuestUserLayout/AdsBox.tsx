@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import Image from "@/components/design-system/Image";
 
 function AdsBox() {
@@ -70,7 +69,8 @@ function AdsBox() {
         src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.webp")}
         alt={"Promptify"}
         fill
-        priority={false}
+        sizes="(max-width: 600px) 344px, (max-width: 900px) 437px, 437px"
+        priority={true}
       />
     </Box>
   );

@@ -127,7 +127,7 @@ function CategoryCarousel({
                 ) : (
                   <CategoryCard
                     category={category}
-                    priority={priority}
+                    priority={false}
                     href={`/explore/${category.slug}`}
                     min={isMobile}
                   />

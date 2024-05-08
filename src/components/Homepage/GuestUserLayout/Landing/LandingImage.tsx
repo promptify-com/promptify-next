@@ -38,7 +38,7 @@ function LandingImage() {
           alt={"Promptify"}
           priority={true}
           fill
-          sizes="(max-width: 900px) 253px, 353px"
+          sizes="(max-width: 600px) 253px, (max-width: 900px) 253px, 353px"
           style={{
             objectFit: "cover",
           }}

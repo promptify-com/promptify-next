@@ -10,6 +10,7 @@ import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 import HomepageLayout from "@/components/Homepage";
 import Footer from "@/components/Footer";
 import type { Category } from "@/core/api/dto/templates";
+import Stack from "@mui/material/Stack";
 
 function HomePage({ categories }: { categories: Category[] }) {
   const isValidUser = useAppSelector(isValidUserFn);
@@ -22,7 +23,9 @@ function HomePage({ categories }: { categories: Category[] }) {
         padding={{ xs: "4px 0px", md: "0px 8px" }}
         p={{ xs: "16px", md: "42px" }}
       >
-        {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
+        <Stack minHeight={"100svh"}>
+          {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
+        </Stack>
         {!isMobile && <Footer />}
       </Box>
     </Layout>

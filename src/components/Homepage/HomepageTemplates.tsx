@@ -19,7 +19,10 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
     return null;
   }
   return (
-    <Stack gap={"32px"}>
+    <Stack
+      gap={"32px"}
+      minHeight={"400px"}
+    >
       <Typography
         fontSize={{ xs: 24, md: 32 }}
         fontWeight={400}

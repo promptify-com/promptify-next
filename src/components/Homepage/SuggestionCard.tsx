@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import useBrowser from "@/hooks/useBrowser";
+import { useRouter } from "next/router";
 
 interface Props {
   title: string;
@@ -58,7 +59,8 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
             <Image
               src={src}
               alt={"template"}
-              priority
+              priority={true}
+              sizes="(max-width: 600px) 40vw, (max-width: 900px) 35vw, 30vw"
               fill
               style={{
                 objectFit: "cover",
@@ -74,6 +76,7 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
 const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props) => {
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
+  const router = useRouter();
   return (
     <Link
       href={href}
@@ -160,18 +163,19 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
             >
               {actionLabel}
             </Typography>
-            <Link href={href}>
-              <IconButton
-                sx={{
-                  border: "none",
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-              >
-                <ArrowForward />
-              </IconButton>
-            </Link>
+
+            <IconButton
+              aria-label="Procced"
+              onClick={() => router.push(href)}
+              sx={{
+                border: "none",
+                ":hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <ArrowForward />
+            </IconButton>
           </Stack>
         </Stack>
       </Stack>
