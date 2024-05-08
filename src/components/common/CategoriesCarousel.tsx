@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -120,7 +120,7 @@ function CategoryCarousel({
             direction={"row"}
           >
             {categories.map((category, idx) => (
-              <Box key={category.id}>
+              <Fragment key={category.id}>
                 {explore ? (
                   <ExploreCardCategory
                     category={category}
@@ -134,7 +134,7 @@ function CategoryCarousel({
                     min={isMobile}
                   />
                 )}
-              </Box>
+              </Fragment>
             ))}
           </Stack>
         </Stack>
