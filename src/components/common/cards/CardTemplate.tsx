@@ -92,7 +92,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
                 alt={template.title}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                sizes="(max-width: 600px) 40vw, (max-width: 900px) 35vw, 30vw"
+                sizes="(max-width: 600px) 176px, (max-width: 900px) 216px, 216px"
                 priority={imgPriority}
               />
             </CardMedia>
@@ -151,19 +151,10 @@ function CardTemplate({ template }: CardTemplateProps) {
               )}
               {template.created_by?.username && (
                 <Typography
+                  onClick={() => router.push(`/users/${template.created_by?.username}`)}
                   fontSize={13}
                   fontWeight={400}
                   color={alpha(theme.palette.onSurface, 0.75)}
-                  sx={{
-                    ml: "auto",
-                    ":hover": {
-                      color: "onSurface",
-                    },
-                  }}
-                  onClick={e => {
-                    e.preventDefault();
-                    router.push(`/users/${template.created_by?.username}`);
-                  }}
                 >
                   by {template.created_by.first_name || template.created_by.username}
                 </Typography>

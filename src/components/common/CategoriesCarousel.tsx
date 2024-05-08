@@ -23,6 +23,7 @@ interface CategoryCarouselProps {
   gap?: number;
   explore?: boolean;
   href?: string;
+  priority?: boolean;
 }
 
 function CategoryCarousel({
@@ -33,6 +34,7 @@ function CategoryCarousel({
   gap = 5,
   explore,
   href,
+  priority,
 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
   const {

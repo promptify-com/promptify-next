@@ -104,7 +104,6 @@ function Footer() {
                         fontWeight: 500,
                         lineHeight: { xs: "170%", md: "150%" },
                         color: "onSurface",
-                        // fontFeatureSettings: "'clig' off, 'liga' off",
                       }}
                     >
                       {link.title}
@@ -155,7 +154,6 @@ function Footer() {
               lineHeight: "160%",
               letterSpacing: "0.17px",
               color: "secondary.light",
-              fontFeatureSettings: "'clig' off, 'liga' off",
             }}
           >
             © {thisYear} Promptify.com - Promptify LLC. All rights reserved.

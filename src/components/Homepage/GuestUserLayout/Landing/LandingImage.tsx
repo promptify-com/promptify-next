@@ -6,6 +6,8 @@ import { Typography } from "@mui/material";
 function LandingImage() {
   const isDesktop = isDesktopViewPort();
 
+  const renderImageByViewport = isDesktop ? require("./empower-2-desktop.webp") : require("./empower-2-mobile.webp");
+
   return (
     <Box position={"relative"}>
       <Box
@@ -32,11 +34,11 @@ function LandingImage() {
         }}
       >
         <Image
-          src={require("./empower-2.webp")}
+          src={renderImageByViewport}
           alt={"Promptify"}
           priority={true}
           fill
-          sizes="(max-width: 900px) 253px, 353px"
+          sizes="(max-width: 600px) 253px, (max-width: 900px) 253px, 353px"
           style={{
             objectFit: "cover",
           }}

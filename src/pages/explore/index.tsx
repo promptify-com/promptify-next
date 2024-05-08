@@ -174,6 +174,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                 <CategoryCarousel
                   categories={categories}
                   userScrolled={hasUserScrolled}
+                  priority={true}
                   onClick={() => {
                     setSeeAll(true);
                   }}
