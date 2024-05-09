@@ -45,6 +45,13 @@ import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builde
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
+  weight: ["400"],
+});
+
 export const Builder = () => {
   const router = useRouter();
   const slug = router.query.slug as string;
@@ -65,13 +72,6 @@ export const Builder = () => {
   const token = useToken();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-
-  const spaceMono = Space_Mono({
-    subsets: ["latin"],
-    display: "swap",
-    variable: "--font-mono",
-    weight: ["400"],
-  });
 
   useEffect(() => {
     dispatch(setEngines(engines || []));
