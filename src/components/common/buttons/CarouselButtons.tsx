@@ -72,13 +72,9 @@ const btnStyle = {
   border: "none",
   borderRadius: 0,
   color: "#1C1B1F80",
-  bgcolor: alpha(theme.palette.surfaceContainerLowest, 0.9),
   p: "8px 16px",
-  ":hover": {
-    bgcolor: "surfaceContainerLowest",
-  },
   "&.Mui-disabled": {
-    opacity: 0.6,
+    opacity: ".6 !important",
   },
 };
 

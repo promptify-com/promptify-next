@@ -1,11 +1,14 @@
-import { EmblaCarouselType } from "embla-carousel";
+import type { EmblaCarouselType, EmblaOptionsType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
+import type { OptionsType } from "embla-carousel-autoplay/components/Options";
 import useEmblaCarousel from "embla-carousel-react";
 import { RefObject, useCallback, useEffect, useState } from "react";
 
-export default function useCarousel(autoplay = false) {
+export default function useCarousel(autoplay = false, options?: EmblaOptionsType) {
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(true);
+  const [selectedSlide, setSelectedSlide] = useState(0);
+  const [slideNodes, setSlideNodes] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -13,6 +16,7 @@ export default function useCarousel(autoplay = false) {
       dragFree: true,
       loop: true,
       align: "start",
+      ...options,
     },
     autoplay ? [Autoplay()] : [],
   );
@@ -20,6 +24,8 @@ export default function useCarousel(autoplay = false) {
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
     setCanScrollNext(emblaApi.canScrollNext());
     setCanScrollPrev(emblaApi.canScrollPrev());
+    setSelectedSlide(emblaApi.selectedScrollSnap());
+    setSlideNodes(emblaApi.slideNodes().length);
   }, []);
 
   useEffect(() => {
@@ -39,5 +45,7 @@ export default function useCarousel(autoplay = false) {
     scrollPrev,
     canScrollNext,
     canScrollPrev,
+    selectedSlide,
+    slideNodes,
   };
 }

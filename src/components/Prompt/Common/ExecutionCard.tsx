@@ -1,6 +1,5 @@
-import { useEffect, useState, createRef, RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import Error from "@mui/icons-material/Error";
-import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -14,6 +13,8 @@ import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
+import useCarousel from "@/hooks/useCarousel";
+import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -24,10 +25,18 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const showPreview = useAppSelector(state => state.template.showPromptsView);
+  const carouselContainerRef = useRef<HTMLDivElement | null>(null);
+  const {
+    containerRef: carouselRef,
+    scrollNext,
+    scrollPrev,
+    canScrollNext,
+    canScrollPrev,
+    selectedSlide,
+    slideNodes,
+  } = useCarousel(false, { loop: false, dragFree: false });
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
-  const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
-  const [elementHeights, setElementHeights] = useState<number[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
 
   const promptsOrderMap: { [key: string]: number } = {};
@@ -37,22 +46,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
-
-  useEffect(() => {
-    setElementRefs(elementRefs =>
-      Array.from({ length: sortedPrompts.length }, (_, i) => elementRefs[i] || createRef<HTMLDivElement>()),
-    );
-  }, [sortedPrompts.length]);
-
-  useEffect(() => {
-    setElementHeights(Array(sortedPrompts.length).fill(0));
-    if (elementRefs.length === sortedPrompts.length) {
-      setTimeout(() => {
-        const heights = elementRefs.map(ref => ref.current?.offsetHeight ?? 0);
-        setElementHeights(heights);
-      }, 300);
-    }
-  }, [elementRefs, execution, promptsData]);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
@@ -106,9 +99,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   return (
     <Stack
       gap={1}
-      p={{ xs: "16px", md: "24px" }}
       sx={{
-        width: { md: "90%" },
+        p: { xs: "16px", md: "24px" },
+        width: { xs: "calc(100% - 32px)", md: "calc(100% - 48px)" },
       }}
     >
       {execution && (
@@ -126,125 +119,156 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
       )}
       {execution && (
         <Stack
-          direction={{ md: "row" }}
+          direction={"row"}
+          alignItems={"center"}
           p={{ xs: "title" in execution ? "10px 0px" : "20px 0px", md: 0 }}
         >
-          <Stack gap={1}>
-            {!!sortedPrompts.length ? (
-              sortedPrompts?.map((exec, index) => {
-                const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
-                const engineType = prompt?.engine?.output_type ?? "TEXT";
-                const prevItem = sortedPrompts[index - 1];
-                const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
-                const nextItem = sortedPrompts[index + 1];
-                const isNextItemText = nextItem && !isImageOutput(nextItem?.content, engineType);
+          <Box
+            ref={carouselRef}
+            overflow={"hidden"}
+          >
+            <Stack
+              ref={carouselContainerRef}
+              direction={"row"}
+              gap={3}
+            >
+              {!!sortedPrompts.length ? (
+                sortedPrompts?.map((exec, index) => {
+                  const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+                  const engineType = prompt?.engine?.output_type ?? "TEXT";
+                  const prevItem = sortedPrompts[index - 1];
+                  const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
+                  const nextItem = sortedPrompts[index + 1];
+                  const isNextItemText = nextItem && !isImageOutput(nextItem?.content, engineType);
 
-                if (prompt?.show_output || sparkHashQueryParam) {
-                  return (
-                    <Stack
-                      key={index}
-                      gap={1}
-                      sx={{ pb: "0px" }}
-                    >
-                      {prompt && (
-                        <Subtitle
-                          sx={{
-                            display: { xs: showPreview ? "none" : "block", md: "block" },
-                            fontSize: { xs: 18, md: 24 },
-                            fontWeight: 400,
-                            color: "onSurface",
-                          }}
-                        >
-                          {!isImageOutput(exec.content, engineType) && prompt?.title}
-                          {exec.errors && executionError(exec.errors)}
-                        </Subtitle>
-                      )}
-                      {/* is Text Output */}
-                      {!isImageOutput(exec.content, engineType) && (
-                        <Stack
-                          direction={"row"}
-                          alignItems={"start"}
-                          gap={{ md: 2 }}
-                        >
-                          <Stack
-                            ref={elementRefs[index]}
-                            display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
-                            width={{ md: showPreview ? "65%" : "100%" }}
-                            direction={{ md: "row" }}
-                            gap={2}
-                          >
-                            {isPrevItemImage && (
-                              <Box
-                                component={"img"}
-                                alt={"book cover"}
-                                src={prevItem.content}
-                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                  (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                                }}
-                                sx={{
-                                  borderRadius: "8px",
-                                  width: "40%",
-                                  objectFit: "cover",
-                                  float: "right",
-                                  ml: "20px",
-                                  mb: "10px",
-                                }}
-                              />
-                            )}
-                            <ExecutionContent content={sanitizeHTML(exec.content)} />
-                          </Stack>
-                        </Stack>
-                      )}
-                      {/* is Image Output and Next item is not text */}
-                      {isImageOutput(exec.content, engineType) && !isNextItemText && (
-                        <>
-                          <Box
-                            component={"img"}
-                            alt={"Promptify"}
-                            src={exec.content}
-                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                              (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                            }}
-                            onClick={() => setPopupOpen(true)}
+                  if (prompt?.show_output || sparkHashQueryParam) {
+                    return (
+                      <Stack
+                        key={index}
+                        gap={1}
+                        minWidth={"100%"}
+                        sx={{ pb: "0px" }}
+                      >
+                        {prompt && (
+                          <Subtitle
                             sx={{
                               display: { xs: showPreview ? "none" : "block", md: "block" },
-                              borderRadius: "8px",
-                              width: "40%",
-                              objectFit: "cover",
-                              float: "right",
-                              ml: "20px",
-                              mb: "10px",
-                              cursor: "pointer",
+                              fontSize: { xs: 18, md: 24 },
+                              fontWeight: 400,
+                              color: "onSurface",
                             }}
-                          />
+                          >
+                            {!isImageOutput(exec.content, engineType) && prompt?.title}
+                            {exec.errors && executionError(exec.errors)}
+                          </Subtitle>
+                        )}
+                        {/* is Text Output */}
+                        {!isImageOutput(exec.content, engineType) && (
+                          <Stack
+                            direction={"row"}
+                            alignItems={"start"}
+                            gap={{ md: 2 }}
+                          >
+                            <Stack
+                              display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
+                              width={{ md: showPreview ? "65%" : "100%" }}
+                              direction={{ md: "row" }}
+                              gap={2}
+                            >
+                              {isPrevItemImage && (
+                                <Box
+                                  component={"img"}
+                                  alt={"book cover"}
+                                  src={prevItem.content}
+                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                    (
+                                      e.target as HTMLImageElement
+                                    ).src = require("@/assets/images/default-thumbnail.jpg");
+                                  }}
+                                  sx={{
+                                    borderRadius: "8px",
+                                    width: "40%",
+                                    objectFit: "cover",
+                                    float: "right",
+                                    ml: "20px",
+                                    mb: "10px",
+                                  }}
+                                />
+                              )}
+                              <ExecutionContent content={sanitizeHTML(exec.content)} />
+                            </Stack>
+                          </Stack>
+                        )}
+                        {/* is Image Output and Next item is not text */}
+                        {isImageOutput(exec.content, engineType) && !isNextItemText && (
+                          <>
+                            <Box
+                              component={"img"}
+                              alt={"Promptify"}
+                              src={exec.content}
+                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                              }}
+                              onClick={() => setPopupOpen(true)}
+                              sx={{
+                                display: { xs: showPreview ? "none" : "block", md: "block" },
+                                borderRadius: "8px",
+                                width: "40%",
+                                objectFit: "cover",
+                                float: "right",
+                                ml: "20px",
+                                mb: "10px",
+                                cursor: "pointer",
+                              }}
+                            />
 
-                          <ImagePopup
-                            open={popupOpen}
-                            imageUrl={exec.content}
-                            onClose={() => setPopupOpen(false)}
-                          />
-                        </>
-                      )}
-                    </Stack>
-                  );
-                }
-              })
-            ) : (
-              <Typography>We could not display the selected execution as it's missing some information!</Typography>
-            )}
-          </Stack>
+                            <ImagePopup
+                              open={popupOpen}
+                              imageUrl={exec.content}
+                              onClose={() => setPopupOpen(false)}
+                            />
+                          </>
+                        )}
+                      </Stack>
+                    );
+                  }
+                })
+              ) : (
+                <Typography>We could not display the selected execution as it's missing some information!</Typography>
+              )}
+            </Stack>
+          </Box>
         </Stack>
       )}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"flex-end"}
+        gap={1}
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          bgcolor: "surface.1",
+          width: "fit-content",
+          ml: "auto",
+          px: "8px",
+          borderRadius: "8px",
+        }}
+      >
+        <Typography
+          fontSize={14}
+          fontWeight={400}
+          color={"secondary.light"}
+        >
+          {selectedSlide + 1} of {slideNodes}
+        </Typography>
+        <CarouselButtons
+          scrollNext={scrollNext}
+          scrollPrev={scrollPrev}
+          canScrollNext={canScrollNext}
+          canScrollPrev={canScrollPrev}
+        />
+      </Stack>
     </Stack>
   );
 };
-
-const expandAnimation = keyframes`
-  from { width: 0%; }
-  to { width: 20%; }
-`;
-
-const collapseAnimation = keyframes`
-  from { width: 20%; }
-  to { width: 0%; }
-`;
