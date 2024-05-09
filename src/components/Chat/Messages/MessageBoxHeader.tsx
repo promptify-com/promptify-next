@@ -32,8 +32,8 @@ function MessageBoxHeader({
   template,
   execution,
 }: Props) {
-  const { isMobile } = useBrowser();
   const { selectedTemplate, selectedChatOption, answers, inputs, params } = useAppSelector(state => state.chat);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [openExportPopup, setOpenExportPopup] = useState(false);
 
@@ -139,7 +139,7 @@ function MessageBoxHeader({
             />
           </>
         )}
-        {variant === "EXECUTION" && (
+        {variant === "EXECUTION" && !isGenerating && (
           <Button
             variant="text"
             startIcon={<ShareOutlined />}
@@ -154,7 +154,7 @@ function MessageBoxHeader({
             }}
             onClick={() => setOpenExportPopup(true)}
           >
-            {!isMobile && "Export"}
+            Export
           </Button>
         )}
 
