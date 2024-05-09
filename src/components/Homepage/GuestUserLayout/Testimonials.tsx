@@ -75,6 +75,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => {
                     src={testimonial.image}
                     alt={testimonial.name}
                     fill
+                    sizes="60px"
                     priority={false}
                   />
                 </Box>
@@ -104,8 +105,8 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => {
             sx={{
               zIndex: 1,
               borderRadius: "16px",
-              width: { xs: "100%", md: "223px" },
-              height: { xs: "200px", md: "312px" },
+              width: "223px",
+              height: "312px",
             }}
           >
             <Image
@@ -113,6 +114,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => {
               alt={testimonial.name}
               style={{ borderRadius: "16px", objectFit: "contain", width: "100%", height: "100%" }}
               priority={false}
+              sizes="223px"
             />
           </CardMedia>
         )}
