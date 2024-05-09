@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import { Poppins, Space_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
@@ -22,13 +22,6 @@ const poppins = Poppins({
   display: "swap",
   variable: "--font-poppins",
   weight: ["400", "500"],
-});
-
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mono",
-  weight: ["400"],
 });
 
 function App({ Component, ...rest }: AppProps) {
@@ -82,7 +75,7 @@ function App({ Component, ...rest }: AppProps) {
     if (viewportMetaTagElement && navigator.userAgent.includes("iPhone")) {
       viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1");
     }
-    document.body.className = `${poppins.variable} font-sans ${spaceMono.variable} font-sans`;
+    document.body.className = `${poppins.variable} font-sans`;
   }, []);
 
   return (

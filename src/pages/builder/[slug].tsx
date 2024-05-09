@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { Space_Mono } from "next/font/google";
+
 import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -43,6 +45,13 @@ import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builde
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
+  weight: ["400"],
+});
+
 export const Builder = () => {
   const router = useRouter();
   const slug = router.query.slug as string;
@@ -72,6 +81,9 @@ export const Builder = () => {
     redirectToPath("/404");
     return;
   }
+  useEffect(() => {
+    document.body.className = `${spaceMono.variable} font-sans`;
+  }, []);
 
   useEffect(() => {
     if (!token) {

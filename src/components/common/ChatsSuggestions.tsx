@@ -119,6 +119,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
                   [theme.breakpoints.down("md")]: {
                     mr: 0,
                   },
+                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
                 }),
               }}
             >

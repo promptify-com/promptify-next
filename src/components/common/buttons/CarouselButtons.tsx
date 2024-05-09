@@ -36,6 +36,7 @@ export const CarouselButtons: React.FC<Props> = ({
       }}
     >
       <IconButton
+        aria-label="previous"
         disabled={!canScrollPrev}
         onClick={scrollPrev}
         className="nav-btn"
@@ -49,6 +50,7 @@ export const CarouselButtons: React.FC<Props> = ({
       </IconButton>
       {children}
       <IconButton
+        aria-label="next"
         disabled={!canScrollNext}
         onClick={scrollNext}
         className="nav-btn"
