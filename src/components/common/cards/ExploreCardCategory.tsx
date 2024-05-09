@@ -8,7 +8,6 @@ import { Category } from "@/core/api/dto/templates";
 import Typography from "@mui/material/Typography";
 import useBrowser from "@/hooks/useBrowser";
 import { CategoryCard } from "./CardCategory";
-import { memo } from "react";
 import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
@@ -119,4 +118,4 @@ function ExploreCardCategory({ category, priority }: Props) {
   );
 }
 
-export default memo(ExploreCardCategory);
+export default ExploreCardCategory;

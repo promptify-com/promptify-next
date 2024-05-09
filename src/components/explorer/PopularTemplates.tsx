@@ -31,7 +31,7 @@ function PopularTemplates({ catId, initTemplates }: Props) {
     status: "published",
   };
 
-  const skipFirstFetch = Boolean(INIT_OFFSET > 0 && offset === INIT_OFFSET);
+  const skipFirstFetch = Boolean(initTemplates?.results.length && offset === INIT_OFFSET);
 
   const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params, {
     skip: skipFirstFetch,
