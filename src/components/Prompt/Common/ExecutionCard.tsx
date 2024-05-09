@@ -27,7 +27,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
-  const [elementHeights, setElementHeights] = useState<number[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
 
   const promptsOrderMap: { [key: string]: number } = {};
@@ -43,16 +42,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
       Array.from({ length: sortedPrompts.length }, (_, i) => elementRefs[i] || createRef<HTMLDivElement>()),
     );
   }, [sortedPrompts.length]);
-
-  useEffect(() => {
-    setElementHeights(Array(sortedPrompts.length).fill(0));
-    if (elementRefs.length === sortedPrompts.length) {
-      setTimeout(() => {
-        const heights = elementRefs.map(ref => ref.current?.offsetHeight ?? 0);
-        setElementHeights(heights);
-      }, 300);
-    }
-  }, [elementRefs, execution, promptsData]);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
