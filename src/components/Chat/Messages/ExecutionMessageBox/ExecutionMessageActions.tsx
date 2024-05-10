@@ -99,7 +99,7 @@ function ExecutionMessageActions({ execution }: Props) {
               }}
               onClick={saveExecution}
             >
-              {isDesktopView && <>{execution.is_favorite ? "Delete from documents" : "Save as document"}</>}
+              {isDesktopView && <>{execution.is_favorite ? "Delete from documents" : "Save"}</>}
             </Button>
             <ExportExecutionButton execution={execution} />
           </Stack>
