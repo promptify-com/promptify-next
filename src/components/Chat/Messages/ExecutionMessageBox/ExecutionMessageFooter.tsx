@@ -78,8 +78,8 @@ function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
               {currentGeneratedPrompt ? (
                 <>
                   Running the prompt
-                  <strong style={{ fontWeight: 700 }}>« {currentGeneratedPrompt.title} »</strong>
-                  of {currentGeneratedPrompt.order}/{filteredPrompts.length}
+                  <strong style={{ fontWeight: 700 }}> « {currentGeneratedPrompt.title} » </strong>
+                  {currentGeneratedPrompt.order}/{filteredPrompts.length}
                 </>
               ) : (
                 "generation in progress"
