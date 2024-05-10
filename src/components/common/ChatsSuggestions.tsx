@@ -1,4 +1,4 @@
-import { type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { useRouter } from "next/router";
 import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
@@ -8,14 +8,39 @@ import Grid from "@mui/material/Grid";
 import { useGetChatsQuery } from "@/core/api/chats";
 import SuggestionCard, { Avatar } from "@/components/Homepage/SuggestionCard";
 import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlaceholder";
+import { useGetExecutionsByMeQuery } from "@/core/api/executions";
+import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
+import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   carouselRef?: RefObject<HTMLDivElement>;
   slice?: number;
 }
 
-function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
+function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
   const { data: chats, isLoading } = useGetChatsQuery({ limit: slice });
+  const {
+    data: fetchExecutions,
+    isLoading: isExecutionsLoading,
+    isFetching: isExecutionsFetching,
+  } = useGetExecutionsByMeQuery({ limit: 1 });
+  const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
+
+  const { data: templates, isLoading: isTemplatesLoading } = useGetExecutedTemplatesQuery();
+
+  const { executions: templatesExecutions } = usePrepareTemplatesExecutions(
+    executions,
+    templates ?? [],
+    isTemplatesLoading,
+  );
+
+  useEffect(() => {
+    if (fetchExecutions?.results) {
+      setExecutions(fetchExecutions?.results);
+    }
+  }, [fetchExecutions?.results]);
+
   const router = useRouter();
   const theme = useTheme();
   const profilePage = router.pathname === "/profile";
@@ -23,7 +48,7 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
 
   return (
     <>
-      {isLoading ? (
+      {isExecutionsFetching ? (
         <Stack
           direction={"row"}
           gap={1}
@@ -71,43 +96,75 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
               }}
             >
               <SuggestionCard
-                title="Chats"
-                description="Start a new chat"
+                title="CHAT WITH Promptify"
+                description="Make more happen with Promptify and stand out!"
                 avatar={
                   <Avatar variant="chat">
                     <AddCircleOutlineRounded sx={{ color: "onPrimary", fontSize: 32 }} />
                   </Avatar>
                 }
-                actionLabel="New chat"
+                actionLabel="Let's Go!"
                 href="/chat"
               />
             </Grid>
-            {chats?.results.map(chat => {
-              return (
-                <Grid
-                  key={chat.id}
-                  item
-                  xs={12}
-                  md={4}
-                  sx={{
+            {chats?.results[0] && (
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                }}
+              >
+                <SuggestionCard
+                  title="Chats"
+                  description={chats.results[0].last_message ?? ""}
+                  actionLabel="Review"
+                  href={`/chat/?ci=${chats.results[0].id}`}
+                  avatar={
+                    <Avatar
+                      variant="last_chat_entry"
+                      src={chats.results[0].thumbnail}
+                    />
+                  }
+                />
+              </Grid>
+            )}
+
+            {templatesExecutions[0] && (
+              <Grid
+                item
+                mr={2}
+                xs={12}
+                md={4}
+                sx={{
+                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  ...(profilePage && {
+                    [theme.breakpoints.down("md")]: {
+                      mr: 0,
+                    },
                     maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                  }}
-                >
-                  <SuggestionCard
-                    title="Chats"
-                    description={chat.last_message ?? ""}
-                    actionLabel="Review"
-                    href={`/chat/?ci=${chat.id}`}
-                    avatar={
-                      <Avatar
-                        variant="last_chat_entry"
-                        src={chat.thumbnail}
-                      />
-                    }
-                  />
-                </Grid>
-              );
-            })}
+                  }),
+                }}
+              >
+                <SuggestionCard
+                  title="Your LAST Work"
+                  description={
+                    templatesExecutions[0].prompt_executions && templatesExecutions[0].prompt_executions.length > 0
+                      ? templatesExecutions[0].prompt_executions[0].output || ""
+                      : ""
+                  }
+                  avatar={
+                    <Avatar
+                      src={templatesExecutions[0]?.template?.thumbnail}
+                      variant="explore"
+                    />
+                  }
+                  actionLabel="Check Your Doc!"
+                  href={`/sparks?slug=${templatesExecutions[0].template?.slug}&hash=${templatesExecutions[0].hash}`}
+                />
+              </Grid>
+            )}
             <Grid
               item
               mr={2}
@@ -124,14 +181,42 @@ function ChatsSuggestions({ carouselRef, slice = 2 }: Props) {
               }}
             >
               <SuggestionCard
-                title="Profile"
-                description="Set up your public profile"
+                title="Explore PROMPT TEmplate"
+                description="Check out hundreds of ready-to-go prompt templates!"
+                avatar={
+                  <Avatar
+                    src={require("@/assets/images/explore-page.webp")}
+                    variant="explore"
+                  />
+                }
+                actionLabel="Start Exploring Now!"
+                href="/explore"
+              />
+            </Grid>
+            <Grid
+              item
+              mr={2}
+              xs={12}
+              md={4}
+              sx={{
+                maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                ...(profilePage && {
+                  [theme.breakpoints.down("md")]: {
+                    mr: 0,
+                  },
+                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                }),
+              }}
+            >
+              <SuggestionCard
+                title="Customize Your Experience"
+                description="Tailor Promptify to your style and make your work unique!"
                 avatar={
                   <Avatar variant="profile">
                     <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />
                   </Avatar>
                 }
-                actionLabel="User profile"
+                actionLabel="Personalize Now!"
                 href="/profile/user"
               />
             </Grid>

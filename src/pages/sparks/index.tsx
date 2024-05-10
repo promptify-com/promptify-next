@@ -7,7 +7,7 @@ import DocumentsContainer from "@/components/Documents/DocumentsContainer";
 import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import type { ExecutionsFilterParams, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { ExecutionsFilterParams, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import PaginatedList from "@/components/PaginatedList";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
@@ -22,16 +22,27 @@ import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 import lazy from "next/dynamic";
 import useBrowser from "@/hooks/useBrowser";
 import Box from "@mui/material/Box";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { useRouter } from "next/router";
+import { getExecutionByHash } from "@/hooks/api/executions";
+import { getTemplateBySlug } from "@/hooks/api/templates";
 
 const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
 });
+interface TemplateProps {
+  fetchedTemplate: Templates;
+  hashedExecution: TemplatesExecutions;
+}
 
 const PAGINATION_LIMIT = 12;
 
-function DocumentsPage() {
+function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
+  const router = useRouter();
+  const hash = router.query.hash;
+
   const filter = useAppSelector(state => state.documents.filter);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
@@ -80,6 +91,16 @@ function DocumentsPage() {
       }
     }
   }, [fetchExecutions?.results]);
+
+  useEffect(() => {
+    if (!!hashedExecution && !!fetchedTemplate) {
+      dispatch(
+        updatePopupTemplate({
+          data: { ...hashedExecution, template: fetchedTemplate },
+        }),
+      );
+    }
+  }, []);
 
   const filteredExecutions = useMemo(() => {
     return templatesExecutions.filter(exec => {
@@ -183,10 +204,32 @@ function DocumentsPage() {
   );
 }
 
-export async function getServerSideProps({ params }: any) {
+export async function getServerSideProps({ params, query, res }: any) {
+  res.setHeader("Cache-Control", "public, maxage=900, stale-while-revalidate=2");
+
+  const { hash, slug } = query;
+  let fetchedTemplate: Templates | null = null;
+  let hashedExecution: TemplatesExecutions | null = null;
+
+  try {
+    if (hash && slug) {
+      const [_execution, _templatesResponse] = await Promise.allSettled([
+        getExecutionByHash(hash as string),
+        getTemplateBySlug(slug as string),
+      ]);
+
+      fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
+      hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
+    }
+  } catch (error) {
+    console.log("Error occurred:", error);
+  }
+
   return {
     props: {
       title: "Documents",
+      hashedExecution,
+      fetchedTemplate,
       description: SEO_DESCRIPTION,
     },
   };

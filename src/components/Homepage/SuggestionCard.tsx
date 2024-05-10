@@ -19,7 +19,7 @@ interface Props {
 }
 
 interface AvatarProps {
-  variant: "chat" | "last_chat_entry" | "profile";
+  variant: "chat" | "last_chat_entry" | "profile" | "explore";
   src?: string;
   children?: ReactNode;
 }
@@ -28,6 +28,7 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
   const isChat = variant === "chat";
   const isProfile = variant === "profile";
   const isChatEntry = variant === "last_chat_entry";
+  const isExplore = variant === "explore";
   return (
     <>
       {(isChat || isProfile) && (
@@ -44,7 +45,7 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
         </Box>
       )}
 
-      {isChatEntry && (
+      {(isChatEntry || isExplore) && (
         <Box
           sx={{
             zIndex: 0,
@@ -83,7 +84,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
       style={{ textDecoration: "none" }}
     >
       <Stack
-        width={{ xs: "290px", md: "330px", xl: "100%" }}
+        width={{ xs: "290px", md: "330px" }}
         sx={{
           border: "1px solid",
           borderColor: "surfaceContainerHighest",
@@ -99,7 +100,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
           direction={"row"}
           justifyContent={"space-between"}
           alignItems={"center"}
-          minHeight={"80px"}
+          minHeight={"88px"}
           sx={{
             p: "16px 8px 16px 24px",
             borderBottom: "1px solid",
@@ -130,6 +131,8 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
               lineHeight={"22.4px"}
               letterSpacing={"0.17px"}
               color={"text.secondary"}
+              minHeight={"66px"}
+              pt={"8px"}
             >
               {truncate(description, { length: isMobile ? 40 : 50 })}
             </Typography>
