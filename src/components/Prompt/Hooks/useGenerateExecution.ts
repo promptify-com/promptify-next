@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
@@ -15,7 +15,7 @@ import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
+import { createExecuteErrorToast } from "@/components/Chat/helper";
 
 interface IStreamExecution {
   id: number;
@@ -34,7 +34,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { uploadedFiles, uploadPromptAnswersFiles } = useUploadPromptFiles();
   const [stopExecution] = useStopExecutionMutation();
 
-  const { answers, inputs, paramsValues } = useAppSelector(state => state.chat);
+  const { answers, inputs, paramsValues, selectedTemplate } = useAppSelector(state => state.chat);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
@@ -48,6 +48,22 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
   const { preparePromptsData } = useChatBox();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
+
+  const currentGeneratedPrompt = useMemo(() => {
+    if (generatedExecution?.data?.length && selectedTemplate) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const prompt = selectedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
+      if (prompt) return prompt;
+    }
+
+    return null;
+  }, [generatedExecution]);
+
+  const EXECUTE_ERROR_TOAST = createExecuteErrorToast(
+    currentGeneratedPrompt?.title,
+    currentGeneratedPrompt?.order,
+    selectedTemplate?.prompts.length,
+  );
 
   const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
     if (!template) return;
