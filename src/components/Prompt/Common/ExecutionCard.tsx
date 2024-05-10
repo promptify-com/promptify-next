@@ -15,6 +15,8 @@ import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
+import { alpha } from "@mui/material";
+import { theme } from "@/theme";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -268,19 +270,28 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             borderRadius: "8px",
           }}
         >
-          <Typography
-            fontSize={14}
-            fontWeight={400}
-            color={"secondary.light"}
-          >
-            {selectedSlide + 1} of {totalSlides}
-          </Typography>
           <CarouselButtons
             scrollNext={scrollNext}
             scrollPrev={scrollPrev}
             canScrollNext={canScrollNext}
             canScrollPrev={canScrollPrev}
-          />
+            containerStyle={{
+              width: "150px",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+            buttonStyle={{
+              color: alpha(theme.palette.secondary.light, 0.6),
+            }}
+          >
+            <Typography
+              fontSize={14}
+              fontWeight={400}
+              color={alpha(theme.palette.secondary.light, 0.7)}
+            >
+              {selectedSlide + 1} of {totalSlides}
+            </Typography>
+          </CarouselButtons>
         </Stack>
       )}
     </Stack>
