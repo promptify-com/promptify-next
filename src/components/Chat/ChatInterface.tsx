@@ -100,7 +100,7 @@ const ChatInterface = ({
             justifyContent="center"
             sx={{
               position: "absolute",
-              top: "40px",
+              top: "140px",
               left: "50%",
               transform: "translate(30%, -50%)",
               zIndex: 2,
