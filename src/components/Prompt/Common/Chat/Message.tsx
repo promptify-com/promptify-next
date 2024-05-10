@@ -14,7 +14,6 @@ import Stack from "@mui/material/Stack";
 import { isDesktopViewPort } from "@/common/helpers";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import Box from "@mui/material/Box";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 
 interface Props {
