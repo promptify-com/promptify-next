@@ -5,11 +5,12 @@ import FolderDeleteOutlined from "@mui/icons-material/FolderDeleteOutlined";
 import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
 
 import { useAppDispatch } from "@/hooks/useStore";
-import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { isDesktopViewPort } from "@/common/helpers";
 import { setToast } from "@/core/store/toastSlice";
 import { setCurrentExecutionDetails } from "@/core/store/chatSlice";
+import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
+import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/ExportExecutionButton";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
@@ -98,8 +99,9 @@ function ExecutionMessageActions({ execution }: Props) {
               }}
               onClick={saveExecution}
             >
-              {isDesktopView && <>{execution.is_favorite ? "Delete from documents" : "Save"}</>}
+              {isDesktopView && <>{execution.is_favorite ? "Delete from documents" : "Save as document"}</>}
             </Button>
+            <ExportExecutionButton execution={execution} />
           </Stack>
         </Stack>
       )}

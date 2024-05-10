@@ -44,6 +44,10 @@ function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
     return null;
   }, [generatedExecution]);
 
+  const filteredPrompts = useMemo(() => {
+    return selectedTemplate?.prompts.filter(prompt => prompt.show_output !== false) || [];
+  }, [selectedTemplate]);
+
   return (
     <>
       {isGenerating && isLastExecution ? (
@@ -71,9 +75,15 @@ function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
                 opacity: 0.9,
               }}
             >
-              {currentGeneratedPrompt
-                ? `Running the prompt ${currentGeneratedPrompt.title} of ${currentGeneratedPrompt.order}/${selectedTemplate?.prompts.length}`
-                : "generation in progress"}{" "}
+              {currentGeneratedPrompt ? (
+                <>
+                  Running the prompt
+                  <strong style={{ fontWeight: 700 }}>« {currentGeneratedPrompt.title} »</strong>
+                  of {currentGeneratedPrompt.order}/{filteredPrompts.length}
+                </>
+              ) : (
+                "generation in progress"
+              )}{" "}
               <span className="animated-ellipsis">
                 <span>.</span>
                 <span>.</span>
