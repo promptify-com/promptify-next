@@ -1,13 +1,15 @@
 import { Fragment, useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import { useAppSelector } from "@/hooks/useStore";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
+import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
   messages: IMessage[];
@@ -33,9 +35,10 @@ const ChatInterface = ({
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { scrollToBottom } = useScrollToBottom({
+  const { scrollToBottom, showScrollDown } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
     skipScroll: stopScrollingToBottom,
@@ -77,6 +80,7 @@ const ChatInterface = ({
         },
       }}
     >
+      {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
       <Stack
         direction={"column"}
         gap={3}
