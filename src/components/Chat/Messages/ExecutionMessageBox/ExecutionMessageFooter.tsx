@@ -34,19 +34,25 @@ function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
     }
   }, [isGenerating]);
 
-  const currentGeneratedPrompt = useMemo(() => {
-    if (generatedExecution?.data?.length && selectedTemplate) {
-      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
-      const prompt = selectedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) return prompt;
-    }
-
-    return null;
-  }, [generatedExecution]);
-
   const filteredPrompts = useMemo(() => {
     return selectedTemplate?.prompts.filter(prompt => prompt.show_output !== false) || [];
   }, [selectedTemplate]);
+
+  const currentGeneratedPrompt = useMemo(() => {
+    if (generatedExecution?.data?.length && selectedTemplate) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const promptIndex = selectedTemplate.prompts.findIndex(prompt => prompt.id === loadingPrompt?.prompt);
+      const prompt = selectedTemplate.prompts[promptIndex];
+      if (prompt && promptIndex !== -1) {
+        const adjustedOrder = filteredPrompts.findIndex(p => p.id === prompt.id) + 1;
+        if (adjustedOrder > 0) {
+          return { ...prompt, order: adjustedOrder };
+        }
+      }
+    }
+
+    return null;
+  }, [generatedExecution, filteredPrompts, selectedTemplate]);
 
   return (
     <>
