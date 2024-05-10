@@ -134,7 +134,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
               minHeight={"66px"}
               pt={"8px"}
             >
-              {truncate(description, { length: isMobile ? 40 : 50 })}
+              {truncate(description, { length: isMobile ? 50 : 70 })}
             </Typography>
           </Stack>
 
