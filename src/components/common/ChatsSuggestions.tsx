@@ -10,8 +10,8 @@ import SuggestionCard, { Avatar } from "@/components/Homepage/SuggestionCard";
 import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlaceholder";
 import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
-import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { useGetTemplateByIdQuery } from "@/core/api/templates";
+import type { TemplateExecutionsDisplay, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   carouselRef?: RefObject<HTMLDivElement>;
@@ -19,19 +19,18 @@ interface Props {
 }
 
 function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
-  const { data: chats, isLoading } = useGetChatsQuery({ limit: slice });
-  const {
-    data: fetchExecutions,
-    isLoading: isExecutionsLoading,
-    isFetching: isExecutionsFetching,
-  } = useGetExecutionsByMeQuery({ limit: 1 });
+  const { data: chats } = useGetChatsQuery({ limit: slice });
+  const { data: fetchExecutions, isFetching: isExecutionsFetching } = useGetExecutionsByMeQuery({ limit: 1 });
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
 
-  const { data: templates, isLoading: isTemplatesLoading } = useGetExecutedTemplatesQuery();
+  const templateId = executions.length && executions[0].template ? executions[0].template.id : null;
+  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplateByIdQuery(templateId!, {
+    skip: !templateId,
+  });
 
   const { executions: templatesExecutions } = usePrepareTemplatesExecutions(
     executions,
-    templates ?? [],
+    ([templates] as TemplateExecutionsDisplay[]) ?? [],
     isTemplatesLoading,
   );
 

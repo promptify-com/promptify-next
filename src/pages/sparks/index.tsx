@@ -23,7 +23,6 @@ import lazy from "next/dynamic";
 import useBrowser from "@/hooks/useBrowser";
 import Box from "@mui/material/Box";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
-import { useRouter } from "next/router";
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 
@@ -40,9 +39,6 @@ const PAGINATION_LIMIT = 12;
 function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const router = useRouter();
-  const hash = router.query.hash;
-
   const filter = useAppSelector(state => state.documents.filter);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
