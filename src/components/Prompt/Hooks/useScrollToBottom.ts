@@ -22,7 +22,7 @@ const useScrollToBottom = ({
     if (!container) return;
 
     const { scrollTop, scrollHeight, clientHeight } = container;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 40;
 
     userHasScrolledUp.current = !isAtBottom;
     setShowScrollDown(!isAtBottom);
@@ -30,7 +30,7 @@ const useScrollToBottom = ({
 
   const scrollToBottom = (force?: boolean) => {
     const container = ref.current;
-    if ((!force && (!container || skipScroll || userHasScrolledUp.current)) || !container) return;
+    if ((!force && (!container || skipScroll || (isGenerating && userHasScrolledUp.current))) || !container) return;
 
     container.scrollTop = container.scrollHeight;
   };
