@@ -59,10 +59,14 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     return null;
   }, [generatedExecution]);
 
+  const filteredPrompts = useMemo(() => {
+    return selectedTemplate?.prompts.filter(prompt => prompt.show_output !== false) || [];
+  }, [selectedTemplate]);
+
   const EXECUTE_ERROR_TOAST = createExecuteErrorToast(
     currentGeneratedPrompt?.title,
     currentGeneratedPrompt?.order,
-    selectedTemplate?.prompts.length,
+    filteredPrompts.length,
   );
 
   const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
