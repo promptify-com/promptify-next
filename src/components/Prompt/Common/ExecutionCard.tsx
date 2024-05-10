@@ -130,7 +130,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             <Stack
               ref={carouselContainerRef}
               direction={"row"}
+              alignItems={"flex-start"}
               gap={3}
+              sx={{
+                transition: "height 0.2s",
+              }}
             >
               {!!sortedPrompts.length ? (
                 sortedPrompts?.map((exec, index) => {
@@ -240,35 +244,37 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
           </Box>
         </Stack>
       )}
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"flex-end"}
-        gap={1}
-        sx={{
-          position: "sticky",
-          bottom: 0,
-          bgcolor: "surface.1",
-          width: "fit-content",
-          ml: "auto",
-          px: "8px",
-          borderRadius: "8px",
-        }}
-      >
-        <Typography
-          fontSize={14}
-          fontWeight={400}
-          color={"secondary.light"}
+      {slideNodes > 1 && (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"flex-end"}
+          gap={1}
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            bgcolor: "surface.1",
+            width: "fit-content",
+            ml: "auto",
+            px: "8px",
+            borderRadius: "8px",
+          }}
         >
-          {selectedSlide + 1} of {slideNodes}
-        </Typography>
-        <CarouselButtons
-          scrollNext={scrollNext}
-          scrollPrev={scrollPrev}
-          canScrollNext={canScrollNext}
-          canScrollPrev={canScrollPrev}
-        />
-      </Stack>
+          <Typography
+            fontSize={14}
+            fontWeight={400}
+            color={"secondary.light"}
+          >
+            {selectedSlide + 1} of {slideNodes}
+          </Typography>
+          <CarouselButtons
+            scrollNext={scrollNext}
+            scrollPrev={scrollPrev}
+            canScrollNext={canScrollNext}
+            canScrollPrev={canScrollPrev}
+          />
+        </Stack>
+      )}
     </Stack>
   );
 };
