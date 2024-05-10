@@ -1,17 +1,16 @@
-import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import useBrowser from "@/hooks/useBrowser";
-import { useAppSelector } from "@/hooks/useStore";
-import ShareOutlined from "@mui/icons-material/ShareOutlined";
-import Button from "@mui/material/Button";
 import { useMemo, useState } from "react";
+import Button from "@mui/material/Button";
+import ShareOutlined from "@mui/icons-material/ShareOutlined";
+
+import useBrowser from "@/hooks/useBrowser";
+import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
+import type { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
-  template: Templates;
   execution?: TemplatesExecutions;
 }
 
-function ExportExecutionButton({ execution, template }: Props) {
+function ExportExecutionButton({ execution }: Props) {
   const [openExportPopup, setOpenExportPopup] = useState(false);
 
   const { isMobile } = useBrowser();
@@ -22,9 +21,6 @@ function ExportExecutionButton({ execution, template }: Props) {
         ...execution,
         template: {
           ...execution.template,
-          title: template?.title,
-          slug: template?.slug,
-          thumbnail: template?.thumbnail,
         },
       };
     }
