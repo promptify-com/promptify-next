@@ -12,7 +12,7 @@ function SuggestionsSection() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(true);
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: true });
 
   return (
     <Stack

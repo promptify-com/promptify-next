@@ -2573,6 +2573,11 @@ elkjs@^0.8.2:
   resolved "https://registry.yarnpkg.com/elkjs/-/elkjs-0.8.2.tgz#c37763c5a3e24e042e318455e0147c912a7c248e"
   integrity sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==
 
+embla-carousel-auto-height@^8.0.4:
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/embla-carousel-auto-height/-/embla-carousel-auto-height-8.0.4.tgz#8b7e46b82f6fb631f2c4beff70776adf832ef8a0"
+  integrity sha512-aDw47waoxGlBEBuEZiZ91dVMrPyyVb2OlKOTYmz3Lx8Rf9ALLlzcIx6HjtCFZslxwmAOeBDgdOiIFnH2CWhqAg==
+
 embla-carousel-autoplay@^8.0.0-rc22:
   version "8.0.4"
   resolved "https://registry.yarnpkg.com/embla-carousel-autoplay/-/embla-carousel-autoplay-8.0.4.tgz#621e2d72a749d0b0281096a6faa093fc84882e21"
