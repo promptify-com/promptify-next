@@ -36,7 +36,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     scrollTo,
     selectedSlide,
     totalSlides,
-  } = useCarousel(false, { loop: false, dragFree: false });
+  } = useCarousel({ autoHeight: !isStreaming, options: { loop: false, dragFree: false } });
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
@@ -125,14 +125,14 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             wordBreak: "break-word",
           }}
         >
-          {"title" in execution ? execution.title : "Untitled"}
+          {!isStreaming ? execution.title : "Untitled"}
         </Typography>
       )}
       {execution && (
         <Stack
           direction={"row"}
           alignItems={"center"}
-          p={{ xs: "title" in execution ? "10px 0px" : "20px 0px", md: 0 }}
+          p={{ xs: !isStreaming ? "10px 0px" : "20px 0px", md: 0 }}
         >
           <Box
             ref={carouselRef}
@@ -143,9 +143,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
               direction={"row"}
               alignItems={"flex-start"}
               gap={3}
-              sx={{
-                transition: "height 0.2s",
-              }}
             >
               {!!sortedPrompts.length ? (
                 sortedPrompts?.map((exec, index) => {

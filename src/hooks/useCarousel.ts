@@ -1,13 +1,24 @@
 import type { EmblaCarouselType, EmblaOptionsType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
+import AutoHeight from "embla-carousel-auto-height";
 import useEmblaCarousel from "embla-carousel-react";
 import { RefObject, useCallback, useEffect, useState } from "react";
 
-export default function useCarousel(autoplay = false, options?: EmblaOptionsType) {
+interface Props {
+  autoplay?: boolean;
+  autoHeight?: boolean;
+  options?: EmblaOptionsType;
+}
+
+export default function useCarousel({ autoplay = false, autoHeight = false, options }: Props = {}) {
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(true);
   const [selectedSlide, setSelectedSlide] = useState(0);
   const [totalSlides, setTotalSlides] = useState(0);
+
+  const plugins = [];
+  if (autoplay) plugins.push(Autoplay());
+  if (autoHeight) plugins.push(AutoHeight());
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -17,7 +28,7 @@ export default function useCarousel(autoplay = false, options?: EmblaOptionsType
       align: "start",
       ...options,
     },
-    autoplay ? [Autoplay()] : [],
+    plugins,
   );
 
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {

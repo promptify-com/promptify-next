@@ -37,12 +37,12 @@ function CategoryCarousel({
   href,
   priority,
 }: CategoryCarouselProps) {
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: autoPlay });
   const {
     containerRef: carouselScrollRef,
     scrollNext: carouselScrollNext,
     scrollPrev: carouselScrollPrev,
-  } = useCarousel(autoPlay);
+  } = useCarousel({ autoplay: autoPlay });
   const theme = useTheme();
   const { isMobile } = useBrowser();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
