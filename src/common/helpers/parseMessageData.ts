@@ -1,7 +1,7 @@
 export function parseMessageData(data: string): any {
   // Replace single quotes with double quotes
   data = data.replace(/'/g, '"');
-  data = data = data.replace(/\n/g, "<br>");
+  data = data.replace(/\n/g, "<br>");
 
   // Handle triple double quotes
   data = data.replace(/"""/g, '"\\""');
