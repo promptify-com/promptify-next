@@ -11,7 +11,7 @@ import type { NextRouter } from "next/router";
 import type { IChat } from "@/core/api/dto/chats";
 import type { AppDispatcher } from "@/hooks/useStore";
 import type { IWorkflow } from "@/components/Automation/types";
-import { ToastState } from "@/core/store/toastSlice";
+import type { ToastState } from "@/core/store/toastSlice";
 
 interface SendMessageResponse {
   output?: string;
