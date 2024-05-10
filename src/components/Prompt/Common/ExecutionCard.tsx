@@ -22,7 +22,8 @@ interface Props {
 }
 
 export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
-  const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+  const isStreaming = execution && "data" in execution;
+  const executionPrompts = isStreaming ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const showPreview = useAppSelector(state => state.template.showPromptsView);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
@@ -32,8 +33,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     scrollPrev,
     canScrollNext,
     canScrollPrev,
+    scrollTo,
     selectedSlide,
-    slideNodes,
+    totalSlides,
   } = useCarousel(false, { loop: false, dragFree: false });
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
@@ -72,9 +74,18 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
 
       setSortedPrompts(processedOutputs);
     };
-
     sortAndProcessExecutions();
   }, [executionPrompts]);
+  const prevTotalSlidesRef = useRef<number>(totalSlides);
+
+  useEffect(() => {
+    const isNewSlideCreated = prevTotalSlidesRef.current !== totalSlides;
+    if (isStreaming && isNewSlideCreated) {
+      const wasOnLastSlide = selectedSlide === prevTotalSlidesRef.current - 1;
+      if (wasOnLastSlide) scrollTo(totalSlides - 1);
+      prevTotalSlidesRef.current = totalSlides;
+    }
+  }, [totalSlides]);
 
   const executionError = (error: string | undefined) => {
     return (
@@ -244,7 +255,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
           </Box>
         </Stack>
       )}
-      {slideNodes > 1 && (
+      {totalSlides > 1 && (
         <Stack
           direction={"row"}
           alignItems={"center"}
@@ -265,7 +276,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             fontWeight={400}
             color={"secondary.light"}
           >
-            {selectedSlide + 1} of {slideNodes}
+            {selectedSlide + 1} of {totalSlides}
           </Typography>
           <CarouselButtons
             scrollNext={scrollNext}

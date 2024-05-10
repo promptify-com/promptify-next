@@ -7,7 +7,7 @@ export default function useCarousel(autoplay = false, options?: EmblaOptionsType
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(true);
   const [selectedSlide, setSelectedSlide] = useState(0);
-  const [slideNodes, setSlideNodes] = useState(0);
+  const [totalSlides, setTotalSlides] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -24,7 +24,7 @@ export default function useCarousel(autoplay = false, options?: EmblaOptionsType
     setCanScrollNext(emblaApi.canScrollNext());
     setCanScrollPrev(emblaApi.canScrollPrev());
     setSelectedSlide(emblaApi.selectedScrollSnap());
-    setSlideNodes(emblaApi.slideNodes().length);
+    setTotalSlides(emblaApi.slideNodes().length);
   }, []);
 
   useEffect(() => {
@@ -37,6 +37,7 @@ export default function useCarousel(autoplay = false, options?: EmblaOptionsType
 
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((slide: number) => emblaApi && emblaApi.scrollTo(slide), [emblaApi]);
 
   return {
     containerRef: emblaRef as unknown as RefObject<HTMLDivElement>,
@@ -44,7 +45,8 @@ export default function useCarousel(autoplay = false, options?: EmblaOptionsType
     scrollPrev,
     canScrollNext,
     canScrollPrev,
+    scrollTo,
     selectedSlide,
-    slideNodes,
+    totalSlides,
   };
 }
