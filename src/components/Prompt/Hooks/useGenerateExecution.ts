@@ -91,11 +91,22 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     dispatch(setGeneratedExecution({ data: [], created_at: new Date(), hasNext: true }));
     generatingCompleted.current = false;
     while ((executionMatch = regex.exec(response)) !== null) {
+      if (isNaN(parseInt(executionMatch[2]))) {
+        continue;
+      }
+
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
 
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
       await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
     }
+
+    if (!generatedExecution?.data.length) {
+      dispatch(setToast({ message: "No data available!", severity: "info" }));
+      dispatch(setGeneratedExecution(null));
+      dispatch(setGeneratingStatus(false));
+    }
+
     generatingCompleted.current = true;
   };
 

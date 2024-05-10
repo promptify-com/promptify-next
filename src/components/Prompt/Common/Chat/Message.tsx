@@ -14,6 +14,7 @@ import Stack from "@mui/material/Stack";
 import { isDesktopViewPort } from "@/common/helpers";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { LogoApp } from "@/assets/icons/LogoApp";
+import { ExecutionContent } from "@/components/common/ExecutionContent";
 
 interface Props {
   message: IMessage;
@@ -60,13 +61,8 @@ const MessageContentWithHTML = memo(({ content }: { content: string }) => {
 
     generateFinalHtml();
   }, [content]);
-  return (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: sanitizeHTML(html),
-      }}
-    />
-  );
+
+  return <ExecutionContent content={sanitizeHTML(html)} />;
 });
 
 export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) => {
@@ -97,7 +93,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
       flexDirection={isVariantA ? "row" : "column"}
       gap={"16px"}
       position={"relative"}
-      width={!fromUser ? "fit-content" : "100%"}
+      width={!fromUser && type !== "html" ? "fit-content" : "100%"}
       py={isVariantA ? { xs: "8px", md: "16px" } : 0}
       {...(isVariantB && {
         onMouseEnter: () => setIsHovered(true),
