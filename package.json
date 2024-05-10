@@ -59,6 +59,11 @@
     "web-worker": "^1.2.0",
     "cypress": "^13.7.2",
     "dotenv": "^16.4.5",
+    "@types/react-syntax-highlighter": "^15.5.7",
+    "@types/node": "20.3.2",
+    "@types/react": "18.2.22",
+    "@types/react-dom": "18.2.7",
+    "@types/yup": "^0.32.0",
     "yup": "^1.2.0"
   },
   "devDependencies": {
@@ -76,12 +81,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "prettier": "3.0.2",
-    "source-map-explorer": "^2.5.3",
-    "@types/node": "20.3.2",
-    "@types/react": "18.2.22",
-    "@types/react-dom": "18.2.7",
-    "@types/react-syntax-highlighter": "^15.5.7",
-    "@types/yup": "^0.32.0"
+    "source-map-explorer": "^2.5.3"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
