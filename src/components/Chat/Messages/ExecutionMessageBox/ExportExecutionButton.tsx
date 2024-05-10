@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 
@@ -11,21 +11,9 @@ interface Props {
 }
 
 function ExportExecutionButton({ execution }: Props) {
+  const { isMobile } = useBrowser();
   const [openExportPopup, setOpenExportPopup] = useState(false);
 
-  const { isMobile } = useBrowser();
-
-  const activeExecution = useMemo(() => {
-    if (execution) {
-      return {
-        ...execution,
-        template: {
-          ...execution.template,
-        },
-      };
-    }
-    return null;
-  }, [execution]);
   return (
     <>
       <Button
@@ -48,7 +36,7 @@ function ExportExecutionButton({ execution }: Props) {
       {openExportPopup && execution?.id && (
         <SparkExportPopup
           onClose={() => setOpenExportPopup(false)}
-          activeExecution={activeExecution}
+          activeExecution={execution}
         />
       )}
     </>
