@@ -63,7 +63,10 @@ function ExecutionMessageBox({ onAbort, executionData, isLastExecution, template
           isLastExecution={isLastExecution}
         />
       </Stack>
-      <ExecutionMessageActions execution={executionData} />
+      <ExecutionMessageActions
+        execution={executionData}
+        template={template}
+      />
     </Stack>
   );
 }

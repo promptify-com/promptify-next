@@ -11,13 +11,14 @@ import { setToast } from "@/core/store/toastSlice";
 import { setCurrentExecutionDetails } from "@/core/store/chatSlice";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/ExportExecutionButton";
-import type { TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
+  template: Templates;
   execution?: TemplatesExecutions;
 }
 
-function ExecutionMessageActions({ execution }: Props) {
+function ExecutionMessageActions({ execution, template }: Props) {
   const dispatch = useAppDispatch();
   const isDesktopView = isDesktopViewPort();
 
@@ -101,7 +102,10 @@ function ExecutionMessageActions({ execution }: Props) {
             >
               {isDesktopView && <>{execution.is_favorite ? "Delete from documents" : "Save"}</>}
             </Button>
-            <ExportExecutionButton execution={execution} />
+            <ExportExecutionButton
+              execution={execution}
+              template={template}
+            />
           </Stack>
         </Stack>
       )}

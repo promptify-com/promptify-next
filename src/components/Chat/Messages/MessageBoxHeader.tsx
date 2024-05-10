@@ -119,7 +119,12 @@ function MessageBoxHeader({
             />
           </>
         )}
-        {variant === "EXECUTION" && !isGenerating && <ExportExecutionButton execution={execution} />}
+        {variant === "EXECUTION" && !isGenerating && (
+          <ExportExecutionButton
+            execution={execution}
+            template={template}
+          />
+        )}
 
         {templateShown && (
           <TemplateActions

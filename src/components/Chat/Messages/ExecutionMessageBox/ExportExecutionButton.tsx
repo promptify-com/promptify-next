@@ -1,30 +1,30 @@
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import Button from "@mui/material/Button";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface Props {
+  template: Templates;
   execution?: TemplatesExecutions;
 }
 
-function ExportExecutionButton({ execution }: Props) {
+function ExportExecutionButton({ execution, template }: Props) {
   const [openExportPopup, setOpenExportPopup] = useState(false);
-  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
 
   const { isMobile } = useBrowser();
 
   const activeExecution = useMemo(() => {
-    if (execution && selectedTemplate) {
+    if (execution) {
       return {
         ...execution,
         template: {
           ...execution.template,
-          title: selectedTemplate.title,
-          slug: selectedTemplate.slug,
-          thumbnail: selectedTemplate.thumbnail,
+          title: template?.title,
+          slug: template?.slug,
+          thumbnail: template?.thumbnail,
         },
       };
     }
