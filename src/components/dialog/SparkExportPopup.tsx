@@ -36,7 +36,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
   const ENCODED_URL = encodeURIComponent(sharedUrl);
 
   const generateTitle = () => {
-    if (activeExecution?.template) {
+    if (activeExecution?.template?.title) {
       const hasNotitle = activeExecution.title.toLowerCase() === "untitled";
       return encodeURIComponent(hasNotitle ? activeExecution.template.title : activeExecution.title);
     } else {
