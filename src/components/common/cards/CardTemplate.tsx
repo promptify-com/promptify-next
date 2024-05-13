@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
-
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import useTruncate from "@/hooks/useTruncate";
@@ -149,6 +148,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                   fontSize={13}
                   fontWeight={400}
                   color={alpha(theme.palette.onSurface, 0.75)}
+                  ml={"auto"}
                 >
                   by {template.created_by.first_name || template.created_by.username}
                 </Typography>

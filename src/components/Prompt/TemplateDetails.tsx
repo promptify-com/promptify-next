@@ -124,6 +124,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
                     backgroundColor: theme.palette.surface[5],
                     borderRadius: "50%",
                   }}
+                  sizes="32px"
                 />
 
                 <Link

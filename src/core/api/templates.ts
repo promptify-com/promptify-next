@@ -29,6 +29,7 @@ export const getSearchParams = (params: FilterParams) => {
   params.engine_type && params.engine_type.forEach(engine => searchParams.append("engine_type", String(engine.id)));
   params.isFavourite && searchParams.append("is_favorite", String(params.isFavourite));
   typeof params.isInternal === "boolean" && searchParams.append("is_internal", String(params.isInternal));
+  params.include && searchParams.append("include", params.include);
 
   return searchParams.toString();
 };
