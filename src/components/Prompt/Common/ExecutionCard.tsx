@@ -150,10 +150,15 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                 sortedPrompts?.map((exec, index) => {
                   const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
                   const engineType = prompt?.engine?.output_type ?? "TEXT";
+                  const isImage = isImageOutput(exec.content, engineType);
                   const prevItem = sortedPrompts[index - 1];
-                  const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
-                  const nextItem = sortedPrompts[index + 1];
-                  const isNextItemText = nextItem && !isImageOutput(nextItem?.content, engineType);
+                  const isPrevItemImage = isImageOutput(sortedPrompts[index - 1]?.content);
+                  const isNextItemText = !isImageOutput(sortedPrompts[index + 1]?.content);
+
+                  const renderImagePrompt = isImage && !isNextItemText;
+                  const renderTextImagePrompt = !isImage && isPrevItemImage;
+
+                  if (isImage && isNextItemText) return null;
 
                   if (prompt?.show_output || sparkHashQueryParam) {
                     return (
@@ -176,8 +181,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                             {exec.errors && executionError(exec.errors)}
                           </Subtitle>
                         )}
-                        {/* is Text Output */}
-                        {!isImageOutput(exec.content, engineType) && (
+                        {renderTextImagePrompt ? (
                           <Stack
                             direction={"row"}
                             alignItems={"start"}
@@ -189,32 +193,23 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                               direction={{ md: "row" }}
                               gap={2}
                             >
-                              {isPrevItemImage && (
-                                <Box
-                                  component={"img"}
-                                  alt={"book cover"}
-                                  src={prevItem.content}
-                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                    (
-                                      e.target as HTMLImageElement
-                                    ).src = require("@/assets/images/default-thumbnail.jpg");
-                                  }}
-                                  sx={{
-                                    borderRadius: "8px",
-                                    width: "40%",
-                                    objectFit: "cover",
-                                    float: "right",
-                                    ml: "20px",
-                                    mb: "10px",
-                                  }}
-                                />
-                              )}
+                              <Box
+                                component={"img"}
+                                alt={"book cover"}
+                                src={prevItem.content}
+                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                  (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                                }}
+                                sx={{
+                                  borderRadius: "8px",
+                                  width: "40%",
+                                  objectFit: "cover",
+                                }}
+                              />
                               <ExecutionContent content={sanitizeHTML(exec.content)} />
                             </Stack>
                           </Stack>
-                        )}
-                        {/* is Image Output and Next item is not text */}
-                        {isImageOutput(exec.content, engineType) && !isNextItemText && (
+                        ) : renderImagePrompt ? (
                           <>
                             <Box
                               component={"img"}
@@ -229,9 +224,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                                 borderRadius: "8px",
                                 width: "40%",
                                 objectFit: "cover",
-                                float: "right",
-                                ml: "20px",
-                                mb: "10px",
                                 cursor: "pointer",
                               }}
                             />
@@ -242,6 +234,21 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                               onClose={() => setPopupOpen(false)}
                             />
                           </>
+                        ) : (
+                          <Stack
+                            direction={"row"}
+                            alignItems={"start"}
+                            gap={{ md: 2 }}
+                          >
+                            <Stack
+                              display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
+                              width={{ md: showPreview ? "65%" : "100%" }}
+                              direction={{ md: "row" }}
+                              gap={2}
+                            >
+                              <ExecutionContent content={sanitizeHTML(exec.content)} />
+                            </Stack>
+                          </Stack>
                         )}
                       </Stack>
                     );
