@@ -34,7 +34,7 @@ export default function Page({ category }: { category: Category }) {
   } = useGetTemplatesByFilter({
     catId: category?.id,
     ordering: "-likes",
-    templateLimit: 5,
+    templateLimit: 8,
     paginatedList: true,
     initialStatus: "published",
   });
@@ -201,12 +201,14 @@ export default function Page({ category }: { category: Category }) {
             </Box>
           )}
 
-          <Box
-            py={"40px"}
-            width={"100%"}
-          >
-            <PopularTemplates catId={category?.id} />
-          </Box>
+          {allFilterParamsNull && (
+            <Box
+              py={"40px"}
+              width={"100%"}
+            >
+              <PopularTemplates catId={category?.id} />
+            </Box>
+          )}
           {!isMobile && <Footer />}
         </Box>
       </Layout>
