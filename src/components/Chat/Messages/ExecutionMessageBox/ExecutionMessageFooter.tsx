@@ -1,16 +1,16 @@
+import { useEffect, useMemo, useState } from "react";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 import { useAppSelector } from "@/hooks/useStore";
-import { useEffect, useState } from "react";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   onAbort: () => void;
   isLastExecution?: boolean;
 }
-
 interface GenerationTiming {
   startTime: Date | null;
   endTime: Date | null;
@@ -19,6 +19,8 @@ interface GenerationTiming {
 
 function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
 
   const [timing, setTiming] = useState<GenerationTiming>({ startTime: null, endTime: null, duration: null });
 
@@ -31,6 +33,26 @@ function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
       setTiming({ ...timing, endTime, duration });
     }
   }, [isGenerating]);
+
+  const filteredPrompts = useMemo(() => {
+    return selectedTemplate?.prompts.filter(prompt => prompt.show_output !== false) || [];
+  }, [selectedTemplate]);
+
+  const currentGeneratedPrompt = useMemo(() => {
+    if (generatedExecution?.data?.length && selectedTemplate) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const promptIndex = selectedTemplate.prompts.findIndex(prompt => prompt.id === loadingPrompt?.prompt);
+      const prompt = selectedTemplate.prompts[promptIndex];
+      if (prompt && promptIndex !== -1) {
+        const adjustedOrder = filteredPrompts.findIndex(p => p.id === prompt.id) + 1;
+        if (adjustedOrder > 0) {
+          return { ...prompt, order: adjustedOrder };
+        }
+      }
+    }
+
+    return null;
+  }, [generatedExecution, filteredPrompts, selectedTemplate]);
 
   return (
     <>
@@ -59,7 +81,20 @@ function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
                 opacity: 0.9,
               }}
             >
-              Generation in progress...
+              {currentGeneratedPrompt ? (
+                <>
+                  Running the prompt
+                  <strong style={{ fontWeight: 700 }}> « {currentGeneratedPrompt.title} » </strong>
+                  {currentGeneratedPrompt.order}/{filteredPrompts.length}
+                </>
+              ) : (
+                "generation in progress"
+              )}{" "}
+              <span className="animated-ellipsis">
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
             </Typography>
           </Stack>
           <Button

@@ -7,7 +7,8 @@ import Button from "@mui/material/Button";
 import { useAppSelector } from "@/hooks/useStore";
 import RunButton from "@/components/Chat/RunButton";
 import TemplateActions from "@/components/Chat/TemplateActions";
-import type { Templates } from "@/core/api/dto/templates";
+import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/ExportExecutionButton";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   onExpand?: () => void;
@@ -16,10 +17,21 @@ interface Props {
   showRunButton?: boolean;
   onScrollToBottom?: () => void;
   template: Templates;
+  execution?: TemplatesExecutions;
 }
 
-function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScrollToBottom, template }: Props) {
+function MessageBoxHeader({
+  onExpand,
+  onGenerate,
+  variant,
+  showRunButton,
+  onScrollToBottom,
+  template,
+  execution,
+}: Props) {
   const { selectedTemplate, selectedChatOption, answers, inputs, params } = useAppSelector(state => state.chat);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const isInputStyleForm = currentUser?.preferences?.input_style === "form" || selectedChatOption === "form";
@@ -107,6 +119,8 @@ function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton, onScro
             />
           </>
         )}
+        {variant === "EXECUTION" && !isGenerating && execution && <ExportExecutionButton execution={execution} />}
+
         {templateShown && (
           <TemplateActions
             template={templateShown}

@@ -6,8 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Slide from "@mui/material/Slide";
 import Avatar from "@mui/material/Avatar";
-
-import { useTheme } from "@mui/material/styles";
+import { alpha, useTheme } from "@mui/material/styles";
 import useCarousel from "@/hooks/useCarousel";
 import { useAppSelector } from "@/hooks/useStore";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
@@ -37,12 +36,12 @@ function CategoryCarousel({
   href,
   priority,
 }: CategoryCarouselProps) {
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: autoPlay });
   const {
     containerRef: carouselScrollRef,
     scrollNext: carouselScrollNext,
     scrollPrev: carouselScrollPrev,
-  } = useCarousel(autoPlay);
+  } = useCarousel({ autoplay: autoPlay });
   const theme = useTheme();
   const { isMobile } = useBrowser();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
@@ -159,6 +158,24 @@ function CategoryCarousel({
               scrollNext={carouselScrollNext}
               canScrollNext={true}
               canScrollPrev={true}
+              containerStyle={{
+                ".nav-btn": {
+                  opacity: 0,
+                },
+                ":hover": {
+                  ".nav-btn": {
+                    opacity: 1,
+                  },
+                },
+              }}
+              buttonStyle={{
+                bgcolor: alpha(theme.palette.surfaceContainerLowest, 0.9),
+                p: "8px 16px",
+                position: "absolute",
+                ":hover": {
+                  bgcolor: "surfaceContainerLowest",
+                },
+              }}
             >
               <Stack
                 ref={carouselScrollRef}
