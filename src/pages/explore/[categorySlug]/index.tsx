@@ -34,7 +34,7 @@ export default function Page({ category }: { category: Category }) {
   } = useGetTemplatesByFilter({
     catId: category?.id,
     ordering: "-likes",
-    templateLimit: 5,
+    templateLimit: 8,
     paginatedList: true,
     initialStatus: "published",
   });
