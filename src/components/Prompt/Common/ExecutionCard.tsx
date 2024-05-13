@@ -183,31 +183,25 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                         )}
                         {renderTextImagePrompt ? (
                           <Stack
-                            direction={"row"}
-                            alignItems={"start"}
-                            gap={{ md: 2 }}
+                            display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
+                            width={{ md: showPreview ? "65%" : "100%" }}
+                            direction={{ md: "row" }}
+                            gap={2}
                           >
-                            <Stack
-                              display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
-                              width={{ md: showPreview ? "65%" : "100%" }}
-                              direction={{ md: "row" }}
-                              gap={2}
-                            >
-                              <Box
-                                component={"img"}
-                                alt={"book cover"}
-                                src={prevItem.content}
-                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                  (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                                }}
-                                sx={{
-                                  borderRadius: "8px",
-                                  width: "40%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                              <ExecutionContent content={sanitizeHTML(exec.content)} />
-                            </Stack>
+                            <Box
+                              component={"img"}
+                              alt={"book cover"}
+                              src={prevItem.content}
+                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                              }}
+                              sx={{
+                                borderRadius: "8px",
+                                width: "40%",
+                                objectFit: "cover",
+                              }}
+                            />
+                            <ExecutionContent content={sanitizeHTML(exec.content)} />
                           </Stack>
                         ) : renderImagePrompt ? (
                           <>
