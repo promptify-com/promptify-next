@@ -8,13 +8,16 @@ import ForumOutlined from "@mui/icons-material/ForumOutlined";
 import DataObject from "@mui/icons-material/DataObject";
 import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
-import Instructions from "./Instructions";
-import ExecutionExample from "./ExecutionExample";
-import ApiAccess from "./ApiAccess";
-import Feedback from "./Feedback";
 import ClientOnly from "@/components/base/ClientOnly";
 import useBrowser from "@/hooks/useBrowser";
 import Footer from "../Footer";
+
+import lazy from "next/dynamic";
+
+const Instructions = lazy(() => import("./Instructions"), { ssr: false });
+const ExecutionExample = lazy(() => import("./ExecutionExample"), { ssr: false });
+const ApiAccess = lazy(() => import("./ApiAccess"), { ssr: false });
+const Feedback = lazy(() => import("./Feedback"), { ssr: false });
 
 const ScrollTabs: Link[] = [
   {
@@ -134,6 +137,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                     bgcolor: selected ? "secondary.main" : "surfaceContainerHigh",
                   },
                 }}
+                aria-label={tab.title}
               >
                 {(!isMobile || selected) && tab.title}
               </Button>
