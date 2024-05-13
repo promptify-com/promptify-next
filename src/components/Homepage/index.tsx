@@ -14,7 +14,7 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 function HomepageLayout({ categories }: { categories: Category[] }) {
   const { data: suggestedTemplates, isFetching } = useGetTemplatesSuggestedQuery(undefined);
 
-  const carouselContainerRef = useRef<HTMLDivElement | null>(null);
+  const carouselContainerRef = useRef<HTMLDivElement | null>(document.createElement("div"));
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
 
