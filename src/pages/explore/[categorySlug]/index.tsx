@@ -201,12 +201,14 @@ export default function Page({ category }: { category: Category }) {
             </Box>
           )}
 
-          <Box
-            py={"40px"}
-            width={"100%"}
-          >
-            <PopularTemplates catId={category?.id} />
-          </Box>
+          {allFilterParamsNull && (
+            <Box
+              py={"40px"}
+              width={"100%"}
+            >
+              <PopularTemplates catId={category?.id} />
+            </Box>
+          )}
           {!isMobile && <Footer />}
         </Box>
       </Layout>
