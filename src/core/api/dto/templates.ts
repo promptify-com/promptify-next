@@ -20,6 +20,7 @@ export interface FilterParams {
   isFavourite?: boolean;
   isInternal?: boolean;
   template?: number;
+  include?: string;
 }
 
 export interface SelectedFilters {

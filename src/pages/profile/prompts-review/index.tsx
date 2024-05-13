@@ -32,6 +32,7 @@ function ProfilePromptsReview() {
     paginatedList: true,
     admin: true,
     shouldSkip: false,
+    includeExtraFields: ",prompts,is_favorite,is_liked",
   });
   const handleSelectSort = (option: SortOption) => {
     setSortOption(option);

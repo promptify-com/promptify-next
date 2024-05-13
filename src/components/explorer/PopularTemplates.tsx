@@ -28,6 +28,7 @@ function PopularTemplates({ catId }: Props) {
     isInternal: false,
     categoryId: catId,
     status: "published",
+    include: "slug,thumbnail,title,description,favorites_count,likes,created_by,tags",
   };
 
   const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);

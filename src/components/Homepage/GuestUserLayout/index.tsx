@@ -44,6 +44,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       ordering: "-runs",
       limit: 30,
       status: "published",
+      include: "slug,thumbnail,title,description,favorites_count,likes,created_by,tags",
     },
     {
       skip: !observers.templatesObserver?.isIntersecting,
