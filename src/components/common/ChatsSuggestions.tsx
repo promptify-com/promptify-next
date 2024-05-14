@@ -11,7 +11,7 @@ import SuggestionCardPlaceholder from "@/components/Homepage/SuggestionCardPlace
 import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
 import { useGetTemplateByIdQuery } from "@/core/api/templates";
-import type { TemplateExecutionsDisplay, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { EngineOutput, TemplateExecutionsDisplay, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   carouselRef?: RefObject<HTMLDivElement>;
@@ -44,6 +44,26 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
   const theme = useTheme();
   const profilePage = router.pathname === "/profile";
   const isHomePage = router.pathname === "/";
+  let documentDescription = "";
+
+  if (templatesExecutions[0]) {
+    const promptsData = templatesExecutions[0].template?.prompts.reduce(
+      (acc, prompt) => {
+        acc[prompt.id] = { show_output: prompt.show_output, engineOutputType: prompt.engine.output_type };
+
+        return acc;
+      },
+      {} as Record<string, { show_output: boolean; engineOutputType: EngineOutput }>,
+    );
+    const firstFoundExecution = templatesExecutions[0].prompt_executions?.find(
+      execution =>
+        !execution.errors &&
+        execution.output.length > 0 &&
+        promptsData?.[execution.prompt].show_output &&
+        promptsData?.[execution.prompt].engineOutputType === "TEXT",
+    );
+    documentDescription = firstFoundExecution ? firstFoundExecution.output : "";
+  }
 
   return (
     <>
@@ -148,11 +168,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               >
                 <SuggestionCard
                   title="Your LAST Work"
-                  description={
-                    templatesExecutions[0].prompt_executions && templatesExecutions[0].prompt_executions.length > 0
-                      ? templatesExecutions[0].prompt_executions[0].output || ""
-                      : ""
-                  }
+                  description={documentDescription}
                   avatar={
                     <Avatar
                       src={templatesExecutions[0]?.template?.thumbnail}
