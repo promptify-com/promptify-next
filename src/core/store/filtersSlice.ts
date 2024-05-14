@@ -50,23 +50,21 @@ const filterSlice = createSlice({
       }
       Storage.set("tagFilter", JSON.stringify(state.tag));
     },
-    setSelectedEngineType: (state, action: PayloadAction<EngineType>) => {
-      if (state.engineType?.find(_engine => _engine.id === action.payload.id)) {
-        return;
-      }
+    setSelectedEngineType: (state, action: PayloadAction<EngineType | EngineType[]>) => {
+      const selectedTypes = Array.isArray(action.payload) ? action.payload : [action.payload];
+      const keepTypes = state.engineType.filter(type => !selectedTypes.some(sType => sType.id === type.id));
+      state.engineType = keepTypes.concat(selectedTypes);
 
-      state.engineType?.push(action.payload);
-
-      if (action.payload) {
-        Storage.set("engineTypeFilter", JSON.stringify(action.payload));
+      if (!!state.engineType?.length) {
+        Storage.set("engineTypeFilter", JSON.stringify(state.engineType));
       } else {
         Storage.remove("engineTypeFilter");
       }
     },
 
-    deleteSeletedEngineType: (state, action: PayloadAction<EngineType>) => {
+    deleteSelectedEngineType: (state, action: PayloadAction<EngineType>) => {
       state.engineType = state.engineType?.filter(_engine => _engine.id !== action.payload.id);
-      if (!state.engineType?.length) {
+      if (!!!state.engineType?.length) {
         Storage.remove("engineTypeFilter");
         return;
       }
@@ -115,7 +113,7 @@ export const {
   setSelectedSubCategory,
   deleteSelectedTag,
   setSelectedEngineType,
-  deleteSeletedEngineType,
+  deleteSelectedEngineType,
   setMyFavoritesChecked,
   resetFilters,
 } = filterSlice.actions;

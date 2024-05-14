@@ -2,10 +2,9 @@ import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import {
   deleteSelectedTag,
-  deleteSeletedEngineType,
+  deleteSelectedEngineType,
   setMyFavoritesChecked,
   setSelectedEngine,
-  setSelectedEngineType,
   setSelectedKeyword,
 } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -73,7 +72,7 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
                   key={item.id}
                   label={item.label}
                   sx={{ fontSize: 13, fontWeight: 500 }}
-                  onDelete={() => dispatch(deleteSeletedEngineType(item))}
+                  onDelete={() => dispatch(deleteSelectedEngineType(item))}
                 />
               ))}
             </Box>
