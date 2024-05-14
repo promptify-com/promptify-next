@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
   useCreateUserWorkflowMutation,
-  useGetWorkflowByIdQuery,
+  useGetWorkflowByslugQuery,
   useUpdateWorkflowMutation,
 } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -15,12 +15,13 @@ import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types"
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
-  const workflowId = router.query?.workflowId as string;
-  const { data, isLoading: isWorkflowLoading } = useGetWorkflowByIdQuery(parseInt(workflowId), {
-    skip: Boolean(workflow.id || !workflowId),
+  const workflowSlug = router.query?.slug as string;
+  const { data, isLoading: isWorkflowLoading } = useGetWorkflowByslugQuery(workflowSlug, {
+    skip: Boolean(workflow.slug || !workflowSlug),
   });
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
+  const workflowId = workflow.id ?? workflowData.id;
 
   const dispatch = useAppDispatch();
   const webhookPathRef = useRef<string>();

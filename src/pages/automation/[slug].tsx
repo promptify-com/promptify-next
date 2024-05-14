@@ -30,6 +30,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import Storage from "@/common/storage";
 import { workflowsApi } from "@/core/api/workflows";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
   workflow: IWorkflow;
@@ -190,65 +191,67 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   }, [generatedExecution]);
 
   return (
-    <Layout>
-      {isWorkflowLoading ? (
-        <WorkflowPlaceholder />
-      ) : (
-        <Stack
-          sx={{
-            width: { md: "80%" },
-            mx: { md: "auto" },
-            height: { xs: "100vh", md: "calc(100vh - 120px)" },
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            gap: 2,
-          }}
-        >
+    <ClientOnly>
+      <Layout>
+        {isWorkflowLoading ? (
+          <WorkflowPlaceholder />
+        ) : (
           <Stack
-            height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
-            justifyContent={"flex-end"}
-            overflow={"auto"}
+            sx={{
+              width: { md: "80%" },
+              mx: { md: "auto" },
+              height: { xs: "100vh", md: "calc(100vh - 120px)" },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              gap: 2,
+            }}
           >
-            <ChatInterface
-              template={workflowAsTemplate as unknown as Templates}
-              messages={messages}
-              showGenerate={showGenerate}
-              onGenerate={executeWorkflow}
-              isValidating={isValidatingAnswer}
-              processData={processData}
-            />
-          </Stack>
-
-          {currentUser?.id ? (
-            <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
-              <ChatInput
-                onSubmit={validateVary}
-                disabled={isValidatingAnswer || !areCredentialsStored}
-                isValidating={isValidatingAnswer}
-                showGenerate={showGenerateButton}
+            <Stack
+              height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
+              justifyContent={"flex-end"}
+              overflow={"auto"}
+            >
+              <ChatInterface
+                template={workflowAsTemplate as unknown as Templates}
+                messages={messages}
+                showGenerate={showGenerate}
                 onGenerate={executeWorkflow}
+                isValidating={isValidatingAnswer}
+                processData={processData}
               />
             </Stack>
-          ) : (
-            <Stack
-              direction="row"
-              justifyContent="center"
-              p={{ md: "16px 8px 16px 16px" }}
-            >
-              <SigninButton onClick={() => router.push("/signin")} />
-            </Stack>
-          )}
-        </Stack>
-      )}
-    </Layout>
+
+            {currentUser?.id ? (
+              <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
+                <ChatInput
+                  onSubmit={validateVary}
+                  disabled={isValidatingAnswer || !areCredentialsStored}
+                  isValidating={isValidatingAnswer}
+                  showGenerate={showGenerateButton}
+                  onGenerate={executeWorkflow}
+                />
+              </Stack>
+            ) : (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                p={{ md: "16px 8px 16px 16px" }}
+              >
+                <SigninButton onClick={() => router.push("/signin")} />
+              </Stack>
+            )}
+          </Stack>
+        )}
+      </Layout>
+    </ClientOnly>
   );
 }
 
 export async function getServerSideProps({ params }: any) {
-  const { workflowId } = params;
+  const { slug } = params;
   try {
-    const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
+    const res = await authClient.get(`/api/n8n/workflow_by_slug/${slug}/`);
     const workflow: IWorkflow = res.data;
 
     return {
