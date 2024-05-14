@@ -113,6 +113,12 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 md={4}
                 sx={{
                   maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  ...(profilePage && {
+                    [theme.breakpoints.down("md")]: {
+                      mr: 0,
+                    },
+                    maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  }),
                 }}
               >
                 <SuggestionCard
@@ -130,7 +136,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               </Grid>
             )}
 
-            {templatesExecutions[0] && (
+            {!profilePage && templatesExecutions[0] && (
               <Grid
                 item
                 mr={2}
@@ -138,12 +144,6 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 md={4}
                 sx={{
                   maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                  ...(profilePage && {
-                    [theme.breakpoints.down("md")]: {
-                      mr: 0,
-                    },
-                    maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                  }),
                 }}
               >
                 <SuggestionCard
@@ -164,34 +164,31 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 />
               </Grid>
             )}
-            <Grid
-              item
-              mr={2}
-              xs={12}
-              md={4}
-              sx={{
-                maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                ...(profilePage && {
-                  [theme.breakpoints.down("md")]: {
-                    mr: 0,
-                  },
+            {!profilePage && (
+              <Grid
+                item
+                mr={2}
+                xs={12}
+                md={4}
+                sx={{
                   maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                }),
-              }}
-            >
-              <SuggestionCard
-                title="Explore PROMPT TEmplate"
-                description="Check out hundreds of ready-to-go prompt templates!"
-                avatar={
-                  <Avatar
-                    src={require("@/assets/images/explore-page.webp")}
-                    variant="explore"
-                  />
-                }
-                actionLabel="Start Exploring Now!"
-                href="/explore"
-              />
-            </Grid>
+                }}
+              >
+                <SuggestionCard
+                  title="Explore PROMPT TEmplate"
+                  description="Check out hundreds of ready-to-go prompt templates!"
+                  avatar={
+                    <Avatar
+                      src={require("@/assets/images/explore-page.webp")}
+                      variant="explore"
+                    />
+                  }
+                  actionLabel="Start Exploring Now!"
+                  href="/explore"
+                />
+              </Grid>
+            )}
+
             <Grid
               item
               mr={2}
