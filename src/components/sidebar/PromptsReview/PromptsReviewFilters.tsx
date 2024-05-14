@@ -8,7 +8,7 @@ import {
   setSelectedTag,
   deleteSelectedTag,
   setSelectedEngineType,
-  deleteSeletedEngineType,
+  deleteSelectedEngineType,
   setSelectedKeyword,
 } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
@@ -66,7 +66,7 @@ function PromptsReviewFilters() {
   const handleEngineTypeSelect = (type: EngineType) => {
     const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
     if (isEngineTypeExisted) {
-      dispatch(deleteSeletedEngineType(type));
+      dispatch(deleteSelectedEngineType(type));
     } else {
       dispatch(setSelectedEngineType(type));
     }

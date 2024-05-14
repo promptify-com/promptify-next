@@ -29,6 +29,7 @@ function PopularTemplates({ catId, initTemplates }: Props) {
     isInternal: false,
     categoryId: catId,
     status: "published",
+    include: "slug,thumbnail,title,description,favorites_count,likes,created_by,tags",
   };
 
   const skipFirstFetch = Boolean(initTemplates?.results.length && offset === INIT_OFFSET);

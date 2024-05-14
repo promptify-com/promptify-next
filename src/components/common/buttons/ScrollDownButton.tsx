@@ -1,7 +1,9 @@
+import { useAppSelector } from "@/hooks/useStore";
 import South from "@mui/icons-material/South";
 import IconButton from "@mui/material/IconButton";
 
 export const ScrollDownButton = ({ sticky = false, onClick }: { sticky?: boolean; onClick: () => void }) => {
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
   return (
     <IconButton
       onClick={onClick}
@@ -10,8 +12,8 @@ export const ScrollDownButton = ({ sticky = false, onClick }: { sticky?: boolean
         height: "30px",
         width: "30px",
         position: sticky ? "sticky" : "fixed",
-        left: "50%",
-        bottom: "95px",
+        left: isChatHistorySticky ? "60%" : "50%",
+        bottom: "125px",
         zIndex: 999,
         bgcolor: "surface.3",
         color: "onSurface",

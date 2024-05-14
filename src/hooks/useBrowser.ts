@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery, useTheme } from "@mui/material";
 
-export default function useBrowser(noSsr = false) {
+export default function useBrowser(noSsr?: boolean) {
   const [clientLoaded, setClientLoaded] = useState(false);
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down("sm"), { noSsr });

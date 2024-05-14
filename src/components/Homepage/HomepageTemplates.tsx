@@ -50,7 +50,32 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
         )}
 
         {templatesLoading ? (
-          <CardTemplatePlaceholder count={5} />
+          Array.from({ length: 6 }).map((_, idx) => (
+            <Grid
+              key={idx}
+              item
+              xs={6}
+              sm={6}
+              md={4}
+              lg={3}
+              xl={2}
+              sx={{
+                minWidth: { xs: "50%", md: "210px" },
+                height: { xs: "calc(100% - 16px)", md: "calc(100% - 24px)" },
+                p: { xs: "0 0 8px 0", md: "24px 16px 8px!important" },
+                ".MuiGrid-item": {
+                  maxWidth: "100%",
+                  p: "0 !important",
+                },
+              }}
+            >
+              <CardTemplatePlaceholder
+                count={1}
+                transparent
+                description
+              />
+            </Grid>
+          ))
         ) : (
           <>
             {templates?.map(template => (

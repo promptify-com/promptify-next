@@ -20,6 +20,7 @@ export interface FilterParams {
   isFavourite?: boolean;
   isInternal?: boolean;
   template?: number;
+  include?: string;
 }
 
 export interface SelectedFilters {
@@ -175,9 +176,9 @@ export interface TemplatesExecutions {
   };
   template?: {
     id?: number;
-    title: string;
-    slug: string;
-    thumbnail: string;
+    title?: string;
+    slug?: string;
+    thumbnail?: string;
   };
   hash: string;
   feedback?: string;

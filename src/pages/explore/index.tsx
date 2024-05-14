@@ -243,37 +243,41 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
             </Box>
           )}
 
-          <PopularTemplates initTemplates={popularTemplates} />
+          {allFilterParamsNull && (
+            <>
+              <PopularTemplates initTemplates={popularTemplates} />
 
-          <Box
-            ref={containerRef}
-            sx={{
-              m: { xs: "0 20px", md: "0px" },
-            }}
-          >
-            {isFetchingSuggestions && (
-              <Grid
-                display={"flex"}
-                flexDirection={"row"}
-                gap={"16px"}
-                alignItems={"flex-start"}
-                alignContent={"flex-start"}
-                alignSelf={"stretch"}
-                flexWrap={{ xs: "nowrap", md: "wrap" }}
+              <Box
+                ref={containerRef}
+                sx={{
+                  m: { xs: "0 20px", md: "0px" },
+                }}
               >
-                <CardTemplatePlaceholder count={4} />
-              </Grid>
-            )}
-            {isValidUser && !!suggestedTemplates?.length && (
-              <TemplatesSection
-                filtered={false}
-                templates={suggestedTemplates ?? []}
-                isLoading={isSuggestedTemplatesLoading}
-                templateLoading={isSuggestedTemplatesLoading}
-                title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
-              />
-            )}
-          </Box>
+                {isFetchingSuggestions && (
+                  <Grid
+                    display={"flex"}
+                    flexDirection={"row"}
+                    gap={"16px"}
+                    alignItems={"flex-start"}
+                    alignContent={"flex-start"}
+                    alignSelf={"stretch"}
+                    flexWrap={{ xs: "nowrap", md: "wrap" }}
+                  >
+                    <CardTemplatePlaceholder count={4} />
+                  </Grid>
+                )}
+                {isValidUser && !!suggestedTemplates?.length && (
+                  <TemplatesSection
+                    filtered={false}
+                    templates={suggestedTemplates ?? []}
+                    isLoading={isSuggestedTemplatesLoading}
+                    templateLoading={isSuggestedTemplatesLoading}
+                    title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
+                  />
+                )}
+              </Box>
+            </>
+          )}
         </Grid>
         {!isMobile && <Footer />}
       </Box>

@@ -7,7 +7,13 @@ interface Props extends IntersectionObserverInit {
 
 export function useIntersectionObserver(
   elementRef: RefObject<Element>,
-  { threshold = 0, root = null, rootMargin = "0%", freezeOnceVisible = false, disconnectNodeOnceVisible = true }: Props,
+  {
+    threshold = 0,
+    root = null,
+    rootMargin = "0%",
+    freezeOnceVisible = false,
+    disconnectNodeOnceVisible = true,
+  }: Props = {},
 ): IntersectionObserverEntry | undefined {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
   const observerRef = useRef<IntersectionObserver | null>(null);

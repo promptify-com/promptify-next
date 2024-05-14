@@ -34,7 +34,7 @@ export default function Page({ category }: { category: Category }) {
   } = useGetTemplatesByFilter({
     catId: category?.id,
     ordering: "-likes",
-    templateLimit: 5,
+    templateLimit: 8,
     paginatedList: true,
     initialStatus: "published",
   });
@@ -172,41 +172,45 @@ export default function Page({ category }: { category: Category }) {
             </Stack>
           </Stack>
 
-          <FiltersSelected show={!allFilterParamsNull} />
+          <Stack gap={"36px"}>
+            <FiltersSelected show={!allFilterParamsNull} />
 
-          {!allFilterParamsNull && (
-            <Box sx={{ px: { xs: "20px", md: "0px" } }}>
-              <TemplatesSection
-                filtered={!allFilterParamsNull}
-                templates={templates ?? []}
-                isLoading={isFetching}
-                templateLoading={isTemplatesLoading}
-                title="Best templates"
-                onNextPage={handleNextPage}
-                hasMore={hasMore}
-                isInfiniteScrolling={false}
-                hasPrev={hasPrev}
-                onPrevPage={handlePrevPage}
-              />
-              {templates?.length === 0 && (
-                <Typography
-                  fontSize={{ xs: 14, md: 18 }}
-                  fontWeight={400}
-                  textAlign={"center"}
-                  color={"onSurface"}
-                >
-                  No templates found. Please adjust your filters.
-                </Typography>
-              )}
+            {!allFilterParamsNull && (
+              <Box sx={{ px: { xs: "20px", md: "0px" } }}>
+                <TemplatesSection
+                  filtered={!allFilterParamsNull}
+                  templates={templates ?? []}
+                  isLoading={isFetching}
+                  templateLoading={isTemplatesLoading}
+                  title="Best templates"
+                  onNextPage={handleNextPage}
+                  hasMore={hasMore}
+                  isInfiniteScrolling={false}
+                  hasPrev={hasPrev}
+                  onPrevPage={handlePrevPage}
+                />
+                {templates?.length === 0 && (
+                  <Typography
+                    fontSize={{ xs: 14, md: 18 }}
+                    fontWeight={400}
+                    textAlign={"center"}
+                    color={"onSurface"}
+                  >
+                    No templates found. Please adjust your filters.
+                  </Typography>
+                )}
+              </Box>
+            )}
+          </Stack>
+
+          {allFilterParamsNull && (
+            <Box
+              py={"40px"}
+              width={"100%"}
+            >
+              <PopularTemplates catId={category?.id} />
             </Box>
           )}
-
-          <Box
-            py={"40px"}
-            width={"100%"}
-          >
-            <PopularTemplates catId={category?.id} />
-          </Box>
           {!isMobile && <Footer />}
         </Box>
       </Layout>

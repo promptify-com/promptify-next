@@ -5,7 +5,12 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { Fragment } from "react";
 
-export default function CardTemplatePlaceholder({ count = 12, isVertical = true }) {
+export default function CardTemplatePlaceholder({
+  count = 12,
+  isVertical = true,
+  transparent = false,
+  description = false,
+}) {
   const { isMobile } = useBrowser();
   return (
     <Grid
@@ -26,7 +31,7 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
               <Card
                 sx={{
                   minWidth: { xs: "50%", sm: !isMobile ? "210px" : "auto" },
-                  bgcolor: "surface.2",
+                  bgcolor: transparent ? "transparent" : "surface.2",
                   borderRadius: "16px",
                   position: "relative",
                   overflow: "hidden",
@@ -57,6 +62,16 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
                       bgcolor: "surfaceContainerHigher",
                     }}
                   />
+                  {description && (
+                    <Skeleton
+                      width={"100%"}
+                      variant="text"
+                      animation="wave"
+                      sx={{
+                        bgcolor: "surfaceContainerHigher",
+                      }}
+                    />
+                  )}
                   <Stack
                     gap={1}
                     direction={"row"}

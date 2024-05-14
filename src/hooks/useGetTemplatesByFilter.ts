@@ -15,6 +15,7 @@ interface Props {
   paginatedList?: boolean;
   initialStatus?: LowercaseTemplateStatus;
   shouldSkip?: boolean;
+  includeExtraFields?: string;
 }
 
 export function useGetTemplatesByFilter({
@@ -26,6 +27,7 @@ export function useGetTemplatesByFilter({
   paginatedList = false,
   initialStatus,
   shouldSkip = true,
+  includeExtraFields,
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
@@ -51,6 +53,9 @@ export function useGetTemplatesByFilter({
     ordering,
     isFavourite: isFavourite,
     isInternal: false,
+    include: `id,slug,thumbnail,title,description,favorites_count,likes,created_by,tags,status,executions_count${
+      includeExtraFields?.length ? includeExtraFields : ""
+    }`,
   };
 
   if (admin) {
