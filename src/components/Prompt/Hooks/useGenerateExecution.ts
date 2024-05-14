@@ -187,6 +187,8 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
               data: prevState.data,
               connectionOpened: true,
             }));
+
+            return;
           }
 
           if (message.includes("[ERROR]")) {
