@@ -95,14 +95,14 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               }}
             >
               <SuggestionCard
-                title={profilePage ? "Profile" : "CHAT WITH Promptify"}
-                description={profilePage ? "Start a new chat" : "Make more happen with Promptify and stand out!"}
+                title="CHAT WITH Promptify"
+                description="Make more happen with Promptify and stand out!"
                 avatar={
                   <Avatar variant="chat">
                     <AddCircleOutlineRounded sx={{ color: "onPrimary", fontSize: 32 }} />
                   </Avatar>
                 }
-                actionLabel={profilePage ? "New chat" : "Let's Go!"}
+                actionLabel="Let's Go!"
                 href="/chat"
               />
             </Grid>
@@ -122,7 +122,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 }}
               >
                 <SuggestionCard
-                  title={profilePage ? "Profile" : "Chats"}
+                  title="Chats"
                   description={chats.results[0].last_message ?? ""}
                   actionLabel="Review"
                   href={`/chat/?ci=${chats.results[0].id}`}
@@ -205,18 +205,14 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               }}
             >
               <SuggestionCard
-                title={profilePage ? "Profile" : "Customize Your Experience"}
-                description={
-                  profilePage
-                    ? "Set up your public profile"
-                    : "Tailor Promptify to your style and make your work unique!"
-                }
+                title="Customize Your Experience"
+                description="Tailor Promptify to your style and make your work unique!"
                 avatar={
                   <Avatar variant="profile">
                     <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />
                   </Avatar>
                 }
-                actionLabel={profilePage ? "User profile" : "Personalize Now!"}
+                actionLabel="Personalize Now!"
                 href="/profile/user"
               />
             </Grid>
