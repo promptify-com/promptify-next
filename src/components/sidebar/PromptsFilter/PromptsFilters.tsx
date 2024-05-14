@@ -8,7 +8,7 @@ import {
   setSelectedTag,
   deleteSelectedTag,
   setSelectedEngineType,
-  deleteSeletedEngineType,
+  deleteSelectedEngineType,
 } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -28,7 +28,7 @@ function PromptsFilters() {
   useEffect(() => {
     const storedEngine = Storage.get("engineFilter") as unknown as Engine;
     const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType) || "";
+    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
 
     if (storedEngine) {
       dispatch(setSelectedEngine(storedEngine));
@@ -62,7 +62,7 @@ function PromptsFilters() {
   const handleEngineTypeSelect = (type: EngineType) => {
     const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
     if (isEngineTypeExisted) {
-      dispatch(deleteSeletedEngineType(type));
+      dispatch(deleteSelectedEngineType(type));
     } else {
       dispatch(setSelectedEngineType(type));
     }
