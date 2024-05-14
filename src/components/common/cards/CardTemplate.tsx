@@ -144,7 +144,10 @@ function CardTemplate({ template }: CardTemplateProps) {
               )}
               {template.created_by?.username && (
                 <Typography
-                  onClick={() => router.push(`/users/${template.created_by?.username}`)}
+                  onClick={e => {
+                    e.preventDefault();
+                    router.push(`/users/${template.created_by?.username}`);
+                  }}
                   fontSize={13}
                   fontWeight={400}
                   color={alpha(theme.palette.onSurface, 0.75)}
