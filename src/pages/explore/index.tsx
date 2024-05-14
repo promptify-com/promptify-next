@@ -58,7 +58,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
   const observer = useIntersectionObserver(containerRef, {
     threshold: 0.5,
   });
-  const renderSuggestedTemplates = useRef(observer?.isIntersecting);
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
@@ -68,13 +67,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
     data: suggestedTemplates,
     isLoading: isSuggestedTemplatesLoading,
     isFetching: isFetchingSuggestions,
-  } = useGetSuggestedTemplatesByCategoryQuery(undefined, { skip: !isValidUser || !renderSuggestedTemplates.current });
-
-  useEffect(() => {
-    if (!renderSuggestedTemplates.current) {
-      renderSuggestedTemplates.current = observer?.isIntersecting;
-    }
-  }, [observer?.isIntersecting]);
+  } = useGetSuggestedTemplatesByCategoryQuery(undefined, { skip: !isValidUser || !observer?.isIntersecting });
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
