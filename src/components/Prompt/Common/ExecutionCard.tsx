@@ -277,7 +277,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             canScrollNext={canScrollNext}
             canScrollPrev={canScrollPrev}
             containerStyle={{
-              width: "150px",
+              minWidth: "150px",
               justifyContent: "space-between",
               alignItems: "center",
             }}

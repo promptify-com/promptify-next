@@ -107,7 +107,6 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
           flexDirection={"column"}
           flexWrap={{ xs: "nowrap", md: "wrap" }}
           sx={{
-            mt: "10px",
             gap: "1em",
             width: "100%",
             overflow: { xs: "auto", md: "initial" },
