@@ -15,6 +15,18 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
+function ScrollContainer({ id }: { id: string }) {
+  return (
+    <Box
+      id={id}
+      sx={{
+        position: "absolute",
+        top: { xs: `-${theme.custom.headerHeight.xs}`, md: `-${theme.custom.headerHeight.md}` },
+      }}
+    />
+  );
+}
+
 export default function LearnPage() {
   return (
     <Layout footer>
@@ -39,11 +51,11 @@ export default function LearnPage() {
           }}
         >
           <Stack
-            id={"start"}
             gap={3}
             alignItems={"flex-start"}
             p={{ xs: "24px 0", md: "24px 16px" }}
           >
+            <ScrollContainer id="start" />
             <Stack gap={2}>
               <Typography
                 fontSize={{ xs: 38, md: 48 }}
@@ -66,14 +78,16 @@ export default function LearnPage() {
               Get started guide
             </Button>
           </Stack>
-          <Box id={"blog"}>
+          <Box position={"relative"}>
+            <ScrollContainer id="blog" />
             <BlogsCarousel />
           </Box>
           <Stack
-            id={"tutorials"}
             gap={3}
             alignItems={"flex-start"}
+            position={"relative"}
           >
+            <ScrollContainer id="tutorials" />
             <Stack
               gap={2}
               p={{ md: "8px 16px" }}
@@ -111,13 +125,14 @@ export default function LearnPage() {
             </Grid>
           </Stack>
           <Stack
-            id={"faq"}
             gap={3}
             sx={{
               width: { md: "70%" },
               m: "auto",
+              position: "relative",
             }}
           >
+            <ScrollContainer id="faq" />
             <Stack
               textAlign={"center"}
               gap={2}
