@@ -95,14 +95,14 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               }}
             >
               <SuggestionCard
-                title="CHAT WITH Promptify"
-                description="Make more happen with Promptify and stand out!"
+                title={profilePage ? "Profile" : "CHAT WITH Promptify"}
+                description={profilePage ? "Start a new chat" : "Make more happen with Promptify and stand out!"}
                 avatar={
                   <Avatar variant="chat">
                     <AddCircleOutlineRounded sx={{ color: "onPrimary", fontSize: 32 }} />
                   </Avatar>
                 }
-                actionLabel="Let's Go!"
+                actionLabel={profilePage ? "New chat" : "Let's Go!"}
                 href="/chat"
               />
             </Grid>
@@ -113,10 +113,16 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 md={4}
                 sx={{
                   maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  ...(profilePage && {
+                    [theme.breakpoints.down("md")]: {
+                      mr: 0,
+                    },
+                    maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  }),
                 }}
               >
                 <SuggestionCard
-                  title="Chats"
+                  title={profilePage ? "Profile" : "Chats"}
                   description={chats.results[0].last_message ?? ""}
                   actionLabel="Review"
                   href={`/chat/?ci=${chats.results[0].id}`}
@@ -130,7 +136,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               </Grid>
             )}
 
-            {templatesExecutions[0] && (
+            {!profilePage && templatesExecutions[0] && (
               <Grid
                 item
                 mr={2}
@@ -138,12 +144,6 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 md={4}
                 sx={{
                   maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                  ...(profilePage && {
-                    [theme.breakpoints.down("md")]: {
-                      mr: 0,
-                    },
-                    maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                  }),
                 }}
               >
                 <SuggestionCard
@@ -164,6 +164,31 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 />
               </Grid>
             )}
+            {!profilePage && (
+              <Grid
+                item
+                mr={2}
+                xs={12}
+                md={4}
+                sx={{
+                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                }}
+              >
+                <SuggestionCard
+                  title="Explore PROMPT TEmplate"
+                  description="Check out hundreds of ready-to-go prompt templates!"
+                  avatar={
+                    <Avatar
+                      src={require("@/assets/images/explore-page.webp")}
+                      variant="explore"
+                    />
+                  }
+                  actionLabel="Start Exploring Now!"
+                  href="/explore"
+                />
+              </Grid>
+            )}
+
             <Grid
               item
               mr={2}
@@ -180,42 +205,18 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               }}
             >
               <SuggestionCard
-                title="Explore PROMPT TEmplate"
-                description="Check out hundreds of ready-to-go prompt templates!"
-                avatar={
-                  <Avatar
-                    src={require("@/assets/images/explore-page.webp")}
-                    variant="explore"
-                  />
+                title={profilePage ? "Profile" : "Customize Your Experience"}
+                description={
+                  profilePage
+                    ? "Set up your public profile"
+                    : "Tailor Promptify to your style and make your work unique!"
                 }
-                actionLabel="Start Exploring Now!"
-                href="/explore"
-              />
-            </Grid>
-            <Grid
-              item
-              mr={2}
-              xs={12}
-              md={4}
-              sx={{
-                maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                ...(profilePage && {
-                  [theme.breakpoints.down("md")]: {
-                    mr: 0,
-                  },
-                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
-                }),
-              }}
-            >
-              <SuggestionCard
-                title="Customize Your Experience"
-                description="Tailor Promptify to your style and make your work unique!"
                 avatar={
                   <Avatar variant="profile">
                     <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />
                   </Avatar>
                 }
-                actionLabel="Personalize Now!"
+                actionLabel={profilePage ? "User profile" : "Personalize Now!"}
                 href="/profile/user"
               />
             </Grid>
