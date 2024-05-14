@@ -20,8 +20,7 @@ import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { formatDate, timeLeft } from "@/common/helpers/timeManipulation";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
-
-const EXECUTION_LIFETIME_DAYS = 30;
+import { calculateDocumentDeleteDeadline } from "./Helper";
 
 interface Props {
   execution: ExecutionWithTemplate;
@@ -62,10 +61,7 @@ export default function CardDocument({ execution, onClick }: Props) {
   };
 
   const actionsOpened = Boolean(menuAnchor);
-  const deleteDeadline = new Date(
-    new Date(execution.created_at).setDate(new Date(execution.created_at).getDate() + EXECUTION_LIFETIME_DAYS),
-  );
-  const daysLeft = timeLeft(deleteDeadline);
+  const daysLeft = calculateDocumentDeleteDeadline(execution.created_at);
   const autoDeleteDate = daysLeft !== "0" ? `${daysLeft} left` : "Soon";
 
   return (

@@ -13,6 +13,7 @@ import ActionButtons from "./ActionButtons";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setDocumentTitle } from "@/core/store/documentsSlice";
 import { theme } from "@/theme";
+import { calculateDocumentDeleteDeadline } from "@/components/Documents/Helper";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -25,7 +26,7 @@ function Header({ document }: Props) {
   const title = useAppSelector(state => state.documents.title);
   const [isFavorite, setIsFavorite] = useState(document.is_favorite);
 
-  const savedFor = daysFrom(document.created_at);
+  const daysLeft = calculateDocumentDeleteDeadline(document.created_at);
 
   return (
     <Stack
@@ -89,7 +90,7 @@ function Header({ document }: Props) {
           ) : (
             <>
               <ScheduleOutlined sx={{ color: "secondary.light" }} />
-              Saved as draft for {savedFor} days
+              {daysLeft !== "0" ? `Saved as draft for ${daysLeft}` : "Soon"}
             </>
           )}
         </Typography>
