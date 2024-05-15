@@ -11,7 +11,6 @@ import ExecutionExample from "./ExecutionExample";
 
 import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
-import ClientOnly from "@/components/base/ClientOnly";
 import useBrowser from "@/hooks/useBrowser";
 import lazy from "next/dynamic";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
@@ -183,7 +182,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           },
         }}
       >
-        <ClientOnly>{observers.feedbackObserver?.isIntersecting && <Feedback />}</ClientOnly>
+        {observers.feedbackObserver?.isIntersecting && <Feedback />}
       </Box>
       {isMobile && <Footer />}
     </Box>
