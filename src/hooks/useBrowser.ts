@@ -19,5 +19,5 @@ export default function useBrowser() {
     }, delay);
   };
 
-  return { replaceHistoryByPathname, isMobile: clientLoaded ? isMobile : false, clientLoaded };
+  return { replaceHistoryByPathname, isMobile, clientLoaded };
 }

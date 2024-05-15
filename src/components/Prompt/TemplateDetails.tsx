@@ -147,9 +147,10 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
             sx={{
               position: "relative",
               width: "100%",
-              height: { xs: "30svh", md: 0 },
+              height: { xs: "30svh", sm: 0 },
               borderRadius: { md: "24px" },
               overflow: "hidden",
+              display: { sm: "none" },
             }}
           >
             <Image

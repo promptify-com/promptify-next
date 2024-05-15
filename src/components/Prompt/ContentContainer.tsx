@@ -163,18 +163,28 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           promptsData={template.prompts || []}
         />
       </div>
-      <div
+      <Box
         id="api"
         ref={apiAccessContainerRef}
+        sx={{
+          ["@media (min-width: 768px) and (max-width: 1024px)"]: {
+            minHeight: "50px",
+          },
+        }}
       >
         {observers.apiAccessObserver?.isIntersecting && <ApiAccess template={template} />}
-      </div>
-      <div
+      </Box>
+      <Box
         id="feedback"
         ref={feedbackContainerRef}
+        sx={{
+          ["@media (min-width: 768px) and (max-width: 1024px)"]: {
+            minHeight: "50px",
+          },
+        }}
       >
         <ClientOnly>{observers.feedbackObserver?.isIntersecting && <Feedback />}</ClientOnly>
-      </div>
+      </Box>
       {isMobile && <Footer />}
     </Box>
   );
