@@ -191,60 +191,58 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   }, [generatedExecution]);
 
   return (
-    <ClientOnly>
-      <Layout>
-        {isWorkflowLoading ? (
-          <WorkflowPlaceholder />
-        ) : (
+    <Layout>
+      {isWorkflowLoading ? (
+        <WorkflowPlaceholder />
+      ) : (
+        <Stack
+          sx={{
+            width: { md: "80%" },
+            mx: { md: "auto" },
+            height: { xs: "100vh", md: "calc(100vh - 120px)" },
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            gap: 2,
+          }}
+        >
           <Stack
-            sx={{
-              width: { md: "80%" },
-              mx: { md: "auto" },
-              height: { xs: "100vh", md: "calc(100vh - 120px)" },
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              gap: 2,
-            }}
+            height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
+            justifyContent={"flex-end"}
+            overflow={"auto"}
           >
-            <Stack
-              height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
-              justifyContent={"flex-end"}
-              overflow={"auto"}
-            >
-              <ChatInterface
-                template={workflowAsTemplate as unknown as Templates}
-                messages={messages}
-                showGenerate={showGenerate}
-                onGenerate={executeWorkflow}
+            <ChatInterface
+              template={workflowAsTemplate as unknown as Templates}
+              messages={messages}
+              showGenerate={showGenerate}
+              onGenerate={executeWorkflow}
+              isValidating={isValidatingAnswer}
+              processData={processData}
+            />
+          </Stack>
+
+          {currentUser?.id ? (
+            <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
+              <ChatInput
+                onSubmit={validateVary}
+                disabled={isValidatingAnswer || !areCredentialsStored}
                 isValidating={isValidatingAnswer}
-                processData={processData}
+                showGenerate={showGenerateButton}
+                onGenerate={executeWorkflow}
               />
             </Stack>
-
-            {currentUser?.id ? (
-              <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
-                <ChatInput
-                  onSubmit={validateVary}
-                  disabled={isValidatingAnswer || !areCredentialsStored}
-                  isValidating={isValidatingAnswer}
-                  showGenerate={showGenerateButton}
-                  onGenerate={executeWorkflow}
-                />
-              </Stack>
-            ) : (
-              <Stack
-                direction="row"
-                justifyContent="center"
-                p={{ md: "16px 8px 16px 16px" }}
-              >
-                <SigninButton onClick={() => router.push("/signin")} />
-              </Stack>
-            )}
-          </Stack>
-        )}
-      </Layout>
-    </ClientOnly>
+          ) : (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              p={{ md: "16px 8px 16px 16px" }}
+            >
+              <SigninButton onClick={() => router.push("/signin")} />
+            </Stack>
+          )}
+        </Stack>
+      )}
+    </Layout>
   );
 }
 
