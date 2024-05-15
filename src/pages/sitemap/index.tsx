@@ -1,6 +1,7 @@
+import fs from "node:fs";
+import path from "node:path";
 import { authClient } from "@/common/axios";
-import { GetServerSideProps } from "next";
-
+import { getCategories } from "@/hooks/api/categories";
 interface Template {
   slug: string;
 }
@@ -42,34 +43,30 @@ function generateSiteMap(templates: Template[], categories: Category[]) {
   return xml;
 }
 
-function SiteMap() {
-  // getServerSideProps will do the heavy lifting
-  return null;
-}
-
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+export async function getStaticProps() {
   let templates: Template[] = [];
   let categories: Category[] = [];
-  const [_templates, _categories] = await Promise.allSettled([
-    authClient.get("/api/meta/templates/"),
-    authClient.get("/api/meta/categories/"),
-  ]);
+  const [_templates, _categories] = await Promise.allSettled([authClient.get("/api/meta/templates/"), getCategories()]);
 
   if (_templates.status === "fulfilled") {
     templates = _templates.value.data as Template[];
   }
   if (_categories.status === "fulfilled") {
-    categories = _categories.value.data as Category[];
+    categories = _categories.value;
   }
 
-  res.setHeader("Cache-Control", "public, s-maxage=86400, stale-while-revalidate=60");
-  res.setHeader("Content-Type", "text/xml");
-  res.write(generateSiteMap(templates, categories));
-  res.end();
+  const sitemap = generateSiteMap(templates, categories);
+
+  fs.writeFileSync(path.join(process.cwd(), "public", "sitemap.xml"), sitemap);
 
   return {
     props: {},
+    revalidate: 86400,
   };
-};
+}
+
+function SiteMap() {
+  return null;
+}
 
 export default SiteMap;

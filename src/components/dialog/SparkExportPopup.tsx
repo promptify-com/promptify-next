@@ -1,4 +1,4 @@
-import { Box, Dialog, Divider, Grid, IconButton, Typography } from "@mui/material";
+import { Box, CircularProgress, Dialog, Divider, Grid, IconButton, Typography } from "@mui/material";
 import { Check, Email, FacebookRounded, GetAppRounded, Reddit, Twitter } from "@mui/icons-material";
 
 import BaseButton from "../base/BaseButton";
@@ -10,6 +10,7 @@ import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { getBaseUrl } from "@/common/helpers";
 import { downloadBlobObject } from "@/common/helpers/handleExecutionExport";
 import { executionsApi } from "@/core/api/executions";
+import { useState } from "react";
 
 interface SparkExportProps {
   onClose: () => void;
@@ -17,6 +18,8 @@ interface SparkExportProps {
 }
 
 export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps) => {
+  const [exporting, setExporting] = useState({ pdf: false, word: false });
+
   if (!activeExecution) {
     throw new Error("Provided activeExecution is not a valid one!");
   }
@@ -33,7 +36,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
   const ENCODED_URL = encodeURIComponent(sharedUrl);
 
   const generateTitle = () => {
-    if (activeExecution?.template) {
+    if (activeExecution?.template?.title) {
       const hasNotitle = activeExecution.title.toLowerCase() === "untitled";
       return encodeURIComponent(hasNotitle ? activeExecution.template.title : activeExecution.title);
     } else {
@@ -63,10 +66,17 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
   };
 
   const handleExportExecution = async (fileType: "word" | "pdf") => {
-    const response = await exportExecution({ id: activeExecution.id, fileType }).unwrap();
-
-    downloadBlobObject(response, fileType, activeExecution.title);
+    setExporting({ ...exporting, [fileType]: true });
+    try {
+      const response = await exportExecution({ id: activeExecution.id, fileType }).unwrap();
+      downloadBlobObject(response, fileType, activeExecution.title);
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setExporting({ ...exporting, [fileType]: false });
+    }
   };
+
   return (
     <Dialog
       open
@@ -132,16 +142,18 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
               </Typography>
             </Box>
           </Grid>
-
-          <IconButton
-            onClick={() => handleExportExecution("pdf")}
-            sx={{
-              border: "none",
-              opacity: 0.6,
-            }}
-          >
-            <GetAppRounded />
-          </IconButton>
+          <Box width={"60px"}>
+            {exporting.pdf ? (
+              <CircularProgress size={24} />
+            ) : (
+              <IconButton
+                onClick={() => handleExportExecution("pdf")}
+                sx={{ border: "none", opacity: 0.6 }}
+              >
+                <GetAppRounded />
+              </IconButton>
+            )}
+          </Box>
         </Grid>
         <Divider />
         <Grid
@@ -189,15 +201,18 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
             </Box>
           </Grid>
 
-          <IconButton
-            onClick={() => handleExportExecution("word")}
-            sx={{
-              border: "none",
-              opacity: 0.6,
-            }}
-          >
-            <GetAppRounded />
-          </IconButton>
+          <Box width={"60px"}>
+            {exporting.word ? (
+              <CircularProgress size={20} />
+            ) : (
+              <IconButton
+                onClick={() => handleExportExecution("word")}
+                sx={{ border: "none", opacity: 0.6 }}
+              >
+                <GetAppRounded />
+              </IconButton>
+            )}
+          </Box>
         </Grid>
         <Divider />
         <Grid

@@ -1,9 +1,15 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { getPathURL, saveToken } from "@/common/utils";
+import { updateUser } from "@/core/store/userSlice";
+import { redirectToPath } from "@/common/helpers";
+import { client } from "@/common/axios";
+import { useAppDispatch } from "@/hooks/useStore";
+import { userApi } from "@/core/api/user";
 import Landing from "@/components/Homepage/GuestUserLayout/Landing";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import Services from "@/components/Homepage/GuestUserLayout/Services";
@@ -11,42 +17,44 @@ import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
-import { useAppDispatch } from "@/hooks/useStore";
-import { userApi } from "@/core/api/user";
 import type { AxiosResponse } from "axios";
 import type { IContinueWithSocialMediaResponse } from "@/common/types";
-import { getPathURL, saveToken } from "@/common/utils";
-import { updateUser } from "@/core/store/userSlice";
-import { redirectToPath } from "@/common/helpers";
-import { client } from "@/common/axios";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
+  const dispatch = useAppDispatch();
+  const path = getPathURL();
+
+  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
+
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
-  const path = getPathURL();
-  const dispatch = useAppDispatch();
-  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
+  const carouselContainerRef = useRef<HTMLDivElement | null>(null);
+
   const observers = {
     templatesObserver: useIntersectionObserver(templateContainerRef, {}),
     learnObserver: useIntersectionObserver(learnContainerRef, {}),
     testimonialsObserver: useIntersectionObserver(testimonialsContainerRef, {}),
+    carouselObserver: useIntersectionObserver(carouselContainerRef, {}),
   };
   const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery(
     {
       ordering: "-runs",
       limit: 30,
       status: "published",
+      include: "slug,thumbnail,title,description,favorites_count,likes,created_by,tags",
     },
     {
       skip: !observers.templatesObserver?.isIntersecting,
     },
   );
+
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
   );
+
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
     if (typeof response.data !== "object" || response.data === null) {
@@ -90,6 +98,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
 
   const showLearn = observers.learnObserver?.isIntersecting;
   const showTestimonials = observers.learnObserver?.isIntersecting;
+  const showCarousel = observers.carouselObserver?.isIntersecting;
 
   return (
     <Stack
@@ -97,12 +106,17 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       data-cy="guest-main-container"
     >
       <Landing />
-      <CategoryCarousel
-        categories={_categories}
-        href="/explore"
-        autoPlay
-        explore
-      />
+      <Box ref={carouselContainerRef}>
+        {showCarousel && (
+          <CategoryCarousel
+            categories={_categories}
+            href="/explore"
+            autoPlay
+            explore
+          />
+        )}
+      </Box>
+
       <Services />
       <Stack
         ref={templateContainerRef}

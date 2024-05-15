@@ -6,15 +6,18 @@ import Button from "@mui/material/Button";
 import ArticleOutlined from "@mui/icons-material/ArticleOutlined";
 import ForumOutlined from "@mui/icons-material/ForumOutlined";
 import DataObject from "@mui/icons-material/DataObject";
-import { Link } from "./Types";
-import Api from "@mui/icons-material/Api";
 import Instructions from "./Instructions";
 import ExecutionExample from "./ExecutionExample";
-import ApiAccess from "./ApiAccess";
-import Feedback from "./Feedback";
-import ClientOnly from "@/components/base/ClientOnly";
+
+import { Link } from "./Types";
+import Api from "@mui/icons-material/Api";
 import useBrowser from "@/hooks/useBrowser";
-import Footer from "../Footer";
+import lazy from "next/dynamic";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+
+const ApiAccess = lazy(() => import("./ApiAccess"), { ssr: false });
+const Feedback = lazy(() => import("./Feedback"), { ssr: false });
+const Footer = lazy(() => import("../Footer"), { ssr: false });
 
 const ScrollTabs: Link[] = [
   {
@@ -47,6 +50,14 @@ interface Props {
 export default function ContentContainer({ template, tabsFixed }: Props) {
   const { isMobile } = useBrowser();
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
+
+  const apiAccessContainerRef = useRef<HTMLDivElement | null>(null);
+  const feedbackContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const observers = {
+    apiAccessObserver: useIntersectionObserver(apiAccessContainerRef, { threshold: 0.5 }),
+    feedbackObserver: useIntersectionObserver(feedbackContainerRef, { threshold: 0.5 }),
+  };
 
   const handleTabChange = (tab: Link) => {
     setSelectedTab(tab);
@@ -134,6 +145,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                     bgcolor: selected ? "secondary.main" : "surfaceContainerHigh",
                   },
                 }}
+                aria-label={tab.title}
               >
                 {(!isMobile || selected) && tab.title}
               </Button>
@@ -150,14 +162,28 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           promptsData={template.prompts || []}
         />
       </div>
-      <div id="api">
-        <ApiAccess template={template} />
-      </div>
-      <div id="feedback">
-        <ClientOnly>
-          <Feedback />
-        </ClientOnly>
-      </div>
+      <Box
+        id="api"
+        ref={apiAccessContainerRef}
+        sx={{
+          ["@media (min-width: 768px) and (max-width: 1024px)"]: {
+            minHeight: "50px",
+          },
+        }}
+      >
+        {observers.apiAccessObserver?.isIntersecting && <ApiAccess template={template} />}
+      </Box>
+      <Box
+        id="feedback"
+        ref={feedbackContainerRef}
+        sx={{
+          ["@media (min-width: 768px) and (max-width: 1024px)"]: {
+            minHeight: "50px",
+          },
+        }}
+      >
+        {observers.feedbackObserver?.isIntersecting && <Feedback />}
+      </Box>
       {isMobile && <Footer />}
     </Box>
   );

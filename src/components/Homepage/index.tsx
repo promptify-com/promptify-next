@@ -8,9 +8,25 @@ import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
 import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
+import { useRef } from "react";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
-  const { data: suggestedTemplates, isLoading } = useGetTemplatesSuggestedQuery(undefined);
+  const { data: suggestedTemplates, isFetching } = useGetTemplatesSuggestedQuery(undefined);
+
+  const carouselContainerRef = useRef<HTMLDivElement | null>(document.createElement("div"));
+  const learnContainerRef = useRef<HTMLDivElement | null>(null);
+  const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const observers = {
+    carouselObserver: useIntersectionObserver(carouselContainerRef, { threshold: 0.5 }),
+    learnObserver: useIntersectionObserver(learnContainerRef, { threshold: 0.5 }),
+    testimonialsObserver: useIntersectionObserver(testimonialsContainerRef, { threshold: 0.5 }),
+  };
+
+  const showCarousel = observers.carouselObserver?.isIntersecting;
+  const showLearn = observers.learnObserver?.isIntersecting;
+  const showTestimonials = observers.learnObserver?.isIntersecting;
 
   return (
     <ClientOnly>
@@ -24,27 +40,34 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         data-cy="logged-in-main-container"
       >
         <SuggestionsSection />
-
-        <HomepageTemplates
-          title="You may like these prompts:"
-          templates={suggestedTemplates || []}
-          templatesLoading={isLoading}
-          showAdsBox
-        />
-
-        <Stack mr={{ md: "16px" }}>
-          <CategoryCarousel
-            categories={categories}
-            userScrolled={false}
-            href="/explore"
-            gap={1}
-            explore
-            autoPlay
+        <Stack minHeight={"300px"}>
+          <HomepageTemplates
+            title="You may like these prompts:"
+            templates={suggestedTemplates || []}
+            templatesLoading={isFetching}
+            showAdsBox
           />
         </Stack>
 
-        <Learn />
-        <Testimonials />
+        <Stack
+          mr={{ md: "16px" }}
+          ref={carouselContainerRef}
+        >
+          {showCarousel && (
+            <CategoryCarousel
+              categories={categories}
+              userScrolled={false}
+              priority={false}
+              href="/explore"
+              gap={1}
+              explore
+              autoPlay
+            />
+          )}
+        </Stack>
+
+        <Stack ref={learnContainerRef}>{showLearn && <Learn />}</Stack>
+        <Stack ref={testimonialsContainerRef}>{showTestimonials && <Testimonials />}</Stack>
       </Grid>
     </ClientOnly>
   );

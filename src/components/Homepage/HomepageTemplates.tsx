@@ -15,7 +15,7 @@ interface Props {
 }
 
 function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: Props) {
-  if (!templates.length) {
+  if (!templates.length && !templatesLoading) {
     return null;
   }
   return (
@@ -30,34 +30,53 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
         {title}
       </Typography>
 
-      {templatesLoading ? (
-        <Grid
-          container
-          gap={2}
-          justifyContent={{ xs: "center", md: "flex-start" }}
-        >
-          <CardTemplatePlaceholder count={5} />
-        </Grid>
-      ) : (
-        <Grid
-          container
-          ml={{ md: -2 }}
-          spacing={1}
-        >
-          {showAdsBox && (
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={8}
-              lg={6}
-              xl={4}
-              mb={{ xs: 2, md: 0 }}
-            >
-              <AdsBox />
-            </Grid>
-          )}
+      <Grid
+        container
+        ml={{ md: -2 }}
+        spacing={1}
+      >
+        {showAdsBox && (
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={8}
+            lg={6}
+            xl={4}
+            mb={{ xs: 2, md: 0 }}
+          >
+            <AdsBox />
+          </Grid>
+        )}
 
+        {templatesLoading ? (
+          Array.from({ length: 6 }).map((_, idx) => (
+            <Grid
+              key={idx}
+              item
+              xs={6}
+              sm={6}
+              md={4}
+              lg={3}
+              xl={2}
+              sx={{
+                minWidth: { xs: "50%", md: "210px" },
+                height: { xs: "calc(100% - 16px)", md: "calc(100% - 24px)" },
+                p: { xs: "0 0 8px 0", md: "24px 16px 8px!important" },
+                ".MuiGrid-item": {
+                  maxWidth: "100%",
+                  p: "0 !important",
+                },
+              }}
+            >
+              <CardTemplatePlaceholder
+                count={1}
+                transparent
+                description
+              />
+            </Grid>
+          ))
+        ) : (
           <>
             {templates?.map(template => (
               <Grid
@@ -73,8 +92,8 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
               </Grid>
             ))}
           </>
-        </Grid>
-      )}
+        )}
+      </Grid>
     </Stack>
   );
 }

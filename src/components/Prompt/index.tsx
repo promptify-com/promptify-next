@@ -154,6 +154,7 @@ function TemplatePage({ template, popup }: Props) {
                 />
               </Box>
             )}
+
             <ContentContainer
               template={template}
               tabsFixed={tabsFixed}

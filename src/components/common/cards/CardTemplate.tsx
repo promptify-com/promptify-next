@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
-
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import useTruncate from "@/hooks/useTruncate";
@@ -86,6 +85,8 @@ function CardTemplate({ template }: CardTemplateProps) {
                 src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
                 alt={template.title}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                sizes="(max-width: 600px) 176px, (max-width: 900px) 216px, 216px"
+                priority={true}
               />
             </CardMedia>
             <Stack
@@ -142,19 +143,18 @@ function CardTemplate({ template }: CardTemplateProps) {
                 </Stack>
               )}
               {template.created_by?.username && (
-                <Link
-                  href={`/users/${template.created_by?.username}`}
-                  onClick={e => e.stopPropagation()}
-                  style={{ textDecoration: "none", marginLeft: "auto" }}
+                <Typography
+                  onClick={e => {
+                    e.preventDefault();
+                    router.push(`/users/${template.created_by?.username}`);
+                  }}
+                  fontSize={13}
+                  fontWeight={400}
+                  color={alpha(theme.palette.onSurface, 0.75)}
+                  ml={"auto"}
                 >
-                  <Typography
-                    fontSize={13}
-                    fontWeight={400}
-                    color={alpha(theme.palette.onSurface, 0.75)}
-                  >
-                    by {template.created_by.first_name || template.created_by.username}
-                  </Typography>
-                </Link>
+                  by {template.created_by.first_name || template.created_by.username}
+                </Typography>
               )}
             </Stack>
           </Stack>

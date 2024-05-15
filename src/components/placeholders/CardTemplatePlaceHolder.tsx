@@ -3,8 +3,14 @@ import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+import { Fragment } from "react";
 
-export default function CardTemplatePlaceholder({ count = 12, isVertical = true }) {
+export default function CardTemplatePlaceholder({
+  count = 12,
+  isVertical = true,
+  transparent = false,
+  description = false,
+}) {
   const { isMobile } = useBrowser();
   return (
     <Grid
@@ -13,10 +19,9 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
       px={"16px"}
     >
       {Array.from({ length: count }).map((_, index) => (
-        <>
+        <Fragment key={index}>
           {isVertical ? (
             <Grid
-              key={index}
               item
               xs={6}
               sm={6}
@@ -26,7 +31,7 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
               <Card
                 sx={{
                   minWidth: { xs: "50%", sm: !isMobile ? "210px" : "auto" },
-                  bgcolor: "surface.2",
+                  bgcolor: transparent ? "transparent" : "surface.2",
                   borderRadius: "16px",
                   position: "relative",
                   overflow: "hidden",
@@ -57,6 +62,16 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
                       bgcolor: "surfaceContainerHigher",
                     }}
                   />
+                  {description && (
+                    <Skeleton
+                      width={"100%"}
+                      variant="text"
+                      animation="wave"
+                      sx={{
+                        bgcolor: "surfaceContainerHigher",
+                      }}
+                    />
+                  )}
                   <Stack
                     gap={1}
                     direction={"row"}
@@ -89,7 +104,6 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
             </Grid>
           ) : (
             <Grid
-              key={index}
               item
               xs={12}
               sx={{ mb: 2 }}
@@ -206,9 +220,8 @@ export default function CardTemplatePlaceholder({ count = 12, isVertical = true 
               </Card>
             </Grid>
           )}
-        </>
+        </Fragment>
       ))}
-      ;
     </Grid>
   );
 }

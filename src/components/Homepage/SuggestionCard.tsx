@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import useBrowser from "@/hooks/useBrowser";
+import { useRouter } from "next/router";
 
 interface Props {
   title: string;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 interface AvatarProps {
-  variant: "chat" | "last_chat_entry" | "profile";
+  variant: "chat" | "last_chat_entry" | "profile" | "explore";
   src?: string;
   children?: ReactNode;
 }
@@ -27,6 +28,7 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
   const isChat = variant === "chat";
   const isProfile = variant === "profile";
   const isChatEntry = variant === "last_chat_entry";
+  const isExplore = variant === "explore";
   return (
     <>
       {(isChat || isProfile) && (
@@ -43,7 +45,7 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
         </Box>
       )}
 
-      {isChatEntry && (
+      {(isChatEntry || isExplore) && (
         <Box
           sx={{
             zIndex: 0,
@@ -58,7 +60,8 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
             <Image
               src={src}
               alt={"template"}
-              priority
+              priority={true}
+              sizes="(max-width: 600px) 40vw, (max-width: 900px) 35vw, 30vw"
               fill
               style={{
                 objectFit: "cover",
@@ -74,13 +77,14 @@ export const Avatar = ({ variant, src, children }: AvatarProps) => {
 const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props) => {
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
+  const router = useRouter();
   return (
     <Link
       href={href}
       style={{ textDecoration: "none" }}
     >
       <Stack
-        width={{ xs: "290px", md: "330px", xl: "100%" }}
+        width={{ xs: "290px", md: "330px" }}
         sx={{
           border: "1px solid",
           borderColor: "surfaceContainerHighest",
@@ -96,7 +100,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
           direction={"row"}
           justifyContent={"space-between"}
           alignItems={"center"}
-          minHeight={"80px"}
+          minHeight={"88px"}
           sx={{
             p: "16px 8px 16px 24px",
             borderBottom: "1px solid",
@@ -127,8 +131,10 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
               lineHeight={"22.4px"}
               letterSpacing={"0.17px"}
               color={"text.secondary"}
+              minHeight={"66px"}
+              pt={"8px"}
             >
-              {truncate(description, { length: isMobile ? 40 : 50 })}
+              {truncate(description, { length: isMobile ? 50 : 70 })}
             </Typography>
           </Stack>
 
@@ -160,18 +166,19 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
             >
               {actionLabel}
             </Typography>
-            <Link href={href}>
-              <IconButton
-                sx={{
-                  border: "none",
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-              >
-                <ArrowForward />
-              </IconButton>
-            </Link>
+
+            <IconButton
+              aria-label="Procced"
+              onClick={() => router.push(href)}
+              sx={{
+                border: "none",
+                ":hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <ArrowForward />
+            </IconButton>
           </Stack>
         </Stack>
       </Stack>

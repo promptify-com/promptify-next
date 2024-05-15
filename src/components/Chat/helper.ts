@@ -5,7 +5,13 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { CreateMessageProps, IQuestion } from "../Prompt/Types/chat";
+import { chatsApi } from "@/core/api/chats";
+import { CHATS_LIST_PAGINATION_LIMIT } from "./Constants";
+import type { NextRouter } from "next/router";
+import type { IChat } from "@/core/api/dto/chats";
+import type { AppDispatcher } from "@/hooks/useStore";
 import type { IWorkflow } from "@/components/Automation/types";
+import type { ToastState } from "@/core/store/toastSlice";
 
 interface SendMessageResponse {
   output?: string;
@@ -133,3 +139,54 @@ export const suggestionsMessageText = (content?: string) => {
     .replace(/((\,\d+)|#\d+|([\(]?id:\s*\d+[\)]?))/gi, "")
     .trim();
 };
+
+export function updateChatsList(
+  dispatch: AppDispatcher,
+  router: NextRouter,
+  chat: IChat,
+  op: "ADD" | "UPDATE" | "DELETE",
+) {
+  dispatch(
+    chatsApi.util.updateQueryData(
+      "getChats",
+      { limit: CHATS_LIST_PAGINATION_LIMIT, offset: Number(router.query.ch_o || 0) },
+      chats => {
+        return {
+          count: chats.count,
+          next: chats.next,
+          previous: chats.previous,
+          results:
+            op === "ADD"
+              ? [chat, ...chats.results]
+              : op === "DELETE"
+              ? chats.results.filter(_chat => _chat.id !== chat.id)
+              : op === "UPDATE"
+              ? chats.results.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
+              : chats.results,
+        };
+      },
+    ),
+  );
+}
+
+export function createExecuteErrorToast(
+  promptTitle: string = "",
+  current: number = 0,
+  total: number = 0,
+): Omit<ToastState, "open"> {
+  const message = `Failed to execute the prompt « ${promptTitle} » ${current}/${total}`;
+  const severity = "error";
+  const duration = 6000;
+
+  const toast: Omit<ToastState, "open"> = {
+    message,
+    severity,
+    duration,
+    position: {
+      vertical: "bottom",
+      horizontal: "right",
+    },
+  };
+
+  return toast;
+}

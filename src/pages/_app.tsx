@@ -1,7 +1,5 @@
 import "@/styles/globals.css";
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/500.css";
-import "@fontsource/space-mono/400.css";
+import { Poppins } from "next/font/google";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
@@ -18,6 +16,13 @@ import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
 import type { User } from "@/core/api/dto/user";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["400", "500"],
+});
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -50,17 +55,42 @@ function App({ Component, ...rest }: AppProps) {
   }, [storedToken, isValidUser]);
 
   useEffect(() => {
-    const handleRouteChange = (url: string) => {
+    const handleRouteChangeStart = (url: string) => {
       if (url.startsWith("/signin")) {
         savePathURL(window.location.pathname);
       } else {
         deletePathURL();
       }
+
+      if (router.asPath !== url) {
+        const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
+
+        if (!_navigationLoadingSpinnerOverlay) {
+          const navigationLoadingSpinnerOverlay = document.createElement("div");
+          const navigationLoadingSpinner = document.createElement("div");
+          navigationLoadingSpinner.id = "navigation-loading";
+
+          navigationLoadingSpinnerOverlay.classList.add("navigationSpinnerOverlay");
+          navigationLoadingSpinnerOverlay.appendChild(navigationLoadingSpinner);
+          document.body.appendChild(navigationLoadingSpinnerOverlay);
+        } else {
+          _navigationLoadingSpinnerOverlay.classList.remove("hidden");
+        }
+      }
+    };
+    const handleRouteChangeComplete = (_url: string) => {
+      const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
+
+      if (_navigationLoadingSpinnerOverlay) {
+        _navigationLoadingSpinnerOverlay.classList.add("hidden");
+      }
     };
 
-    router.events.on("routeChangeStart", handleRouteChange);
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
     return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
     };
   }, [router]);
 
@@ -70,6 +100,7 @@ function App({ Component, ...rest }: AppProps) {
     if (viewportMetaTagElement && navigator.userAgent.includes("iPhone")) {
       viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1");
     }
+    document.body.className = `${poppins.variable} font-sans`;
   }, []);
 
   return (

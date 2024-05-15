@@ -1,11 +1,12 @@
-import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import type { GetServerSideProps } from "next/types";
-import { Layout } from "@/layout";
+
+import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { getCategories } from "@/hooks/api/categories";
-import { useAppSelector } from "@/hooks/useStore";
-import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import useBrowser from "@/hooks/useBrowser";
+import { useAppSelector } from "@/hooks/useStore";
+import { Layout } from "@/layout";
 import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 import HomepageLayout from "@/components/Homepage";
 import Footer from "@/components/Footer";
@@ -17,14 +18,16 @@ function HomePage({ categories }: { categories: Category[] }) {
 
   return (
     <Layout>
-      <Box
+      <Stack
         mt={{ xs: 7, md: 0 }}
         padding={{ xs: "4px 0px", md: "0px 8px" }}
         p={{ xs: "16px", md: "42px" }}
       >
-        {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
+        <Stack minHeight={"100svh"}>
+          {isValidUser ? <HomepageLayout categories={categories} /> : <GuestUserLayout categories={categories} />}
+        </Stack>
         {!isMobile && <Footer />}
-      </Box>
+      </Stack>
     </Layout>
   );
 }

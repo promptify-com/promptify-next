@@ -299,7 +299,7 @@ function Styler({ selectedNodeData, setSelectedNodeData, type }: IProps) {
             sx={{
               p: "30px",
               pb: "10px",
-              fontFamily: "Space Mono",
+              fontFamily: "var(--font-mono)",
               fontSize: 22,
               fontWeight: "600",
             }}
@@ -313,7 +313,7 @@ function Styler({ selectedNodeData, setSelectedNodeData, type }: IProps) {
                   key={preset.id}
                   sx={{
                     mt: 2,
-                    fontFamily: "Space Mono",
+                    fontFamily: "var(--font-mono)",
                     fontSize: 16,
                     cursor: "pointer",
                     color: "black",

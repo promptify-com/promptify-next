@@ -37,7 +37,6 @@ const Login = () => {
         sx={{
           width: "54px",
           height: "26px",
-          fontFamily: "Poppins",
           fontStyle: "normal",
           fontWeight: 500,
           fontSize: "15px",
@@ -209,7 +208,6 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
                     sx={{
                       width: "61px",
                       height: "26px",
-                      fontFamily: "Poppins",
                       fontStyle: "normal",
                       fontWeight: 500,
                       fontSize: "15px",

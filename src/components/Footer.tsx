@@ -96,6 +96,7 @@ function Footer() {
                   <Link
                     href={link.href}
                     style={{ textDecoration: "none" }}
+                    aria-label={link.title}
                   >
                     <Typography
                       sx={{
@@ -103,7 +104,6 @@ function Footer() {
                         fontWeight: 500,
                         lineHeight: { xs: "170%", md: "150%" },
                         color: "onSurface",
-                        // fontFeatureSettings: "'clig' off, 'liga' off",
                       }}
                     >
                       {link.title}
@@ -123,6 +123,7 @@ function Footer() {
                   href={link.href}
                   key={index}
                   target="_blank"
+                  aria-label={link.title}
                 >
                   <IconButton
                     sx={{
@@ -131,6 +132,7 @@ function Footer() {
                         bgcolor: "action.hover",
                       },
                     }}
+                    aria-label={link.title}
                   >
                     {link.icon}
                   </IconButton>
@@ -152,7 +154,6 @@ function Footer() {
               lineHeight: "160%",
               letterSpacing: "0.17px",
               color: "secondary.light",
-              fontFeatureSettings: "'clig' off, 'liga' off",
             }}
           >
             © {thisYear} Promptify.com - Promptify LLC. All rights reserved.

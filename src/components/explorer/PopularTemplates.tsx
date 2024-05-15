@@ -9,7 +9,6 @@ import useBrowser from "@/hooks/useBrowser";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-
 interface Props {
   catId?: number;
 }
@@ -29,6 +28,7 @@ function PopularTemplates({ catId }: Props) {
     isInternal: false,
     categoryId: catId,
     status: "published",
+    include: "slug,thumbnail,title,description,favorites_count,likes,created_by,tags",
   };
 
   const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);
@@ -84,7 +84,6 @@ function PopularTemplates({ catId }: Props) {
           fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
           color={"onSurface"}
-          fontFamily={"Poppins"}
           lineHeight={"120%"}
           letterSpacing={"0.17px"}
           fontStyle={"normal"}

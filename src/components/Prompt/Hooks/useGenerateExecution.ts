@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
@@ -15,7 +15,7 @@ import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
+import { createExecuteErrorToast } from "@/components/Chat/helper";
 
 interface IStreamExecution {
   id: number;
@@ -34,7 +34,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { uploadedFiles, uploadPromptAnswersFiles } = useUploadPromptFiles();
   const [stopExecution] = useStopExecutionMutation();
 
-  const { answers, inputs, paramsValues } = useAppSelector(state => state.chat);
+  const { answers, inputs, paramsValues, selectedTemplate } = useAppSelector(state => state.chat);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
@@ -48,6 +48,26 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
   const { preparePromptsData } = useChatBox();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
+
+  const currentGeneratedPrompt = useMemo(() => {
+    if (generatedExecution?.data?.length && selectedTemplate) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const prompt = selectedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
+      if (prompt) return prompt;
+    }
+
+    return null;
+  }, [generatedExecution]);
+
+  const filteredPrompts = useMemo(() => {
+    return selectedTemplate?.prompts.filter(prompt => prompt.show_output !== false) || [];
+  }, [selectedTemplate]);
+
+  const EXECUTE_ERROR_TOAST = createExecuteErrorToast(
+    currentGeneratedPrompt?.title,
+    currentGeneratedPrompt?.order,
+    filteredPrompts.length,
+  );
 
   const generateExecutionHandler = async (onGenerateExecution = (executionId: number) => {}) => {
     if (!template) return;
@@ -91,11 +111,22 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     dispatch(setGeneratedExecution({ data: [], created_at: new Date(), hasNext: true }));
     generatingCompleted.current = false;
     while ((executionMatch = regex.exec(response)) !== null) {
+      if (isNaN(parseInt(executionMatch[2]))) {
+        continue;
+      }
+
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
 
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
       await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
     }
+
+    if (!generatedExecution?.data.length) {
+      dispatch(setToast({ message: "No data available!", severity: "info" }));
+      dispatch(setGeneratedExecution(null));
+      dispatch(setGeneratingStatus(false));
+    }
+
     generatingCompleted.current = true;
   };
 
@@ -156,6 +187,8 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
               data: prevState.data,
               connectionOpened: true,
             }));
+
+            return;
           }
 
           if (message.includes("[ERROR]")) {
