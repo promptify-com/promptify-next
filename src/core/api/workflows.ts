@@ -16,9 +16,10 @@ export const workflowsApi = baseApi.injectEndpoints({
           keepUnusedDataFor: 21600,
         }),
       }),
-      getWorkflowById: builder.query<IWorkflow, number>({
-        query: workflowsId => ({
-          url: `/api/n8n/workflows/${workflowsId}/`,
+
+      getWorkflowByslug: builder.query<IWorkflow, string>({
+        query: workflowSlug => ({
+          url: `/api/n8n/workflow_by_slug/${workflowSlug}`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
@@ -78,11 +79,11 @@ export const workflowsApi = baseApi.injectEndpoints({
 export const {
   useGetWorkflowsQuery,
   useCreateUserWorkflowMutation,
-  useGetWorkflowByIdQuery,
   useCreateCredentialsMutation,
   useGetCredentialsQuery,
   useDeleteCredentialMutation,
   useUpdateWorkflowMutation,
   useGetAuthUrlQuery,
   useGetWorkflowQuery,
+  useGetWorkflowByslugQuery,
 } = workflowsApi;
