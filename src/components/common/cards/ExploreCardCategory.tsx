@@ -8,7 +8,6 @@ import { Category } from "@/core/api/dto/templates";
 import Typography from "@mui/material/Typography";
 import useBrowser from "@/hooks/useBrowser";
 import { CategoryCard } from "./CardCategory";
-import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
   category: Category;
@@ -19,7 +18,7 @@ function ExploreCardCategory({ category, priority }: Props) {
   const { isMobile } = useBrowser(true);
 
   return (
-    <ClientOnly>
+    <>
       {isMobile ? (
         <CategoryCard
           category={category}
@@ -114,7 +113,7 @@ function ExploreCardCategory({ category, priority }: Props) {
           </Card>
         </Link>
       )}
-    </ClientOnly>
+    </>
   );
 }
 
