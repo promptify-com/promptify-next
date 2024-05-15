@@ -6,18 +6,19 @@ import Button from "@mui/material/Button";
 import ArticleOutlined from "@mui/icons-material/ArticleOutlined";
 import ForumOutlined from "@mui/icons-material/ForumOutlined";
 import DataObject from "@mui/icons-material/DataObject";
+import Instructions from "./Instructions";
+import ExecutionExample from "./ExecutionExample";
+
 import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
 import ClientOnly from "@/components/base/ClientOnly";
 import useBrowser from "@/hooks/useBrowser";
-import Footer from "../Footer";
-
 import lazy from "next/dynamic";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
-const Instructions = lazy(() => import("./Instructions"), { ssr: false });
-const ExecutionExample = lazy(() => import("./ExecutionExample"), { ssr: false });
 const ApiAccess = lazy(() => import("./ApiAccess"), { ssr: false });
 const Feedback = lazy(() => import("./Feedback"), { ssr: false });
+const Footer = lazy(() => import("../Footer"), { ssr: false });
 
 const ScrollTabs: Link[] = [
   {
@@ -50,6 +51,14 @@ interface Props {
 export default function ContentContainer({ template, tabsFixed }: Props) {
   const { isMobile } = useBrowser();
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
+
+  const apiAccessContainerRef = useRef<HTMLDivElement | null>(null);
+  const feedbackContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const observers = {
+    apiAccessObserver: useIntersectionObserver(apiAccessContainerRef, { threshold: 0.5 }),
+    feedbackObserver: useIntersectionObserver(feedbackContainerRef, { threshold: 0.5 }),
+  };
 
   const handleTabChange = (tab: Link) => {
     setSelectedTab(tab);
@@ -154,13 +163,17 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           promptsData={template.prompts || []}
         />
       </div>
-      <div id="api">
-        <ApiAccess template={template} />
+      <div
+        id="api"
+        ref={apiAccessContainerRef}
+      >
+        {observers.apiAccessObserver?.isIntersecting && <ApiAccess template={template} />}
       </div>
-      <div id="feedback">
-        <ClientOnly>
-          <Feedback />
-        </ClientOnly>
+      <div
+        id="feedback"
+        ref={feedbackContainerRef}
+      >
+        <ClientOnly>{observers.feedbackObserver?.isIntersecting && <Feedback />}</ClientOnly>
       </div>
       {isMobile && <Footer />}
     </Box>

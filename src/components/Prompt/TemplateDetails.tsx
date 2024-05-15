@@ -142,28 +142,27 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
               </Stack>
             )}
           </Stack>
-          {isMobile && (
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                height: "30svh",
-                borderRadius: { md: "24px" },
-                overflow: "hidden",
+
+          <Box
+            sx={{
+              position: "relative",
+              width: "100%",
+              height: { xs: "30svh", md: 0 },
+              borderRadius: { md: "24px" },
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={template.title?.slice(0, 1) ?? "P"}
+              priority={true}
+              fill
+              sizes="(max-width: 900px) 253px, 446px"
+              style={{
+                objectFit: "cover",
               }}
-            >
-              <Image
-                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                alt={template.title?.slice(0, 1) ?? "P"}
-                priority={true}
-                fill
-                sizes="(max-width: 900px) 253px, 446px"
-                style={{
-                  objectFit: "cover",
-                }}
-              />
-            </Box>
-          )}
+            />
+          </Box>
 
           {!isMobile && (
             <Stack
