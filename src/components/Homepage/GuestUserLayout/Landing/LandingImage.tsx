@@ -1,12 +1,12 @@
 import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
-import { isDesktopViewPort } from "@/common/helpers";
-import { Typography } from "@mui/material";
+import useBrowser from "@/hooks/useBrowser";
+import Typography from "@mui/material/Typography";
 
 function LandingImage() {
-  const isDesktop = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
-  const renderImageByViewport = isDesktop ? require("./empower-2-desktop.webp") : require("./empower-2-mobile.webp");
+  const renderImageByViewport = !isMobile ? require("./empower-2-desktop.webp") : require("./empower-2-mobile.webp");
 
   return (
     <Box position={"relative"}>
@@ -27,8 +27,8 @@ function LandingImage() {
           position: "relative",
           zIndex: 1,
           margin: "0 55px",
-          width: isDesktop ? "353px" : "253px",
-          height: isDesktop ? "408px" : "293px",
+          width: !isMobile ? "353px" : "253px",
+          height: !isMobile ? "408px" : "293px",
           borderRadius: "999px 999px 0 0",
           overflow: "hidden",
         }}

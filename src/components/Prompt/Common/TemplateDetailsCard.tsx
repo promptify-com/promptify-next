@@ -14,7 +14,8 @@ import { useRouter } from "next/router";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Image from "@/components/design-system/Image";
-import { isDesktopViewPort, stripTags } from "@/common/helpers";
+import { stripTags } from "@/common/helpers";
+import useBrowser from "@/hooks/useBrowser";
 
 interface DetailsCardProps {
   title: string;
@@ -74,7 +75,7 @@ const DescriptionTags = ({ description, tags }: { description: string; tags?: Ta
 export default function TemplateDetailsCard({ title, description, tags, categoryName, thumbnail }: DetailsCardProps) {
   const [expanded, setExpanded] = useState(false);
 
-  const isMobile = !isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   return (
     <Box

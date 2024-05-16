@@ -5,10 +5,10 @@ import Typography from "@mui/material/Typography";
 import CreateBuilderCard from "@/components/builder/CreateBuilderCard";
 import TemplateSuggestionPlaceholder from "@/components/placeholders/TemplateSuggestionPlaceholder";
 import { useGetMyTemplatesQuery } from "@/core/api/templates";
+import TemplateCard from "@/components/common/TemplateCard";
+import useBrowser from "@/hooks/useBrowser";
 import type { TemplatesWithPagination } from "@/core/api/dto/templates";
 import type { ICreateBuilderLink } from "@/components/builder/Types";
-import TemplateCard from "@/components/common/TemplateCard";
-import { isDesktopViewPort } from "@/common/helpers";
 
 const createPageLinks = [
   {
@@ -24,7 +24,7 @@ const createPageLinks = [
 ] satisfies ICreateBuilderLink[];
 
 export default function WelcomeScreen() {
-  const desktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const { data: templates, isLoading } = useGetMyTemplatesQuery(
     {
@@ -32,7 +32,7 @@ export default function WelcomeScreen() {
       limit: 1,
       status: "draft",
     },
-    { skip: !desktopView },
+    { skip: isMobile },
   );
 
   return (
@@ -100,7 +100,7 @@ export default function WelcomeScreen() {
           ))}
         </Stack>
 
-        {desktopView && (
+        {!isMobile && (
           <>
             {isLoading && <TemplateSuggestionPlaceholder />}
 

@@ -28,8 +28,8 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
-import { isDesktopViewPort } from "@/common/helpers";
 import { DesktopIcon } from "@/assets/icons/DesktopIcon";
+import useBrowser from "@/hooks/useBrowser";
 
 export const PromptBuilder = ({ isNewTemplate = false }) => {
   const router = useRouter();
@@ -39,11 +39,11 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const [publishTemplate] = usePublishTemplateMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const desktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const slug = router.query.slug as string;
 
-  const { data: engines } = useGetEnginesQuery(undefined, { skip: !desktopView });
+  const { data: engines } = useGetEnginesQuery(undefined, { skip: isMobile });
   const { data: fetchedTemplateData, isLoading: isTemplateLoading } = useGetPromptTemplateBySlugQuery(slug, {
     skip: isNewTemplate,
   });
@@ -254,7 +254,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
 
   return (
     <Layout>
-      {desktopView ? (
+      {!isMobile ? (
         <Box
           sx={{
             mt: "-10px",

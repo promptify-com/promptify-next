@@ -7,10 +7,10 @@ import { FavoriteList } from "@/assets/icons/FavoriteList";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 import LoadingOverlay from "@/components/design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
-import { isDesktopViewPort } from "@/common/helpers";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import lazy from "next/dynamic";
+import useBrowser from "@/hooks/useBrowser";
 
 const CollectionsListLazy = lazy(() => import("./CollectionsList"));
 
@@ -25,7 +25,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({ sidebarOpen }) 
     },
   });
   const isValidUser = useAppSelector(isValidUserFn);
-  const isDesktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   return (
     <Box>
@@ -71,7 +71,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({ sidebarOpen }) 
                 overflowX: "hidden",
               }}
             >
-              {isDesktopView && showOverlay && <LoadingOverlay showOnDesktop />}
+              {!isMobile && showOverlay && <LoadingOverlay showOnDesktop />}
               <CollectionsListLazy sidebarOpen={sidebarOpen} />
             </List>
           </Box>

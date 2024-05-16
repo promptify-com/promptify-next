@@ -6,12 +6,12 @@ import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined
 
 import { useAppDispatch } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { isDesktopViewPort } from "@/common/helpers";
 import { setToast } from "@/core/store/toastSlice";
 import { setCurrentExecutionDetails } from "@/core/store/chatSlice";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/ExportExecutionButton";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   execution?: TemplatesExecutions;
@@ -19,7 +19,7 @@ interface Props {
 
 function ExecutionMessageActions({ execution }: Props) {
   const dispatch = useAppDispatch();
-  const isDesktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -99,7 +99,7 @@ function ExecutionMessageActions({ execution }: Props) {
               }}
               onClick={saveExecution}
             >
-              {isDesktopView && <>{execution.is_favorite ? "Delete from documents" : "Save"}</>}
+              {!isMobile && <>{execution.is_favorite ? "Delete from documents" : "Save"}</>}
             </Button>
             <ExportExecutionButton execution={execution} />
           </Stack>
