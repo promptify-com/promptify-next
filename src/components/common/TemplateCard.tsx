@@ -254,6 +254,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
                       bgcolor: "action.hover",
                     },
                   }}
+                  aria-label="edit"
                 >
                   <ModeEditOutline />
                 </IconButton>
@@ -273,6 +274,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
                     bgcolor: "action.hover",
                   },
                 }}
+                aria-label="delete"
               >
                 <DeleteForeverOutlined />
               </IconButton>
