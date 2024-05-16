@@ -20,7 +20,7 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
 
   const { updateChat } = useChatsManager();
 
-  const { selectedChat } = useAppSelector(state => state.chat);
+  const selectedChat = useAppSelector(state => state.chat?.selectedChat);
 
   const { image, name, description } = workflow;
 

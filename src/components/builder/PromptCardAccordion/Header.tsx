@@ -24,7 +24,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
-  const engines = useAppSelector(state => state.builder.engines);
+  const engines = useAppSelector(state => state.builder?.engines);
 
   const closeEnginesModal = () => {
     setEnginesAnchor(null);

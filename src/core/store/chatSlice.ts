@@ -6,28 +6,9 @@ import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IChat, ChatOption } from "@/core/api/dto/chats";
+import { IChatSliceState } from "./types";
 
-export interface ExecutionsProps {
-  answers: IAnswer[];
-  inputs: IPromptInput[];
-  params: PromptParams[];
-  paramsValues: ResOverrides[];
-  isSimulationStreaming: boolean;
-  credentialsInput: ICredentialInput[];
-  areCredentialsStored: boolean;
-  tmpMessages?: IMessage[];
-  selectedTemplate?: Templates;
-  selectedChatOption?: ChatOption | null;
-  selectedChat?: IChat;
-  selectedWorkflow?: IWorkflow;
-  chatMode: ChatMode;
-  initialChat: boolean;
-  parameterSelected: string | null;
-  currentExecutionDetails: { id: number | null; isFavorite: boolean };
-  chats: IChat[];
-}
-
-const initialState: ExecutionsProps = {
+const initialState: IChatSliceState = {
   answers: [],
   inputs: [],
   params: [],

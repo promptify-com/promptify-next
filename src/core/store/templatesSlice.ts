@@ -1,25 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { AnsweredInputType } from "@/common/types/prompt";
 import type { PopupTemplateDocument, TempalteApiStatusState } from "@/core/api/dto/templates";
 import type { Link } from "@/components/Prompt/Types";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { ITemplateSliceState } from "./types";
 
-export interface TemplatesProps {
-  is_favorite: boolean;
-  is_liked: boolean;
-  id: number;
-  likes: number;
-  isGenerating: boolean;
-  answeredInputs: AnsweredInputType[];
-  activeSideBarLink: Link | null;
-  showPromptsView: boolean;
-  templateApiStatus: TempalteApiStatusState;
-  popupTemplateDocument: PopupTemplateDocument;
-}
+type UpdateTemplateDataPayload = Pick<ITemplateSliceState, "is_favorite" | "is_liked" | "id" | "likes">;
 
-type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "is_liked" | "id" | "likes">;
-
-const initialState: TemplatesProps = {
+const initialState: ITemplateSliceState = {
   is_favorite: false,
   is_liked: false,
   id: 0,

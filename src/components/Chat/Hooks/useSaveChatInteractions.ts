@@ -29,7 +29,7 @@ const useSaveChatInteractions = () => {
   const [saveTemplate] = useSaveChatTemplateMutation();
   const [saveBatchingMessages] = useBatchingMessagesMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedChatOption = useAppSelector(state => state.chat.selectedChatOption);
+  const selectedChatOption = useAppSelector(state => state.chat?.selectedChatOption ?? null);
 
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
 

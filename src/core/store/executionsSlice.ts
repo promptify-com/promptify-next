@@ -2,16 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { TemplatesExecutions } from "../api/dto/templates";
 import type { PromptLiveResponse } from "@/common/types/prompt";
+import { IExecutionsSliceState } from "./types";
 
-export interface ExecutionsProps {
-  selectedExecution: TemplatesExecutions | null;
-  generatedExecution: PromptLiveResponse | null;
-  repeatedExecution: TemplatesExecutions | null;
-  sparkHashQueryParam: string | null;
-  isFetching: boolean;
-}
-
-const initialState: ExecutionsProps = {
+const initialState: IExecutionsSliceState = {
   selectedExecution: null,
   generatedExecution: null,
   repeatedExecution: null,

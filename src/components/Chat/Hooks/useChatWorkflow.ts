@@ -14,6 +14,7 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useSaveChatInteractions from "./useSaveChatInteractions";
 import { useDeleteExecutionMutation } from "@/core/api/executions";
+import { IChatSliceState, IExecutionsSliceState } from "@/core/store/types";
 
 interface Props {
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
@@ -26,8 +27,8 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat);
-  const { generatedExecution } = useAppSelector(state => state.executions);
+  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const [deleteExecution] = useDeleteExecutionMutation();
 

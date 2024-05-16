@@ -11,6 +11,7 @@ import {
   useRemoveTemplateLikeMutation,
 } from "@/core/api/templates";
 import { Templates } from "@/core/api/dto/templates";
+import { ITemplateSliceState } from "@/core/store/types";
 
 const useSaveFavoriteTemplate = (template?: Templates) => {
   const router = useRouter();
@@ -18,7 +19,7 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
   const [isFetching, setIsFetching] = useState(false);
   const isValidUser = useAppSelector(isValidUserFn);
   const favoriteCollectionId = useAppSelector(state => state.user.currentUser?.favorite_collection_id);
-  const selectedTemplate = useAppSelector(state => state.template);
+  const selectedTemplate = useAppSelector(state => state.templates ?? {}) as ITemplateSliceState;
 
   const { data: fetchedTemplate } = useGetTemplateByIdQuery(selectedTemplate.id, {
     skip: Boolean(template || !selectedTemplate.id),

@@ -16,7 +16,7 @@ import SigninButton from "@/components/common/buttons/SigninButton";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
+import executionsSlice, { setSelectedExecution } from "@/core/store/executionsSlice";
 import { chatsApi } from "@/core/api/chats";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
@@ -26,6 +26,10 @@ import Button from "@mui/material/Button";
 import { theme } from "@/theme";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 import lazy from "next/dynamic";
+import { IChatSliceState, IExecutionsSliceState } from "@/core/store/types";
+import store from "@/core/store";
+import chatSlice from "@/core/store/chatSlice";
+import templatesSlice from "@/core/store/templatesSlice";
 
 const ChatsHistoryLazy = lazy(() => import("@/components/sidebar/ChatsHistory/ChatsHistory"), {
   ssr: false,
@@ -41,12 +45,18 @@ function Chat() {
   const [displayChatHistoryOnMobile, setDisplayChatHistoryOnMobile] = useState(false);
   const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating);
+  const { generatedExecution = null, selectedExecution = null } = useAppSelector(
+    state => state.executions ?? {},
+  ) as IExecutionsSliceState;
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
-    state => state.chat,
-  );
+  const {
+    selectedTemplate,
+    selectedChatOption = null,
+    selectedChat,
+    chatMode = "automation",
+    initialChat = true,
+  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
   const { createChat, updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
   const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();
@@ -176,6 +186,16 @@ function Chat() {
   };
 
   useEffect(() => {
+    if (!store.asyncReducers["chat"]) {
+      store.injectReducers([
+        { key: "chat", asyncReducer: chatSlice },
+        { key: "templates", asyncReducer: templatesSlice },
+        { key: "executions", asyncReducer: executionsSlice },
+      ]);
+    }
+  }, [store]);
+
+  useEffect(() => {
     return () => {
       dispatch(setSelectedChat(undefined));
       dispatch(setInitialChat(true));
@@ -225,8 +245,8 @@ function Chat() {
     }
   }, [isGenerating, generatedExecution]);
 
-  const showLanding = !!!messages.length && !selectedTemplate;
-  const showChatInput = isInputStyleQA || !!selectedExecution || chatMode === "automation";
+  const showLanding = !messages.length && !selectedTemplate;
+  const showChatInput = isInputStyleQA || selectedExecution || chatMode === "automation";
 
   return (
     <ThemeProvider theme={dynamicTheme}>

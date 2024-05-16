@@ -11,7 +11,7 @@ import { setChats } from "@/core/store/chatSlice";
 
 const useChatsManager = () => {
   const dispatch = useAppDispatch();
-  const chats = useAppSelector(state => state.chat.chats);
+  const chats = useAppSelector(state => state.chat?.chats ?? []);
 
   const [createChatAction] = useCreateChatMutation();
   const [updateChatAction] = useUpdateChatMutation();

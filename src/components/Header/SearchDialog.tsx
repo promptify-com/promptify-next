@@ -11,7 +11,6 @@ import SearchByKeywords from "./SearchByKeywords";
 import { useDeferredValue, useEffect, useState } from "react";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
-import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import SearchField from "@/components/common/forms/SearchField";
@@ -37,7 +36,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
     skip: !textInput.length,
   });
 
-  const title = useSelector((state: RootState) => state.filters.title);
+  const title = useSelector((state: RootState) => state.filters?.title);
 
   const handleClose = (e: any) => {
     e.stopPropagation();
@@ -133,7 +132,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
       </DialogTitle>
       <DialogContent>
         {textInput === "" ? (
-          <SearchByKeywords title={title} />
+          <SearchByKeywords title={title ?? ""} />
         ) : (
           <Grid>
             {isFetching ? (
