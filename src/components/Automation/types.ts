@@ -56,6 +56,7 @@ interface IData {
 }
 
 export interface IWorkflow {
+  slug: string;
   id: number;
   name: string;
   description?: string;

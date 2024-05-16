@@ -38,7 +38,7 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
 
   return (
     <Link
-      href={`/automation/${workflow.id}`}
+      href={`/automation/${workflow.slug}`}
       style={{ textDecoration: "none" }}
     >
       <Card

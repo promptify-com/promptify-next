@@ -30,6 +30,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import Storage from "@/common/storage";
 import { workflowsApi } from "@/core/api/workflows";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
   workflow: IWorkflow;
@@ -246,9 +247,9 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 }
 
 export async function getServerSideProps({ params }: any) {
-  const { workflowId } = params;
+  const { slug } = params;
   try {
-    const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
+    const res = await authClient.get(`/api/n8n/workflow_by_slug/${slug}/`);
     const workflow: IWorkflow = res.data;
 
     return {
