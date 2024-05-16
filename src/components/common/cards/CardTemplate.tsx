@@ -49,9 +49,10 @@ function CardTemplate({ template }: CardTemplateProps) {
               transition: "top 0.3s ease",
             },
             ".card-effect": {
+              height: "168px",
               m: 0,
               borderRadius: "16px 16px 0 0",
-              transition: "margin 0.3s ease, border-radius 0.3s ease",
+              transition: "height 0.3s ease, margin 0.3s ease, border-radius 0.3s ease",
             },
             ".gradient-effect": {
               opacity: 1,
@@ -217,6 +218,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                           borderRadius: "100px",
                           border: "1px solid rgba(0, 0, 0, 0.08)",
                           bgcolor: "white",
+                          "& .MuiChip-label": {
+                            p: "10px",
+                          },
                         }}
                       />
                     ) : (
@@ -253,6 +257,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                               borderRadius: "100px",
                               border: "1px solid rgba(0, 0, 0, 0.08)",
                               bgcolor: "white",
+                              "& .MuiChip-label": {
+                                p: "10px",
+                              },
                             }}
                           />
                         )}
