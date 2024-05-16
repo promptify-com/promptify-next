@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import { alpha } from "@mui/material";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -6,15 +7,15 @@ import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Tag, Templates } from "@/core/api/dto/templates";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+
 import { theme } from "@/theme";
 import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import { useRouter } from "next/router";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
+import type { Tag } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
 
 interface DetailsCardProps {
