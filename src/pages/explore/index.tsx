@@ -285,7 +285,9 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   let categories: Category[] = [];
   const [_categories, _templates] = await Promise.allSettled([
     await getCategories(),
-    authClient.get("/api/meta/templates?ordering=-runs&limit=12&status=published&is_internal=false"),
+    authClient.get(
+      "/api/meta/templates?ordering=-runs&limit=12&status=published&is_internal=false&include=slug,thumbnail,title,description,favorites_count,likes,executions_count,created_by,tags",
+    ),
   ]);
 
   if (_templates.status === "fulfilled") {
