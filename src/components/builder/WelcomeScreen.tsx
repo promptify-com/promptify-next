@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -7,8 +8,7 @@ import TemplateSuggestionPlaceholder from "@/components/placeholders/TemplateSug
 import type { TemplatesWithPagination } from "@/core/api/dto/templates";
 import type { ICreateBuilderLink } from "@/components/builder/Types";
 import TemplateCard from "@/components/common/TemplateCard";
-import { useEffect, useState } from "react";
-import { authClient } from "@/common/axios";
+import { useLazyGetMyTemplatesQuery } from "@/core/api/templates";
 
 const createPageLinks = [
   {
@@ -24,33 +24,25 @@ const createPageLinks = [
 ] satisfies ICreateBuilderLink[];
 
 export default function WelcomeScreen() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [templates, setTemplates] = useState<TemplatesWithPagination | null>(null);
+  const [triggerGetMyTemplates, { data: templates, isLoading }] = useLazyGetMyTemplatesQuery();
 
   useEffect(() => {
-    const isDesktop = window.innerWidth >= 1024;
+    const isDesktop = window.innerWidth >= 900;
 
     if (isDesktop) {
       const fetchData = async () => {
         try {
-          setIsLoading(true);
-          const response = await authClient.get("api/meta/templates/me?ordering=-created_at&limit=1&status=draft");
-
-          setTemplates(response.data);
+          triggerGetMyTemplates({ ordering: "-created_at", limit: 1, status: "draft" });
         } catch (error) {
           console.error("Error fetching data:", error);
-        } finally {
-          setIsLoading(false);
         }
       };
 
       fetchData();
-    } else {
-      setIsLoading(false);
     }
 
     const handleResize = () => {
-      const newIsDesktop = window.innerWidth >= 1024;
+      const newIsDesktop = window.innerWidth >= 900;
       if (newIsDesktop !== isDesktop) {
         window.location.reload();
       }
