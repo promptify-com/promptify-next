@@ -12,11 +12,11 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import MessageBoxHeader from "@/components/Chat/Messages/MessageBoxHeader";
 import FormInputs from "@/components/Prompt/Common/Chat/Form";
 import FormPromptContent from "@/components/Chat/FormPromptContent";
-import { isDesktopViewPort } from "@/common/helpers";
 import { setChatMode } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
 import RunButton from "../RunButton";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   content: string;
@@ -26,7 +26,7 @@ interface Props {
 }
 
 function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Props) {
-  const isDesktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
   const dispatch = useAppDispatch();
 
   const { inputs, answers } = useAppSelector(state => state.chat);
@@ -121,7 +121,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
                           }
                         />
                       }
-                      label={isDesktopView ? "Form mode" : ""}
+                      label={!isMobile ? "Form mode" : ""}
                       sx={{
                         fontSize: 12,
                       }}
@@ -143,7 +143,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
                         },
                       }}
                     >
-                      {isDesktopView && "Close"}
+                      {!isMobile && "Close"}
                     </Button>
                   </Stack>
                 </Stack>

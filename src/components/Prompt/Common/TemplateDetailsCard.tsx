@@ -13,10 +13,10 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { theme } from "@/theme";
 import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import useBrowser from "@/hooks/useBrowser";
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
 import type { Tag } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
 
 interface DetailsCardProps {
   title: string;

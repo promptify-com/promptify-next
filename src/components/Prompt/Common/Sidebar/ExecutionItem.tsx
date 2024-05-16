@@ -12,7 +12,6 @@ import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } fro
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { isDesktopViewPort } from "@/common/helpers";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 import useTruncate from "@/hooks/useTruncate";
@@ -22,6 +21,7 @@ import useVariant from "../../Hooks/useVariant";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
+import useBrowser from "@/hooks/useBrowser";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
@@ -34,7 +34,7 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
   const dispatch = useAppDispatch();
   const { isVariantB } = useVariant();
   const { truncate } = useTruncate();
-  const isMobile = !isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 

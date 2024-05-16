@@ -1,9 +1,9 @@
 import { FC, ReactNode, useRef, useCallback } from "react";
 import Grid from "@mui/material/Grid";
-import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
-import { isDesktopViewPort } from "@/common/helpers";
-import PaginatedList from "./PaginatedList";
 import ArrowRight from "@mui/icons-material/ArrowRight";
+import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
+import PaginatedList from "./PaginatedList";
+import useBrowser from "@/hooks/useBrowser";
 
 interface InfiniteScrollContainerProps {
   loading: boolean;
@@ -27,7 +27,7 @@ const InfiniteScrollContainer: FC<InfiniteScrollContainerProps> = ({
   placeholder,
 }) => {
   const observer = useRef<IntersectionObserver | null>(null);
-  const isMobile = !isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const lastTemplateElementRef = useCallback(
     (node: HTMLDivElement) => {
