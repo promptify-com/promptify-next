@@ -1,8 +1,6 @@
-import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-
 import {
   setSelectedEngine,
   setSelectedTag,
@@ -12,7 +10,6 @@ import {
 } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import Storage from "@/common/storage";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
@@ -24,26 +21,6 @@ function PromptsFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
   const { tag, engine, engineType } = useAppSelector(state => state.filters);
-
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
-    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-  }, []);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
     dispatch(setSelectedEngine(selectedEngine));

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import lazy from "next/dynamic";
 import { useRouter } from "next/router";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
@@ -11,12 +11,15 @@ import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import TryRounded from "@mui/icons-material/TryRounded";
 import { useTheme } from "@mui/material/styles";
 import useBrowser from "@/hooks/useBrowser";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import SidebarItem from "@/components/sidebar/SidebarItem";
 import EditorIcon from "@/components/builder/Assets/EditorIcon";
 import type { NavItem } from "@/common/types/sidebar";
 import Book3 from "@/assets/icons/Book3";
+import Storage from "@/common/storage";
+import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
+import { setSelectedEngine, setSelectedEngineType, setSelectedTag } from "@/core/store/filtersSlice";
 
 const PromptsDrawerLazy = lazy(() => import("./PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -36,6 +39,7 @@ const LearnDrawerLazy = lazy(() => import("./LearnSidebar/LearnDrawer"), {
 
 function Sidebar() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const { isMobile } = useBrowser();
   const [mouseHover, setMouseHover] = useState<boolean>(false);
@@ -117,6 +121,28 @@ function Sidebar() {
   if (isMobile) {
     return null;
   }
+
+  useEffect(() => {
+    if (isPromptsPage) {
+      const storedEngine = Storage.get("engineFilter") as unknown as Engine;
+      const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
+      const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
+
+      if (storedEngine) {
+        dispatch(setSelectedEngine(storedEngine));
+      }
+
+      if (storedTags.length > 0) {
+        storedTags.forEach((tag: Tag) => {
+          dispatch(setSelectedTag(tag));
+        });
+      }
+
+      if (storedEngineType) {
+        dispatch(setSelectedEngineType(storedEngineType));
+      }
+    }
+  }, []);
 
   const promptFilterExpanded = isPromptsPage && mouseHover;
   const chatsExpanded = isChatPage && mouseHover;
