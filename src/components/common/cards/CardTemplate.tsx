@@ -201,14 +201,30 @@ function CardTemplate({ template }: CardTemplateProps) {
                 gap="8px"
                 flexWrap="wrap"
               >
-                <Box
-                  display="flex"
-                  gap="8px"
-                  flexWrap="wrap"
-                >
-                  {displayedTags.map((tag, index) => (
-                    <>
-                      {index === 0 ? (
+                {displayedTags.map((tag, index) => (
+                  <>
+                    {index === 0 ? (
+                      <Chip
+                        key={tag.id}
+                        label={tag.name}
+                        size="small"
+                        sx={{
+                          fontSize: "11px",
+                          fontWeight: 500,
+                          lineHeight: "16px",
+                          textAlign: "left",
+                          padding: "7px 12px 7px 12px",
+                          borderRadius: "100px",
+                          border: "1px solid rgba(0, 0, 0, 0.08)",
+                          bgcolor: "white",
+                        }}
+                      />
+                    ) : (
+                      <Stack
+                        gap="8px"
+                        direction={{ xs: "column", md: "row" }}
+                        alignItems={{ xs: "start", md: "center" }}
+                      >
                         <Chip
                           key={tag.id}
                           label={tag.name}
@@ -219,56 +235,31 @@ function CardTemplate({ template }: CardTemplateProps) {
                             lineHeight: "16px",
                             textAlign: "left",
                             padding: "7px 12px 7px 12px",
-                            gap: "6px",
                             borderRadius: "100px",
                             border: "1px solid rgba(0, 0, 0, 0.08)",
                             bgcolor: "white",
                           }}
                         />
-                      ) : (
-                        <Stack
-                          gap="8px"
-                          direction={{ xs: "column", md: "row" }}
-                          alignItems={{ xs: "start", md: "center" }}
-                        >
+                        {remainingTagsCount > 0 && (
                           <Chip
-                            key={tag.id}
-                            label={tag.name}
+                            label={`+${remainingTagsCount}`}
                             size="small"
                             sx={{
                               fontSize: "11px",
                               fontWeight: 500,
                               lineHeight: "16px",
                               textAlign: "left",
-                              padding: "7px 12px 7px 12px",
-                              gap: "6px",
+                              p: "7px 1px 7px 1px",
                               borderRadius: "100px",
                               border: "1px solid rgba(0, 0, 0, 0.08)",
                               bgcolor: "white",
                             }}
                           />
-                          {remainingTagsCount > 0 && (
-                            <Chip
-                              label={`+${remainingTagsCount}`}
-                              size="small"
-                              sx={{
-                                fontSize: "11px",
-                                fontWeight: 500,
-                                lineHeight: "16px",
-                                textAlign: "left",
-                                p: "7px 1px 7px 1px",
-                                gap: "6px",
-                                borderRadius: "100px",
-                                border: "1px solid rgba(0, 0, 0, 0.08)",
-                                bgcolor: "white",
-                              }}
-                            />
-                          )}
-                        </Stack>
-                      )}
-                    </>
-                  ))}
-                </Box>
+                        )}
+                      </Stack>
+                    )}
+                  </>
+                ))}
               </Box>
             )}
           </Box>
