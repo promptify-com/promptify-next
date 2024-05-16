@@ -12,7 +12,7 @@ import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
@@ -22,8 +22,10 @@ import Footer from "@/components/Footer";
 import PaginatedList from "@/components/PaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { Category, TemplateExecutionsDisplay, Templates, Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
+import Storage from "@/common/storage";
+import { setSelectedEngine, setSelectedEngineType, setSelectedTag } from "@/core/store/filtersSlice";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -36,6 +38,7 @@ interface Props {
 const scrollYThreshold = 500;
 
 export default function ExplorePage({ categories = [] }: Props) {
+  const dispatch = useAppDispatch();
   const {
     templates,
     handleNextPage,
@@ -69,6 +72,26 @@ export default function ExplorePage({ categories = [] }: Props) {
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
+
+  useEffect(() => {
+    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
+    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
+    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
+
+    if (storedEngine) {
+      dispatch(setSelectedEngine(storedEngine));
+    }
+
+    if (storedTags.length > 0) {
+      storedTags.forEach((tag: Tag) => {
+        dispatch(setSelectedTag(tag));
+      });
+    }
+
+    if (storedEngineType) {
+      dispatch(setSelectedEngineType(storedEngineType));
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
