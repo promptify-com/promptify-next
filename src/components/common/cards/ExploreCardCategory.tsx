@@ -15,7 +15,7 @@ interface Props {
 }
 
 function ExploreCardCategory({ category, priority }: Props) {
-  const { isMobile } = useBrowser(true);
+  const { isMobile } = useBrowser();
 
   return (
     <>
