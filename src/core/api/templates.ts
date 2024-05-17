@@ -267,5 +267,4 @@ export const {
   useGetPromptExecutionsQuery,
   useDeletePromptExecutionsMutation,
   useCreatePromptMutation,
-  useLazyGetMyTemplatesQuery,
 } = templatesApi;

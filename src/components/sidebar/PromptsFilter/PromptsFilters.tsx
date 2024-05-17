@@ -1,15 +1,8 @@
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-import {
-  setSelectedEngine,
-  setSelectedTag,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  deleteSelectedEngineType,
-} from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
@@ -19,24 +12,17 @@ import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsFilters() {
-  const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine } = useAppSelector(state => state.filters);
-  const { filters, handleSelectEngineType } = usePromptsFilter();
-  const { engineType } = filters;
+  const { engine } = useAppSelector(state => state.filters);
+  const { filters, handleSelectEngineType, handleSelectTag } = usePromptsFilter();
+  const { engineType, tag } = filters;
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
     // setSelectedEngineTypes(selectedEngine);
   };
 
   const handleTagSelect = (selectedTag: Tag) => {
-    const tagExists = tag.some(tagItem => tagItem.id === selectedTag.id);
-
-    if (tagExists) {
-      dispatch(deleteSelectedTag(selectedTag.id));
-    } else {
-      dispatch(setSelectedTag(selectedTag));
-    }
+    handleSelectTag(selectedTag);
   };
 
   const handleEngineTypeSelect = (type: EngineType) => {

@@ -34,7 +34,6 @@ export function useGetTemplatesByFilter({
   const { categorySlug, subcategorySlug } = router.query;
   const filters = useAppSelector(state => state.filters);
   const { tag: tags, engine, title, isFavourite } = filters;
-  const { filters: routerFilters } = usePromptsFilter();
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
@@ -42,7 +41,10 @@ export function useGetTemplatesByFilter({
   const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
 
+  const { filters: routerFilters } = usePromptsFilter();
   const engineType = routerFilters.engineType;
+
+  console.log({ routerFilters });
 
   const params: FilterParams = {
     tags,
