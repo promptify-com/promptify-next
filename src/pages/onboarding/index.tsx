@@ -5,6 +5,7 @@ import { useQuestions } from "../../hooks/api/questions";
 import Finish from "@/components/onboarding/Finish";
 import Questions from "@/components/onboarding/Questions";
 import { LogoApp } from "@/assets/icons/LogoApp";
+import Link from "next/link";
 
 const thisYear = new Date().getFullYear();
 
@@ -46,7 +47,11 @@ function Onboarding() {
           gap: "var(--borderRadius, 4px)",
           alignSelf: "stretch",
           mt: "var(--3, 24px)",
+          textDecoration: "none",
+          color: "inherit",
         }}
+        component={Link}
+        href="/"
       >
         <LogoApp />
         <Typography

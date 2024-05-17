@@ -50,6 +50,21 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
 
   const allowGenerate = allRequiredInputsAnswered();
 
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      console.log(event.key);
+      if (event.key === "Enter" && allowGenerate) {
+        onGenerate();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   return (
     <Stack>
       <Typography

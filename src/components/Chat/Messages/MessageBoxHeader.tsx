@@ -8,7 +8,9 @@ import { useAppSelector } from "@/hooks/useStore";
 import RunButton from "@/components/Chat/RunButton";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/ExportExecutionButton";
+import SaveExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/SaveExecutionButton";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   onExpand?: () => void;
@@ -31,7 +33,7 @@ function MessageBoxHeader({
 }: Props) {
   const { selectedTemplate, selectedChatOption, answers, inputs, params } = useAppSelector(state => state.chat);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
+  const { isMobile } = useBrowser();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const isInputStyleForm = currentUser?.preferences?.input_style === "form" || selectedChatOption === "form";
@@ -119,7 +121,12 @@ function MessageBoxHeader({
             />
           </>
         )}
-        {variant === "EXECUTION" && !isGenerating && execution && <ExportExecutionButton execution={execution} />}
+        {variant === "EXECUTION" && !isGenerating && execution && (
+          <>
+            {!isMobile && <SaveExecutionButton execution={execution} />}
+            <ExportExecutionButton execution={execution} />
+          </>
+        )}
 
         {templateShown && (
           <TemplateActions

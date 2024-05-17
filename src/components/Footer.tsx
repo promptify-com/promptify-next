@@ -60,7 +60,12 @@ function Footer() {
             gap={"48px"}
             alignItems={{ md: "center" }}
           >
-            <Stack flexDirection={"row"}>
+            <Stack
+              flexDirection={"row"}
+              component={Link}
+              href="/"
+              sx={{ textDecoration: "none", color: "inherit" }}
+            >
               <LogoApp
                 width={23}
                 color="#1B1B1F"
