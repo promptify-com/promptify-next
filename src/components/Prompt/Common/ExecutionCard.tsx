@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Error from "@mui/icons-material/Error";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
@@ -10,13 +10,15 @@ import { useAppSelector } from "@/hooks/useStore";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
 import type { Prompts } from "@/core/api/dto/prompts";
-import type { TemplatesExecutions } from "@/core/api/dto/templates";
+import type { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import { alpha } from "@mui/material";
+import { IconButton, alpha } from "@mui/material";
 import { theme } from "@/theme";
+import Edit from "@mui/icons-material/Edit";
+import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -39,6 +41,14 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     selectedSlide,
     totalSlides,
   } = useCarousel({ autoHeight: !isStreaming, options: { loop: false, dragFree: false } });
+
+  const [openExecutionEditPopup, setOpenExecutionEditPopup] = useState<ExecutionTemplatePopupType>(null);
+  const [executionTitle, setExecutionTitle] = useState((execution as TemplatesExecutions)?.title);
+
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const isOwner = currentUser?.id === (execution as TemplatesExecutions)?.executed_by;
+
+  const allowRename = executionTitle && !isStreaming && isOwner;
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
@@ -117,7 +127,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
         width: { xs: "calc(100% - 32px)", md: "calc(100% - 48px)" },
       }}
     >
-      {execution && (
+      {execution && !isStreaming && (
         <Typography
           sx={{
             fontSize: { xs: 30, md: 48 },
@@ -127,7 +137,40 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             wordBreak: "break-word",
           }}
         >
-          {!isStreaming ? execution.title : "Untitled"}
+          {executionTitle}
+
+          {allowRename && (
+            <Tooltip
+              arrow
+              title="Rename"
+              PopperProps={{
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -5],
+                    },
+                  },
+                ],
+              }}
+            >
+              <IconButton
+                onClick={e => {
+                  e.stopPropagation();
+                  setOpenExecutionEditPopup("update");
+                }}
+                sx={{
+                  border: "none",
+                  ml: { md: 1 },
+                  ":hover": {
+                    bgcolor: "surface.4",
+                  },
+                }}
+              >
+                <Edit style={{ width: "30px", height: "30px" }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Typography>
       )}
       {execution && (
@@ -295,6 +338,15 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             </Typography>
           </CarouselButtons>
         </Stack>
+      )}
+
+      {openExecutionEditPopup === "update" && execution && (
+        <SparkSaveDeletePopup
+          type={openExecutionEditPopup}
+          activeExecution={execution as TemplatesExecutions}
+          onClose={() => setOpenExecutionEditPopup(null)}
+          onUpdate={execution => setExecutionTitle(execution.title)}
+        />
       )}
     </Stack>
   );

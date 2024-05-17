@@ -107,10 +107,10 @@ function Sidebar() {
   ];
   const learnHelpNavItem = {
     name: "Learn",
-    href: "/learn",
+    href: "https://blog.promptify.com/",
     icon: <Book3 {...(isLearnPage && { color: theme.palette.primary.main })} />,
     active: isLearnPage,
-    external: false,
+    external: true,
     reload: false,
   };
 

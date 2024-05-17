@@ -75,7 +75,7 @@ export const SparkSaveDeletePopup = ({
             defaultValue={activeExecution?.title}
             onChange={e => setExecutionTitle(e.target.value)}
             id="standard-basic"
-            label="Rename Spark"
+            label="Rename Document"
             variant="standard"
             fullWidth
             color="secondary"
