@@ -1,22 +1,18 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { alpha } from "@mui/material/styles";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
 import { theme } from "@/theme";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
-import { useAppDispatch } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
 import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
 
 type CardTemplateProps = {
@@ -24,14 +20,16 @@ type CardTemplateProps = {
 };
 
 function CardTemplate({ template }: CardTemplateProps) {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
 
+  const { tags } = template;
+
   const imgPriority = observer?.isIntersecting;
+  const displayedTags = tags.slice(0, 2);
+  const remainingTagsCount = tags.length - displayedTags.length;
 
   return (
     <Link
@@ -47,94 +45,88 @@ function CardTemplate({ template }: CardTemplateProps) {
         ref={containerRef}
         sx={{
           minWidth: { xs: "50%", sm: !isMobile ? "210px" : "auto" },
-          height: !isMobile ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
-          cursor: "pointer",
-          p: !isMobile ? "16px 16px 8px" : "0 0 8px 0",
-          bgcolor: "transparent",
-          ".tags": {
-            display: "none",
-          },
+          display: "flex",
+          flexDirection: "column",
+          bgcolor: "#F9F9F9",
+          transition: "all 0.3s ease",
           "&:hover": {
-            bgcolor: "surface.2",
-            borderRadius: "16px 16px 0 0",
-            ".tags": {
-              display: "flex",
+            ".likes-favorites": {
+              top: 8,
+              transition: "top 0.3s ease",
+            },
+            ".card-effect": {
+              height: "168px",
+              m: 0,
+              borderRadius: "16px 16px 0 0",
+              transition: "height 0.3s ease, margin 0.3s ease, border-radius 0.3s ease",
+            },
+            ".gradient-effect": {
+              opacity: 1,
+              transition: "opacity 0.3s ease",
+            },
+            ".icon-text-style": {
+              bgcolor: "rgba(0, 0, 0, 0.5)",
+              border: "1px solid rgba(0, 0, 0, 0.02)",
+              transition: "background-color 0.3s ease, border 0.3s ease",
             },
           },
         }}
         elevation={0}
       >
-        <Stack
-          direction={"column"}
-          alignItems={"flex-start"}
-          justifyContent={"space-between"}
-          gap={{ xs: 0, md: 1 }}
-          height={"100%"}
-        >
+        <Stack sx={{ flex: "1 0 auto" }}>
           <Stack
-            direction={"column"}
-            justifyContent={{ xs: "flex-start", md: "space-between" }}
-            alignItems={"flex-start"}
-            gap={{ xs: "10px", md: 2 }}
-            width={"100%"}
-            height={"100%"}
+            sx={{
+              position: "relative",
+              zIndex: 1,
+              borderRadius: "16px",
+              overflow: "hidden",
+              height: { xs: "135px", md: "160px" },
+              m: "8px 8px 0 8px",
+              transition: "margin 0.3s ease, height 0.3s ease, border-radius 0.3s ease",
+            }}
+            className="card-effect"
           >
-            <CardMedia
+            <Image
+              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={template.title}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              sizes="(max-width: 600px) 176px, (max-width: 900px) 216px, 216px"
+              priority={imgPriority}
+            />
+            <Stack
               sx={{
-                zIndex: 1,
-                borderRadius: "16px",
-                overflow: "hidden",
+                height: "100%",
                 width: "100%",
-                height: { xs: "135px", md: "160px" },
+                position: "absolute",
+                left: 0,
+                bottom: 0,
+                zIndex: 9999,
+                background:
+                  "linear-gradient(to bottom, rgba(255, 255, 255, 0) 60%, rgba(250, 250, 250, 0.75) 80%, rgba(249, 249, 249, 1) 100%)",
+                opacity: 0,
+                transition: "opacity 0.3s ease",
               }}
-            >
-              <Image
-                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                alt={template.title}
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                sizes="(max-width: 600px) 176px, (max-width: 900px) 216px, 216px"
-                priority={imgPriority}
-              />
-            </CardMedia>
-            <Stack
-              flex={1}
-              gap={0.5}
-            >
-              <Typography
-                fontSize={14}
-                fontWeight={500}
-              >
-                {template.title}
-              </Typography>
-              {!isMobile && (
-                <Typography
-                  sx={{
-                    fontSize: 12,
-                    fontWeight: 400,
-                    lineHeight: "16.8px",
-                    letterSpacing: "0.15px",
-                    color: "onSurface",
-                    opacity: 0.75,
-                  }}
-                >
-                  {truncate(stripTags(template.description), { length: 70 })}
-                </Typography>
-              )}
-            </Stack>
-
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={1}
-              width={{ xs: "auto", md: "100%" }}
-              mt={{ xs: "-10px", md: 0 }}
+              className="gradient-effect"
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: 126,
+                right: 8,
+                display: "flex",
+                gap: "8px",
+                zIndex: 2,
+                transition: "top 0.3s ease",
+              }}
+              className="likes-favorites"
             >
               <Stack
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
                 sx={iconTextStyle}
+                className="icon-text-style"
               >
                 <Favorite />
                 {template.favorites_count || 0}
@@ -145,66 +137,149 @@ function CardTemplate({ template }: CardTemplateProps) {
                   alignItems={"center"}
                   gap={0.5}
                   sx={iconTextStyle}
+                  className="icon-text-style"
                 >
                   <Bolt />
                   {template.likes || template.executions_count || 0}
                 </Stack>
               )}
-              {template.created_by?.username && (
+            </Box>
+          </Stack>
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap="16px"
+            p={"16px"}
+          >
+            <Stack
+              flex={1}
+              gap={"8px"}
+            >
+              <Typography
+                fontSize={14}
+                fontWeight={500}
+              >
+                {template.title}
+              </Typography>
+              {!isMobile && (
                 <Typography
-                  onClick={e => {
-                    e.preventDefault();
-                    router.push(`/users/${template.created_by?.username}`);
+                  sx={{
+                    fontSize: 11,
+                    fontWeight: 400,
+                    lineHeight: "16.5px",
+                    textAlign: "left",
                   }}
-                  fontSize={13}
-                  fontWeight={400}
-                  color={alpha(theme.palette.onSurface, 0.75)}
-                  ml={"auto"}
                 >
-                  by {template.created_by.first_name || template.created_by.username}
+                  {truncate(stripTags(template.description), { length: 70 })}
                 </Typography>
               )}
             </Stack>
-          </Stack>
 
-          <Stack
-            sx={{
-              position: "absolute",
-              top: "100%",
-              left: 0,
-              right: 0,
-              zIndex: 9999,
-              p: "8px",
-              bgcolor: "surface.2",
-              borderRadius: "0 0 16px 16px",
-              alignItems: "flex-start",
-              alignContent: "flex-start",
-              flexDirection: "row",
-              gap: "8px var(--1, 8px)",
-              flexWrap: "wrap",
-              transition: "background-color 0.3s ease",
-            }}
-            className="tags"
-          >
-            {template.tags.map(tag => (
-              <Chip
-                onClick={e => {
-                  e.preventDefault();
-                  dispatch(setSelectedTag(tag));
-                  router.push("/explore");
-                }}
-                size="small"
-                label={tag.name}
-                key={tag.id}
-                sx={{
-                  fontSize: { xs: 11, md: 13 },
-                  fontWeight: 400,
-                  bgcolor: "white",
-                  color: "onSurface",
-                }}
-              />
-            ))}
-          </Stack>
+            <Box
+              display="flex"
+              alignItems="center"
+            >
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+              >
+                <Image
+                  src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                  alt={template.created_by?.first_name ?? "Promptify"}
+                  width={18}
+                  height={18}
+                  style={{
+                    backgroundColor: theme.palette.surface[5],
+                    borderRadius: "50%",
+                  }}
+                />
+
+                <Typography
+                  fontSize={11}
+                  fontWeight={500}
+                  lineHeight={"13.2px"}
+                  textAlign={"left"}
+                >
+                  {template.created_by?.first_name}
+                </Typography>
+              </Stack>
+            </Box>
+
+            {tags.length > 0 && (
+              <Box
+                display="flex"
+                gap="8px"
+                flexWrap="wrap"
+              >
+                {displayedTags.map((tag, index) => (
+                  <>
+                    {index === 0 ? (
+                      <Chip
+                        key={tag.id}
+                        label={tag.name}
+                        size="small"
+                        sx={{
+                          fontSize: "11px",
+                          fontWeight: 500,
+                          lineHeight: "16px",
+                          textAlign: "left",
+                          padding: "7px 12px 7px 12px",
+                          borderRadius: "100px",
+                          border: "1px solid rgba(0, 0, 0, 0.08)",
+                          bgcolor: "white",
+                          "& .MuiChip-label": {
+                            p: "10px",
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Stack
+                        gap="8px"
+                        direction={{ xs: "column", md: "row" }}
+                        alignItems={{ xs: "start", md: "center" }}
+                      >
+                        <Chip
+                          key={tag.id}
+                          label={tag.name}
+                          size="small"
+                          sx={{
+                            fontSize: "11px",
+                            fontWeight: 500,
+                            lineHeight: "16px",
+                            textAlign: "left",
+                            padding: "7px 12px 7px 12px",
+                            borderRadius: "100px",
+                            border: "1px solid rgba(0, 0, 0, 0.08)",
+                            bgcolor: "white",
+                          }}
+                        />
+                        {remainingTagsCount > 0 && (
+                          <Chip
+                            label={`+${remainingTagsCount}`}
+                            size="small"
+                            sx={{
+                              fontSize: "11px",
+                              fontWeight: 500,
+                              lineHeight: "16px",
+                              textAlign: "left",
+                              p: "7px 1px 7px 1px",
+                              borderRadius: "100px",
+                              border: "1px solid rgba(0, 0, 0, 0.08)",
+                              bgcolor: "white",
+                              "& .MuiChip-label": {
+                                p: "10px",
+                              },
+                            }}
+                          />
+                        )}
+                      </Stack>
+                    )}
+                  </>
+                ))}
+              </Box>
+            )}
+          </Box>
         </Stack>
       </Card>
     </Link>
@@ -214,9 +289,14 @@ function CardTemplate({ template }: CardTemplateProps) {
 const iconTextStyle = {
   fontSize: 13,
   fontWeight: 400,
-  color: "onSurface",
+  color: "white",
+  bgcolor: "rgba(0, 0, 0, 0.8)",
+  borderRadius: "100px",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  padding: "0px 12px",
+  height: "26px",
   svg: {
-    fontSize: 14,
+    fontSize: 12,
   },
 };
 
