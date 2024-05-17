@@ -14,13 +14,20 @@ const usePromptsFilter = () => {
     category: null,
     subCategory: null,
     engineType: [],
-    isFavourite: false,
+    isFavorite: false,
   });
   const { data: engines } = useGetEnginesQuery();
 
   const routerEngine = router.query.engine as string | undefined;
   const routerEngineTypes = router.query.type as string | undefined;
   const routerTags = router.query.tags as string | undefined;
+  const routerIsFavorite = router.query.isFavorite as string | undefined;
+
+  const handleCheckIsFavorite = (isFavorite: boolean) => {
+    updateQueryParams({
+      isFavorite,
+    });
+  };
 
   const handleSelectEngine = (engine: Engine | null) => {
     updateQueryParams({
@@ -91,6 +98,10 @@ const usePromptsFilter = () => {
   };
 
   useEffect(() => {
+    setFilters({ ...filters, isFavorite: Boolean(routerIsFavorite) });
+  }, [routerIsFavorite]);
+
+  useEffect(() => {
     const selectedEngine = routerEngine ? engines?.find(eng => eng.id === Number(routerEngine)) : null;
     setFilters({ ...filters, engine: selectedEngine ?? null });
   }, [routerEngine]);
@@ -149,6 +160,7 @@ const usePromptsFilter = () => {
 
   return {
     filters,
+    handleCheckIsFavorite,
     handleSelectEngine,
     handleSelectEngineType,
     handleSelectTag,

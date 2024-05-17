@@ -25,6 +25,7 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { authClient } from "@/common/axios";
+import usePromptsFilter from "../../components/explorer/Hooks/usePromptsFilter";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -61,7 +62,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isFavorite = useAppSelector(state => state.filters.isFavourite);
+  const { filters } = usePromptsFilter();
 
   const {
     data: suggestedTemplates,
@@ -122,7 +123,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
           <FiltersSelected show={!allFilterParamsNull} />
 
           {allFilterParamsNull &&
-            !isFavorite &&
+            !filters.isFavorite &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
                 <Typography

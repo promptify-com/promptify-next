@@ -9,7 +9,7 @@ const initialState: SelectedFilters = {
   category: null,
   subCategory: null,
   engineType: [],
-  isFavourite: false,
+  isFavorite: false,
 };
 
 const filterSlice = createSlice({
@@ -72,7 +72,7 @@ const filterSlice = createSlice({
     },
 
     setMyFavoritesChecked: (state, action: PayloadAction<boolean>) => {
-      state.isFavourite = action.payload;
+      state.isFavorite = action.payload;
       if (!action.payload) {
         Storage.remove("myFavoritesChecked");
         return;
@@ -97,7 +97,7 @@ export const countSelectedFilters = (state: SelectedFilters): number => {
   if (state.category) count += 1;
   if (state.subCategory) count += 1;
   if (state.title) count += 1;
-  if (state.isFavourite) count += 1;
+  if (state.isFavorite) count += 1;
 
   count += state.tag.length;
   count += state.engineType.length;

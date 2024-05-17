@@ -2,7 +2,6 @@ import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useAppSelector } from "@/hooks/useStore";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
