@@ -76,6 +76,7 @@ function CardTemplate({ template }: CardTemplateProps) {
               overflow: "hidden",
               height: { xs: "135px", md: "160px" },
               m: "8px 8px 0 8px",
+              transition: "margin 0.3s ease, height 0.3s ease, border-radius 0.3s ease",
             }}
             className="card-effect"
           >
@@ -88,15 +89,16 @@ function CardTemplate({ template }: CardTemplateProps) {
             />
             <Stack
               sx={{
-                height: "115px",
+                height: "100%",
                 width: "100%",
                 position: "absolute",
                 left: 0,
-                bottom: -10,
+                bottom: 0,
                 zIndex: 9999,
                 background:
-                  "linear-gradient(to top, rgba(249, 249, 249, 1), rgba(250, 250, 250, 0.9), rgba(255, 255, 255, 0))",
+                  "linear-gradient(to bottom, rgba(255, 255, 255, 0) 60%, rgba(250, 250, 250, 0.75) 80%, rgba(249, 249, 249, 1) 100%)",
                 opacity: 0,
+                transition: "opacity 0.3s ease",
               }}
               className="gradient-effect"
             />
@@ -108,6 +110,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 display: "flex",
                 gap: "8px",
                 zIndex: 2,
+                transition: "top 0.3s ease",
               }}
               className="likes-favorites"
             >
