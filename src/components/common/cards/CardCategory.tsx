@@ -1,7 +1,6 @@
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import type { Category } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
@@ -23,7 +22,7 @@ export const CategoryCard = ({ category, href, index, priority, min }: Props) =>
   const token = useToken();
   const { isMobile } = useBrowser();
   const { truncate } = useTruncate();
-  const shouldPrioritizeImage = priority ?? token ? false : isMobile ? index === 0 || index === 1 : true;
+  const shouldPrioritizeImage = priority ? true : token ? false : isMobile ? index === 0 || index === 1 : true;
   return (
     <Link
       href={href}
