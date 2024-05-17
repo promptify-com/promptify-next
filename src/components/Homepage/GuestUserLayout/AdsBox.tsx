@@ -16,7 +16,6 @@ function AdsBox() {
         width: { xs: "100%", md: "94%" },
         height: "275px",
         ml: { xs: 0, md: 2 },
-        mt: "16px",
       }}
     >
       <Image
