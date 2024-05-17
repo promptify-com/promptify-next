@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import type { EngineType, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import type { Engine, EngineType, SelectedFilters, Tag } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import { ParsedUrlQueryInput } from "querystring";
+import { useGetEnginesQuery } from "@/core/api/engines";
 
 const usePromptsFilter = () => {
   const router = useRouter();
@@ -15,9 +16,17 @@ const usePromptsFilter = () => {
     engineType: [],
     isFavourite: false,
   });
+  const { data: engines } = useGetEnginesQuery();
 
+  const routerEngine = router.query.engine as string | undefined;
   const routerEngineTypes = router.query.type as string | undefined;
   const routerTags = router.query.tags as string | undefined;
+
+  const handleSelectEngine = (engine: Engine | null) => {
+    updateQueryParams({
+      engine: engine?.id,
+    });
+  };
 
   const handleSelectEngineType = (engineType: EngineType) => {
     const isSelected = filters.engineType.some(type => type.id === engineType.id);
@@ -82,6 +91,11 @@ const usePromptsFilter = () => {
   };
 
   useEffect(() => {
+    const selectedEngine = routerEngine ? engines?.find(eng => eng.id === Number(routerEngine)) : null;
+    setFilters({ ...filters, engine: selectedEngine ?? null });
+  }, [routerEngine]);
+
+  useEffect(() => {
     const engineTypes = routerEngineTypes
       ? routerEngineTypes
           .split(",")
@@ -135,6 +149,7 @@ const usePromptsFilter = () => {
 
   return {
     filters,
+    handleSelectEngine,
     handleSelectEngineType,
     handleSelectTag,
   };

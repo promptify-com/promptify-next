@@ -13,12 +13,11 @@ import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsFilters() {
   const { data: tags } = useGetTagsPopularQuery();
-  const { engine } = useAppSelector(state => state.filters);
-  const { filters, handleSelectEngineType, handleSelectTag } = usePromptsFilter();
-  const { engineType, tag } = filters;
+  const { filters, handleSelectEngine, handleSelectEngineType, handleSelectTag } = usePromptsFilter();
+  const { engine, engineType, tag } = filters;
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
-    // setSelectedEngineTypes(selectedEngine);
+    handleSelectEngine(selectedEngine);
   };
 
   const handleTagSelect = (selectedTag: Tag) => {
