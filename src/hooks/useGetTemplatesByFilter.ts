@@ -5,6 +5,7 @@ import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Templates, FilterParams, LowercaseTemplateStatus, SelectedFilters } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface Props {
   catId?: number;
@@ -32,13 +33,16 @@ export function useGetTemplatesByFilter({
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
   const filters = useAppSelector(state => state.filters);
-  const { tag: tags, engine, title, engineType, isFavourite } = filters;
+  const { tag: tags, engine, title, isFavourite } = filters;
+  const { filters: routerFilters } = usePromptsFilter();
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
+
+  const engineType = routerFilters.engineType;
 
   const params: FilterParams = {
     tags,

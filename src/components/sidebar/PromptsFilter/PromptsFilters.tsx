@@ -16,14 +16,17 @@ import Collapsible from "@/components/sidebar/Collapsible";
 import StaticFilterItems from "@/components/sidebar/PromptsFilter/StaticFilterItems";
 import type { Item } from "@/components/sidebar/Collapsible";
 import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine, engineType } = useAppSelector(state => state.filters);
+  const { tag, engine } = useAppSelector(state => state.filters);
+  const { filters, handleSelectEngineType } = usePromptsFilter();
+  const { engineType } = filters;
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
-    dispatch(setSelectedEngine(selectedEngine));
+    // setSelectedEngineTypes(selectedEngine);
   };
 
   const handleTagSelect = (selectedTag: Tag) => {
@@ -37,12 +40,7 @@ function PromptsFilters() {
   };
 
   const handleEngineTypeSelect = (type: EngineType) => {
-    const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
-    if (isEngineTypeExisted) {
-      dispatch(deleteSelectedEngineType(type));
-    } else {
-      dispatch(setSelectedEngineType(type));
-    }
+    handleSelectEngineType(type);
   };
 
   const isSelected = (item: Item) => {
