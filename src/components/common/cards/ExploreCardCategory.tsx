@@ -33,7 +33,6 @@ function ExploreCardCategory({ category, priority }: Props) {
         >
           <Card
             elevation={0}
-            title={category.name}
             sx={{
               display: "flex",
               flexDirection: "column",
