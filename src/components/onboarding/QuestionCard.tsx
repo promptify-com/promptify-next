@@ -57,8 +57,14 @@ const QuestionCard = ({ name, id, selectedOptionId, setSelectedOptionId }: ICard
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        cursor: "pointer",
         gap: "16px",
         m: "auto",
+        transition: "background-color 0.3s ease",
+        "&:hover": {
+          backgroundColor: "var(--surfaceContainerHigh, #F9F9F9)",
+          transition: "background-color 0.3s ease",
+        },
       }}
       borderRadius="16px"
       border={
