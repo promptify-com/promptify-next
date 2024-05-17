@@ -98,15 +98,8 @@ const usePromptsFilter = () => {
   };
 
   useEffect(() => {
-    setFilters({ ...filters, isFavorite: Boolean(routerIsFavorite) });
-  }, [routerIsFavorite]);
-
-  useEffect(() => {
+    const isFavorite = Boolean(routerIsFavorite);
     const selectedEngine = routerEngine ? engines?.find(eng => eng.id === Number(routerEngine)) : null;
-    setFilters({ ...filters, engine: selectedEngine ?? null });
-  }, [routerEngine]);
-
-  useEffect(() => {
     const engineTypes = routerEngineTypes
       ? routerEngineTypes
           .split(",")
@@ -119,44 +112,21 @@ const usePromptsFilter = () => {
           })
           .filter((type): type is { id: number; label: string } => type !== undefined)
       : [];
-    setFilters({ ...filters, engineType: engineTypes });
-  }, [routerEngineTypes]);
-
-  useEffect(() => {
     const tags = routerTags
       ? routerTags.split(",").map(tag => {
           const [id, name] = tag.split("_");
           return { id: Number(id), name };
         })
       : [];
-    setFilters({ ...filters, tag: tags });
-  }, [routerTags]);
 
-  useEffect(() => {
-    // const engineTypes = routerEngineTypes
-    //   .split(",")
-    //   .map(rType => {
-    //     const contentType = contentTypeItems.find(type => type.id === Number(rType));
-    //     if (contentType) {
-    //       return { id: contentType.id, label: contentType.name };
-    //     }
-    //   })
-    //   .filter((type): type is { id: number; label: string } => type !== undefined);
-    // selectEngineType(engineTypes);
-    // const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    // const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
-    // if (storedEngine) {
-    //   dispatch(setSelectedEngine(storedEngine));
-    // }
-    // if (storedTags.length > 0) {
-    //   storedTags.forEach((tag: Tag) => {
-    //     dispatch(setSelectedTag(tag));
-    //   });
-    // }
-    // if (storedEngineType) {
-    //   dispatch(setSelectedEngineType(storedEngineType));
-    // }
-  }, []);
+    setFilters({
+      ...filters,
+      isFavorite,
+      engine: selectedEngine ?? null,
+      engineType: engineTypes,
+      tag: tags,
+    });
+  }, [router.query]);
 
   return {
     filters,
