@@ -212,7 +212,14 @@ const Finish = () => {
               onClick={formik.submitForm}
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={23} /> : <>Finish</>}
+              {isLoading ? (
+                <CircularProgress
+                  size={23}
+                  sx={{ color: "onPrimary" }}
+                />
+              ) : (
+                <>Finish</>
+              )}
             </Button>
           </Box>
         </FinishCard>

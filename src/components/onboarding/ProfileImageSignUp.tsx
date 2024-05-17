@@ -317,6 +317,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
               </Typography>
             </Button>
             <Button
+              disabled={isLoading}
               sx={{
                 width: "160px",
                 height: "50px",
@@ -338,7 +339,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
               {isLoading ? (
                 <CircularProgress
                   size={20}
-                  color="secondary"
+                  sx={{ color: "onPrimary" }}
                 />
               ) : (
                 <>Crop & Save</>
