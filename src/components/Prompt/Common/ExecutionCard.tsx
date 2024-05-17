@@ -152,8 +152,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                   const engineType = prompt?.engine?.output_type ?? "TEXT";
                   const isImage = isImageOutput(exec.content, engineType);
                   const prevItem = sortedPrompts[index - 1];
-                  const isPrevItemImage = isImageOutput(sortedPrompts[index - 1]?.content);
-                  const isNextItemText = !isImageOutput(sortedPrompts[index + 1]?.content);
+                  const nextItem = sortedPrompts[index + 1];
+                  const isPrevItemImage = prevItem && isImageOutput(prevItem.content);
+                  const isNextItemText = nextItem && !isImageOutput(nextItem.content);
 
                   const renderImagePrompt = isImage && !isNextItemText;
                   const renderTextImagePrompt = !isImage && isPrevItemImage;

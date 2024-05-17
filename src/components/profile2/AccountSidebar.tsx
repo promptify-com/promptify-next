@@ -7,9 +7,9 @@ import { AccountSidebarWidth, navItems } from "./Constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useLogout from "@/hooks/useLogout";
-import { isDesktopViewPort } from "@/common/helpers";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import IconButton from "@mui/material/IconButton";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   closeSidebar?: () => void;
@@ -18,7 +18,7 @@ interface Props {
 export default function AccountSidebar({ closeSidebar }: Props) {
   const router = useRouter();
   const logout = useLogout();
-  const desktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const handleLogout = async () => {
     await logout();
@@ -26,12 +26,12 @@ export default function AccountSidebar({ closeSidebar }: Props) {
 
   return (
     <Box
-      width={desktopView ? AccountSidebarWidth : "301px"}
+      width={!isMobile ? AccountSidebarWidth : "301px"}
       height={"100svh"}
       sx={{
         position: "fixed",
         top: 0,
-        ...(desktopView
+        ...(!isMobile
           ? {
               right: 0,
             }
@@ -71,7 +71,7 @@ export default function AccountSidebar({ closeSidebar }: Props) {
             My Account
           </Typography>
 
-          {!desktopView && (
+          {isMobile && (
             <IconButton
               sx={{
                 border: "none",

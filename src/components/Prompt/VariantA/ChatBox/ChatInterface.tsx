@@ -5,7 +5,6 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import GenerateAndClearButton from "./GenerateAndClearButton";
-import { isDesktopViewPort } from "@/common/helpers";
 import { MessageSparkBox } from "./MessageSparkBox";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
@@ -16,6 +15,7 @@ import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   template: Templates;
@@ -35,7 +35,7 @@ export const ChatInterface = ({
   abortGenerating,
 }: Props) => {
   const dispatch = useAppDispatch();
-  const isDesktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
@@ -87,7 +87,7 @@ export const ChatInterface = ({
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      <Box mx={!isDesktopView ? "16px" : "40px"}>
+      <Box mx={isMobile ? "16px" : "40px"}>
         {typeof template !== "undefined" && !isExecutionShown && (
           <TemplateDetailsCard
             title={template.title}

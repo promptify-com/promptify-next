@@ -8,13 +8,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import ChatsSuggestions from "@/components/common/ChatsSuggestions";
 import { useTheme } from "@mui/material/styles";
-import { isDesktopViewPort } from "@/common/helpers";
 import UserLayout from "@/components/profile2/UserLayout";
+import useBrowser from "@/hooks/useBrowser";
 
 function Profile() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const theme = useTheme();
-  const desktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
   return (
     <Protected>
       <Layout>
@@ -38,7 +38,7 @@ function Profile() {
                 gap={2}
                 p={{ xs: "16px", md: 0 }}
               >
-                {desktopView && (
+                {!isMobile && (
                   <Avatar
                     src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
                     alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
@@ -61,7 +61,7 @@ function Profile() {
                   Welcome, {currentUser?.username}
                 </Typography>
 
-                {!desktopView && (
+                {isMobile && (
                   <Typography
                     sx={{
                       color: "var(--onSurface, var(--onSurface, #1B1B1F))",

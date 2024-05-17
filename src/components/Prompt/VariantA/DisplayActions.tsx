@@ -20,7 +20,7 @@ import { useDispatch } from "react-redux";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
-import { isDesktopViewPort } from "@/common/helpers";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   onOpenExport: () => void;
@@ -31,7 +31,7 @@ interface Props {
 export const DisplayActions: React.FC<Props> = ({ onOpenExport, showPreviews, toggleShowPreviews }) => {
   const { truncate } = useTruncate();
   const dispatch = useDispatch();
-  const isMobile = !isDesktopViewPort();
+  const { isMobile } = useBrowser();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 

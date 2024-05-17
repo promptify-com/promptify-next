@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, stripTags } from "@/common/helpers";
+import { stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
 import { Bolt } from "@mui/icons-material";
 import Box from "@mui/material/Box";
+import useBrowser from "@/hooks/useBrowser";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -39,7 +40,7 @@ function CardTemplate({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
-  const isDesktop = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const highlightSearchQuery = (text: string) => {
     if (!query) return text;
@@ -73,9 +74,9 @@ function CardTemplate({
       component={Link}
       href={`/prompt/${template.slug}`}
       sx={{
-        flex: isDesktop ? 1 : "none",
+        flex: !isMobile ? 1 : "none",
         textDecoration: "none",
-        width: isDesktop ? "auto" : "100%",
+        width: !isMobile ? "auto" : "100%",
         position: "relative",
         maxWidth: {
           xs: "100%",
@@ -88,15 +89,15 @@ function CardTemplate({
       <Card
         sx={{
           width: "auto",
-          minWidth: isDesktop && vertical ? "210px" : "auto",
-          height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
+          minWidth: !isMobile && vertical ? "210px" : "auto",
+          height: !isMobile && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: {
             sm: "16px",
             md: showTagsOnHover ? "16px 16px 0 0" : "16px",
           },
           cursor: "pointer",
-          p: isDesktop && vertical ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop && vertical ? "transparent" : bgColor,
+          p: !isMobile && vertical ? "16px 16px 8px" : "8px",
+          bgcolor: !isMobile && vertical ? "transparent" : bgColor,
           transition: "background-color 0.1s ease",
           "&:hover": {
             bgcolor: bgColor,
@@ -116,7 +117,7 @@ function CardTemplate({
           height={"100%"}
         >
           <Stack
-            direction={isDesktop && vertical ? "column" : "row"}
+            direction={!isMobile && vertical ? "column" : "row"}
             justifyContent={{ xs: "flex-start", md: "space-between" }}
             alignItems={vertical ? "flex-start" : "center"}
             flexWrap={"wrap"}
@@ -190,7 +191,7 @@ function CardTemplate({
                 width={32}
                 height={32}
                 style={{
-                  display: isDesktop ? "none" : asResult ? "none" : "flex",
+                  display: !isMobile ? "none" : asResult ? "none" : "flex",
                   backgroundColor: theme.palette.surface[5],
                   borderRadius: "50%",
                 }}
@@ -298,7 +299,7 @@ function CardTemplate({
                     width={32}
                     height={32}
                     style={{
-                      display: isDesktop ? "flex" : "none",
+                      display: !isMobile ? "flex" : "none",
                       backgroundColor: theme.palette.surface[5],
                       borderRadius: "50%",
                     }}

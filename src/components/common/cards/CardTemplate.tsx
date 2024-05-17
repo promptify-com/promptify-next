@@ -11,12 +11,13 @@ import Bolt from "@mui/icons-material/Bolt";
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, stripTags } from "@/common/helpers";
+import { stripTags } from "@/common/helpers";
 import { useAppDispatch } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
 import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import useBrowser from "@/hooks/useBrowser";
 
 type CardTemplateProps = {
   template: Templates;
@@ -26,7 +27,7 @@ function CardTemplate({ template }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
-  const isDesktop = isDesktopViewPort();
+  const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
 
@@ -36,8 +37,8 @@ function CardTemplate({ template }: CardTemplateProps) {
     <Link
       href={`/prompt/${template.slug}`}
       style={{
-        flex: isDesktop ? 1 : "none",
-        width: isDesktop ? "auto" : "100%",
+        flex: !isMobile ? 1 : "none",
+        width: !isMobile ? "auto" : "100%",
         textDecoration: "none",
         position: "relative",
       }}
@@ -45,11 +46,11 @@ function CardTemplate({ template }: CardTemplateProps) {
       <Card
         ref={containerRef}
         sx={{
-          minWidth: { xs: "50%", sm: isDesktop ? "210px" : "auto" },
-          height: isDesktop ? "calc(100% - 24px)" : "calc(100% - 16px)",
+          minWidth: { xs: "50%", sm: !isMobile ? "210px" : "auto" },
+          height: !isMobile ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: isDesktop ? "16px 16px 8px" : "0 0 8px 0",
+          p: !isMobile ? "16px 16px 8px" : "0 0 8px 0",
           bgcolor: "transparent",
           ".tags": {
             display: "none",
@@ -106,7 +107,7 @@ function CardTemplate({ template }: CardTemplateProps) {
               >
                 {template.title}
               </Typography>
-              {isDesktop && (
+              {!isMobile && (
                 <Typography
                   sx={{
                     fontSize: 12,
@@ -138,7 +139,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 <Favorite />
                 {template.favorites_count || 0}
               </Stack>
-              {isDesktop && (
+              {!isMobile && (
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
