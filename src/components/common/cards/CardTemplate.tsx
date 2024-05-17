@@ -10,6 +10,8 @@ import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
+import { useRef } from "react";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
 
@@ -20,8 +22,12 @@ type CardTemplateProps = {
 function CardTemplate({ template }: CardTemplateProps) {
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const observer = useIntersectionObserver(containerRef, {});
 
   const { tags } = template;
+
+  const imgPriority = observer?.isIntersecting;
   const displayedTags = tags.slice(0, 2);
   const remainingTagsCount = tags.length - displayedTags.length;
 
@@ -36,6 +42,7 @@ function CardTemplate({ template }: CardTemplateProps) {
       }}
     >
       <Card
+        ref={containerRef}
         sx={{
           minWidth: { xs: "50%", sm: !isMobile ? "210px" : "auto" },
           borderRadius: "16px",
@@ -85,7 +92,7 @@ function CardTemplate({ template }: CardTemplateProps) {
               alt={template.title}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
               sizes="(max-width: 600px) 176px, (max-width: 900px) 216px, 216px"
-              priority={true}
+              priority={imgPriority}
             />
             <Stack
               sx={{
