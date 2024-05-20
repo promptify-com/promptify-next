@@ -3,19 +3,19 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-
 import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
 import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsReviewFloatButton({ expanded = false }) {
   const dispatch = useAppDispatch();
   const theme = useTheme();
 
   const isPromptsReviewFiltersSticky = useAppSelector(state => state.sidebar.isPromptsReviewFiltersSticky);
-  const filters = useAppSelector(state => state.filters);
+  const { filters } = usePromptsFilter();
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCrossHovered, setIsCrossHovered] = useState(false);

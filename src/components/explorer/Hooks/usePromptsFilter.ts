@@ -18,10 +18,17 @@ const usePromptsFilter = () => {
   });
   const { data: engines } = useGetEnginesQuery();
 
+  const routerKey = router.query.key as string | undefined;
   const routerEngine = router.query.engine as string | undefined;
   const routerEngineTypes = router.query.type as string | undefined;
   const routerTags = router.query.tags as string | undefined;
   const routerIsFavorite = router.query.isFavorite as string | undefined;
+
+  const handleSelectKeyword = (key: string | null) => {
+    updateQueryParams({
+      key,
+    });
+  };
 
   const handleCheckIsFavorite = (isFavorite: boolean) => {
     updateQueryParams({
@@ -121,6 +128,7 @@ const usePromptsFilter = () => {
 
     setFilters({
       ...filters,
+      title: routerKey ?? null,
       isFavorite,
       engine: selectedEngine ?? null,
       engineType: engineTypes,
@@ -130,6 +138,7 @@ const usePromptsFilter = () => {
 
   return {
     filters,
+    handleSelectKeyword,
     handleCheckIsFavorite,
     handleSelectEngine,
     handleSelectEngineType,

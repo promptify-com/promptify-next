@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import { setSelectedKeyword } from "@/core/store/filtersSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import type { Tag } from "@/core/api/dto/templates";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
@@ -10,11 +9,15 @@ interface FiltersSelectedProps {
 }
 
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
-  const dispatch = useAppDispatch();
-  const { title } = useAppSelector(state => state.filters);
-  const { filters, handleCheckIsFavorite, handleSelectEngine, handleSelectEngineType, handleSelectTag } =
-    usePromptsFilter();
-  const { engine, engineType, tag, isFavorite } = filters;
+  const {
+    filters,
+    handleSelectKeyword,
+    handleCheckIsFavorite,
+    handleSelectEngine,
+    handleSelectEngineType,
+    handleSelectTag,
+  } = usePromptsFilter();
+  const { title, engine, engineType, tag, isFavorite } = filters;
 
   return (
     <>
@@ -75,7 +78,7 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
             <Chip
               label={title}
               sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setSelectedKeyword(null))}
+              onDelete={() => handleSelectKeyword(null)}
             />
           )}
 

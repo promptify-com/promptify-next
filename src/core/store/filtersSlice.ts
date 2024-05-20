@@ -16,19 +16,6 @@ const filterSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    setSelectedKeyword: (state, action: PayloadAction<string | null>) => {
-      state.title = action.payload;
-    },
-
-    setMyFavoritesChecked: (state, action: PayloadAction<boolean>) => {
-      state.isFavorite = action.payload;
-      if (!action.payload) {
-        Storage.remove("myFavoritesChecked");
-        return;
-      }
-
-      Storage.set("myFavoritesChecked", JSON.stringify(action.payload));
-    },
     resetFilters: () => {
       Storage.remove("engineTypeFilter");
       Storage.remove("tagFilter");
@@ -54,6 +41,6 @@ export const countSelectedFilters = (state: SelectedFilters): number => {
   return count;
 };
 
-export const { setSelectedKeyword, setMyFavoritesChecked, resetFilters } = filterSlice.actions;
+export const { resetFilters } = filterSlice.actions;
 
 export default filterSlice.reducer;

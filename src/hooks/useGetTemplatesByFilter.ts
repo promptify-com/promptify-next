@@ -32,7 +32,6 @@ export function useGetTemplatesByFilter({
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
-  const { title } = useAppSelector(state => state.filters);
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
@@ -40,8 +39,8 @@ export function useGetTemplatesByFilter({
   const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
 
-  const { filters: routerFilters } = usePromptsFilter();
-  const { isFavorite, engine, engineType, tag: tags } = routerFilters;
+  const { filters } = usePromptsFilter();
+  const { title, isFavorite, engine, engineType, tag: tags } = filters;
 
   const params: FilterParams = {
     tags,
@@ -65,10 +64,10 @@ export function useGetTemplatesByFilter({
     delete params.isInternal;
   }
 
-  const allFilterParamsNull = areAllStatesNull(routerFilters);
+  const allFilterParamsNull = areAllStatesNull(filters);
   const skipFetchingTemplates = shouldSkip
     ? ![catId, subCatId, admin, ordering].some(_param => _param) ||
-      !Object.values(routerFilters)?.length ||
+      !Object.values(filters)?.length ||
       (ordering === "-likes" && allFilterParamsNull)
     : false;
 
