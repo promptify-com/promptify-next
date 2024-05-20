@@ -16,8 +16,6 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
 import { useRouter } from "next/router";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 
 type CardTemplateProps = {
   template: Templates;
@@ -27,7 +25,6 @@ function CardTemplate({ template }: CardTemplateProps) {
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
 
@@ -227,8 +224,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                         key={tag.id}
                         onClick={e => {
                           e.preventDefault();
-                          dispatch(setSelectedTag(tag));
-                          router.push("/explore");
+                          router.push(`/explore?tags=${tag.id}_${tag.name}`);
                         }}
                         label={tag.name}
                         size="small"
@@ -256,8 +252,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                           key={tag.id}
                           onClick={e => {
                             e.preventDefault();
-                            dispatch(setSelectedTag(tag));
-                            router.push("/explore");
+                            router.push(`/explore?tags=${tag.id}_${tag.name}`);
                           }}
                           label={tag.name}
                           size="small"
