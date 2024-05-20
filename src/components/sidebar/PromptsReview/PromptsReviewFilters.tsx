@@ -1,39 +1,18 @@
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-import { deleteSelectedTag, setSelectedEngineType, deleteSelectedEngineType } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useAppDispatch } from "@/hooks/useStore";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
 import type { Item } from "@/components/sidebar/Collapsible";
-import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import PromptsReviewSearch from "./PromptsReviewSearch";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsReviewFilters() {
-  const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { filters, handleSelectEngine, handleSelectTag } = usePromptsFilter();
+  const { filters, handleSelectEngine, handleSelectEngineType, handleSelectTag } = usePromptsFilter();
   const { tag, engine, engineType, title } = filters;
-
-  const handleEngineSelect = (selectedEngine: Engine | null) => {
-    handleSelectEngine(selectedEngine);
-  };
-
-  const handleTagSelect = (selectedTag: Tag) => {
-    handleSelectTag(selectedTag);
-  };
-
-  const handleEngineTypeSelect = (type: EngineType) => {
-    const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
-    if (isEngineTypeExisted) {
-      dispatch(deleteSelectedEngineType(type));
-    } else {
-      dispatch(setSelectedEngineType(type));
-    }
-  };
 
   const isSelected = (item: Item) => {
     switch (item.type) {
@@ -58,12 +37,12 @@ function PromptsReviewFilters() {
         title="Content type"
         key="contentType"
         items={contentTypeItems}
-        onSelect={item => handleEngineTypeSelect({ id: item.id, label: item.name })}
+        onSelect={item => handleSelectEngineType({ id: item.id, label: item.name })}
         isSelected={isSelected}
       />
       <EnginesSelect
         value={engine}
-        onSelect={handleEngineSelect}
+        onSelect={handleSelectEngine}
       />
       <Collapsible
         title="Popular tags"
@@ -78,7 +57,7 @@ function PromptsReviewFilters() {
           {tags?.map(tag => (
             <Box
               key={tag.id}
-              onClick={() => handleTagSelect(tag)}
+              onClick={() => handleSelectTag(tag)}
             >
               <Chip
                 label={tag.name}

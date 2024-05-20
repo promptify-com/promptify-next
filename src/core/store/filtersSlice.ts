@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Storage from "@/common/storage";
-import type { Category, Engine, EngineType, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import type { SelectedFilters } from "@/core/api/dto/templates";
 
 const initialState: SelectedFilters = {
   engine: null,
@@ -16,42 +16,8 @@ const filterSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    setSelectedCategory: (state, action: PayloadAction<Category | null>) => {
-      state.category = action.payload;
-    },
-    setSelectedSubCategory: (state, action: PayloadAction<Category | null>) => {
-      state.subCategory = action.payload;
-    },
     setSelectedKeyword: (state, action: PayloadAction<string | null>) => {
       state.title = action.payload;
-    },
-    deleteSelectedTag: (state, action: PayloadAction<number>) => {
-      state.tag = state.tag.filter(tag => tag?.id !== action.payload);
-      if (!state.tag.length) {
-        Storage.remove("tagFilter");
-        return;
-      }
-      Storage.set("tagFilter", JSON.stringify(state.tag));
-    },
-    setSelectedEngineType: (state, action: PayloadAction<EngineType | EngineType[]>) => {
-      const selectedTypes = Array.isArray(action.payload) ? action.payload : [action.payload];
-      const keepTypes = state.engineType.filter(type => !selectedTypes.some(sType => sType.id === type.id));
-      state.engineType = keepTypes.concat(selectedTypes);
-
-      if (!!state.engineType?.length) {
-        Storage.set("engineTypeFilter", JSON.stringify(state.engineType));
-      } else {
-        Storage.remove("engineTypeFilter");
-      }
-    },
-
-    deleteSelectedEngineType: (state, action: PayloadAction<EngineType>) => {
-      state.engineType = state.engineType?.filter(_engine => _engine.id !== action.payload.id);
-      if (!!!state.engineType?.length) {
-        Storage.remove("engineTypeFilter");
-        return;
-      }
-      Storage.set("engineTypeFilter", JSON.stringify(state.engineType));
     },
 
     setMyFavoritesChecked: (state, action: PayloadAction<boolean>) => {
@@ -88,15 +54,6 @@ export const countSelectedFilters = (state: SelectedFilters): number => {
   return count;
 };
 
-export const {
-  setSelectedKeyword,
-  setSelectedCategory,
-  setSelectedSubCategory,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  deleteSelectedEngineType,
-  setMyFavoritesChecked,
-  resetFilters,
-} = filterSlice.actions;
+export const { setSelectedKeyword, setMyFavoritesChecked, resetFilters } = filterSlice.actions;
 
 export default filterSlice.reducer;

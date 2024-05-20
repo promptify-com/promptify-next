@@ -118,7 +118,6 @@ const usePromptsFilter = () => {
           return { id: Number(id), name };
         })
       : [];
-    console.log(routerTags);
 
     setFilters({
       ...filters,
