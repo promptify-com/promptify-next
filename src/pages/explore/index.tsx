@@ -12,7 +12,7 @@ import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
@@ -22,19 +22,10 @@ import Footer from "@/components/Footer";
 import PaginatedList from "@/components/PaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import type {
-  Category,
-  TemplateExecutionsDisplay,
-  Templates,
-  TemplatesWithPagination,
-  Engine,
-  EngineType,
-  Tag,
-} from "@/core/api/dto/templates";
-import Storage from "@/common/storage";
-import { setSelectedEngine, setSelectedEngineType, setSelectedTag } from "@/core/store/filtersSlice";
+import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { authClient } from "@/common/axios";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -48,7 +39,6 @@ interface Props {
 const scrollYThreshold = 500;
 
 export default function ExplorePage({ categories = [], popularTemplates = null }: Props) {
-  const dispatch = useAppDispatch();
   const {
     templates,
     handleNextPage,
@@ -72,7 +62,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isFavorite = useAppSelector(state => state.filters.isFavourite);
+  const { filters } = usePromptsFilter();
 
   const {
     data: suggestedTemplates,
@@ -82,26 +72,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
-
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
-    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -153,7 +123,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
           <FiltersSelected show={!allFilterParamsNull} />
 
           {allFilterParamsNull &&
-            !isFavorite &&
+            !filters.isFavorite &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
                 <Typography

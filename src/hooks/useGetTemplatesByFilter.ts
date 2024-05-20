@@ -5,6 +5,7 @@ import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Templates, FilterParams, LowercaseTemplateStatus, SelectedFilters } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface Props {
   catId?: number;
@@ -31,14 +32,16 @@ export function useGetTemplatesByFilter({
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
-  const filters = useAppSelector(state => state.filters);
-  const { tag: tags, engine, title, engineType, isFavourite } = filters;
+  const { title } = useAppSelector(state => state.filters);
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
+
+  const { filters: routerFilters } = usePromptsFilter();
+  const { isFavorite, engine, engineType, tag: tags } = routerFilters;
 
   const params: FilterParams = {
     tags,
@@ -51,7 +54,7 @@ export function useGetTemplatesByFilter({
     limit: PAGINATION_LIMIT,
     status,
     ordering,
-    isFavourite: isFavourite,
+    isFavorite,
     isInternal: false,
     include: `id,slug,thumbnail,title,description,favorites_count,likes,created_by,tags,status,executions_count${
       includeExtraFields?.length ? includeExtraFields : ""
@@ -62,10 +65,10 @@ export function useGetTemplatesByFilter({
     delete params.isInternal;
   }
 
-  const allFilterParamsNull = areAllStatesNull(filters);
+  const allFilterParamsNull = areAllStatesNull(routerFilters);
   const skipFetchingTemplates = shouldSkip
     ? ![catId, subCatId, admin, ordering].some(_param => _param) ||
-      !Object.values(filters)?.length ||
+      !Object.values(routerFilters)?.length ||
       (ordering === "-likes" && allFilterParamsNull)
     : false;
 
@@ -125,7 +128,6 @@ export function useGetTemplatesByFilter({
     allFilterParamsNull,
     templates: allTemplates,
     isTemplatesLoading,
-    filters,
     handleNextPage,
     resetOffest,
     isFetching,
