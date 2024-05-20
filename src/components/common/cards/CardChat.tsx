@@ -17,7 +17,7 @@ import Edit from "@mui/icons-material/Edit";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
-import { setSelectedChat } from "@/core/store/chatSlice";
+import { setSelectedChat, initialState as initialChatState } from "@/core/store/chatSlice";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
@@ -35,7 +35,7 @@ export const ChatCard = memo(({ chat, active, onClick }: Props) => {
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
-  const { selectedChat } = useAppSelector(state => state.chat);
+  const { selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { updateChat, deleteChat, duplicateChat } = useChatsManager();
 

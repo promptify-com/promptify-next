@@ -10,8 +10,8 @@ import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard"
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
-import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
+import { initialState as initialTemplatesState, setGeneratingStatus } from "@/core/store/templatesSlice";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
@@ -37,8 +37,8 @@ export const ChatInterface = ({
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? initialTemplatesState.isGenerating);
+  const { selectedExecution, generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);

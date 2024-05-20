@@ -25,6 +25,8 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { authClient } from "@/common/axios";
+import filtersSlice from "@/core/store/filtersSlice";
+import store from "@/core/store";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -61,7 +63,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isFavorite = useAppSelector(state => state.filters.isFavourite);
+  const isFavorite = useAppSelector(state => state.filters?.isFavourite ?? false);
 
   const {
     data: suggestedTemplates,
@@ -88,6 +90,14 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMobile]);
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    store.injectReducers([{ key: "filters", asyncReducer: filtersSlice }]);
+  }, [store]);
 
   return (
     <Layout>

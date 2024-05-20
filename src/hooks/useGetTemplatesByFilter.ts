@@ -4,7 +4,9 @@ import { useRouter } from "next/router";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
 import { useAppSelector } from "@/hooks/useStore";
-import type { Templates, FilterParams, LowercaseTemplateStatus, SelectedFilters } from "@/core/api/dto/templates";
+import type { Templates, FilterParams, LowercaseTemplateStatus } from "@/core/api/dto/templates";
+import { initialState as initialFiltersState } from "@/core/store/filtersSlice";
+import { IFilterSliceState } from "@/core/store/types";
 
 interface Props {
   catId?: number;
@@ -31,7 +33,7 @@ export function useGetTemplatesByFilter({
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
-  const filters = useAppSelector(state => state.filters);
+  const filters = useAppSelector(state => state.filters ?? initialFiltersState);
   const { tag: tags, engine, title, engineType, isFavourite } = filters;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
@@ -86,7 +88,7 @@ export function useGetTemplatesByFilter({
     }
   }, [templates?.results]);
 
-  function areAllStatesNull(filters: SelectedFilters): boolean {
+  function areAllStatesNull(filters: IFilterSliceState): boolean {
     return (
       filters.engine === null &&
       filters.tag.every(tag => tag === null) &&

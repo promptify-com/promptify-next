@@ -25,8 +25,6 @@ const poppins = Poppins({
 });
 
 function App({ Component, pageProps }: AppProps) {
-  // const { store, props } = wrapper.useWrappedStore(rest);
-  // const { pageProps } = props;
   const isValidUser = isValidUserFn(store.getState());
   const storedToken = useToken();
   const router = useRouter();

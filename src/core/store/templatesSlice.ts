@@ -6,7 +6,7 @@ import { ITemplateSliceState } from "./types";
 
 type UpdateTemplateDataPayload = Pick<ITemplateSliceState, "is_favorite" | "is_liked" | "id" | "likes">;
 
-const initialState: ITemplateSliceState = {
+export const initialState: ITemplateSliceState = {
   is_favorite: false,
   is_liked: false,
   id: 0,

@@ -2,17 +2,18 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Collapsible from "@/components/sidebar/Collapsible";
 import type { Item } from "@/components/sidebar/Collapsible";
-import type { Engine, EngineOutput, EngineType } from "@/core/api/dto/templates";
+import type { Engine } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { setDocumentsContentTypes, setDocumentsEngine, setDocumentsStatus } from "@/core/store/documentsSlice";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import { contentTypeItems } from "@/components/sidebar/Constants";
+import { initialState as initialDocumentsState } from "@/core/store/documentsSlice";
 
 function StatusFilter() {
   const dispatch = useAppDispatch();
-  const status = useAppSelector(state => state.documents.filter.status);
+  const status = useAppSelector(state => state.documents?.filter?.status ?? null);
 
   return (
     <Box>
@@ -69,7 +70,7 @@ function StatusFilter() {
 
 function DocumentsFilters() {
   const dispatch = useAppDispatch();
-  const { engine, contentTypes } = useAppSelector(state => state.documents.filter);
+  const { engine, contentTypes } = useAppSelector(state => state.documents?.filter ?? initialDocumentsState.filter);
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
     dispatch(setDocumentsEngine(selectedEngine));

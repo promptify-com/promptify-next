@@ -25,8 +25,8 @@ interface Props {
 
 export default function AccordionMessage({ messageType, children, template, messages = [], abortGenerating }: Props) {
   const dispatch = useAppDispatch();
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const areCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
+  const areCredentialsStored = useAppSelector(state => state.chat?.areCredentialsStored ?? false);
   const { isAutomationPage } = useVariant();
   const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);

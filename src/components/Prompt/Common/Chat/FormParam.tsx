@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setParamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setParamsValues, initialState as initialChatState } from "@/core/store/chatSlice";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import Storage from "@/common/storage";
 import ParamSlider from "@/components/Prompt/Common/Chat/ParamSlider";
@@ -18,7 +18,7 @@ export default function FormParam({ param, variant }: GeneratorParamProps) {
   const dispatch = useAppDispatch();
   const { isAutomationPage } = useVariant();
 
-  const { paramsValues, answers } = useAppSelector(state => state.chat);
+  const { paramsValues, answers } = useAppSelector(state => state.chat ?? initialChatState);
 
   useEffect(() => {
     const paramsStored = Storage.get("paramsValue") as unknown as ResOverrides[];

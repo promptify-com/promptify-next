@@ -22,7 +22,13 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
   const [getTempalteEnable] = templatesApi.endpoints.getTemplateApiStatus.useLazyQuery();
 
   const dispatch = useAppDispatch();
-  const tempateApiStatus = useAppSelector(state => state.template.templateApiStatus);
+  const tempateApiStatus = useAppSelector(
+    state =>
+      state.templates?.templateApiStatus ?? {
+        data: null,
+        isLoading: true,
+      },
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 

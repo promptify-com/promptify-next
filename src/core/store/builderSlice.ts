@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { Engine, Templates } from "@/core/api/dto/templates";
 import { IBuilderSliceState } from "./types";
 
-const initialState: IBuilderSliceState = {
+export const initialState: IBuilderSliceState = {
   engines: [],
   template: null,
   isTemplateOwner: false,

@@ -7,11 +7,11 @@ import {
   useDuplicateChatMutation,
   useUpdateChatMutation,
 } from "@/core/api/chats";
-import { setChats } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setChats } from "@/core/store/chatSlice";
 
 const useChatsManager = () => {
   const dispatch = useAppDispatch();
-  const chats = useAppSelector(state => state.chat?.chats ?? []);
+  const chats = useAppSelector(state => state.chat?.chats ?? initialChatState.chats);
 
   const [createChatAction] = useCreateChatMutation();
   const [updateChatAction] = useUpdateChatMutation();

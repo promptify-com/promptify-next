@@ -4,7 +4,7 @@ import type { TemplatesExecutions } from "../api/dto/templates";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import { IExecutionsSliceState } from "./types";
 
-const initialState: IExecutionsSliceState = {
+export const initialState: IExecutionsSliceState = {
   selectedExecution: null,
   generatedExecution: null,
   repeatedExecution: null,

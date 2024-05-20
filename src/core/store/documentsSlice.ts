@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { Engine, EngineType } from "@/core/api/dto/templates";
 import { IDocumentSliceState, DocumentFilterStatusType } from "./types";
 
-const initialState: IDocumentSliceState = {
+export const initialState: IDocumentSliceState = {
   filter: {
     status: null,
     contentTypes: [],

@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import { Mode } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import BaseButton from "@/components/base/BaseButton";
-import { showProfileInEditMode } from "@/core/store/profileSlice";
 import { RootState } from "@/core/store";
 import Image from "../design-system/Image";
 
@@ -103,7 +102,7 @@ export const Home = () => {
         )}
         <Box>
           <BaseButton
-            onClick={() => dispatch(showProfileInEditMode(true))}
+            onClick={() => {}}
             color="primary"
             variant="contained"
             style={{

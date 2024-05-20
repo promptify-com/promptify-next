@@ -9,7 +9,7 @@ export function useChatsPaginator() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [offset, setOffset] = useState(0);
-  const chats = useAppSelector(state => state.chat.chats);
+  const chats = useAppSelector(state => state.chat?.chats ?? []);
 
   const {
     data: fetchedChats,

@@ -3,11 +3,20 @@ import { useRouter } from "next/router";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
+import {
+  initialState as initialChatState,
+  setAnswers,
+  setIsSimulationStreaming,
+  setParamsValues,
+} from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import useToken from "@/hooks/useToken";
 import { vary } from "@/common/helpers/varyValidator";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import {
+  initialState as initialExecutionsState,
+  setGeneratedExecution,
+  setSelectedExecution,
+} from "@/core/store/executionsSlice";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import type { IPromptInput } from "@/common/types/prompt";
@@ -33,9 +42,11 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const { isVariantA, isVariantB, isAutomationPage } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { isSimulationStreaming, inputs, answers, paramsValues, tmpMessages } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers, paramsValues, tmpMessages } = useAppSelector(
+    state => state.chat ?? initialChatState,
+  );
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
-    state => state.executions,
+    state => state.executions ?? initialExecutionsState,
   );
 
   const [messages, setMessages] = useState<IMessage[]>([]);

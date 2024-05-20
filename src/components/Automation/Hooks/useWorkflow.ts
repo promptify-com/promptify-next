@@ -6,7 +6,7 @@ import {
   useUpdateWorkflowMutation,
 } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAreCredentialsStored } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, initialState as initialChatState } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
@@ -27,7 +27,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   const dispatch = useAppDispatch();
   const webhookPathRef = useRef<string>();
 
-  const { answers = [], inputs = [] } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  const { answers = [], inputs = [] } = useAppSelector(state => state.chat ?? initialChatState);
   const [createWorkflow] = useCreateUserWorkflowMutation();
   const [updateWorkflow] = useUpdateWorkflowMutation();
 

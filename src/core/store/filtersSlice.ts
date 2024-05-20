@@ -3,7 +3,7 @@ import Storage from "@/common/storage";
 import type { Category, Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import { IFilterSliceState } from "./types";
 
-const initialState: IFilterSliceState = {
+export const initialState: IFilterSliceState = {
   engine: null,
   tag: [],
   title: null,

@@ -3,7 +3,7 @@ import Storage from "@/common/storage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
-import { setAreCredentialsStored, setCredentialsInput } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setCredentialsInput, initialState as initialChatState } from "@/core/store/chatSlice";
 import type {
   ICredential,
   ICredentialInput,
@@ -17,7 +17,7 @@ const useCredentials = () => {
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );
-  const credentialsInput = useAppSelector(state => state.chat?.credentialsInput ?? []);
+  const credentialsInput = useAppSelector(state => state.chat?.credentialsInput ?? initialChatState.credentialsInput);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
   const initializeCredentials = (): Promise<ICredential[]> => {

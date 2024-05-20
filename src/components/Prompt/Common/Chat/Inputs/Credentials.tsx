@@ -41,7 +41,7 @@ function Credentials({ input }: Props) {
   const router = useRouter();
   const workflowId = router.query.workflowId as string;
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedWorkflow = useAppSelector(state => state.chat.selectedWorkflow);
+  const selectedWorkflow = useAppSelector(state => state.chat?.selectedWorkflow);
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();

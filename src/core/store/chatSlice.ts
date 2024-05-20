@@ -8,7 +8,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IChat, ChatOption } from "@/core/api/dto/chats";
 import { IChatSliceState } from "./types";
 
-const initialState: IChatSliceState = {
+export const initialState: IChatSliceState = {
   answers: [],
   inputs: [],
   params: [],

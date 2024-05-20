@@ -75,10 +75,6 @@ export interface IFilterSliceState {
   isFavourite?: boolean;
 }
 
-export interface IProfileSliceState {
-  showEditMode: boolean;
-}
-
 export interface ISidebarSliceState {
   builderSidebarOpen: boolean;
   isPromptsFiltersSticky: boolean;

@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useEffect, useState } from "react";
-import { TemplatesProps, updateCurrentFavorite } from "@/core/store/templatesSlice";
+import { updateCurrentFavorite } from "@/core/store/templatesSlice";
 import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import { useAppSelector } from "./useStore";
 import {
@@ -24,7 +24,7 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
   const { data: fetchedTemplate } = useGetTemplateByIdQuery(selectedTemplate.id, {
     skip: Boolean(template || !selectedTemplate.id),
   });
-  const [templateData, setTemplateData] = useState<Templates | TemplatesProps>(selectedTemplate);
+  const [templateData, setTemplateData] = useState<Templates | ITemplateSliceState>(selectedTemplate);
 
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();

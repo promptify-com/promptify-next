@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { Avatar, Button, Chip, Stack, Typography, alpha } from "@mui/material";
 import { Engine, Tag } from "@/core/api/dto/templates";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteSelectedTag, setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import {
+  deleteSelectedTag,
+  setSelectedEngine,
+  setSelectedTag,
+  initialState as initialFiltersState,
+} from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 import { theme } from "@/theme";
 import { useRouter } from "next/router";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 const minShown = 5;
 
@@ -15,8 +20,8 @@ export const TemplatesFilter = () => {
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
   const [enginesToShow, setEnginesToShow] = useState<number>(minShown);
-  const filters = useSelector((state: RootState) => state.filters);
-  const dispatch = useDispatch();
+  const filters = useAppSelector((state: RootState) => state.filters ?? initialFiltersState);
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const handleEngineSelect = (engine: Engine) => {
