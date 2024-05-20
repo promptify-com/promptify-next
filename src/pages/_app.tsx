@@ -62,7 +62,10 @@ function App({ Component, ...rest }: AppProps) {
         deletePathURL();
       }
 
-      if (router.asPath !== url) {
+      const cleanedAsPath = router.asPath.includes("?") ? router.asPath.split("?")[0] : router.asPath;
+      const cleanedUrl = url.includes("?") ? url.split("?")[0] : url;
+
+      if (cleanedAsPath !== cleanedUrl) {
         const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
 
         if (!_navigationLoadingSpinnerOverlay) {
