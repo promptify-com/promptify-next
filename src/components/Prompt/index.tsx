@@ -165,11 +165,13 @@ function TemplatePage({ template, popup }: Props) {
           flex={2}
           order={0}
           sx={{
-            maxHeight: "100%",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: 0,
-            },
+            ...(!isMobile && {
+              maxHeight: "100%",
+              overflowY: "auto",
+              "&::-webkit-scrollbar": {
+                width: 0,
+              },
+            }),
           }}
         >
           <TemplateDetails
