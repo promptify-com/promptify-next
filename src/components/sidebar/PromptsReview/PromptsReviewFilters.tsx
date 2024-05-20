@@ -1,12 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-import {
-  setSelectedTag,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  deleteSelectedEngineType,
-} from "@/core/store/filtersSlice";
+import { deleteSelectedTag, setSelectedEngineType, deleteSelectedEngineType } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useAppDispatch } from "@/hooks/useStore";
 import { contentTypeItems } from "@/components/sidebar/Constants";
@@ -20,7 +15,7 @@ import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 function PromptsReviewFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { filters, handleSelectEngine } = usePromptsFilter();
+  const { filters, handleSelectEngine, handleSelectTag } = usePromptsFilter();
   const { tag, engine, engineType, title } = filters;
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
@@ -28,13 +23,7 @@ function PromptsReviewFilters() {
   };
 
   const handleTagSelect = (selectedTag: Tag) => {
-    const tagExists = tag.some(tagItem => tagItem.id === selectedTag.id);
-
-    if (tagExists) {
-      dispatch(deleteSelectedTag(selectedTag.id));
-    } else {
-      dispatch(setSelectedTag(selectedTag));
-    }
+    handleSelectTag(selectedTag);
   };
 
   const handleEngineTypeSelect = (type: EngineType) => {

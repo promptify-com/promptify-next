@@ -16,15 +16,6 @@ const filterSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    setSelectedTag: (state, action: PayloadAction<Tag>) => {
-      if (state.tag?.find(_tag => _tag.id === action.payload?.id)) {
-        return;
-      }
-
-      state.tag.push(action.payload);
-
-      Storage.set("tagFilter", JSON.stringify(state.tag));
-    },
     setSelectedCategory: (state, action: PayloadAction<Category | null>) => {
       state.category = action.payload;
     },
@@ -98,7 +89,6 @@ export const countSelectedFilters = (state: SelectedFilters): number => {
 };
 
 export const {
-  setSelectedTag,
   setSelectedKeyword,
   setSelectedCategory,
   setSelectedSubCategory,

@@ -9,10 +9,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-
 import { theme } from "@/theme";
 import { useDispatch } from "react-redux";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
 import type { Tag } from "@/core/api/dto/templates";
@@ -50,8 +48,7 @@ const DescriptionTags = ({ description, tags }: { description: string; tags?: Ta
             <Chip
               key={tag.id}
               onClick={() => {
-                dispatch(setSelectedTag(tag));
-                router.push("/explore");
+                router.push(`/explore?tags=${tag.id}_${tag.name}`);
               }}
               variant={"filled"}
               label={tag.name}

@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
@@ -267,8 +266,7 @@ function CardTemplate({
                       }}
                       onClick={e => {
                         e.preventDefault();
-                        dispatch(setSelectedTag(tag));
-                        router.push("/explore");
+                        router.push(`/explore?tags=${tag.id}_${tag.name}`);
                       }}
                     />
                   ))}
@@ -335,8 +333,7 @@ function CardTemplate({
               <Chip
                 onClick={e => {
                   e.preventDefault();
-                  dispatch(setSelectedTag(tag));
-                  router.push("/explore");
+                  router.push(`/explore?tags=${tag.id}_${tag.name}`);
                 }}
                 size="small"
                 label={tag.name}

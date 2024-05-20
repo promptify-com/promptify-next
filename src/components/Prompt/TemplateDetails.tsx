@@ -9,12 +9,10 @@ import Typography from "@mui/material/Typography";
 import Tune from "@mui/icons-material/Tune";
 import { Collapse, alpha } from "@mui/material";
 import ContentCopy from "@mui/icons-material/ContentCopy";
-
 import { setSelectedTemplate } from "@/core/store/chatSlice";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { stripTags } from "@/common/helpers";
 import { formatDate } from "@/common/helpers/timeManipulation";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
@@ -284,8 +282,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
                     <Chip
                       key={tag.id}
                       onClick={() => {
-                        dispatch(setSelectedTag(tag));
-                        router.push("/explore");
+                        router.push(`/explore?tags=${tag.id}_${tag.name}`);
                         close?.();
                       }}
                       variant={"filled"}
