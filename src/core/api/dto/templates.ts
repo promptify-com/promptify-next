@@ -24,12 +24,12 @@ export interface FilterParams {
 }
 
 export interface SelectedFilters {
-  engine: Engine | null;
-  tag: Tag[];
   title: string | null;
-  category: Category | null;
-  subCategory: Category | null;
+  engine: Engine | null;
   engineType: EngineType[];
+  tag: Tag[];
+  category?: Category | null;
+  subCategory?: Category | null;
   isFavorite?: boolean;
 }
 
