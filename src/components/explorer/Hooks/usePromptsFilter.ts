@@ -83,6 +83,19 @@ const usePromptsFilter = () => {
     updateQueryParams({ type: updatedTypes.map(type => type.id).join(",") });
   };
 
+  const resetFilters = () => {
+    const pathname = router.asPath.split("?")[0];
+    router.push(
+      {
+        pathname,
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    );
+  };
+
   const updateQueryParams = (newParams: ParsedUrlQueryInput) => {
     const updatedQuery = { ...router.query, ...newParams };
 
@@ -143,6 +156,7 @@ const usePromptsFilter = () => {
     handleSelectEngine,
     handleSelectEngineType,
     handleSelectTag,
+    resetFilters,
   };
 };
 

@@ -196,8 +196,11 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                 <Typography
                   fontSize={{ xs: 14, md: 18 }}
                   fontWeight={400}
-                  textAlign={"center"}
                   color={"onSurface"}
+                  sx={{
+                    textAlign: "center",
+                    my: "50px",
+                  }}
                 >
                   No templates found. Please adjust your filters.
                 </Typography>

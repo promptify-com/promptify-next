@@ -15,15 +15,7 @@ const initialState: SelectedFilters = {
 const filterSlice = createSlice({
   name: "filters",
   initialState,
-  reducers: {
-    resetFilters: () => {
-      Storage.remove("engineTypeFilter");
-      Storage.remove("tagFilter");
-      Storage.remove("myFavoritesChecked");
-      Storage.remove("engineFilter");
-      return initialState;
-    },
-  },
+  reducers: {},
 });
 
 export const countSelectedFilters = (state: SelectedFilters): number => {
@@ -40,7 +32,5 @@ export const countSelectedFilters = (state: SelectedFilters): number => {
 
   return count;
 };
-
-export const { resetFilters } = filterSlice.actions;
 
 export default filterSlice.reducer;

@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
+import { countSelectedFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
@@ -15,7 +15,7 @@ function PromptsReviewFloatButton({ expanded = false }) {
   const theme = useTheme();
 
   const isPromptsReviewFiltersSticky = useAppSelector(state => state.sidebar.isPromptsReviewFiltersSticky);
-  const { filters } = usePromptsFilter();
+  const { filters, resetFilters } = usePromptsFilter();
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCrossHovered, setIsCrossHovered] = useState(false);
@@ -66,7 +66,7 @@ function PromptsReviewFloatButton({ expanded = false }) {
                 style={{ color: "white", fontSize: 16 }}
                 onClick={event => {
                   event.stopPropagation();
-                  dispatch(resetFilters());
+                  resetFilters();
                   setIsHovered(false);
                   dispatch(setStickyPromptsReviewFilters(false));
                   Storage.set("isPromptsReviewFiltersSticky", JSON.stringify(false));

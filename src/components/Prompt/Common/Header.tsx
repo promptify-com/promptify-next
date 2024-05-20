@@ -16,7 +16,6 @@ interface TemplateHeaderProps {
 
 export default function Header({ template, close }: TemplateHeaderProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const breadcrumbs = [
     <Link
       key="0"
@@ -32,10 +31,10 @@ export default function Header({ template, close }: TemplateHeaderProps) {
     </Link>,
     <Link
       key="1"
-      href="/explore"
+      href={`/explore/${template.category.slug}`}
       onClick={e => {
         e.preventDefault();
-        router.push(`/explore?tags=${template.category.id}_${template.category.name}`);
+        router.push(`/explore/${template.category.slug}`);
         close?.();
       }}
       sx={breadcrumbStyle}
