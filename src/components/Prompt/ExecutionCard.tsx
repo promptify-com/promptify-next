@@ -25,7 +25,7 @@ interface Props {
 
 export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers, showPreview }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
-  const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
+  const sparkHashQueryParam = useAppSelector(state => state.executions?.sparkHashQueryParam ?? null);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);

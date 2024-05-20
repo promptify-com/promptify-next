@@ -1,14 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { Engine, Templates } from "@/core/api/dto/templates";
+import { IBuilderSliceState } from "./types";
 
-export interface Props {
-  engines: Engine[];
-  template: Templates | null;
-  isTemplateOwner: boolean;
-}
-
-const initialState: Props = {
+export const initialState: IBuilderSliceState = {
   engines: [],
   template: null,
   isTemplateOwner: false,

@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
 
 function ExecutionMessageInstructions() {
-  const answers = useAppSelector(state => state.chat.answers);
+  const answers = useAppSelector(state => state.chat?.answers ?? []);
   return (
     <Stack
       p={" 8px 24px"}

@@ -37,7 +37,7 @@ function Navigations({ onCloseDrawer }: Props) {
 
   const pathname = router.pathname;
 
-  const title = useAppSelector(state => state.filters.title || "");
+  const title = useAppSelector(state => state.filters?.title ?? "");
   const isValidUser = useAppSelector(isValidUserFn);
 
   const [textInput, setTextInput] = useState("");

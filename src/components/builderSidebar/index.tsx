@@ -24,6 +24,7 @@ import Contact from "@/components/builder/Assets/Contact";
 import Api from "@/components/builder/Assets/Api";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
 import type { IEditPrompts } from "@/common/types/builder";
+import { initialState as initialBuilderState } from "@/core/store/builderSlice";
 
 const LINKS: Link[] = [
   {
@@ -64,7 +65,7 @@ interface Props {
 export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const { template, engines } = useAppSelector(state => state.builder);
+  const { template, engines } = useAppSelector(state => state.builder ?? initialBuilderState);
   const templateId = template?.id;
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<Link>();

@@ -23,7 +23,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
   const [isCarousel, setIsCarousel] = useState(true);
 
-  const activeTemplate = useAppSelector(state => state.documents.filter.template);
+  const activeTemplate = useAppSelector(state => state.documents?.filter?.template ?? null);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   const handleSelectTemplate = (template: TemplateExecutionsDisplay) => {

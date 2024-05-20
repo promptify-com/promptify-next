@@ -20,6 +20,7 @@ import Storage from "@/common/storage";
 import { useRouter } from "next/router";
 import { workflowsApi } from "@/core/api/workflows";
 import RefreshCredentials from "@/components/RefreshCredentials";
+import { IChatSliceState } from "@/core/store/types";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -35,10 +36,10 @@ interface Props {
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
   const router = useRouter();
   const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { inputs, areCredentialsStored } = useAppSelector(state => state.chat);
+  const { inputs = [], areCredentialsStored = false } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
   const workflowId = router.query?.workflowId as string;
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();

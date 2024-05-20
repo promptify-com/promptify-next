@@ -23,7 +23,7 @@ export default function FeedbackThumbs({ vertical, execution, variant, noRepeat 
   const dispatch = useAppDispatch();
 
   const [feedback, setFeedback] = useState(execution.feedback);
-  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
+  const selectedTemplate = useAppSelector(state => state.chat?.selectedTemplate);
 
   const liked = feedback === "LIKED";
   const disliked = feedback === "DISLIKED";

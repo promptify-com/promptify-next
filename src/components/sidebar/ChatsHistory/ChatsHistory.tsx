@@ -5,7 +5,7 @@ import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat, initialState as initialChatState } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
@@ -22,7 +22,7 @@ function ChatsHistory({ onClose }: Props) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { chats, selectedChat } = useAppSelector(state => state.chat);
+  const { chats, selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
   const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
 
   const loadedChats = useMemo(() => {

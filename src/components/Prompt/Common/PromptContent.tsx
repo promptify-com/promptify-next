@@ -14,7 +14,7 @@ interface Props {
 }
 
 function PromptContent({ execution, content, engineName, id }: Props) {
-  const answers = useAppSelector(state => state.chat.answers);
+  const answers = useAppSelector(state => state.chat?.answers ?? []);
   function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;

@@ -13,7 +13,7 @@ interface Props {
 }
 
 function FormPromptContent({ template }: Props) {
-  const params = useAppSelector(state => state.chat.params);
+  const params = useAppSelector(state => state.chat?.params ?? []);
   return (
     <>
       <Stack p={"16px 24px"}>

@@ -8,6 +8,9 @@ import Grid from "@mui/material/Grid";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { getTemplateById } from "@/hooks/api/templates";
 import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
+import { initialState as initialDocumentsState } from "@/core/store/documentsSlice";
+import store from "@/core/store";
+import { useEffect } from "react";
 
 interface Props {
   executions: ExecutionWithTemplate[] | undefined;
@@ -16,7 +19,9 @@ interface Props {
 
 export default function DocumentsContainer({ executions = [], isLoading }: Props) {
   const dispatch = useAppDispatch();
-  const filterTemplate = useAppSelector(state => state.documents.filter.template);
+  const filterTemplate = useAppSelector(
+    state => state.documents?.filter?.template ?? initialDocumentsState.filter.template,
+  );
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
   const handleOpenDocument = async (execution: ExecutionWithTemplate) => {

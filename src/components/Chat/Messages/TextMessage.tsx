@@ -9,7 +9,8 @@ import Edit from "@mui/icons-material/Edit";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
-import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, initialState as initialChatState } from "@/core/store/chatSlice";
+
 import ClientOnly from "@/components/base/ClientOnly";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
@@ -44,7 +45,7 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
 });
 
 const Message = ({ message, onScrollToBottom }: Props) => {
-  const { inputs, answers } = useAppSelector(state => state.chat);
+  const { inputs, answers } = useAppSelector(state => state.chat ?? initialChatState);
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [messageContent, setMessageContent] = useState(message.text);

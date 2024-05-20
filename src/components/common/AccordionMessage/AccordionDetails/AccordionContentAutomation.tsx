@@ -13,7 +13,7 @@ interface Props {
 }
 
 function AccordionContentAutomation({ title, children, onGenerate, showRunButton }: Props) {
-  const inputs = useAppSelector(state => state.chat.inputs);
+  const inputs = useAppSelector(state => state.chat?.inputs ?? []);
 
   return (
     <>

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
-import { setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import type { IAnswer } from "../Prompt/Types/chat";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 
 const HighlightContent = ({ content, promptId }: Props) => {
   const dispatch = useAppDispatch();
-  const { inputs, answers } = useAppSelector(state => state.chat);
+  const { inputs, answers } = useAppSelector(state => state.chat ?? initialChatState);
   const [selectedPrompt, setSelectedPrompt] = useState<{ promptId: number; match: string } | null>(null);
 
   function handleHighlightClick(promptId: number, match: string) {

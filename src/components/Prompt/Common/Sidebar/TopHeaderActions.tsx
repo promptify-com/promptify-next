@@ -19,7 +19,7 @@ import type { Link } from "@/components/Prompt/Types";
 function TopHeaderActions({ executionsLength = 0 }) {
   const dispatch = useAppDispatch();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const { variant, switchVariant } = useVariant();
 

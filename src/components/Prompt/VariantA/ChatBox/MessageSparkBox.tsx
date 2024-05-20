@@ -22,7 +22,7 @@ interface MessageSparkBoxProps {
 export const MessageSparkBox: React.FC<MessageSparkBoxProps> = ({ execution, min, onClick, promptsData }) => {
   const dispatch = useDispatch();
   const [content, setContent] = useState<string>("");
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
   const isSelected = execution.id === selectedExecution?.id;
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();

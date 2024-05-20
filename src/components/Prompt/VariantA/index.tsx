@@ -19,8 +19,8 @@ interface TemplateLayoutProps {
 }
 
 export default function TemplateVariantA({ template, executions, questionPrefixContent }: TemplateLayoutProps) {
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const { isMobile } = useBrowser();
 

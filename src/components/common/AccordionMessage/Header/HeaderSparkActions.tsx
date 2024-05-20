@@ -21,6 +21,8 @@ import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import type { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
+import { initialState as initialTemplatesState } from "@/core/store/templatesSlice";
 
 interface Props {
   template: Templates;
@@ -46,10 +48,14 @@ function HeaderSparkActions({
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? initialTemplatesState.isGenerating);
+  const selectedExecution = useAppSelector(
+    state => state.executions?.selectedExecution ?? initialExecutionsState.selectedExecution,
+  );
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const showPrompts = useAppSelector(state => state.template.showPromptsView);
+  const showPrompts = useAppSelector(
+    state => state.templates?.showPromptsView ?? initialTemplatesState.showPromptsView,
+  );
 
   const [openExportPopup, setOpenExportPopup] = useState(false);
 
