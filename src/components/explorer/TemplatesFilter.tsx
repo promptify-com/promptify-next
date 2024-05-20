@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Avatar, Button, Chip, Stack, Typography, alpha } from "@mui/material";
 import { Engine, Tag } from "@/core/api/dto/templates";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteSelectedTag, setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import { deleteSelectedTag, setSelectedTag } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 import { theme } from "@/theme";
 import { useRouter } from "next/router";
@@ -20,8 +20,7 @@ export const TemplatesFilter = () => {
   const router = useRouter();
 
   const handleEngineSelect = (engine: Engine) => {
-    dispatch(setSelectedEngine(engine));
-    router.push("/explore");
+    router.push(`/explore?engine=${engine.id}`);
   };
 
   const handleTagSelect = (tag: Tag) => {

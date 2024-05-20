@@ -1,56 +1,30 @@
-import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-
 import {
-  setSelectedEngine,
   setSelectedTag,
   deleteSelectedTag,
   setSelectedEngineType,
   deleteSelectedEngineType,
-  setSelectedKeyword,
 } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import Storage from "@/common/storage";
+import { useAppDispatch } from "@/hooks/useStore";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
 import type { Item } from "@/components/sidebar/Collapsible";
 import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import PromptsReviewSearch from "./PromptsReviewSearch";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsReviewFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine, engineType, title } = useAppSelector(state => state.filters);
-
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
-    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType) || "";
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-    if (title) {
-      dispatch(setSelectedKeyword(title));
-    }
-  }, []);
+  const { filters, handleSelectEngine } = usePromptsFilter();
+  const { tag, engine, engineType, title } = filters;
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
-    dispatch(setSelectedEngine(selectedEngine));
+    handleSelectEngine(selectedEngine);
   };
 
   const handleTagSelect = (selectedTag: Tag) => {

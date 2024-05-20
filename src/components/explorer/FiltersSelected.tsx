@@ -1,14 +1,9 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import {
-  deleteSelectedTag,
-  deleteSelectedEngineType,
-  setSelectedEngine,
-  setSelectedKeyword,
-} from "@/core/store/filtersSlice";
+import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Tag } from "@/core/api/dto/templates";
-import usePromptsFilter from "./Hooks/usePromptsFilter";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface FiltersSelectedProps {
   show: boolean;

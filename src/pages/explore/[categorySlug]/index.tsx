@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import Box from "@mui/material/Box";
@@ -6,7 +5,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { authClient } from "@/common/axios";
-import type { Category, Engine, EngineType, Tag } from "@/core/api/dto/templates";
+import type { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
@@ -18,13 +17,9 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
-import Storage from "@/common/storage";
-import { setSelectedEngine, setSelectedEngineType, setSelectedTag } from "@/core/store/filtersSlice";
-import { useAppDispatch } from "@/hooks/useStore";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
 
   const {
@@ -49,26 +44,6 @@ export default function Page({ category }: { category: Category }) {
   const goBack = () => {
     router.push("/explore");
   };
-
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
-    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-  }, []);
 
   return (
     <ThemeProvider theme={dynamicTheme}>
