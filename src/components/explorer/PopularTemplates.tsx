@@ -3,23 +3,24 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import PaginatedList from "@/components/PaginatedList";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-
-import type { FilterParams, Templates } from "@/core/api/dto/templates";
+import type { FilterParams, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 interface Props {
   catId?: number;
+  initTemplates?: TemplatesWithPagination | null;
 }
 
-function PopularTemplates({ catId }: Props) {
-  const observer = useRef<IntersectionObserver | null>(null);
-  const { isMobile } = useBrowser();
-  const [offset, setOffset] = useState(0);
-  const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
+function PopularTemplates({ catId, initTemplates }: Props) {
   const PAGINATION_LIMIT = 12;
   const SCROLL_THRESHOLD = 24;
+  const INIT_OFFSET = initTemplates?.results.length ?? 0;
+  const observer = useRef<IntersectionObserver | null>(null);
+  const { isMobile } = useBrowser();
+  const [offset, setOffset] = useState(INIT_OFFSET);
+  const [allTemplates, setAllTemplates] = useState<Templates[]>(initTemplates?.results ?? []);
 
   const params: FilterParams = {
     offset,
@@ -31,12 +32,14 @@ function PopularTemplates({ catId }: Props) {
     include: "slug,thumbnail,title,description,favorites_count,likes,created_by,tags",
   };
 
-  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);
+  const skipFirstFetch = Boolean(initTemplates?.results.length && offset === INIT_OFFSET);
+
+  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params, {
+    skip: skipFirstFetch,
+  });
 
   const handleNextPage = () => {
-    if (!!data?.next) {
-      setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
-    }
+    setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
   };
 
   useEffect(() => {
@@ -60,10 +63,11 @@ function PopularTemplates({ catId }: Props) {
 
       const rowHeight = isMobile ? 145 : 80;
       const margin = `${2 * rowHeight}px`;
+      const hasNext = skipFirstFetch ? !!initTemplates?.next : !!data?.next;
 
       observer.current = new IntersectionObserver(
         entries => {
-          if (entries[0].isIntersecting && !!data?.next) {
+          if (entries[0].isIntersecting && hasNext) {
             handleNextPage();
           }
         },
@@ -109,7 +113,7 @@ function PopularTemplates({ catId }: Props) {
       >
         <Box sx={{ px: { xs: "20px", md: "0px" } }}>
           <TemplatesSection
-            templateLoading={isLoading}
+            templateLoading={skipFirstFetch && isLoading}
             templates={allTemplates}
             type="popularTemplates"
           />

@@ -37,7 +37,6 @@ function HeaderSpark({ template, isExpanded, onCancel, messages = [] }: Props) {
   const isOwner = currentUser?.id === selectedExecution?.executed_by;
 
   const allowRename = executionTitle && !isGenerating && isOwner;
-
   return (
     <Stack
       direction={{ xs: !isGenerating ? "column" : "row", md: "row" }}

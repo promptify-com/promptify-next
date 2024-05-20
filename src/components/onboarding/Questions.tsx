@@ -197,27 +197,21 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
             justifyContent: "center",
             alignItems: "center",
             borderRadius: "99px",
+            color: "var(--onPrimary, var(--onPrimary, #FFF))",
+            fontSize: "16px",
+            fontStyle: "normal",
+            fontWeight: "500",
+            lineHeight: "150%",
+            border: !selectedOptionId ? 0 : "1px solid",
             background: !selectedOptionId ? "var(--surfaceContainerHighest, #E3E2E6)" : "var(--onSurface, #1B1B1F)",
+            transition: "background 0.3s ease-in-out",
             "&:hover": {
-              background: "var(--onSurface, #1B1B1F)",
+              background: "transparent",
+              color: "#424242",
             },
           }}
         >
-          {isAnswering ? (
-            <CircularProgress style={{ color: "#fff" }} />
-          ) : (
-            <Typography
-              sx={{
-                color: "var(--onPrimary, var(--onPrimary, #FFF))",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: "500",
-                lineHeight: "150%",
-              }}
-            >
-              Continue
-            </Typography>
-          )}
+          {isAnswering ? <CircularProgress style={{ color: "#fff" }} /> : <>Continue</>}
         </Button>
 
         <Box

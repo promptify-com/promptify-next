@@ -1,24 +1,22 @@
 import { useState } from "react";
-
 import Box from "@mui/material/Box";
-
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
 import AccountSidebar from "@/components/profile2/AccountSidebar";
-import IconButton from "@mui/material/IconButton";
+import useBrowser from "@/hooks/useBrowser";
 import ProfileNavigation from "./ProfileNavigation";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { isDesktopViewPort } from "@/common/helpers";
 
 export default function Layout({ children, title }: { children: React.ReactNode; title: string }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const desktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
-  return desktopView ? (
+  return !isMobile ? (
     <>{children}</>
   ) : (
     <Box

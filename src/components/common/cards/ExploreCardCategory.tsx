@@ -11,16 +11,18 @@ import { CategoryCard } from "./CardCategory";
 
 interface Props {
   category: Category;
+  priority?: boolean;
 }
 
-function ExploreCardCategory({ category }: Props) {
+function ExploreCardCategory({ category, priority }: Props) {
   const { isMobile } = useBrowser();
+
   return (
     <>
       {isMobile ? (
         <CategoryCard
           category={category}
-          priority={false}
+          priority={priority}
           href={`/explore/${category.slug}`}
           min={!isMobile}
         />
@@ -31,7 +33,6 @@ function ExploreCardCategory({ category }: Props) {
         >
           <Card
             elevation={0}
-            title={category.name}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -71,7 +72,7 @@ function ExploreCardCategory({ category }: Props) {
                   src={category.image}
                   alt={category.name}
                   style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
-                  priority={true}
+                  priority={priority}
                 />
               </CardMedia>
               <CardContent sx={{ p: "8px 0", m: 0 }}>

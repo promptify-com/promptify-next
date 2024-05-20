@@ -237,7 +237,13 @@ export default function PrivacyPolicy() {
                 </Box>
                 <Box component={"li"}>
                   Contact InformationFor any questions, comments, or concerns about this Privacy Policy, please contact
-                  us at: <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>
+                  us at:{" "}
+                  <a
+                    href="mailto:privacy@promptify.com"
+                    style={{ color: "blue" }}
+                  >
+                    privacy@promptify.com
+                  </a>
                 </Box>
               </Box>
             </Box>

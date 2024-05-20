@@ -197,27 +197,28 @@ const Finish = () => {
                 alignItems: "center",
                 borderRadius: "99px",
                 background: "var(--onSurface, #1B1B1F)",
-                "&:hover": {
-                  background: "var(--onSurface, #1B1B1F)",
+                color: "onPrimary",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: "500",
+                lineHeight: "150%",
+                border: "1px solid",
+                ariaLabel: "Finish",
+                ":hover": {
+                  bgcolor: "transparent",
+                  color: "#424242",
                 },
               }}
               onClick={formik.submitForm}
               disabled={isLoading}
             >
               {isLoading ? (
-                <CircularProgress size={23} />
+                <CircularProgress
+                  size={23}
+                  sx={{ color: "onPrimary" }}
+                />
               ) : (
-                <Typography
-                  sx={{
-                    color: "var(--onPrimary, var(--onPrimary, #FFF))",
-                    fontSize: "16px",
-                    fontStyle: "normal",
-                    fontWeight: "500",
-                    lineHeight: "150%",
-                  }}
-                >
-                  Finish
-                </Typography>
+                <>Finish</>
               )}
             </Button>
           </Box>

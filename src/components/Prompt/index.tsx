@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useViewTemplateMutation } from "@/core/api/templates";
 import { redirectToPath } from "@/common/helpers";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
-import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
   template: Templates;
@@ -32,7 +31,7 @@ function TemplatePage({ template, popup }: Props) {
     } as Templates;
   }
 
-  const { isMobile } = useBrowser(true);
+  const { isMobile } = useBrowser();
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
@@ -92,88 +91,95 @@ function TemplatePage({ template, popup }: Props) {
 
   return (
     <ThemeProvider theme={dynamicTheme}>
-      <ClientOnly>
-        <Stack
-          direction={{ md: "row" }}
+      <Stack
+        direction={{ md: "row" }}
+        height={{
+          xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
+          md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
+        }}
+        sx={{
+          overflow: { xs: "auto", md: "unset" },
+          mt: { xs: theme.custom.headerHeight.xs, md: 0 },
+          px: { md: "32px" },
+        }}
+        data-cy="main-container-prompt-template"
+      >
+        <Box
+          ref={tabsRef}
+          flex={4}
+          order={{ xs: 1, md: 0 }}
           height={{
-            xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
-            md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
+            md: `calc(100% - ${popup ? "24px" : "0px"})`,
           }}
           sx={{
-            overflow: { xs: "auto", md: "unset" },
-            mt: { xs: theme.custom.headerHeight.xs, md: 0 },
-            px: { md: "32px" },
+            pr: { md: "32px" },
+            overflow: { md: "auto" },
+            "&::-webkit-scrollbar": {
+              width: 0,
+            },
           }}
-          data-cy="main-container-prompt-template"
         >
-          <Box
-            ref={tabsRef}
-            flex={4}
-            order={{ xs: 1, md: 0 }}
-            height={{
-              md: `calc(100% - ${popup ? "24px" : "0px"})`,
-            }}
-            sx={{
-              pr: { md: "32px" },
-              overflow: { md: "auto" },
+          <Stack>
+            {!isMobile && (
+              <Stack
+                sx={{
+                  p: "24px 48px",
+                }}
+              >
+                <Header
+                  template={template}
+                  close={closeTemplatePopup}
+                />
+              </Stack>
+            )}
+            {!isMobile && (
+              <Box
+                sx={{
+                  position: "relative",
+                  width: "100%",
+                  height: isMobile ? "408px" : "446px",
+                  borderRadius: "24px",
+                  overflow: "hidden",
+                }}
+              >
+                <Image
+                  src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                  alt={template.title?.slice(0, 1) ?? "P"}
+                  priority={true}
+                  fill
+                  sizes="(max-width: 900px) 253px, 446px"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                />
+              </Box>
+            )}
+
+            <ContentContainer
+              template={template}
+              tabsFixed={tabsFixed}
+            />
+          </Stack>
+        </Box>
+        <Box
+          flex={2}
+          order={0}
+          sx={{
+            ...(!isMobile && {
+              maxHeight: "100%",
+              overflowY: "auto",
               "&::-webkit-scrollbar": {
                 width: 0,
               },
-            }}
-          >
-            <Stack>
-              {!isMobile && (
-                <Stack
-                  sx={{
-                    p: "24px 48px",
-                  }}
-                >
-                  <Header
-                    template={template}
-                    close={closeTemplatePopup}
-                  />
-                </Stack>
-              )}
-              {!isMobile && (
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    height: isMobile ? "408px" : "446px",
-                    borderRadius: "24px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Image
-                    src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                    alt={template.title?.slice(0, 1) ?? "P"}
-                    priority={true}
-                    fill
-                    sizes="(max-width: 900px) 253px, 446px"
-                    style={{
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
-              )}
-
-              <ContentContainer
-                template={template}
-                tabsFixed={tabsFixed}
-              />
-            </Stack>
-          </Box>
-          <Box
-            flex={2}
-            order={0}
-          >
-            <TemplateDetails
-              template={template}
-              close={closeTemplatePopup}
-            />
-          </Box>
-        </Stack>
-      </ClientOnly>
+            }),
+          }}
+        >
+          <TemplateDetails
+            template={template}
+            close={closeTemplatePopup}
+          />
+        </Box>
+      </Stack>
     </ThemeProvider>
   );
 }

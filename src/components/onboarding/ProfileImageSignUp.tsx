@@ -184,6 +184,11 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
                 borderRadius: "99px",
                 border: "1px solid var(--surfaceContainerHigh, #E9E7EC)",
                 cursor: "pointer",
+                transition: "bgcolor 0.3s ease",
+                ":hover": {
+                  bgcolor: "surfaceContainerHigh",
+                  transition: "bgcolor 0.3s ease",
+                },
               }}
               aria-label="upload picture"
               onClick={handleSelectImageClick}
@@ -312,8 +317,8 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
               </Typography>
             </Button>
             <Button
+              disabled={isLoading}
               sx={{
-                bgcolor: "#424242",
                 width: "160px",
                 height: "50px",
                 borderRadius: "25px",
@@ -321,19 +326,23 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
                 alignItems: "center",
                 justifyContent: "center",
                 ariaLabel: "upload picture",
+                border: "1px solid",
+                bgcolor: "#424242",
                 color: "#FFF",
+                ":hover": {
+                  bgcolor: "transparent",
+                  color: "#424242",
+                },
               }}
               onClick={() => onSave()}
             >
               {isLoading ? (
-                <CircularProgress />
+                <CircularProgress
+                  size={20}
+                  sx={{ color: "onPrimary" }}
+                />
               ) : (
-                <Typography
-                  fontWeight={500}
-                  fontSize={{ xs: "0.6rem", sm: "0.8rem" }}
-                >
-                  Crop & Save
-                </Typography>
+                <>Crop & Save</>
               )}
             </Button>
           </Box>
