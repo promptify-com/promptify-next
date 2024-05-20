@@ -16,7 +16,20 @@ const Links = [
 ];
 
 const socialLinks = [
-  { title: "Twitter", href: "#", icon: <XIcon style={{ fill: "#1B1B1F" }} /> },
+  {
+    title: "Twitter",
+    href: "#",
+    icon: (
+      <XIcon
+        style={{
+          fill: "#1B1B1F",
+          width: "16.5px",
+          height: "17px",
+          marginTop: "1px",
+        }}
+      />
+    ),
+  },
   { title: "Facebook", href: "#", icon: <FacebookIcon style={{ fill: "#1B1B1F" }} /> },
   {
     title: "LinkedIn",
