@@ -19,7 +19,7 @@ function AdsBox() {
       }}
     >
       <Image
-        src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.webp")}
+        src={"/assets/images/Homepage/TryGPT.webp"}
         alt={"Promptify"}
         fill
         sizes="(max-width: 600px) 344px, (max-width: 900px) 437px, 437px"

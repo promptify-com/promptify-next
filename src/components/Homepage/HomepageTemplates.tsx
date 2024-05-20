@@ -78,9 +78,9 @@ function HomepageTemplates({ title, templates, templatesLoading, showAdsBox }: P
           ))
         ) : (
           <>
-            {templates?.map(template => (
+            {templates?.map((template, index) => (
               <Grid
-                key={template.id}
+                key={index}
                 item
                 xs={6}
                 sm={6}
