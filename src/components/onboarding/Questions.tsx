@@ -35,7 +35,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
       .then(() => {
         dispatch(
           setToast({
-            message: "Your answer registred successfully.",
+            message: "Your answer is registered successfully.",
             severity: "success",
             position: { vertical: "bottom", horizontal: "left" },
           }),
