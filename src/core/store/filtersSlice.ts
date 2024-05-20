@@ -18,19 +18,4 @@ const filterSlice = createSlice({
   reducers: {},
 });
 
-export const countSelectedFilters = (state: SelectedFilters): number => {
-  let count = 0;
-
-  if (state.engine) count += 1;
-  if (state.category) count += 1;
-  if (state.subCategory) count += 1;
-  if (state.title) count += 1;
-  if (state.isFavorite) count += 1;
-
-  count += state.tag.length;
-  count += state.engineType.length;
-
-  return count;
-};
-
 export default filterSlice.reducer;

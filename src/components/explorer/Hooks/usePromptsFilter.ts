@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Engine, EngineType, SelectedFilters, Tag } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { contentTypeItems } from "@/components/sidebar/Constants";
@@ -96,6 +96,21 @@ const usePromptsFilter = () => {
     );
   };
 
+  const filtersCount = useMemo(() => {
+    let count = 0;
+
+    if (filters.engine) count += 1;
+    if (filters.category) count += 1;
+    if (filters.subCategory) count += 1;
+    if (filters.title) count += 1;
+    if (filters.isFavorite) count += 1;
+
+    count += filters.tag.length;
+    count += filters.engineType.length;
+
+    return count;
+  }, [filters]);
+
   const updateQueryParams = (newParams: ParsedUrlQueryInput) => {
     const updatedQuery = { ...router.query, ...newParams };
 
@@ -157,6 +172,7 @@ const usePromptsFilter = () => {
     handleSelectEngineType,
     handleSelectTag,
     resetFilters,
+    filtersCount,
   };
 };
 

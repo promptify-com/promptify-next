@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-import { countSelectedFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
@@ -15,11 +14,10 @@ function PromptsReviewFloatButton({ expanded = false }) {
   const theme = useTheme();
 
   const isPromptsReviewFiltersSticky = useAppSelector(state => state.sidebar.isPromptsReviewFiltersSticky);
-  const { filters, resetFilters } = usePromptsFilter();
+  const { resetFilters, filtersCount } = usePromptsFilter();
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCrossHovered, setIsCrossHovered] = useState(false);
-  const filterCount = countSelectedFilters(filters);
 
   return (
     <Box
@@ -43,7 +41,7 @@ function PromptsReviewFloatButton({ expanded = false }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <>
-        {filterCount !== 0 && (
+        {filtersCount !== 0 && (
           <Box
             position={"absolute"}
             top={0}
@@ -77,7 +75,7 @@ function PromptsReviewFloatButton({ expanded = false }) {
                 fontSize={"12px"}
                 color={"onPrimary"}
               >
-                {filterCount}
+                {filtersCount}
               </Typography>
             )}
           </Box>

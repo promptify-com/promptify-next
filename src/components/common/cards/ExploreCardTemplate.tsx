@@ -11,7 +11,6 @@ import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
-import { useAppDispatch } from "@/hooks/useStore";
 import Link from "next/link";
 import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
@@ -37,7 +36,6 @@ function CardTemplate({
   showTagsOnHover = false,
 }: CardTemplateProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
 
