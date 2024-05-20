@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import { useAppSelector } from "@/hooks/useStore";
 import type { Tag } from "@/core/api/dto/templates";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 

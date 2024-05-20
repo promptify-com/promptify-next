@@ -90,11 +90,12 @@ export function useGetTemplatesByFilter({
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
-      filters.engine === null &&
-      filters.tag.every(tag => tag === null) &&
-      filters.title === null &&
-      filters.category === null &&
-      filters.subCategory === null &&
+      !filters.isFavorite &&
+      !filters.engine &&
+      !filters.tag.length &&
+      !filters.title &&
+      !filters.category &&
+      !filters.subCategory &&
       !filters.engineType.length
     );
   }

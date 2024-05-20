@@ -8,21 +8,20 @@ import { useGetEnginesQuery } from "@/core/api/engines";
 const usePromptsFilter = () => {
   const router = useRouter();
   const [filters, setFilters] = useState<SelectedFilters>({
-    engine: null,
-    tag: [],
     title: null,
-    category: null,
-    subCategory: null,
-    engineType: [],
     isFavorite: false,
+    engine: null,
+    engineType: [],
+    tag: [],
   });
-  const { data: engines } = useGetEnginesQuery();
 
   const routerKey = router.query.key as string | undefined;
   const routerEngine = router.query.engine as string | undefined;
   const routerEngineTypes = router.query.type as string | undefined;
   const routerTags = router.query.tags as string | undefined;
   const routerIsFavorite = router.query.isFavorite as string | undefined;
+
+  const { data: engines, isLoading: enginesLoading } = useGetEnginesQuery(undefined, { skip: !routerEngine });
 
   const handleSelectKeyword = (key: string | null) => {
     updateQueryParams({
@@ -133,6 +132,8 @@ const usePromptsFilter = () => {
   };
 
   useEffect(() => {
+    if (enginesLoading) return;
+
     const isFavorite = Boolean(routerIsFavorite);
     const selectedEngine = routerEngine ? engines?.find(eng => eng.id === Number(routerEngine)) : null;
     const engineTypes = routerEngineTypes
@@ -155,14 +156,13 @@ const usePromptsFilter = () => {
       : [];
 
     setFilters({
-      ...filters,
       title: routerKey ?? null,
       isFavorite,
       engine: selectedEngine ?? null,
       engineType: engineTypes,
       tag: tags,
     });
-  }, [router.query]);
+  }, [router.query, engines]);
 
   return {
     filters,
