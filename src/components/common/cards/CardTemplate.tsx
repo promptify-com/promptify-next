@@ -5,6 +5,7 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
+import Tooltip from "@mui/material/Tooltip";
 import { theme } from "@/theme";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
@@ -14,6 +15,9 @@ import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
+import { useRouter } from "next/router";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setSelectedTag } from "@/core/store/filtersSlice";
 
 type CardTemplateProps = {
   template: Templates;
@@ -22,6 +26,8 @@ type CardTemplateProps = {
 function CardTemplate({ template }: CardTemplateProps) {
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
 
@@ -29,6 +35,7 @@ function CardTemplate({ template }: CardTemplateProps) {
 
   const imgPriority = observer?.isIntersecting;
   const displayedTags = tags.slice(0, 2);
+  const remainingTags = tags.slice(2);
   const remainingTagsCount = tags.length - displayedTags.length;
 
   return (
@@ -154,6 +161,7 @@ function CardTemplate({ template }: CardTemplateProps) {
             <Stack
               flex={1}
               gap={"8px"}
+              maxHeight={"91.5px"}
             >
               <Typography
                 fontSize={14}
@@ -206,7 +214,7 @@ function CardTemplate({ template }: CardTemplateProps) {
               </Stack>
             </Box>
 
-            {tags.length > 0 && (
+            {tags.length > 0 && !isMobile && (
               <Box
                 display="flex"
                 gap="8px"
@@ -217,6 +225,11 @@ function CardTemplate({ template }: CardTemplateProps) {
                     {index === 0 ? (
                       <Chip
                         key={tag.id}
+                        onClick={e => {
+                          e.preventDefault();
+                          dispatch(setSelectedTag(tag));
+                          router.push("/explore");
+                        }}
                         label={tag.name}
                         size="small"
                         sx={{
@@ -241,6 +254,11 @@ function CardTemplate({ template }: CardTemplateProps) {
                       >
                         <Chip
                           key={tag.id}
+                          onClick={e => {
+                            e.preventDefault();
+                            dispatch(setSelectedTag(tag));
+                            router.push("/explore");
+                          }}
                           label={tag.name}
                           size="small"
                           sx={{
@@ -255,23 +273,25 @@ function CardTemplate({ template }: CardTemplateProps) {
                           }}
                         />
                         {remainingTagsCount > 0 && (
-                          <Chip
-                            label={`+${remainingTagsCount}`}
-                            size="small"
-                            sx={{
-                              fontSize: "11px",
-                              fontWeight: 500,
-                              lineHeight: "16px",
-                              textAlign: "left",
-                              p: "7px 1px 7px 1px",
-                              borderRadius: "100px",
-                              border: "1px solid rgba(0, 0, 0, 0.08)",
-                              bgcolor: "white",
-                              "& .MuiChip-label": {
-                                p: "10px",
-                              },
-                            }}
-                          />
+                          <Tooltip title={remainingTags.map(tag => tag.name).join(", ")}>
+                            <Chip
+                              label={`+${remainingTagsCount}`}
+                              size="small"
+                              sx={{
+                                fontSize: "11px",
+                                fontWeight: 500,
+                                lineHeight: "16px",
+                                textAlign: "left",
+                                p: "7px 1px 7px 1px",
+                                borderRadius: "100px",
+                                border: "1px solid rgba(0, 0, 0, 0.08)",
+                                bgcolor: "white",
+                                "& .MuiChip-label": {
+                                  p: "10px",
+                                },
+                              }}
+                            />
+                          </Tooltip>
                         )}
                       </Stack>
                     )}
