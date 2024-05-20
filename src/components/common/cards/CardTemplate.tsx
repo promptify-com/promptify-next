@@ -10,7 +10,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
@@ -213,10 +213,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                 flexWrap="wrap"
               >
                 {displayedTags.map((tag, index) => (
-                  <>
+                  <Fragment key={tag.id}>
                     {index === 0 ? (
                       <Chip
-                        key={tag.id}
                         label={tag.name}
                         size="small"
                         sx={{
@@ -240,7 +239,6 @@ function CardTemplate({ template }: CardTemplateProps) {
                         alignItems={{ xs: "start", md: "center" }}
                       >
                         <Chip
-                          key={tag.id}
                           label={tag.name}
                           size="small"
                           sx={{
@@ -275,7 +273,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                         )}
                       </Stack>
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </Box>
             )}
