@@ -4,7 +4,7 @@ import { Window, LinkedIn, Reddit, GitHub } from "@mui/icons-material";
 import { CONNECTIONS } from "./constants";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
-import LocalStorage from "./Storage/LocalStorage";
+import { LocalStorage } from "./storageTemp";
 
 interface TokenResponse {
   token: string;

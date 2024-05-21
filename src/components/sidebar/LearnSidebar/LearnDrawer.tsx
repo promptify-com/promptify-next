@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyLearnSidebar } from "@/core/store/sidebarSlice";
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import { Stack } from "@mui/material";

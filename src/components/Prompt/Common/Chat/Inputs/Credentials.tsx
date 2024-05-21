@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { object, string } from "yup";
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import {
   useCreateCredentialsMutation,
   useDeleteCredentialMutation,

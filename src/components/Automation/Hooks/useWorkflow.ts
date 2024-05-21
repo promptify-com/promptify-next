@@ -8,7 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAreCredentialsStored, initialState as initialChatState } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types";

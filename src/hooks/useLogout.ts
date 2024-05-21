@@ -1,4 +1,4 @@
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";

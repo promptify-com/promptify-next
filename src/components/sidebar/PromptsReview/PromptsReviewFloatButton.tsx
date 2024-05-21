@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 

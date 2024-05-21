@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
 import PromptsReviewFloatButton from "./PromptsReviewFloatButton";

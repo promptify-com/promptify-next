@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import LocalStorage from "@/common/Storage/LocalStorage";
+import { LocalStorage } from "@/common/storageTemp";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
 import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
