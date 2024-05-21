@@ -5,6 +5,9 @@ import { contentTypeItems } from "@/components/sidebar/Constants";
 import { ParsedUrlQueryInput } from "querystring";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { IFilterSliceState } from "@/core/store/types";
+import SessionStorage from "@/common/Storage/SessionStorage";
+
+type SessionFilter = { [key: string]: ParsedUrlQueryInput };
 
 const usePromptsFilter = () => {
   const router = useRouter();
@@ -23,6 +26,21 @@ const usePromptsFilter = () => {
   const routerIsFavorite = router.query.isFavorite as string | undefined;
 
   const { data: engines, isLoading: enginesLoading } = useGetEnginesQuery(undefined, { skip: !routerEngine });
+
+  const filtersCount = useMemo(() => {
+    let count = 0;
+
+    if (filters.engine) count += 1;
+    if (filters.category) count += 1;
+    if (filters.subCategory) count += 1;
+    if (filters.title) count += 1;
+    if (filters.isFavorite) count += 1;
+
+    count += filters.tag.length;
+    count += filters.engineType.length;
+
+    return count;
+  }, [filters]);
 
   const handleSelectKeyword = (key: string | null) => {
     updateQueryParams({
@@ -94,22 +112,8 @@ const usePromptsFilter = () => {
         shallow: true,
       },
     );
+    resetSessionStorage();
   };
-
-  const filtersCount = useMemo(() => {
-    let count = 0;
-
-    if (filters.engine) count += 1;
-    if (filters.category) count += 1;
-    if (filters.subCategory) count += 1;
-    if (filters.title) count += 1;
-    if (filters.isFavorite) count += 1;
-
-    count += filters.tag.length;
-    count += filters.engineType.length;
-
-    return count;
-  }, [filters]);
 
   const updateQueryParams = (newParams: ParsedUrlQueryInput) => {
     const updatedQuery = { ...router.query, ...newParams };
@@ -130,6 +134,26 @@ const usePromptsFilter = () => {
         shallow: true,
       },
     );
+  };
+
+  const updateSessionStorage = () => {
+    const sessionFilters = SessionStorage.get("filters") as SessionFilter;
+    const params = Object.keys(router.query).filter(param => param !== "categorySlug");
+    if (!!params.length) {
+      SessionStorage.set("filters", JSON.stringify({ ...sessionFilters, [router.pathname]: router.query }));
+    } else {
+      if (sessionFilters && !!!Object.keys(sessionFilters).length) {
+        SessionStorage.remove("filters");
+      }
+    }
+  };
+
+  const resetSessionStorage = () => {
+    const sessionFilters = SessionStorage.get("filters") as SessionFilter;
+    if (sessionFilters) {
+      delete sessionFilters[router.pathname];
+      SessionStorage.set("filters", JSON.stringify(sessionFilters));
+    }
   };
 
   useEffect(() => {
@@ -163,7 +187,21 @@ const usePromptsFilter = () => {
       engineType: engineTypes,
       tag: tags,
     });
+
+    updateSessionStorage();
   }, [router.query, engines]);
+
+  useEffect(() => {
+    const sessionFilters = SessionStorage.get("filters") as SessionFilter;
+    const sessionQueryParams = sessionFilters?.[router.pathname];
+    if (sessionQueryParams) {
+      // As categorySlug is treated as a query param it needs to be replaced and have current router value
+      if (sessionQueryParams.categorySlug && router.query.categorySlug) {
+        sessionQueryParams.categorySlug = router.query.categorySlug;
+      }
+      updateQueryParams(sessionQueryParams);
+    }
+  }, []);
 
   return {
     filters,

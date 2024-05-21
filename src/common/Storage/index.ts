@@ -1,7 +1,7 @@
 import { isBrowser } from "@/common/helpers";
 
 abstract class Storage {
-  abstract get(key: string): string | null;
+  abstract get(key: string): any;
   abstract set(key: string, item: string): void;
   abstract remove(key: string): void;
   abstract clear(): void;
@@ -10,7 +10,7 @@ abstract class Storage {
     throw new Error("This method should be implemented by the subclass.");
   }
 
-  static get(key: string): string | null {
+  static get(key: string) {
     if (!isBrowser()) {
       return null;
     }
