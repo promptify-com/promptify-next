@@ -5,7 +5,7 @@ import { contentTypeItems } from "@/components/sidebar/Constants";
 import { ParsedUrlQueryInput } from "querystring";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { IFilterSliceState } from "@/core/store/types";
-import { SessionStorage } from "@/common/storageTemp";
+import { SessionStorage } from "@/common/storage";
 
 type SessionFilter = { [key: string]: ParsedUrlQueryInput };
 

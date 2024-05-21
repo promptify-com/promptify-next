@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyDocumentsFilters } from "@/core/store/sidebarSlice";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { useEffect, useState } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import DocumentsFilters from "./DocumentsFilters";

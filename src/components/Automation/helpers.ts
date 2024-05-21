@@ -1,4 +1,4 @@
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import type {
   INode,
   NodesFileData,

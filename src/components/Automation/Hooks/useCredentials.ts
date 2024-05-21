@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { extractCredentialsInput } from "@/components/Automation/helpers";

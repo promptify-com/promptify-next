@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MouseEvent } from "react";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 
 export default function Admin() {
   const [token, setToken] = useState("");

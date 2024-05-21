@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { ISidebarSliceState } from "./types";
 
 const initialState: ISidebarSliceState = {

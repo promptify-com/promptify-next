@@ -11,7 +11,7 @@ import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setAnswers, initialState as initialChatState } from "@/core/store/chatSlice";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";

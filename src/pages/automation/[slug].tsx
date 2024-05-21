@@ -28,7 +28,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import executionsSlice, { clearExecutionsStates, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { workflowsApi } from "@/core/api/workflows";
 import ClientOnly from "@/components/base/ClientOnly";
 import store from "@/core/store";

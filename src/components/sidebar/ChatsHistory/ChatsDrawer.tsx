@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyChatHistory } from "@/core/store/sidebarSlice";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import ChatsHistory from "./ChatsHistory";

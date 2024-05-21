@@ -1,4 +1,4 @@
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { ResOverrides } from "@/core/api/dto/prompts";
 

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setParamsValues, initialState as initialChatState } from "@/core/store/chatSlice";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import ParamSlider from "@/components/Prompt/Common/Chat/ParamSlider";
 import ParamButtons from "@/components/Chat/ParamButtons";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";

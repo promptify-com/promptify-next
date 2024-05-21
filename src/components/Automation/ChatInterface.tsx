@@ -15,7 +15,7 @@ import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { IAvailableCredentials, IStoredWorkflows } from "./types";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { useRouter } from "next/router";
 import { workflowsApi } from "@/core/api/workflows";
 import RefreshCredentials from "@/components/RefreshCredentials";

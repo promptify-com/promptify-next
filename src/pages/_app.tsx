@@ -11,7 +11,7 @@ import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
-import { LocalStorage } from "@/common/storageTemp";
+import { LocalStorage } from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
