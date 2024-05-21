@@ -142,7 +142,7 @@ const usePromptsFilter = () => {
     if (!!params.length) {
       SessionStorage.set("filters", JSON.stringify({ ...sessionFilters, [router.pathname]: router.query }));
     } else {
-      if (sessionFilters && !!!Object.keys(sessionFilters).length) {
+      if (sessionFilters && !Object.keys(sessionFilters).length) {
         SessionStorage.remove("filters");
       }
     }

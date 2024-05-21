@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import lazy from "next/dynamic";
 import { useRouter } from "next/router";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
