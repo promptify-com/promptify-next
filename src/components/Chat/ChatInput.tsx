@@ -79,7 +79,7 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
         <a
           href="https://staging.d3gvg02vbse3to.amplifyapp.com/terms-of-use"
           target="_blank"
-          style={{ color: "inherit" }}
+          style={{ color: "blue" }}
         >
           Terms of Use
         </a>{" "}
@@ -87,7 +87,7 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
         <a
           href="https://staging.d3gvg02vbse3to.amplifyapp.com/privacy-policy"
           target="_blank"
-          style={{ color: "inherit" }}
+          style={{ color: "blue" }}
         >
           Privacy Policy
         </a>
