@@ -46,6 +46,7 @@ export default function TermsOfUsePage() {
             <a
               href="https://promptify.com"
               target="_blank"
+              style={{ color: "blue" }}
             >
               Promptify.com
             </a>
