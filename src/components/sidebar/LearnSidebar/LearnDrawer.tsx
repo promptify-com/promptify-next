@@ -6,7 +6,7 @@ import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import { Stack } from "@mui/material";
 import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
 import useBrowser from "@/hooks/useBrowser";
-import { countSelectedFilters } from "@/core/store/documentsSlice";
+import { countSelectedFilters, initialState as initialDocumentsState } from "@/core/store/documentsSlice";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -29,7 +29,7 @@ export default function LearnSidebar({ expandedOnHover = false }: Props) {
   const router = useRouter();
   const { isMobile } = useBrowser();
   const isLearnSidebarSticky = useAppSelector(state => state.sidebar.isLearnSidebarSticky);
-  const filters = useAppSelector(state => state.documents.filter);
+  const filters = useAppSelector(state => state.documents?.filter ?? initialDocumentsState.filter);
   const filterCount = countSelectedFilters(filters);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 

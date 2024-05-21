@@ -30,6 +30,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IWorkflow } from "@/components/Automation/types";
 import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
 import useChatsManager from "./useChatsManager";
+import { IChatSliceState } from "@/core/store/types";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -40,19 +41,19 @@ const useMessageManager = () => {
   const {
     selectedTemplate,
     selectedWorkflow,
-    isSimulationStreaming,
+    isSimulationStreaming = false,
     selectedChat,
-    inputs,
-    params,
-    answers,
-    chatMode,
-    initialChat,
-    parameterSelected,
-    currentExecutionDetails,
-    selectedChatOption,
-  } = useAppSelector(state => state.chat);
+    inputs = [],
+    params = [],
+    answers = [],
+    chatMode = "automation",
+    initialChat = true,
+    parameterSelected = null,
+    currentExecutionDetails = { id: null, isFavorite: false },
+    selectedChatOption = null,
+  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
+  const repeatedExecution = useAppSelector(state => state.executions?.repeatedExecution ?? null);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);

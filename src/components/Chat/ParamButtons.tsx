@@ -7,7 +7,7 @@ import Popover from "@mui/material/Popover";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { updateParameterSelection } from "@/core/store/chatSlice";
+import { updateParameterSelection, initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface Props {
   param: PromptParams;
@@ -22,7 +22,7 @@ const ParamButtons = ({ param, onChange }: Props) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  const answers = useAppSelector(state => state.chat.answers);
+  const answers = useAppSelector(state => state.chat?.answers ?? initialChatState.answers);
 
   const handlePopoverOpen = (event: MouseEvent<HTMLElement>, index: number) => {
     setAnchorEl(event.currentTarget);

@@ -16,8 +16,8 @@ function Textual({ input, value, onChange }: Props) {
   const type = input.type;
   const { isAutomationPage } = useVariant();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const areAllCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const areAllCredentialsStored = useAppSelector(state => state.chat?.areCredentialsStored ?? false);
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
 

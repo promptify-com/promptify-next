@@ -6,6 +6,7 @@ import {
   setMyFavoritesChecked,
   setSelectedEngine,
   setSelectedKeyword,
+  initialState as initialFiltersState,
 } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Tag } from "@/core/api/dto/templates";
@@ -16,7 +17,7 @@ interface FiltersSelectedProps {
 
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
   const dispatch = useAppDispatch();
-  const filters = useAppSelector(state => state.filters);
+  const filters = useAppSelector(state => state.filters ?? initialFiltersState);
   const { engine, tag, title, engineType, isFavourite } = filters;
   const handleDeleteTag = (tagId: number) => {
     dispatch(deleteSelectedTag(tagId));

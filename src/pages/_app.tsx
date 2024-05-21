@@ -6,7 +6,7 @@ import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material/styles";
 import Script from "next/script";
 import { Provider } from "react-redux";
-import { wrapper } from "@/core/store";
+import store from "@/core/store";
 import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
@@ -24,9 +24,7 @@ const poppins = Poppins({
   weight: ["400", "500"],
 });
 
-function App({ Component, ...rest }: AppProps) {
-  const { store, props } = wrapper.useWrappedStore(rest);
-  const { pageProps } = props;
+function App({ Component, pageProps }: AppProps) {
   const isValidUser = isValidUserFn(store.getState());
   const storedToken = useToken();
   const router = useRouter();

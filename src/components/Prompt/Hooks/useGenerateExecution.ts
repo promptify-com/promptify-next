@@ -16,6 +16,7 @@ import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import { createExecuteErrorToast } from "@/components/Chat/helper";
+import { IChatSliceState } from "@/core/store/types";
 
 interface IStreamExecution {
   id: number;
@@ -34,8 +35,13 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { uploadedFiles, uploadPromptAnswersFiles } = useUploadPromptFiles();
   const [stopExecution] = useStopExecutionMutation();
 
-  const { answers, inputs, paramsValues, selectedTemplate } = useAppSelector(state => state.chat);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const {
+    answers = [],
+    inputs = [],
+    paramsValues = [],
+    selectedTemplate,
+  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [disableChatInput, setDisableChatInput] = useState(false);

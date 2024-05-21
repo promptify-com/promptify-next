@@ -16,7 +16,7 @@ import ExecutionOutput from "@/components/builder/ExecutionOutput";
 import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
 
 const TestLog = () => {
-  const template = useAppSelector(state => state.builder.template);
+  const template = useAppSelector(state => state.builder?.template ?? null);
   const { data: executions, isLoading: isLoading } = useGetPromptExecutionsQuery(template?.id!);
 
   const [activeExecution, setActiveExecution] = useState<number | null>(null);

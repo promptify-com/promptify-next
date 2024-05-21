@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Storage from "@/common/storage";
-import type { Category, Engine, EngineType, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import type { Category, Engine, EngineType, Tag } from "@/core/api/dto/templates";
+import { IFilterSliceState } from "./types";
 
-const initialState: SelectedFilters = {
+export const initialState: IFilterSliceState = {
   engine: null,
   tag: [],
   title: null,
@@ -90,7 +91,7 @@ const filterSlice = createSlice({
   },
 });
 
-export const countSelectedFilters = (state: SelectedFilters): number => {
+export const countSelectedFilters = (state: IFilterSliceState): number => {
   let count = 0;
 
   if (state.engine) count += 1;

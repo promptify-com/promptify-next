@@ -12,7 +12,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import MessageBoxHeader from "@/components/Chat/Messages/MessageBoxHeader";
 import FormInputs from "@/components/Prompt/Common/Chat/Form";
 import FormPromptContent from "@/components/Chat/FormPromptContent";
-import { setChatMode } from "@/core/store/chatSlice";
+import { setChatMode, initialState as initialChatState } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
 import RunButton from "../RunButton";
@@ -29,7 +29,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
   const { isMobile } = useBrowser();
   const dispatch = useAppDispatch();
 
-  const { inputs, answers } = useAppSelector(state => state.chat);
+  const { inputs, answers } = useAppSelector(state => state.chat ?? initialChatState);
   const [expanded, setExpanded] = useState(true);
   const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
 

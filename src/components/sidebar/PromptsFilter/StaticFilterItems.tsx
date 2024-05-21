@@ -11,7 +11,7 @@ import Browse from "@/components/sidebar/PromptsFilter/Icons/Browse";
 function StaticFilterItems() {
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
-  const isFavourite = useAppSelector(state => state.filters.isFavourite);
+  const isFavourite = useAppSelector(state => state.filters?.isFavourite ?? false);
 
   return (
     <List

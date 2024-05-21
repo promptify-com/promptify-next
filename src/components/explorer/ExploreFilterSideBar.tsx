@@ -12,9 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import { Engine, Tag } from "@/core/api/dto/templates";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteSelectedTag, setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import {
+  deleteSelectedTag,
+  setSelectedEngine,
+  setSelectedTag,
+  initialState as initialFiltersState,
+} from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 interface ExploreFilterSideBarProps {
   sidebarOpen: boolean;
@@ -25,8 +30,14 @@ interface ExploreFilterSideBarProps {
 const listHeaderStyle = { fontSize: "12px", m: "0 5px", borderRadius: "16px", textAlign: "center" };
 export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engines, tags, sidebarOpen }) => {
   const [itemsToShow, setItemsToShow] = useState<number>(3);
-  const filters = useSelector((state: RootState) => state.filters);
-  const dispatch = useDispatch();
+  const filters = useAppSelector(
+    (state: RootState) =>
+      state.filters ?? {
+        engine: initialFiltersState.engine,
+        tag: initialFiltersState.tag,
+      },
+  );
+  const dispatch = useAppDispatch();
   const handleEngineSelect = (engine: Engine | null) => {
     dispatch(setSelectedEngine(engine));
   };

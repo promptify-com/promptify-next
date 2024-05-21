@@ -18,10 +18,10 @@ interface Props {
 
 export const Display: React.FC<Props> = ({ templateData }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isFetching = useAppSelector(state => state.executions.isFetching);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const isFetching = useAppSelector(state => state.executions?.isFetching ?? false);
 
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const [previewsShown, setPreviewsShown] = useState(false);

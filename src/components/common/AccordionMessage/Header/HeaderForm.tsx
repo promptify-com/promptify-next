@@ -21,7 +21,7 @@ interface Props {
 function HeaderForm({ title, type, isExpanded }: Props) {
   const dispatch = useAppDispatch();
 
-  const answers = useAppSelector(state => state.chat.answers);
+  const answers = useAppSelector(state => state.chat?.answers ?? []);
   return (
     <Stack
       direction={"row"}

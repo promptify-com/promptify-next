@@ -18,9 +18,9 @@ interface GenerationTiming {
 }
 
 function ExecutionMessageFooter({ onAbort, isLastExecution }: Props) {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const selectedTemplate = useAppSelector(state => state.chat?.selectedTemplate);
 
   const [timing, setTiming] = useState<GenerationTiming>({ startTime: null, endTime: null, duration: null });
 

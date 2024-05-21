@@ -36,7 +36,7 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
 
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
 
   const [content, setContent] = useState<string>("");
 
