@@ -137,7 +137,7 @@ const usePromptsFilter = () => {
   };
 
   const updateSessionStorage = () => {
-    const sessionFilters = SessionStorage.get("filters") as SessionFilter;
+    const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
     const params = Object.keys(router.query).filter(param => param !== "categorySlug");
     if (!!params.length) {
       SessionStorage.set("filters", JSON.stringify({ ...sessionFilters, [router.pathname]: router.query }));
@@ -149,7 +149,7 @@ const usePromptsFilter = () => {
   };
 
   const resetSessionStorage = () => {
-    const sessionFilters = SessionStorage.get("filters") as SessionFilter;
+    const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
     if (sessionFilters) {
       delete sessionFilters[router.pathname];
       SessionStorage.set("filters", JSON.stringify(sessionFilters));
@@ -192,7 +192,7 @@ const usePromptsFilter = () => {
   }, [router.query, engines]);
 
   useEffect(() => {
-    const sessionFilters = SessionStorage.get("filters") as SessionFilter;
+    const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
     const sessionQueryParams = sessionFilters?.[router.pathname];
     if (sessionQueryParams) {
       // As categorySlug is treated as a query param it needs to be replaced and have current router value

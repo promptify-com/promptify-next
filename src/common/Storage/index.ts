@@ -1,7 +1,7 @@
 import { isBrowser } from "@/common/helpers";
 
 abstract class Storage {
-  abstract get(key: string): any;
+  abstract get(key: string): string | null;
   abstract set(key: string, item: string): void;
   abstract remove(key: string): void;
   abstract clear(): void;
