@@ -75,7 +75,23 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
         }}
       >
         Promptify uses various LLM models to achieve better results. Promptify may be wrong and can make mistakes, just
-        double-check the information received from the chat. Check our Terms of Use and Privacy Policy.
+        double-check the information received from the chat. Check our{" "}
+        <a
+          href="https://staging.d3gvg02vbse3to.amplifyapp.com/terms-of-use"
+          target="_blank"
+          style={{ color: "inherit" }}
+        >
+          Terms of Use
+        </a>{" "}
+        and{" "}
+        <a
+          href="https://staging.d3gvg02vbse3to.amplifyapp.com/privacy-policy"
+          target="_blank"
+          style={{ color: "inherit" }}
+        >
+          Privacy Policy
+        </a>
+        .
       </Typography>
     </Grid>
   );
