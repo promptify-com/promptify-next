@@ -55,7 +55,7 @@ const usePromptsFilter = () => {
     const tagExists = filters.tag.some(tag => tag.id === selectedTag.id);
     if (tagExists) {
       updateQueryParams({
-        tags: [...filters.tag]
+        tags: filters.tag
           .filter(tag => tag.id !== selectedTag.id)
           .map(tag => `${tag.id}_${tag.name}`)
           .join(","),
@@ -72,14 +72,14 @@ const usePromptsFilter = () => {
 
   const selectEngineType = (engineType: EngineType) => {
     const selectedTypes = Array.isArray(engineType) ? engineType : [engineType];
-    const keepTypes = [...filters.engineType].filter(type => !selectedTypes.some(sType => sType.id === type.id));
+    const keepTypes = filters.engineType.filter(type => !selectedTypes.some(sType => sType.id === type.id));
     const updatedTypes = keepTypes.concat(selectedTypes);
     setFilters({ ...filters, engineType: updatedTypes });
     updateQueryParams({ type: updatedTypes.map(type => type.id).join(",") });
   };
 
   const deleteSelectedEngineType = (engineType: EngineType) => {
-    const updatedTypes = [...filters.engineType].filter(type => type.id !== engineType.id);
+    const updatedTypes = filters.engineType.filter(type => type.id !== engineType.id);
     updateQueryParams({ type: updatedTypes.map(type => type.id).join(",") });
   };
 
