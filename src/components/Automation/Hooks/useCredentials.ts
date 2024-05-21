@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
@@ -15,7 +15,7 @@ import type {
 const useCredentials = () => {
   const dispatch = useAppDispatch();
   const [credentials, setCredentials] = useState<ICredential[]>(
-    (Storage.get("credentials") as unknown as ICredential[]) || [],
+    (LocalStorage.get("credentials") as unknown as ICredential[]) || [],
   );
   const credentialsInput = useAppSelector(state => state.chat?.credentialsInput ?? initialChatState.credentialsInput);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -36,7 +36,7 @@ const useCredentials = () => {
         }
 
         setCredentials(fetchedCredentials);
-        Storage.set("credentials", JSON.stringify(fetchedCredentials));
+        LocalStorage.set("credentials", JSON.stringify(fetchedCredentials));
         resolve(fetchedCredentials);
       } catch (error) {
         console.error("Failed fetching Credentials");
@@ -55,7 +55,7 @@ const useCredentials = () => {
   }
 
   const checkAllCredentialsStored = (credentialsInput: ICredentialInput[]) => {
-    const _credentials = (Storage.get("credentials") || []) as ICredential[];
+    const _credentials = (LocalStorage.get("credentials") || []) as ICredential[];
 
     if (!credentialsInput.length || !_credentials.length) {
       return false;
@@ -65,25 +65,25 @@ const useCredentials = () => {
   };
 
   const checkCredentialInserted = (credential: ICredentialInput) => {
-    const _credentials = (Storage.get("credentials") || []) as ICredential[];
+    const _credentials = (LocalStorage.get("credentials") || []) as ICredential[];
 
     return _credentials.findIndex(c => c.type === credential?.name) !== -1;
   };
 
   const updateCredentials = (newCredential: ICredential) => {
-    const updatedCredentials = (Storage.get("credentials") as unknown as ICredential[]) || [];
+    const updatedCredentials = (LocalStorage.get("credentials") as unknown as ICredential[]) || [];
 
     updatedCredentials.push(newCredential);
     setCredentials(updatedCredentials);
-    Storage.set("credentials", JSON.stringify(updatedCredentials));
+    LocalStorage.set("credentials", JSON.stringify(updatedCredentials));
   };
 
   const removeCredential = (credentialId: string) => {
-    const _credentials = (Storage.get("credentials") || []) as ICredential[];
+    const _credentials = (LocalStorage.get("credentials") || []) as ICredential[];
     const updatedCredentials = _credentials.filter(credential => credential.id !== credentialId);
 
     setCredentials(updatedCredentials);
-    Storage.set("credentials", JSON.stringify(updatedCredentials));
+    LocalStorage.set("credentials", JSON.stringify(updatedCredentials));
   };
 
   function recreateNodeCredentials(nodeCredentials: INodeCredentials) {
@@ -97,7 +97,7 @@ const useCredentials = () => {
   }
 
   async function updateWorkflowAfterCredentialsDeletion(credentialType: string) {
-    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+    const storedWorkflows = (LocalStorage.get("workflows") as unknown as IStoredWorkflows) || {};
 
     if (!!Object.values(storedWorkflows).length) {
       for (const _workflowId in storedWorkflows) {

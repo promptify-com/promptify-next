@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MouseEvent } from "react";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 
 export default function Admin() {
   const [token, setToken] = useState("");
@@ -12,11 +12,11 @@ export default function Admin() {
       return;
     }
 
-    Storage.remove("workflows");
-    Storage.remove("credentials");
-    Storage.remove("currentUser");
-    Storage.remove("path");
-    Storage.set("token", token);
+    LocalStorage.remove("workflows");
+    LocalStorage.remove("credentials");
+    LocalStorage.remove("currentUser");
+    LocalStorage.remove("path");
+    LocalStorage.set("token", token);
     setToken("");
   };
 

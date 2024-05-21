@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyLearnSidebar } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import { Stack } from "@mui/material";
@@ -35,7 +35,7 @@ export default function LearnSidebar({ expandedOnHover = false }: Props) {
   useEffect(() => {
     if (isMobile) return;
 
-    const isLearnSidebarSticky = Boolean(Storage.get("isLearnSidebarSticky"));
+    const isLearnSidebarSticky = Boolean(LocalStorage.get("isLearnSidebarSticky"));
     if (isLearnSidebarSticky) {
       dispatch(setStickyLearnSidebar(isLearnSidebarSticky));
     }

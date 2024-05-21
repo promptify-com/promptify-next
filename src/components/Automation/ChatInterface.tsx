@@ -1,7 +1,6 @@
 import { useRef, Fragment, useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/common/AccordionMessage";
@@ -16,7 +15,7 @@ import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { IAvailableCredentials, IStoredWorkflows } from "./types";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import { useRouter } from "next/router";
 import { workflowsApi } from "@/core/api/workflows";
 import RefreshCredentials from "@/components/RefreshCredentials";
@@ -60,7 +59,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
 
   useEffect(() => {
     async function updateRefreshButtons() {
-      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+      const storedWorkflows = (LocalStorage.get("workflows") as unknown as IStoredWorkflows) || {};
 
       if (workflowId && storedWorkflows[workflowId]?.id) {
         const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();

@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
 import PromptsReviewFloatButton from "./PromptsReviewFloatButton";
@@ -23,7 +23,7 @@ export default function PromptsReviewDrawer({ expandedOnHover }: Props) {
   };
 
   useEffect(() => {
-    const storedPromptsReviewFilter = Storage.get("isPromptsReviewFiltersSticky");
+    const storedPromptsReviewFilter = LocalStorage.get("isPromptsReviewFiltersSticky");
     if (storedPromptsReviewFilter !== null) {
       dispatch(setStickyPromptsReviewFilters(JSON.parse(storedPromptsReviewFilter)));
     }

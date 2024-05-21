@@ -28,7 +28,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import executionsSlice, { clearExecutionsStates, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import { workflowsApi } from "@/core/api/workflows";
 import ClientOnly from "@/components/base/ClientOnly";
 import store from "@/core/store";
@@ -66,7 +66,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   });
   const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
   const processData = async (skipInitialMessages: boolean = false) => {
-    const storedWorkflows = (Storage.get("workflows") ?? {}) as IStoredWorkflows;
+    const storedWorkflows = (LocalStorage.get("workflows") ?? {}) as IStoredWorkflows;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     let currentWorkflow = {} as IWorkflowCreateResponse;
 

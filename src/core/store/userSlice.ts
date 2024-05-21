@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/core/api/dto/user";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import { IUserSliceState } from "./types";
 
 const initialState: IUserSliceState = {
@@ -14,7 +14,7 @@ const userSlice = createSlice({
     updateUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload ? Object.freeze(action.payload) : null;
 
-      Storage.set("currentUser", JSON.stringify(action.payload || {}));
+      LocalStorage.set("currentUser", JSON.stringify(action.payload || {}));
     },
   },
 });

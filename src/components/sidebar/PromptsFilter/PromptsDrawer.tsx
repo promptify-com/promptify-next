@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
 import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
@@ -23,7 +23,7 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
   };
 
   useEffect(() => {
-    const storedIsPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
+    const storedIsPromptsFiltersSticky = LocalStorage.get("isPromptsFiltersSticky");
     if (storedIsPromptsFiltersSticky !== null) {
       dispatch(setStickyPromptsFilters(JSON.parse(storedIsPromptsFiltersSticky)));
     }
@@ -44,7 +44,7 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
           onClose={() => {
             resetFilters();
             dispatch(setStickyPromptsFilters(false));
-            Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+            LocalStorage.set("isPromptsFiltersSticky", JSON.stringify(false));
           }}
         />
       </Stack>

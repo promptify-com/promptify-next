@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { object, string } from "yup";
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import {
   useCreateCredentialsMutation,
   useDeleteCredentialMutation,
@@ -103,7 +103,7 @@ function Credentials({ input }: Props) {
 
   const updateWorkflowAndStorage = async () => {
     const selectedWorkflowId = selectedWorkflow?.id.toString() ?? workflowId;
-    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+    const storedWorkflows = (LocalStorage.get("workflows") as unknown as IStoredWorkflows) || {};
     let workflow = storedWorkflows[selectedWorkflowId]?.workflow;
 
     if (!workflow && storedWorkflows[selectedWorkflowId]?.id) {
@@ -127,7 +127,7 @@ function Credentials({ input }: Props) {
           id: storedWorkflows[selectedWorkflowId]?.id,
         };
 
-        Storage.set("workflows", JSON.stringify(storedWorkflows));
+        LocalStorage.set("workflows", JSON.stringify(storedWorkflows));
       } catch (error) {
         console.error("Error updating workflow:", error);
       }
@@ -277,7 +277,7 @@ function Credentials({ input }: Props) {
             {oAuthConnected ? (
               <>
                 {() => {
-                  const _credentials = (Storage.get("credentials") || []) as ICredential[];
+                  const _credentials = (LocalStorage.get("credentials") || []) as ICredential[];
                   const _credential = _credentials.find(cred => cred.type === credential?.name);
                   if (!_credential) {
                     return null;

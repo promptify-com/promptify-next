@@ -8,7 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAreCredentialsStored, initialState as initialChatState } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
-import Storage from "@/common/storage";
+import LocalStorage from "@/common/Storage/LocalStorage";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types";
@@ -32,7 +32,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
-    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+    const storedWorkflows = (LocalStorage.get("workflows") as unknown as IStoredWorkflows) || {};
 
     if (selectedWorkflowId.toString() in storedWorkflows && storedWorkflows[selectedWorkflowId.toString()].id) {
       webhookPathRef.current = storedWorkflows[selectedWorkflowId].webhookPath;
@@ -99,7 +99,7 @@ const useWorkflow = (workflow: IWorkflow) => {
           };
         }
 
-        Storage.set("workflows", JSON.stringify(storedWorkflows));
+        LocalStorage.set("workflows", JSON.stringify(storedWorkflows));
       }
     } catch (error) {
       console.error("Error creating workflow:", error);
@@ -109,13 +109,13 @@ const useWorkflow = (workflow: IWorkflow) => {
   async function removeWorkflowFromStorage(storedWorkflows: IStoredWorkflows = {}) {
     const _storedWorkflows = Object.values(storedWorkflows)?.length
       ? storedWorkflows
-      : ((Storage.get("workflows") || {}) as IStoredWorkflows);
+      : ((LocalStorage.get("workflows") || {}) as IStoredWorkflows);
 
     if (_storedWorkflows[workflowId] && "workflow" in _storedWorkflows[workflowId]) {
       const { webhookPath, id } = _storedWorkflows[workflowId];
 
       storedWorkflows[workflowId] = { webhookPath, id };
-      Storage.set("workflows", JSON.stringify(storedWorkflows));
+      LocalStorage.set("workflows", JSON.stringify(storedWorkflows));
     }
   }
 
@@ -123,7 +123,7 @@ const useWorkflow = (workflow: IWorkflow) => {
     let inputsData: Record<string, string> = {};
 
     if (!webhookPathRef.current) {
-      const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
+      const storedWorkflows = (LocalStorage.get("workflows") as unknown as IStoredWorkflows) || {};
       webhookPathRef.current = storedWorkflows[workflowId].webhookPath;
       removeWorkflowFromStorage(storedWorkflows);
     } else {
