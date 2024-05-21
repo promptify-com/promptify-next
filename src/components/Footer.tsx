@@ -174,7 +174,15 @@ function Footer() {
               color: "secondary.light",
             }}
           >
-            © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
+            © {thisYear}{" "}
+            <a
+              href="https://promptify.com/"
+              target="_blank"
+              style={{ textDecoration: "none", color: "blue" }}
+            >
+              Promptify.com
+            </a>{" "}
+            - Promptify LLC. All rights reserved.
           </Typography>
         </Stack>
       </Stack>
