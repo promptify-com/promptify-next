@@ -59,12 +59,15 @@ function MessageSender({
   };
 
   const handleSubmit = () => {
-    onSubmit(MessageSenderValue);
+    const trimmedValue = MessageSenderValue.trim();
+    if (!trimmedValue) return;
+
+    onSubmit(trimmedValue);
     setMessageSenderValue("");
     resetGlobalValue();
   };
 
-  const hasValue = MessageSenderValue !== "";
+  const hasValue = MessageSenderValue.trim() !== "";
 
   return (
     <Box

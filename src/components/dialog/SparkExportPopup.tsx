@@ -44,27 +44,6 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
     }
   };
 
-  const handleFacebookShare = () => {
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${ENCODED_URL}`;
-    window.open(facebookShareUrl, "_blank");
-  };
-  const handleTwitterShare = () => {
-    const twitterShareUrl = `https://twitter.com/intent/tweet?url=${ENCODED_URL}`;
-    window.open(twitterShareUrl, "_blank");
-  };
-  const handleRedditShare = () => {
-    const redditTitle = generateTitle();
-    const redditShareUrl = `https://www.reddit.com/submit?url=${ENCODED_URL}&title=${redditTitle}`;
-    window.open(redditShareUrl, "_blank");
-  };
-  const handleEmailShare = () => {
-    const subject = generateTitle();
-    const body = ENCODED_URL;
-
-    const emailUrl = `mailto:?subject=${subject}&body=${body}`;
-    window.location.href = emailUrl;
-  };
-
   const handleExportExecution = async (fileType: "word" | "pdf") => {
     setExporting({ ...exporting, [fileType]: true });
     try {
@@ -137,7 +116,6 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
                   opacity: 0.5,
                 }}
               >
-                {}
                 {activeExecution?.title}.pdf
               </Typography>
             </Box>
@@ -278,47 +256,50 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
               display={"flex"}
               justifyContent={"space-around"}
             >
-              <Box onClick={() => handleFacebookShare()}>
+              <Box
+                component={"a"}
+                href={`https://www.facebook.com/sharer/sharer.php?u=${ENCODED_URL}`}
+                target="_blank"
+                sx={socialMediaStyle}
+              >
                 <FacebookRounded
                   sx={{
                     fontSize: "24px",
-                    cursor: "pointer",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
                   }}
                 />
               </Box>
-              <Box onClick={() => handleTwitterShare()}>
+              <Box
+                component={"a"}
+                href={`https://twitter.com/intent/tweet?url=${ENCODED_URL}`}
+                target="_blank"
+                sx={socialMediaStyle}
+              >
                 <Twitter
                   sx={{
                     fontSize: "24px",
-                    cursor: "pointer",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
                   }}
                 />
               </Box>
-              <Box onClick={() => handleRedditShare()}>
+              <Box
+                component={"a"}
+                href={`https://www.reddit.com/submit?url=${ENCODED_URL}&title=${generateTitle()}`}
+                target="_blank"
+                sx={socialMediaStyle}
+              >
                 <Reddit
                   sx={{
                     fontSize: "24px",
-                    cursor: "pointer",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
                   }}
                 />
               </Box>
-              <Box onClick={() => handleEmailShare()}>
+              <Box
+                component="a"
+                href={`mailto:?subject=${generateTitle()}&body=${ENCODED_URL}`}
+                sx={socialMediaStyle}
+              >
                 <Email
                   sx={{
                     fontSize: "24px",
-                    cursor: "pointer",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
                   }}
                 />
               </Box>
@@ -328,4 +309,16 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
       </Grid>
     </Dialog>
   );
+};
+
+const socialMediaStyle = {
+  display: "inline-block",
+  cursor: "pointer",
+  textDecoration: "none",
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "none",
+    color: "inherit",
+    opacity: 0.8,
+  },
 };
