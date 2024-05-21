@@ -16,7 +16,7 @@ interface Props {
 }
 
 function ExecutionMessageBox({ onAbort, executionData, isLastExecution, template, executionId }: Props) {
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   if (!template) {
     return;

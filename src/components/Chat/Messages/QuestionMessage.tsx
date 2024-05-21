@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import FormParam from "@/components/Prompt/Common/Chat/FormParam";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface Props {
   message: IMessage;
@@ -11,7 +12,7 @@ interface Props {
 }
 
 function QuestionMessage({ message, variant }: Props) {
-  const { inputs, params } = useAppSelector(state => state.chat);
+  const { inputs, params } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { questionIndex, questionInputName, text, isRequired } = message;
   const totalQuestions = inputs.length + params.length;

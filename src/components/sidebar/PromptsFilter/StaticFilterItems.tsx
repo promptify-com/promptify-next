@@ -3,12 +3,11 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import Browse from "@/components/sidebar/PromptsFilter/Icons/Browse";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function StaticFilterItems() {
-  const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const { filters, handleCheckIsFavorite } = usePromptsFilter();
 

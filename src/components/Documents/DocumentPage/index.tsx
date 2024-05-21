@@ -19,7 +19,7 @@ interface Props {
 function DocumentPage({ document }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const showPreviews = useAppSelector(state => state.documents.showPreviews);
+  const showPreviews = useAppSelector(state => state.documents?.showPreviews ?? false);
 
   const template = document.template;
 

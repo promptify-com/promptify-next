@@ -30,8 +30,8 @@ const HelpIcon = () => {
 };
 
 function ParamSlider({ param, onChange }: Props) {
-  const paramsValues = useAppSelector(state => state.chat.paramsValues);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const paramsValues = useAppSelector(state => state.chat?.paramsValues ?? []);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
 

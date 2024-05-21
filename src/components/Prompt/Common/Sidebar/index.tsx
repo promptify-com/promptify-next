@@ -37,7 +37,7 @@ function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { isVariantB } = useVariant();
   const { isMobile } = useBrowser();
-  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+  const activeLink = useAppSelector(state => state.templates?.activeSideBarLink ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const theme = useTheme();
   const handleCloseSidebar = () => {

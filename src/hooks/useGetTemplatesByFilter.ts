@@ -1,11 +1,10 @@
 import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
-import { useAppSelector } from "@/hooks/useStore";
-import type { Templates, FilterParams, LowercaseTemplateStatus, SelectedFilters } from "@/core/api/dto/templates";
+import type { Templates, FilterParams, LowercaseTemplateStatus } from "@/core/api/dto/templates";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
+import type { IFilterSliceState } from "@/core/store/types";
 
 interface Props {
   catId?: number;
@@ -88,7 +87,7 @@ export function useGetTemplatesByFilter({
     }
   }, [templates?.results]);
 
-  function areAllStatesNull(filters: SelectedFilters): boolean {
+  function areAllStatesNull(filters: IFilterSliceState): boolean {
     return (
       !filters.isFavorite &&
       !filters.engine &&

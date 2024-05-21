@@ -129,7 +129,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
       </DialogTitle>
       <DialogContent>
         {textInput === "" ? (
-          <SearchByKeywords title={title} />
+          <SearchByKeywords title={title ?? ""} />
         ) : (
           <Grid>
             {isFetching ? (

@@ -21,6 +21,7 @@ import PromptTestDialog from "./PromptTest";
 import { useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
 import { useCreatePromptMutation, useUpdatePromptMutation } from "@/core/api/templates";
+import { initialState as initialBuilderState } from "@/core/store/builderSlice";
 
 interface Props {
   prompt: IEditPrompts;
@@ -53,7 +54,7 @@ const PromptCardAccordion = ({
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
-  const { template, isTemplateOwner } = useAppSelector(state => state.builder);
+  const { template, isTemplateOwner } = useAppSelector(state => state.builder ?? initialBuilderState);
   const isDraft = template?.status === "DRAFT";
 
   const [savePrompt] = useUpdatePromptMutation();

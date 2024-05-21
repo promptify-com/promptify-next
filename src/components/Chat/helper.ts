@@ -11,7 +11,7 @@ import type { NextRouter } from "next/router";
 import type { IChat } from "@/core/api/dto/chats";
 import type { AppDispatcher } from "@/hooks/useStore";
 import type { IWorkflow } from "@/components/Automation/types";
-import type { ToastState } from "@/core/store/toastSlice";
+import type { IToastSliceState } from "@/core/store/types";
 
 interface SendMessageResponse {
   output?: string;
@@ -173,12 +173,12 @@ export function createExecuteErrorToast(
   promptTitle: string = "",
   current: number = 0,
   total: number = 0,
-): Omit<ToastState, "open"> {
+): Omit<IToastSliceState, "open"> {
   const message = `Failed to execute the prompt « ${promptTitle} » ${current}/${total}`;
   const severity = "error";
   const duration = 6000;
 
-  const toast: Omit<ToastState, "open"> = {
+  const toast: Omit<IToastSliceState, "open"> = {
     message,
     severity,
     duration,

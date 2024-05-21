@@ -7,6 +7,7 @@ import AccordionMessage from "@/components/common/AccordionMessage";
 import AccordionContentAutomation from "@/components/common/AccordionMessage/AccordionDetails/AccordionContentAutomation";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import RunButton from "@/components/Prompt/Common/RunButton";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface Props {
   message: IMessage;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 function CredentialsMessage({ message, onExecuteWorkflow, showRunButton }: Props) {
-  const { inputs, answers } = useAppSelector(state => state.chat);
+  const { inputs, answers } = useAppSelector(state => state.chat ?? initialChatState);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { type, text } = message;

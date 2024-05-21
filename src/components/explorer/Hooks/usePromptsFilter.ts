@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Engine, EngineType, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import { ParsedUrlQueryInput } from "querystring";
 import { useGetEnginesQuery } from "@/core/api/engines";
+import { IFilterSliceState } from "@/core/store/types";
 
 const usePromptsFilter = () => {
   const router = useRouter();
-  const [filters, setFilters] = useState<SelectedFilters>({
+  const [filters, setFilters] = useState<IFilterSliceState>({
     title: null,
     isFavorite: false,
     engine: null,

@@ -35,8 +35,9 @@ export const DisplayActions: React.FC<Props> = ({ onOpenExport, showPreviews, to
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { selectedExecution, repeatedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
+  const repeatedExecution = useAppSelector(state => state.executions?.repeatedExecution ?? null);
 
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);

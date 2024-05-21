@@ -10,6 +10,7 @@ import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import { IChatSliceState } from "@/core/store/types";
 
 interface Props {
   messages: IMessage[];
@@ -33,9 +34,13 @@ const ChatInterface = ({
   onExecuteWorkflow,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
+  const {
+    selectedTemplate,
+    selectedChatOption = null,
+    selectedChat,
+  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { scrollToBottom, showScrollDown } = useScrollToBottom({

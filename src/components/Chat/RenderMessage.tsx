@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Fade from "@mui/material/Fade";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { setIsSimulationStreaming, initialState as initialChatState } from "@/core/store/chatSlice";
 import TemplateSuggestions from "@/components/Chat/Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
 import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox";
@@ -15,6 +15,7 @@ import WorkflowSuggestions from "./Messages/WorkflowSuggestions";
 import CredentialsMessage from "./Messages/CredentialsMessage";
 import { createMessage } from "./helper";
 import Box from "@mui/material/Box";
+import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
 
 interface Props {
   message: IMessage;
@@ -26,8 +27,12 @@ interface Props {
 
 function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
   const dispatch = useAppDispatch();
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const areCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
+  const generatedExecution = useAppSelector(
+    state => state.executions?.generatedExecution ?? initialExecutionsState.generatedExecution,
+  );
+  const areCredentialsStored = useAppSelector(
+    state => state.chat?.areCredentialsStored ?? initialChatState.areCredentialsStored,
+  );
   const generatedExecutionMessage: IMessage = createMessage({
     type: "html",
     text: generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "",

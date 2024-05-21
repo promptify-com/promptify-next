@@ -23,16 +23,6 @@ export interface FilterParams {
   include?: string;
 }
 
-export interface SelectedFilters {
-  title: string | null;
-  engine: Engine | null;
-  engineType: EngineType[];
-  tag: Tag[];
-  category?: Category | null;
-  subCategory?: Category | null;
-  isFavorite?: boolean;
-}
-
 export type EngineType = { id: number; label: string };
 
 export class TemplateParam {

@@ -23,7 +23,7 @@ function Header({ document }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
-  const title = useAppSelector(state => state.documents.title);
+  const title = useAppSelector(state => state.documents?.title ?? "");
   const [isFavorite, setIsFavorite] = useState(document.is_favorite);
 
   const daysLeft = calculateDocumentDeleteDeadline(document.created_at);

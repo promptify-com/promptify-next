@@ -14,10 +14,12 @@ interface Props {
 
 function GenerateAndClearButton({ isValidating, showGenerate, onGenerate }: Props) {
   const dispatch = useAppDispatch();
-  const { selectedExecution, generatedExecution } = useAppSelector(state => state.executions);
-  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const answers = useAppSelector(state => state.chat?.answers ?? []);
+  const isSimulationStreaming = useAppSelector(state => state.chat?.isSimulationStreaming ?? false);
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
 
