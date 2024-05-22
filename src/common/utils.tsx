@@ -19,7 +19,7 @@ export const getToken = () => {
   let token = null;
 
   if (typeof window !== "undefined") {
-    token = LocalStorage.get("token");
+    token = LocalStorage.get("token") as string;
   }
 
   return token;
