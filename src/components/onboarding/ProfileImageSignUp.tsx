@@ -244,7 +244,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
         <Box
           display="flex"
           width="60vw"
-          // maxHeight="60vh"
+          maxHeight="95vh"
           bgcolor="#FFF"
           justifyContent="center"
           alignSelf="center"

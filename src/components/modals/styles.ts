@@ -40,6 +40,9 @@ export const boxStyle = {
   justifyContent: "space-between",
   gap: 1,
   marginTop: "25px",
+  ".MuiIconButton-root": {
+    mr: "2px",
+  },
 };
 
 export const buttonBoxStyle = {

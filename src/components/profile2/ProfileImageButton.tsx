@@ -124,7 +124,7 @@ export const ProfileImageButton = () => {
         <Box
           display="flex"
           width="60vw"
-          // maxHeight="60vh"
+          maxHeight="95vh"
           bgcolor="#FFF"
           justifyContent="center"
           alignSelf="center"
