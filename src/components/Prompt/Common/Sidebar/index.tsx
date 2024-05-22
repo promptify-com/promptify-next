@@ -17,7 +17,6 @@ import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
 import FavoriteIcon from "../../FavoriteButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
 const ExecutionsLazy = lazy(() => import("./Executions"));
 const TemplateDetailsLazy = lazy(() => import("../../TemplateDetails"));
@@ -25,6 +24,7 @@ const ApiAccessLazy = lazy(() => import("./ApiAccess"));
 const ExtensionLazy = lazy(() => import("./Extension"));
 const FeedbackLazy = lazy(() => import("../../Feedback"));
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
 
 const drawerWidth = 352;
 
@@ -36,8 +36,8 @@ interface SidebarProps {
 function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { isVariantB } = useVariant();
-  const isMobile = !isDesktopViewPort();
-  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+  const { isMobile } = useBrowser();
+  const activeLink = useAppSelector(state => state.templates?.activeSideBarLink ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const theme = useTheme();
   const handleCloseSidebar = () => {

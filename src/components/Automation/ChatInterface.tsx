@@ -13,12 +13,11 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import AccordionContentAutomation from "@/components/common/AccordionMessage/AccordionDetails/AccordionContentAutomation";
 import Form from "@/components/Prompt/Common/Chat/Form";
+import RefreshCredentials from "@/components/RefreshCredentials";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import { IAvailableCredentials } from "./types";
-
-import RefreshCredentials from "@/components/RefreshCredentials";
-import { workflowsApi } from "@/core/api/workflows";
+import type { IAvailableCredentials } from "@/components/Automation/types";
+import type { IChatSliceState } from "@/core/store/types";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -34,12 +33,15 @@ interface Props {
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
   const dispatch = useAppDispatch();
   const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { inputs, areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat);
+  const {
+    inputs = [],
+    areCredentialsStored = false,
+    clonedWorkflow,
+  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,

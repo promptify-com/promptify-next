@@ -16,9 +16,9 @@ interface Props {
 
 export const Display: React.FC<Props> = ({ templateData, execution, isLastExecution }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const isFetching = useAppSelector(state => state.executions.isFetching);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const isFetching = useAppSelector(state => state.executions?.isFetching ?? false);
 
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = (isFetching || isGeneratedExecutionEmpty) && isLastExecution;

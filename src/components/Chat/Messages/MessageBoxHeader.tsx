@@ -8,7 +8,10 @@ import { useAppSelector } from "@/hooks/useStore";
 import RunButton from "@/components/Chat/RunButton";
 import TemplateActions from "@/components/Chat/TemplateActions";
 import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/ExportExecutionButton";
+import SaveExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/SaveExecutionButton";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
+import { IChatSliceState } from "@/core/store/types";
 
 interface Props {
   onExpand?: () => void;
@@ -29,8 +32,15 @@ function MessageBoxHeader({
   template,
   execution,
 }: Props) {
-  const { selectedTemplate, selectedChatOption, answers, inputs, params } = useAppSelector(state => state.chat);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const { isMobile } = useBrowser();
+  const {
+    selectedTemplate,
+    selectedChatOption = null,
+    answers = [],
+    inputs = [],
+    params = [],
+  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -119,7 +129,12 @@ function MessageBoxHeader({
             />
           </>
         )}
-        {variant === "EXECUTION" && !isGenerating && execution && <ExportExecutionButton execution={execution} />}
+        {variant === "EXECUTION" && !isGenerating && execution && (
+          <>
+            {!isMobile && <SaveExecutionButton execution={execution} />}
+            <ExportExecutionButton execution={execution} />
+          </>
+        )}
 
         {templateShown && (
           <TemplateActions

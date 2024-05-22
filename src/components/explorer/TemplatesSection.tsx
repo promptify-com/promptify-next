@@ -124,6 +124,11 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
             <Grid
               container
               spacing={1}
+              ml={{
+                xs: 0,
+                md: "8px",
+              }}
+              width={"99%"}
             >
               {!!templates?.length &&
                 templates.map((template: TemplateExecutionsDisplay | Templates) => {

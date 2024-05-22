@@ -9,6 +9,7 @@ import FormInputPlaceholder from "@/components/placeholders/FormInputPlaceholder
 import type { IPromptInput } from "@/common/types/prompt";
 import type { MessageType } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface FormProps {
   messageType?: MessageType;
@@ -22,7 +23,7 @@ interface FormLayoutProps {
 }
 
 function FormFields({ messageType, template }: FormLayoutProps) {
-  const { params, inputs, credentialsInput } = useAppSelector(state => state.chat);
+  const { params, inputs, credentialsInput } = useAppSelector(state => state.chat ?? initialChatState);
   const [localInputs, setLocalInputs] = useState<IPromptInput[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

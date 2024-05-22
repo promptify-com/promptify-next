@@ -237,7 +237,13 @@ export default function PrivacyPolicy() {
                 </Box>
                 <Box component={"li"}>
                   Contact InformationFor any questions, comments, or concerns about this Privacy Policy, please contact
-                  us at: <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>
+                  us at:{" "}
+                  <a
+                    href="mailto:privacy@promptify.com"
+                    style={{ color: "blue" }}
+                  >
+                    privacy@promptify.com
+                  </a>
                 </Box>
               </Box>
             </Box>
@@ -327,8 +333,13 @@ export default function PrivacyPolicy() {
                 </Box>
               </Box>
               How to Exercise Your Rights: To exercise the privacy rights outlined above, you can submit a request to{" "}
-              <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>, provided these rights apply under local
-              law.
+              <a
+                href="mailto:privacy@promptify.com"
+                style={{ color: "blue" }}
+              >
+                privacy@promptify.com
+              </a>
+              , provided these rights apply under local law.
               <Box component={"h3"}>Verification:</Box>
               We may ask you to verify your credentials to protect your Personal Information from unauthorized access,
               alteration, or deletion. This verification will be necessary when submitting a request to access, correct,
@@ -339,19 +350,37 @@ export default function PrivacyPolicy() {
               You may also choose to submit a rights request through an authorized agent. In such cases, the agent must
               provide signed written permission to act on your behalf. You may also be required to verify your identity
               independently and submit proof of residency with us. Requests via authorized agents can be submitted to{" "}
-              <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>.<Box component={"h3"}>Appeals:</Box>
+              <a
+                href="mailto:privacy@promptify.com"
+                style={{ color: "blue" }}
+              >
+                privacy@promptify.com
+              </a>
+              .<Box component={"h3"}>Appeals:</Box>
               Depending on your location, you may have the right to appeal our decision relating to requests to exercise
               your rights under local law. To appeal a decision, please send your request to{" "}
-              <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>.
+              <a
+                href="mailto:privacy@promptify.com"
+                style={{ color: "blue" }}
+              >
+                privacy@promptify.com
+              </a>
+              .
             </Box>
             <Box component={"h2"}>6. Children</Box>
             <Box component={"p"}>
-              Our services at <a href="https://www.promptify.com/">Promptify.com</a> are not aimed at children under the
-              age of 13. Promptify LLC does not intentionally collect Personal Information from children below this age.
-              If you believe a child under 13 has provided us with Personal Information via our services, please get in
-              touch at legal@promptify.com. We will look into any such cases and, if necessary, remove the Personal
-              Information from our systems. If you are aged 13 or above but under 18, you must obtain consent from your
-              parent or guardian to use our services.
+              Our services at{" "}
+              <a
+                href="https://www.promptify.com/"
+                style={{ color: "blue" }}
+              >
+                Promptify.com
+              </a>{" "}
+              are not aimed at children under the age of 13. Promptify LLC does not intentionally collect Personal
+              Information from children below this age. If you believe a child under 13 has provided us with Personal
+              Information via our services, please get in touch at legal@promptify.com. We will look into any such cases
+              and, if necessary, remove the Personal Information from our systems. If you are aged 13 or above but under
+              18, you must obtain consent from your parent or guardian to use our services.
             </Box>
             <Box component={"h2"}>7. Links to Other Websites</Box>
             <Box component={"p"}>
@@ -411,8 +440,14 @@ export default function PrivacyPolicy() {
               </Box>
               <br />
               EEA and UK Representative: We have appointed representatives in the EEA and UK for data protection
-              matters. You can contact them at <a href="mailto:eu-privacy@promptify.com">eu-privacy@promptify.com</a>.
-              <Box component={"h4"}>Data Transfers:</Box>
+              matters. You can contact them at{" "}
+              <a
+                href="mailto:eu-privacy@promptify.com"
+                style={{ color: "blue" }}
+              >
+                eu-privacy@promptify.com
+              </a>
+              .<Box component={"h4"}>Data Transfers:</Box>
               <Box component={"p"}>
                 As needed, we&apos;ll use appropriate safeguards for transferring Personal Information outside of the
                 EEA, Switzerland, and the UK. We will only transfer Personal Information using a legally valid transfer
@@ -427,8 +462,13 @@ export default function PrivacyPolicy() {
               <Box component={"h4"}>Data Protection Officer:</Box>
               <Box component={"p"}>
                 You can reach out to our data protection officer at{" "}
-                <a href="mailto:privacy@promptify.com">privacy@promptify.com</a> regarding matters related to Personal
-                Information processing.
+                <a
+                  href="mailto:privacy@promptify.com"
+                  style={{ color: "blue" }}
+                >
+                  privacy@promptify.com
+                </a>{" "}
+                regarding matters related to Personal Information processing.
               </Box>
             </Box>
             <Box component={"h2"}>10. Changes to the Privacy Policy</Box>
@@ -439,7 +479,13 @@ export default function PrivacyPolicy() {
             <Box component={"h2"}>11. How to Contact Us</Box>
             <Box component={"p"}>
               If you have questions or concerns that we haven&apos;t covered in this Privacy Policy, please contact{" "}
-              <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>. We&apos;re here to help!
+              <a
+                href="mailto:privacy@promptify.com"
+                style={{ color: "blue" }}
+              >
+                privacy@promptify.com
+              </a>
+              . We&apos;re here to help!
             </Box>
           </Stack>
         </Stack>

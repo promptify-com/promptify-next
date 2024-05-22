@@ -11,10 +11,10 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import { isDesktopViewPort } from "@/common/helpers";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   message: IMessage;
@@ -69,7 +69,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
   const [isHovered, setIsHovered] = useState(false);
   const { isVariantA, isVariantB } = useVariant();
 
-  const isDesktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const dispatch = useAppDispatch();
 
@@ -100,7 +100,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
         onMouseLeave: () => setIsHovered(false),
       })}
     >
-      {isVariantA && !isExecutionShown && !message.noHeader && isDesktopView && (
+      {isVariantA && !isExecutionShown && !message.noHeader && !isMobile && (
         <>
           {message.type === "spark" ? (
             <Stack

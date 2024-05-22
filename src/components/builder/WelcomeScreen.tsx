@@ -1,14 +1,14 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CreateBuilderCard from "@/components/builder/CreateBuilderCard";
 import TemplateSuggestionPlaceholder from "@/components/placeholders/TemplateSuggestionPlaceholder";
-import { useGetMyTemplatesQuery } from "@/core/api/templates";
 import type { TemplatesWithPagination } from "@/core/api/dto/templates";
 import type { ICreateBuilderLink } from "@/components/builder/Types";
 import TemplateCard from "@/components/common/TemplateCard";
-import { isDesktopViewPort } from "@/common/helpers";
+import { useLazyGetMyTemplatesQuery } from "@/core/api/templates";
 
 const createPageLinks = [
   {
@@ -24,16 +24,33 @@ const createPageLinks = [
 ] satisfies ICreateBuilderLink[];
 
 export default function WelcomeScreen() {
-  const desktopView = isDesktopViewPort();
+  const [triggerGetMyTemplates, { data: templates, isLoading }] = useLazyGetMyTemplatesQuery();
 
-  const { data: templates, isLoading } = useGetMyTemplatesQuery(
-    {
-      ordering: "-created_at",
-      limit: 1,
-      status: "draft",
-    },
-    { skip: !desktopView },
-  );
+  useEffect(() => {
+    const isDesktop = window.innerWidth >= 900;
+
+    if (isDesktop) {
+      const fetchData = async () => {
+        try {
+          triggerGetMyTemplates({ ordering: "-created_at", limit: 1, status: "draft" });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    }
+
+    const handleResize = () => {
+      const newIsDesktop = window.innerWidth >= 900;
+      if (newIsDesktop !== isDesktop) {
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Stack
@@ -77,6 +94,7 @@ export default function WelcomeScreen() {
             textDecoration: "none",
             cursor: "pointer",
           }}
+          aria-label="Learn more about Promptify blog"
         >
           <Button variant="contained">Learn more</Button>
         </Link>
@@ -100,33 +118,31 @@ export default function WelcomeScreen() {
           ))}
         </Stack>
 
-        {desktopView && (
-          <>
-            {isLoading && <TemplateSuggestionPlaceholder />}
+        <Stack pb={2}>
+          {isLoading && <TemplateSuggestionPlaceholder />}
 
-            {(templates as TemplatesWithPagination)?.results.length > 0 && !isLoading && (
-              <Stack
-                gap={3}
-                direction={"column"}
-                justifyContent={"center"}
-                alignItems={"center"}
+          {(templates as TemplatesWithPagination)?.results.length > 0 && !isLoading && (
+            <Stack
+              gap={3}
+              direction={"column"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Typography
+                fontSize={16}
+                fontWeight={500}
+                lineHeight={"19.2px"}
+                letterSpacing={"0.17px"}
               >
-                <Typography
-                  fontSize={16}
-                  fontWeight={500}
-                  lineHeight={"19.2px"}
-                  letterSpacing={"0.17px"}
-                >
-                  Continue editing
-                </Typography>
-                <TemplateCard
-                  template={(templates as TemplatesWithPagination).results[0]}
-                  isEditor
-                />
-              </Stack>
-            )}
-          </>
-        )}
+                Continue editing
+              </Typography>
+              <TemplateCard
+                template={(templates as TemplatesWithPagination).results[0]}
+                isEditor
+              />
+            </Stack>
+          )}
+        </Stack>
       </Stack>
     </Stack>
   );

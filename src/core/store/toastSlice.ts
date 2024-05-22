@@ -1,17 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IToastSliceState } from "./types";
 
-export interface ToastState {
-  open: boolean;
-  message: string;
-  severity: "error" | "warning" | "info" | "success";
-  duration?: number;
-  position?: {
-    vertical: "top" | "bottom";
-    horizontal: "left" | "center" | "right";
-  };
-}
-
-const initialState: ToastState = {
+const initialState: IToastSliceState = {
   open: false,
   message: "",
   severity: "info",
@@ -26,7 +16,7 @@ export const toastSlice = createSlice({
   name: "toast",
   initialState,
   reducers: {
-    setToast: (state, action: PayloadAction<Omit<ToastState, "open">>) => {
+    setToast: (state, action: PayloadAction<Omit<IToastSliceState, "open">>) => {
       state.open = true;
       state.message = action.payload.message;
       state.severity = action.payload.severity;

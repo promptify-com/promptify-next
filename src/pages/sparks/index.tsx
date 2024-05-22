@@ -18,13 +18,17 @@ import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/system";
 import { theme } from "@/theme";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
-import { setDocumentsTemplate } from "@/core/store/documentsSlice";
+import documentsSlice, {
+  initialState as initialDocumentsState,
+  setDocumentsTemplate,
+} from "@/core/store/documentsSlice";
 import lazy from "next/dynamic";
 import useBrowser from "@/hooks/useBrowser";
 import Box from "@mui/material/Box";
-import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import templatesSlice, { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { getTemplateBySlug } from "@/hooks/api/templates";
+import store from "@/core/store";
 
 const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
@@ -39,7 +43,7 @@ const PAGINATION_LIMIT = 12;
 function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const filter = useAppSelector(state => state.documents.filter);
+  const filter = useAppSelector(state => state.documents?.filter ?? initialDocumentsState.filter);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
 
@@ -97,6 +101,17 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
       );
     }
   }, []);
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    store.injectReducers([
+      { key: "documents", asyncReducer: documentsSlice },
+      { key: "templates", asyncReducer: templatesSlice },
+    ]);
+  }, [store]);
 
   const filteredExecutions = useMemo(() => {
     return templatesExecutions.filter(exec => {

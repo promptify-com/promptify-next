@@ -35,7 +35,7 @@ function TemplatePage({ template, popup }: Props) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
-  const savedTemplateId = useAppSelector(state => state.template.id);
+  const savedTemplateId = useAppSelector(state => state.templates?.id ?? 0);
   const [updateViewTemplate] = useViewTemplateMutation();
 
   const [tabsFixed, setTabsFixed] = useState(false);
@@ -164,6 +164,15 @@ function TemplatePage({ template, popup }: Props) {
         <Box
           flex={2}
           order={0}
+          sx={{
+            ...(!isMobile && {
+              maxHeight: "100%",
+              overflowY: "auto",
+              "&::-webkit-scrollbar": {
+                width: 0,
+              },
+            }),
+          }}
         >
           <TemplateDetails
             template={template}

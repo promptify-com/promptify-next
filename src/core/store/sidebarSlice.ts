@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Storage from "@/common/storage";
+import { ISidebarSliceState } from "./types";
 
-const initialState = {
+const initialState: ISidebarSliceState = {
   builderSidebarOpen: false,
   isPromptsFiltersSticky: false,
   isChatHistorySticky: false,

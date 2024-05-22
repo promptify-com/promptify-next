@@ -22,8 +22,11 @@ import Footer from "@/components/Footer";
 import PaginatedList from "@/components/PaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import type { Category, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
+import { authClient } from "@/common/axios";
+import filtersSlice from "@/core/store/filtersSlice";
+import store from "@/core/store";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -31,11 +34,12 @@ const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/
 
 interface Props {
   categories: Category[];
+  popularTemplates: TemplatesWithPagination | null;
 }
 
 const scrollYThreshold = 500;
 
-export default function ExplorePage({ categories = [] }: Props) {
+export default function ExplorePage({ categories = [], popularTemplates = null }: Props) {
   const {
     templates,
     handleNextPage,
@@ -59,7 +63,7 @@ export default function ExplorePage({ categories = [] }: Props) {
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isFavorite = useAppSelector(state => state.filters.isFavourite);
+  const isFavorite = useAppSelector(state => state.filters?.isFavourite ?? false);
 
   const {
     data: suggestedTemplates,
@@ -86,6 +90,14 @@ export default function ExplorePage({ categories = [] }: Props) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMobile]);
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    store.injectReducers([{ key: "filters", asyncReducer: filtersSlice }]);
+  }, [store]);
 
   return (
     <Layout>
@@ -236,7 +248,7 @@ export default function ExplorePage({ categories = [] }: Props) {
 
           {allFilterParamsNull && (
             <>
-              <PopularTemplates />
+              <PopularTemplates initTemplates={popularTemplates} />
 
               <Box
                 ref={containerRef}
@@ -279,13 +291,28 @@ export default function ExplorePage({ categories = [] }: Props) {
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
 
-  const categories = await getCategories();
+  let popularTemplates: TemplatesWithPagination | null = null;
+  let categories: Category[] = [];
+  const [_categories, _templates] = await Promise.allSettled([
+    await getCategories(),
+    authClient.get(
+      "/api/meta/templates?ordering=-runs&limit=12&status=published&is_internal=false&include=slug,thumbnail,title,description,favorites_count,likes,executions_count,created_by,tags",
+    ),
+  ]);
+
+  if (_templates.status === "fulfilled") {
+    popularTemplates = _templates.value.data as TemplatesWithPagination;
+  }
+  if (_categories.status === "fulfilled") {
+    categories = _categories.value;
+  }
 
   return {
     props: {
       title: "Explore and Boost Your Creativity",
       description: SEO_DESCRIPTION,
       categories,
+      popularTemplates,
     },
   };
 };

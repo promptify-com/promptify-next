@@ -23,7 +23,7 @@ interface ExecutionsProps {
 const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   const router = useRouter();
   const activeVariant = router.query.variant;
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
 
   const isValidUser = useAppSelector(isValidUserFn);
 

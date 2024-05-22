@@ -24,7 +24,7 @@ interface Props {
 function ActionButtons({ document, onFavorite }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const showPreviews = useAppSelector(state => state.documents.showPreviews);
+  const showPreviews = useAppSelector(state => state.documents?.showPreviews ?? false);
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
   const [isFavorite, setIsFavorite] = useState(document.is_favorite);
 

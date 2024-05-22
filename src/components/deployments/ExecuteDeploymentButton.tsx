@@ -3,10 +3,9 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 
-import type { Deployment } from "@/common/types/deployments";
 import DeployementPopup from "./DeploymentPopup";
-import { isDesktopViewPort } from "@/common/helpers";
 import ExecuteForm from "./ExecuteForm";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   modelName: string;
@@ -15,7 +14,7 @@ interface Props {
 
 export function ExecuteDeploymentButton({ modelName, deploymentId }: Props) {
   const [openPopup, setOpenPopup] = useState(false);
-  const isDesktop = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   return (
     <>
@@ -32,7 +31,7 @@ export function ExecuteDeploymentButton({ modelName, deploymentId }: Props) {
         >
           <PlayCircle
             sx={{
-              opacity: isDesktop ? 0.25 : 1,
+              opacity: !isMobile ? 0.25 : 1,
               fontSize: "16px",
               "&:hover": {
                 opacity: 1,

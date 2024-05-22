@@ -6,9 +6,9 @@ import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { isDesktopViewPort } from "@/common/helpers";
 import SocialButtons from "@/components/login/SocialMediaAuth";
 import backgroundImage from "@/assets/images/signup.webp";
+import useBrowser from "@/hooks/useBrowser";
 
 interface IProps {
   preLogin: (isLoading: boolean) => void;
@@ -25,7 +25,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
     setIsChecked(!isChecked);
     setErrorCheckBox(true);
   };
-  const desktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   return (
     <Box
@@ -70,7 +70,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
             Unleash your creative potential using Promptify
           </Typography>
 
-          {desktopView && (
+          {!isMobile && (
             <Typography
               sx={{
                 color: "onPrimary",
@@ -119,7 +119,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               my: { xs: "32px 0", md: 0 },
             }}
           >
-            <LogoApp width={desktopView ? 57 : 37} />
+            <LogoApp width={!isMobile ? 57 : 37} />
           </Box>
           <Typography
             sx={{
@@ -155,7 +155,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               alignSelf: "stretch",
             }}
           >
-            {desktopView && (
+            {!isMobile && (
               <Typography
                 sx={{
                   fontWeight: 300,

@@ -5,17 +5,17 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import GenerateAndClearButton from "./GenerateAndClearButton";
-import { isDesktopViewPort } from "@/common/helpers";
 import { MessageSparkBox } from "./MessageSparkBox";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
-import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
+import { initialState as initialTemplatesState, setGeneratingStatus } from "@/core/store/templatesSlice";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   template: Templates;
@@ -35,10 +35,10 @@ export const ChatInterface = ({
   abortGenerating,
 }: Props) => {
   const dispatch = useAppDispatch();
-  const isDesktopView = isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? initialTemplatesState.isGenerating);
+  const { selectedExecution, generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -87,7 +87,7 @@ export const ChatInterface = ({
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      <Box mx={!isDesktopView ? "16px" : "40px"}>
+      <Box mx={isMobile ? "16px" : "40px"}>
         {typeof template !== "undefined" && !isExecutionShown && (
           <TemplateDetailsCard
             title={template.title}

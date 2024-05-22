@@ -6,7 +6,7 @@ import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material/styles";
 import Script from "next/script";
 import { Provider } from "react-redux";
-import { wrapper } from "@/core/store";
+import store from "@/core/store";
 import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
@@ -24,9 +24,7 @@ const poppins = Poppins({
   weight: ["400", "500"],
 });
 
-function App({ Component, ...rest }: AppProps) {
-  const { store, props } = wrapper.useWrappedStore(rest);
-  const { pageProps } = props;
+function App({ Component, pageProps }: AppProps) {
   const isValidUser = isValidUserFn(store.getState());
   const storedToken = useToken();
   const router = useRouter();
@@ -62,7 +60,10 @@ function App({ Component, ...rest }: AppProps) {
         deletePathURL();
       }
 
-      if (router.asPath !== url) {
+      const cleanedAsPath = router.asPath.includes("?") ? router.asPath.split("?")[0] : router.asPath;
+      const cleanedUrl = url.includes("?") ? url.split("?")[0] : url;
+
+      if (cleanedAsPath !== cleanedUrl) {
         const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
 
         if (!_navigationLoadingSpinnerOverlay) {

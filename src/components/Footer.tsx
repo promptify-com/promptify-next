@@ -16,7 +16,20 @@ const Links = [
 ];
 
 const socialLinks = [
-  { title: "Twitter", href: "#", icon: <XIcon style={{ fill: "#1B1B1F" }} /> },
+  {
+    title: "Twitter",
+    href: "#",
+    icon: (
+      <XIcon
+        style={{
+          fill: "#1B1B1F",
+          width: "16.5px",
+          height: "17px",
+          marginTop: "1px",
+        }}
+      />
+    ),
+  },
   { title: "Facebook", href: "#", icon: <FacebookIcon style={{ fill: "#1B1B1F" }} /> },
   {
     title: "LinkedIn",
@@ -60,7 +73,12 @@ function Footer() {
             gap={"48px"}
             alignItems={{ md: "center" }}
           >
-            <Stack flexDirection={"row"}>
+            <Stack
+              flexDirection={"row"}
+              component={Link}
+              href="/"
+              sx={{ textDecoration: "none", color: "inherit" }}
+            >
               <LogoApp
                 width={23}
                 color="#1B1B1F"
@@ -156,7 +174,15 @@ function Footer() {
               color: "secondary.light",
             }}
           >
-            © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
+            © {thisYear}{" "}
+            <a
+              href="https://promptify.com/"
+              target="_blank"
+              style={{ textDecoration: "none", color: "blue" }}
+            >
+              Promptify.com
+            </a>{" "}
+            - Promptify LLC. All rights reserved.
           </Typography>
         </Stack>
       </Stack>

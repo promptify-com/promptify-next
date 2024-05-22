@@ -10,6 +10,7 @@ import {
   setSelectedEngineType,
   deleteSelectedEngineType,
   setSelectedKeyword,
+  initialState as initialFiltersState,
 } from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -24,7 +25,7 @@ import PromptsReviewSearch from "./PromptsReviewSearch";
 function PromptsReviewFilters() {
   const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine, engineType, title } = useAppSelector(state => state.filters);
+  const { tag, engine, engineType, title } = useAppSelector(state => state.filters ?? initialFiltersState);
 
   useEffect(() => {
     const storedEngine = Storage.get("engineFilter") as unknown as Engine;

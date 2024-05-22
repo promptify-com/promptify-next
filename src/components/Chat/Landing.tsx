@@ -71,7 +71,7 @@ function Landing() {
           }}
         >
           <Image
-            src={require("@/pages/chat/images/image_1.png")}
+            src={require("@/pages/chat/images/image_1.webp")}
             alt={"left"}
             priority={true}
             fill
@@ -92,7 +92,7 @@ function Landing() {
           }}
         >
           <Image
-            src={require("@/pages/chat/images/image_2.png")}
+            src={require("@/pages/chat/images/image_2.webp")}
             alt={"middle"}
             priority={true}
             fill
@@ -119,7 +119,7 @@ function Landing() {
           }}
         >
           <Image
-            src={require("@/pages/chat/images/image_3.png")}
+            src={require("@/pages/chat/images/image_3.webp")}
             alt={"right"}
             priority={true}
             fill
