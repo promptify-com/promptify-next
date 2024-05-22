@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "yarn"
+  - package-ecosystem: "npm" # supports both npm/yarn, will be split in the future
     directory: "/"
     schedule:
       interval: "weekly"
