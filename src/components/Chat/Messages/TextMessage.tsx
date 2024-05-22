@@ -18,6 +18,7 @@ import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 interface Props {
   message: IMessage;
   onScrollToBottom: () => void;
+  lastMessage: IMessage;
 }
 
 interface MessageContentProps {
@@ -44,7 +45,7 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
-const Message = ({ message, onScrollToBottom }: Props) => {
+const Message = ({ message, onScrollToBottom, lastMessage }: Props) => {
   const { inputs, answers } = useAppSelector(state => state.chat ?? initialChatState);
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -102,8 +103,8 @@ const Message = ({ message, onScrollToBottom }: Props) => {
     setIsEditing(false);
   };
 
-  const allowEditMessage = isEditable && fromUser && !isEditing;
-
+  const isExecutionMessage = lastMessage.type === "spark";
+  const allowEditMessage = isEditable && fromUser && !isEditing && !isExecutionMessage;
   if (message.type !== "text") {
     return;
   }

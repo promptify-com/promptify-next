@@ -127,6 +127,7 @@ const ChatInterface = ({
                 onGenerate={onGenerate}
                 onAbort={onAbort}
                 onExecuteWorkflow={onExecuteWorkflow}
+                lastMessage={messages[messages.length - 1]}
               />
             </Fragment>
           ))}
