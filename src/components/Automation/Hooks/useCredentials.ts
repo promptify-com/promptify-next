@@ -19,8 +19,6 @@ import { useRouter } from "next/router";
 
 const useCredentials = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const workflowId = router.query.workflowId;
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );
