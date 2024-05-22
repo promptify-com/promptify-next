@@ -20,7 +20,6 @@ const useWorkflow = (workflow: IWorkflow) => {
   });
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
-  const workflowId = workflow.id ?? workflowData.id;
 
   const dispatch = useAppDispatch();
   const webhookPathRef = useRef<string>();
@@ -43,11 +42,11 @@ const useWorkflow = (workflow: IWorkflow) => {
           node => (node.parameters?.authentication || oAuthTypeMapping[node.type]) && !node.credentials,
         );
         if (nodesRequiringAuthentication.length) {
-          // response's objects are not extensible, so we need to extract the nodes
           const updatedNodes = createdWorklow.nodes.map(node => ({ ...node }));
           updatedNodes.forEach(node => attachCredentialsToNode(node));
 
           const updatedResponse = {
+            id: createdWorklow.id,
             name: createdWorklow.name,
             nodes: updatedNodes,
             active: createdWorklow.active,
@@ -65,8 +64,9 @@ const useWorkflow = (workflow: IWorkflow) => {
             dispatch(setAreCredentialsStored(true));
 
             try {
+              //TODO: Replace by current workflow id
               await updateWorkflow({
-                workflowId: selectedWorkflowId,
+                workflowId: 11,
                 data: updatedResponse,
               });
             } catch (error) {

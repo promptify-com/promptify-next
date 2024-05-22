@@ -20,7 +20,7 @@ import {
 } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
-import { setAreCredentialsStored } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import type { ICredential, ICredentialProperty, IStoredWorkflows } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
@@ -39,22 +39,23 @@ interface FormValues {
 function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const workflowId = router.query.workflowId as string;
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedWorkflow = useAppSelector(state => state.chat.selectedWorkflow);
+  const { clonedWorkflow } = useAppSelector(state => state.chat);
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
   const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
     useCredentials();
-  const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
   const isOauthCredential = credential?.name.includes("OAuth2");
-  const isCredentialInserted = checkCredentialInserted(credential!);
-  const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
+
   const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
-  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
+  // const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
+  const isCredentialInserted = checkCredentialInserted(credential!);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
 
@@ -102,32 +103,31 @@ function Credentials({ input }: Props) {
   );
 
   const updateWorkflowAndStorage = async () => {
-    const selectedWorkflowId = selectedWorkflow?.id.toString() ?? workflowId;
-    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-    let workflow = storedWorkflows[selectedWorkflowId]?.workflow;
-
-    if (!workflow && storedWorkflows[selectedWorkflowId]?.id) {
-      const _workflow = await getWorkflow(storedWorkflows[selectedWorkflowId].id).unwrap();
-      workflow = JSON.parse(JSON.stringify(_workflow));
+    if (!clonedWorkflow) {
+      return;
     }
 
-    (workflow?.nodes ?? []).forEach(node => attachCredentialsToNode(node));
-
+    const updatedNodes = clonedWorkflow?.nodes.map(node => ({ ...node }));
+    updatedNodes.forEach(node => attachCredentialsToNode(node));
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
 
-    if (areAllCredentialsStored && workflow) {
+    if (areAllCredentialsStored) {
+      const updatedResponse = {
+        id: clonedWorkflow.id,
+        name: clonedWorkflow.name,
+        nodes: updatedNodes,
+        active: clonedWorkflow.active,
+        connections: clonedWorkflow.connections,
+        settings: clonedWorkflow.settings,
+      };
+
       try {
-        await updateWorkflow({
-          workflowId: parseInt(selectedWorkflowId),
-          data: workflow,
-        });
-
-        storedWorkflows[selectedWorkflowId] = {
-          webhookPath: storedWorkflows[selectedWorkflowId].webhookPath,
-          id: storedWorkflows[selectedWorkflowId]?.id,
-        };
-
-        Storage.set("workflows", JSON.stringify(storedWorkflows));
+        //TODO: to be replaced with real workflow id
+        const response = await updateWorkflow({
+          workflowId: 11,
+          data: updatedResponse,
+        }).unwrap();
+        dispatch(setClonedWorkflow(response));
       } catch (error) {
         console.error("Error updating workflow:", error);
       }

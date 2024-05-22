@@ -3,26 +3,26 @@ import Storage from "@/common/storage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
-import { setAreCredentialsStored, setClonedWorkflow, setCredentialsInput } from "@/core/store/chatSlice";
+import { setClonedWorkflow, setCredentialsInput } from "@/core/store/chatSlice";
 import type {
   ICredential,
   ICredentialInput,
   INode,
   INodeCredentials,
-  IStoredWorkflows,
+  IWorkflowCreateResponse,
 } from "@/components/Automation/types";
 import { useRouter } from "next/router";
 
 const useCredentials = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const workflowId = router.query.workflowId;
   const [credentials, setCredentials] = useState<ICredential[]>(
     (Storage.get("credentials") as unknown as ICredential[]) || [],
   );
   const { credentialsInput, clonedWorkflow } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
+  const [getUserWorkflows] = workflowsApi.endpoints.getUserWorkflows.useLazyQuery();
+
   const initializeCredentials = (): Promise<ICredential[]> => {
     return new Promise(async resolve => {
       if (!!credentials.length || !currentUser?.id) {
@@ -100,33 +100,36 @@ const useCredentials = () => {
   }
 
   async function updateWorkflowAfterCredentialsDeletion(credentialType: string) {
-    if (clonedWorkflow?.id) {
-      const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
-      let credentialFound = false;
-      const _updatedWorkflow = {
-        ..._workflow,
-        nodes: _workflow.nodes.map(node => ({
+    const { data: workflows } = await getUserWorkflows().unwrap();
+
+    const currentWorkflow = workflows.find(workflow => clonedWorkflow?.id === workflow.id);
+
+    const updatedNodes = currentWorkflow?.nodes.map(node => {
+      if (node.credentials && node.credentials[credentialType]) {
+        const updatedCredentials = { ...node.credentials };
+        updatedCredentials[credentialType] = { ...updatedCredentials[credentialType], name: "to_be_deleted" };
+        return {
           ...node,
-          ...(node.credentials && { credentials: recreateNodeCredentials(node.credentials) }),
-        })),
-      };
-
-      _updatedWorkflow.nodes.forEach(node => {
-        if (!node.credentials) {
-          return;
-        }
-
-        if (node.credentials[credentialType]) {
-          node.credentials[credentialType].name = "to_be_deleted";
-          credentialFound = true;
-        }
-      });
-
-      if (credentialFound) {
-        await updateWorkflow({ workflowId: Number(workflowId), data: _updatedWorkflow });
-        dispatch(setAreCredentialsStored(false));
+          credentials: recreateNodeCredentials(updatedCredentials),
+        };
       }
-      dispatch(setClonedWorkflow(_updatedWorkflow));
+      return node;
+    });
+
+    const updatedWorkflow = { ...currentWorkflow, nodes: updatedNodes } as IWorkflowCreateResponse;
+
+    if (updatedWorkflow.id && updatedNodes) {
+      const updatedResponse = {
+        id: updatedWorkflow.id,
+        name: updatedWorkflow.name,
+        nodes: updatedNodes,
+        active: updatedWorkflow.active,
+        connections: updatedWorkflow.connections,
+        settings: updatedWorkflow.settings,
+      };
+      //@TODO: replace with real workflow id
+      const response = await updateWorkflow({ workflowId: 11, data: updatedResponse }).unwrap();
+      dispatch(setClonedWorkflow(response));
     }
   }
 

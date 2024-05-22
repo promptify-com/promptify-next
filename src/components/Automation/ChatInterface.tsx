@@ -58,10 +58,10 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   useEffect(() => {
     async function updateRefreshButtons() {
       if (clonedWorkflow?.id) {
-        const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
+        // const _workflow = await getWorkflow(clonedWorkflow.id).unwrap();
         const listedCredentials: IAvailableCredentials[] = [];
 
-        _workflow.nodes.forEach(node => {
+        clonedWorkflow.nodes.forEach(node => {
           if (
             !node.credentials ||
             Object.keys(node.credentials).length === 0 ||
