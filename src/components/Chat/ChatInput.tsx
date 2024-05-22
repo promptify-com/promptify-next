@@ -56,7 +56,10 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
         gap={"8px"}
         alignItems={"center"}
       >
-        <Box flex={1}>
+        <Box
+          flex={1}
+          pt={1}
+        >
           <MessageSender
             onSubmit={onSubmit}
             disabled={disabled}
