@@ -11,7 +11,7 @@ const minShown = 5;
 
 export const TemplatesFilter = () => {
   const router = useRouter();
-  const { filters } = usePromptsFilter();
+  const { filters, handleClickTag } = usePromptsFilter();
   const { engine: filterEngine, tag: filterTags } = filters;
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
@@ -19,14 +19,6 @@ export const TemplatesFilter = () => {
 
   const handleEngineSelect = (engine: Engine) => {
     router.push(`/explore?engine=${engine.id}`);
-  };
-
-  const handleTagSelect = (tag: Tag) => {
-    if (filterTags.includes(tag)) {
-      router.push("/explore");
-    } else {
-      router.push(`/explore?tags=${tag.id}_${tag.name}`);
-    }
   };
 
   const showMore = () => {
@@ -131,7 +123,7 @@ export const TemplatesFilter = () => {
             <Chip
               key={tag.id}
               label={tag.name}
-              onClick={() => handleTagSelect(tag)}
+              onClick={() => handleClickTag(tag)}
               sx={{
                 fontSize: 13,
                 fontWeight: 500,

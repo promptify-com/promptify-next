@@ -11,6 +11,7 @@ type SessionFilter = { [key: string]: ParsedUrlQueryInput };
 
 const usePromptsFilter = () => {
   const router = useRouter();
+  const isExplorePage = router.pathname === "/explore";
   const [filters, setFilters] = useState<IFilterSliceState>({
     title: null,
     isFavorite: false,
@@ -31,8 +32,6 @@ const usePromptsFilter = () => {
     let count = 0;
 
     if (filters.engine) count += 1;
-    if (filters.category) count += 1;
-    if (filters.subCategory) count += 1;
     if (filters.title) count += 1;
     if (filters.isFavorite) count += 1;
 
@@ -43,21 +42,15 @@ const usePromptsFilter = () => {
   }, [filters]);
 
   const handleSelectKeyword = (key: string | null) => {
-    updateQueryParams({
-      key,
-    });
+    updateQueryParams({ key });
   };
 
   const handleCheckIsFavorite = (isFavorite: boolean) => {
-    updateQueryParams({
-      isFavorite,
-    });
+    updateQueryParams({ isFavorite });
   };
 
   const handleSelectEngine = (engine: Engine | null) => {
-    updateQueryParams({
-      engine: engine?.id,
-    });
+    updateQueryParams({ engine: engine?.id });
   };
 
   const handleSelectEngineType = (engineType: EngineType) => {
@@ -69,14 +62,12 @@ const usePromptsFilter = () => {
     }
   };
 
-  const handleSelectTag = (selectedTag: Tag) => {
+  const handleSelectTag = (selectedTag: Tag, remove = true) => {
     const tagExists = filters.tag.some(tag => tag.id === selectedTag.id);
     if (tagExists) {
+      const filteredTags = remove ? filters.tag.filter(tag => tag.id !== selectedTag.id) : filters.tag;
       updateQueryParams({
-        tags: filters.tag
-          .filter(tag => tag.id !== selectedTag.id)
-          .map(tag => `${tag.id}_${tag.name}`)
-          .join(","),
+        tags: filteredTags.map(tag => `${tag.id}_${tag.name}`).join(","),
       });
     } else {
       updateQueryParams({
@@ -85,6 +76,31 @@ const usePromptsFilter = () => {
           .concat(`${selectedTag.id}_${selectedTag.name}`)
           .join(","),
       });
+    }
+  };
+
+  const pushTagParam = (pushedTag: Tag) => {
+    const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
+    const exploreFilters = sessionFilters?.["/explore"] ?? {};
+    const prevTags = exploreFilters?.tags ? `${exploreFilters?.tags},` : "";
+    SessionStorage.set(
+      "filters",
+      JSON.stringify({
+        ...sessionFilters,
+        "/explore": {
+          ...exploreFilters,
+          tags: `${prevTags}${pushedTag.id}_${pushedTag.name}`,
+        },
+      }),
+    );
+  };
+
+  const handleClickTag = (tag: Tag) => {
+    if (isExplorePage) {
+      handleSelectTag(tag, false);
+    } else {
+      pushTagParam(tag);
+      router.push("/explore");
     }
   };
 
@@ -103,15 +119,7 @@ const usePromptsFilter = () => {
 
   const resetFilters = () => {
     const pathname = router.asPath.split("?")[0];
-    router.push(
-      {
-        pathname,
-      },
-      undefined,
-      {
-        shallow: true,
-      },
-    );
+    router.push({ pathname }, undefined, { shallow: true });
     resetSessionStorage();
   };
 
@@ -134,17 +142,21 @@ const usePromptsFilter = () => {
         shallow: true,
       },
     );
+
+    // remove "categorySlug" param before calculating if router query is empty
+    delete updatedQuery["categorySlug"];
+    if (!Object.keys(updatedQuery).length) {
+      resetFilters();
+    }
   };
 
   const updateSessionStorage = () => {
     const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
     const params = Object.keys(router.query).filter(param => param !== "categorySlug");
-    if (!!params.length) {
+    if (params.length) {
       SessionStorage.set("filters", JSON.stringify({ ...sessionFilters, [router.pathname]: router.query }));
-    } else {
-      if (sessionFilters && !Object.keys(sessionFilters).length) {
-        SessionStorage.remove("filters");
-      }
+    } else if (sessionFilters && !Object.keys(sessionFilters).length) {
+      SessionStorage.remove("filters");
     }
   };
 
@@ -189,7 +201,7 @@ const usePromptsFilter = () => {
     });
 
     updateSessionStorage();
-  }, [router.query, engines]);
+  }, [router.query, enginesLoading]);
 
   useEffect(() => {
     const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
@@ -210,6 +222,7 @@ const usePromptsFilter = () => {
     handleSelectEngine,
     handleSelectEngineType,
     handleSelectTag,
+    handleClickTag,
     resetFilters,
     filtersCount,
   };

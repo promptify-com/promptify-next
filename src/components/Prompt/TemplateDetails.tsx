@@ -23,6 +23,7 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 import Header from "@/components/Prompt/Common/Header";
 import type { Templates } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -33,8 +34,10 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
   const router = useRouter();
   const { isMobile } = useBrowser();
   const dispatch = useAppDispatch();
-  const { cloneTemplate } = useCloneTemplate({ template });
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const { cloneTemplate } = useCloneTemplate({ template });
+  const { handleClickTag } = usePromptsFilter();
+
   const isOwner = currentUser?.is_admin || currentUser?.id === template.created_by.id;
 
   const [showMore, setShowMore] = useState(false);
@@ -282,7 +285,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
                     <Chip
                       key={tag.id}
                       onClick={() => {
-                        router.push(`/explore?tags=${tag.id}_${tag.name}`);
+                        handleClickTag(tag);
                         close?.();
                       }}
                       variant={"filled"}

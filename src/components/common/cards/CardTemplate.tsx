@@ -16,20 +16,21 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
 import { useRouter } from "next/router";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 type CardTemplateProps = {
   template: Templates;
 };
 
 function CardTemplate({ template }: CardTemplateProps) {
+  const router = useRouter();
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
-  const router = useRouter();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
+  const { handleClickTag } = usePromptsFilter();
 
   const { tags } = template;
-
   const imgPriority = observer?.isIntersecting;
   const displayedTags = tags.slice(0, 2);
   const remainingTags = tags.slice(2);
@@ -223,7 +224,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                       <Chip
                         onClick={e => {
                           e.preventDefault();
-                          router.push(`/explore?tags=${tag.id}_${tag.name}`);
+                          handleClickTag(tag);
                         }}
                         label={tag.name}
                         size="small"
@@ -250,7 +251,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                         <Chip
                           onClick={e => {
                             e.preventDefault();
-                            router.push(`/explore?tags=${tag.id}_${tag.name}`);
+                            handleClickTag(tag);
                           }}
                           label={tag.name}
                           size="small"

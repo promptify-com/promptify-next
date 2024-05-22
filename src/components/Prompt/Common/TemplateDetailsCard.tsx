@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { alpha } from "@mui/material";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -10,11 +9,11 @@ import Typography from "@mui/material/Typography";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { theme } from "@/theme";
-import { useDispatch } from "react-redux";
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
 import type { Tag } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface DetailsCardProps {
   title: string;
@@ -25,8 +24,7 @@ interface DetailsCardProps {
 }
 
 const DescriptionTags = ({ description, tags }: { description: string; tags?: Tag[] }) => {
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const { handleClickTag } = usePromptsFilter();
 
   return (
     <>
@@ -48,7 +46,7 @@ const DescriptionTags = ({ description, tags }: { description: string; tags?: Ta
             <Chip
               key={tag.id}
               onClick={() => {
-                router.push(`/explore?tags=${tag.id}_${tag.name}`);
+                handleClickTag(tag);
               }}
               variant={"filled"}
               label={tag.name}
