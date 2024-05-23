@@ -20,7 +20,7 @@ function HeroSection() {
       justifyContent={"space-between"}
       sx={{
         background: "linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, rgba(110, 69, 233, 0.05) 100%), #FFF",
-        border: "1px solid #ECECF3",
+        borderBottom: "1px solid #ECECF3",
       }}
       pl={{ xs: "0px", md: "80px" }}
       gap={"40px"}
