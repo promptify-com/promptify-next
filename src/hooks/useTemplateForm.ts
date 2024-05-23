@@ -100,6 +100,8 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
     title: string().min(1).required("Template title field is required"),
     description: string().min(1).required("Description field is required"),
     thumbnail: string().min(1).required("Please upload a thumbnail."),
+    difficulty: string().min(1).required("Difficulty field is required"),
+    language: string().min(1).required("Language field is required"),
   });
 
   const formik = useFormik<IEditTemplate>({
