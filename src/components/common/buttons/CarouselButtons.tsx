@@ -4,6 +4,7 @@ import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import { SxProps } from "@mui/material";
+import { usePathname } from "next/navigation";
 
 interface Props {
   scrollPrev(): void;
@@ -24,11 +25,15 @@ export const CarouselButtons: React.FC<Props> = ({
   buttonStyle,
   containerStyle,
 }) => {
+  const pathName = usePathname();
+  const isGptsPage = pathName === "/GPTs";
+
   const btnStyle = {
     zIndex: 999,
-    height: "100%",
-    border: "none",
-    borderRadius: 0,
+    height: "40px",
+    width: "40px",
+    border: isGptsPage ? "1px solid rgba(0, 0, 0, 0.10)" : "none",
+    borderRadius: "40px",
     color: "#1C1B1F80",
     p: "8px 16px",
     "&.Mui-disabled": {
@@ -41,6 +46,7 @@ export const CarouselButtons: React.FC<Props> = ({
     <Stack
       direction={"row"}
       sx={containerStyle}
+      gap={"8px"}
     >
       <IconButton
         aria-label="previous"
