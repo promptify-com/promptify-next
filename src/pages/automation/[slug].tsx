@@ -35,7 +35,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const areCredentialsStored = useAppSelector(state => state.chat?.areCredentialsStored ?? false);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
-  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
+  const { extractCredentialsInputFromNodes, checkAllCredentialsStored, initializeCredentials } = useCredentials();
   const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
     useWorkflow(workflow);
   const {
@@ -87,6 +87,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   };
 
   useEffect(() => {
+    initializeCredentials();
     dispatch(clearChatStates());
     dispatch(clearExecutionsStates());
   }, []);

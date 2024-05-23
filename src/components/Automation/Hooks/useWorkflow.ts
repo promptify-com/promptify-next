@@ -11,6 +11,7 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import { includes } from "cypress/types/lodash";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
@@ -29,60 +30,65 @@ const useWorkflow = (workflow: IWorkflow) => {
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
-    let createdWorklow: IWorkflowCreateResponse | undefined;
-    try {
-      createdWorklow = await createWorkflow(selectedWorkflowId).unwrap();
+    let createdWorkflow: IWorkflowCreateResponse | undefined;
 
-      if (createdWorklow) {
-        webhookPathRef.current = extractWebhookPath(createdWorklow.nodes);
+    try {
+      createdWorkflow = await createWorkflow(selectedWorkflowId).unwrap();
+
+      if (createdWorkflow) {
+        webhookPathRef.current = extractWebhookPath(createdWorkflow.nodes);
+
         if (!webhookPathRef.current) {
           return;
         }
-        const nodesRequiringAuthentication = createdWorklow.nodes.filter(
+
+        const nodesRequiringAuthentication = createdWorkflow.nodes.filter(
           node => (node.parameters?.authentication || oAuthTypeMapping[node.type]) && !node.credentials,
         );
+
         if (nodesRequiringAuthentication.length) {
-          const updatedNodes = createdWorklow.nodes.map(node => ({ ...node }));
-          updatedNodes.forEach(node => attachCredentialsToNode(node));
+          const updatedWorkflow = structuredClone(createdWorkflow);
 
-          const updatedResponse = {
-            id: createdWorklow.id,
-            name: createdWorklow.name,
-            nodes: updatedNodes,
-            active: createdWorklow.active,
-            connections: createdWorklow.connections,
-            settings: createdWorklow.settings,
-          };
+          updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
 
-          const filteredNodes = updatedNodes
+          const areAllCredentialsAttached = updatedWorkflow.nodes
             .filter(node => {
               return node.parameters.authentication || oAuthTypeMapping[node.type];
             })
             .every(node => node.credentials);
 
-          if (filteredNodes) {
-            dispatch(setAreCredentialsStored(true));
-
+          // if at least one credential was attached to a node, then we need to update the workflow
+          if (
+            updatedWorkflow.nodes.some(
+              node =>
+                node.credentials && !["n8n-nodes-base.openAi", "n8n-nodes-promptify.promptify"].includes(node.type),
+            )
+          ) {
             try {
-              //TODO: Replace by current workflow id
-              await updateWorkflow({
-                workflowId: 11,
-                data: updatedResponse,
+              updateWorkflow({
+                workflowId: updatedWorkflow.id,
+                data: updatedWorkflow,
               });
             } catch (error) {
               console.error("Error updating workflow:", error);
             }
+          }
+
+          if (areAllCredentialsAttached) {
+            dispatch(setAreCredentialsStored(true));
           } else {
             dispatch(setAreCredentialsStored(false));
           }
         }
       }
     } catch (error) {
-      createdWorklow = undefined;
+      createdWorkflow = undefined;
       console.error("Error creating workflow:", error);
+    } finally {
+      dispatch(setClonedWorkflow(createdWorkflow));
     }
-    dispatch(setClonedWorkflow(createdWorklow));
-    return createdWorklow;
+
+    return createdWorkflow;
   };
 
   async function sendMessageAPI(): Promise<any> {

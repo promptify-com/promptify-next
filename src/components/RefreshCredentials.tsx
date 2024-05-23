@@ -70,7 +70,7 @@ function RefreshCredentials({ credential, showLabel = false, onClick }: Props) {
           onClick={async e => {
             e.preventDefault();
             await deleteCredential(credential.id);
-            await updateWorkflowAfterCredentialsDeletion(credential.type);
+            await updateWorkflowAfterCredentialsDeletion(credential.type, false);
             dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
             removeCredential(credential.id);
             onClick?.();

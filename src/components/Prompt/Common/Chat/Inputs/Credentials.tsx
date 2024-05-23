@@ -105,31 +105,23 @@ function Credentials({ input }: Props) {
     }, {}),
   );
 
-  const updateWorkflowAndStorage = async () => {
+  const _updateWorkflow = async () => {
     if (!clonedWorkflow) {
       return;
     }
 
-    const updatedNodes = clonedWorkflow?.nodes.map(node => ({ ...node }));
-    updatedNodes.forEach(node => attachCredentialsToNode(node));
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
 
     if (areAllCredentialsStored) {
-      const updatedResponse = {
-        id: clonedWorkflow.id,
-        name: clonedWorkflow.name,
-        nodes: updatedNodes,
-        active: clonedWorkflow.active,
-        connections: clonedWorkflow.connections,
-        settings: clonedWorkflow.settings,
-      };
+      const _updatedWorkflow = structuredClone(clonedWorkflow);
+      _updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
 
       try {
-        //TODO: to be replaced with real workflow id
         const response = await updateWorkflow({
-          workflowId: 11,
-          data: updatedResponse,
+          workflowId: clonedWorkflow.id,
+          data: _updatedWorkflow,
         }).unwrap();
+
         dispatch(setClonedWorkflow(response));
       } catch (error) {
         console.error("Error updating workflow:", error);
@@ -169,7 +161,7 @@ function Credentials({ input }: Props) {
         return response.id;
       }
 
-      updateWorkflowAndStorage();
+      _updateWorkflow();
 
       setOpenModal(false);
       dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
@@ -221,7 +213,7 @@ function Credentials({ input }: Props) {
 
         if (event.data.status === "success") {
           clearPopupCheck();
-          updateWorkflowAndStorage();
+          _updateWorkflow();
           setOpenModal(false);
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           setOAuthConnected(true);

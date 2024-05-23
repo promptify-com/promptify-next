@@ -67,7 +67,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "delete",
         }),
       }),
-      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: number; data: IWorkflowCreateResponse }>({
+      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: string; data: IWorkflowCreateResponse }>({
         query: ({ workflowId, data }) => ({
           url: `/api/n8n/workflows/${workflowId}/update`,
           method: "put",
