@@ -25,15 +25,13 @@ function CarouselSection({ header, subheader, children }: Props) {
     <Stack
       ref={carouselContainerRef}
       gap={"24px"}
-      sx={{
-        pt: { md: "48px" },
-      }}
     >
       <Stack
         direction={"row"}
         alignItems={{ xs: "end", md: "center" }}
         px={{ xs: "26px", md: "80px" }}
-        justifyContent={"space-between"}
+        justifyContent={{ md: "space-between" }}
+        gap={"40px"}
       >
         <Stack
           gap={"12px"}
@@ -70,6 +68,7 @@ function CarouselSection({ header, subheader, children }: Props) {
             scrollNext={scrollNext}
             canScrollNext={true}
             canScrollPrev={true}
+            buttonStyle={{ color: "#000", opacity: 1, fontSize: "14px", border: "1px solid rgba(0, 0, 0, 0.10)" }}
           />
         </Stack>
       </Stack>

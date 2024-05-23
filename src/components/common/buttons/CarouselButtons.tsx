@@ -1,10 +1,8 @@
-import React from "react";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
-import { SxProps } from "@mui/material";
-import { usePathname } from "next/navigation";
+import { type SxProps } from "@mui/material";
 
 interface Props {
   scrollPrev(): void;
@@ -25,14 +23,11 @@ export const CarouselButtons: React.FC<Props> = ({
   buttonStyle,
   containerStyle,
 }) => {
-  const pathName = usePathname();
-  const isGptsPage = pathName === "/GPTs";
-
   const btnStyle = {
     zIndex: 999,
     height: "40px",
     width: "40px",
-    border: isGptsPage ? "1px solid rgba(0, 0, 0, 0.10)" : "none",
+    border: "none",
     borderRadius: "40px",
     color: "#1C1B1F80",
     p: "8px 16px",
