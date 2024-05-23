@@ -86,7 +86,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.34.1",
     "husky": "^8.0.3",
-    "lint-staged": "^14.0.0",
+    "lint-staged": "^15.2.4",
     "prettier": "3.0.2",
     "source-map-explorer": "^2.5.3"
   },
