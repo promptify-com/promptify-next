@@ -11,7 +11,7 @@ import {
 import type { IPromptInput } from "@/common/types/prompt";
 import type { ChatMode, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IChat, ChatOption } from "@/core/api/dto/chats";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { AnsweredInputType } from "@/common/types/prompt";
@@ -42,6 +42,7 @@ export interface IChatSliceState {
   parameterSelected: string | null;
   currentExecutionDetails: { id: number | null; isFavorite: boolean };
   chats: IChat[];
+  clonedWorkflow?: IWorkflowCreateResponse;
 }
 
 export type DocumentFilterStatusType = "draft" | "saved" | null;

@@ -66,8 +66,13 @@ export interface IWorkflow {
   created_at: string;
 }
 
+export interface UserWorkflowsResponse {
+  data: IWorkflowCreateResponse[];
+  cursor: string | null;
+}
+
 export interface IWorkflowCreateResponse {
-  id?: string;
+  id: string;
   name: string;
   description?: string;
   image?: string;

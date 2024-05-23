@@ -5,10 +5,12 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import FormControl from "@mui/material/FormControl";
 import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { object, string } from "yup";
+
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
@@ -20,12 +22,11 @@ import {
 } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
-import { setAreCredentialsStored } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setClonedWorkflow, initialState as initialChatState } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredential, ICredentialProperty, IStoredWorkflows } from "@/components/Automation/types";
+import type { ICredential, ICredentialProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import Stack from "@mui/material/Stack";
 import RefreshCredentials from "@/components/RefreshCredentials";
 
 interface Props {
@@ -39,22 +40,25 @@ interface FormValues {
 function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const workflowId = router.query.workflowId as string;
+
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const selectedWorkflow = useAppSelector(state => state.chat?.selectedWorkflow);
+  const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
+
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
+  const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
+
   const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
     useCredentials();
-  const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
   const isOauthCredential = credential?.name.includes("OAuth2");
+
   const isCredentialInserted = checkCredentialInserted(credential!);
+
+  const [openModal, setOpenModal] = useState(false);
   const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
-  const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
-  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
 
@@ -101,33 +105,24 @@ function Credentials({ input }: Props) {
     }, {}),
   );
 
-  const updateWorkflowAndStorage = async () => {
-    const selectedWorkflowId = selectedWorkflow?.id.toString() ?? workflowId;
-    const storedWorkflows = (Storage.get("workflows") as unknown as IStoredWorkflows) || {};
-    let workflow = storedWorkflows[selectedWorkflowId]?.workflow;
-
-    if (!workflow && storedWorkflows[selectedWorkflowId]?.id) {
-      const _workflow = await getWorkflow(storedWorkflows[selectedWorkflowId].id).unwrap();
-      workflow = JSON.parse(JSON.stringify(_workflow));
+  const _updateWorkflow = async () => {
+    if (!clonedWorkflow) {
+      return;
     }
-
-    (workflow?.nodes ?? []).forEach(node => attachCredentialsToNode(node));
 
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
 
-    if (areAllCredentialsStored && workflow) {
+    if (areAllCredentialsStored) {
+      const _updatedWorkflow = structuredClone(clonedWorkflow);
+      _updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
+
       try {
-        await updateWorkflow({
-          workflowId: parseInt(selectedWorkflowId),
-          data: workflow,
-        });
+        const response = await updateWorkflow({
+          workflowId: clonedWorkflow.id,
+          data: _updatedWorkflow,
+        }).unwrap();
 
-        storedWorkflows[selectedWorkflowId] = {
-          webhookPath: storedWorkflows[selectedWorkflowId].webhookPath,
-          id: storedWorkflows[selectedWorkflowId]?.id,
-        };
-
-        Storage.set("workflows", JSON.stringify(storedWorkflows));
+        dispatch(setClonedWorkflow(response));
       } catch (error) {
         console.error("Error updating workflow:", error);
       }
@@ -166,7 +161,7 @@ function Credentials({ input }: Props) {
         return response.id;
       }
 
-      updateWorkflowAndStorage();
+      _updateWorkflow();
 
       setOpenModal(false);
       dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
@@ -218,7 +213,7 @@ function Credentials({ input }: Props) {
 
         if (event.data.status === "success") {
           clearPopupCheck();
-          updateWorkflowAndStorage();
+          _updateWorkflow();
           setOpenModal(false);
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           setOAuthConnected(true);
