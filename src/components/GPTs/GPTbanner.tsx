@@ -36,7 +36,7 @@ function GPTbanner({ title, description, href }: Props) {
         gap={"8px"}
       >
         <Typography
-          fontSize={48}
+          fontSize={{ xs: 40, md: 48 }}
           fontWeight={"500"}
           lineHeight={"120%"}
         >
