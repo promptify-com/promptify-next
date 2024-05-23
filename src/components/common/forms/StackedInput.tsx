@@ -75,6 +75,7 @@ export default function StackedInput({
         gap={3}
         sx={{
           p: rows ? "16px" : "8px 16px",
+          width: rows ? "95%" : "100%",
           ...(!rows && {
             borderBottom: "1px solid",
             borderColor: isFocused ? "primary.main" : "transparent",
