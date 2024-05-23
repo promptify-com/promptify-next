@@ -21,7 +21,6 @@ function LandingImage() {
           type="image/webp"
           imageSrcSet="/assets/images/Homepage/empower-2-mobile.webp 253w, /assets/images/Homepage/empower-2-desktop.webp 353w"
           imageSizes="(max-width: 600px) 253px, (max-width: 900px) 253px, 353px"
-          placeholder="blur"
         />
       </Head>
       <Box
