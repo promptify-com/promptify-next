@@ -21,7 +21,7 @@
     "@mui/material": "5.15.14",
     "@netlify/plugin-nextjs": "4.40.1",
     "@react-oauth/google": "^0.11.0",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^2.2.5",
     "@sentry/nextjs": "7.91.0",
     "@types/node": "20.3.2",
     "@types/react": "18.3.2",
