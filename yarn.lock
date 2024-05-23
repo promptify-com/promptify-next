@@ -6176,10 +6176,10 @@ rete-render-utils@2.0.0-beta.9:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-rete@2.0.0-beta.6:
-  version "2.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/rete/-/rete-2.0.0-beta.6.tgz#503303abeeae3108a50a5df333a3f50349a01824"
-  integrity sha512-zmEgLeK86hOCis33ICJBnVUTBRdIYQzWkC7eLyBqeqk9Z8L0pWZvoIc1ml5CBhm8bSPSOItZTs2poMH1kiNGLA==
+rete@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/rete/-/rete-2.0.3.tgz#293d51e3d0028516c6b50b14736e5af070e201fb"
+  integrity sha512-/xzcyEBhVXhMZVZHElnYaLKOmTEuwlnul9Wfjvxw5sdl/+6Nqn2nyqIaW4koefrFpIWZy9aitnjnP3zeCMVDuw==
   dependencies:
     "@babel/runtime" "^7.21.0"
 
