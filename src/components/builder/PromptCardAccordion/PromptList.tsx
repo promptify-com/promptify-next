@@ -152,6 +152,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
           <BuilderPromptPlaceholder count={2} />
         </Stack>
       ) : (
+        // @ts-expect-error
         <Stack
           ref={drop}
           alignItems={"center"}

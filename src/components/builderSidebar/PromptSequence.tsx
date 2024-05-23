@@ -70,6 +70,7 @@ const DraggableContent = memo(
     );
 
     return (
+      // @ts-expect-error
       <Stack
         ref={(node: ConnectableElement) => preview(drop(node))}
         key={promptId}
@@ -85,6 +86,7 @@ const DraggableContent = memo(
         }}
         gap={2}
       >
+        {/* @ts-expect-error */}
         <Box ref={(node: ConnectableElement) => drag(drop(node))}>
           <Menu
             sx={{
@@ -167,6 +169,7 @@ const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenc
   );
 
   return (
+    // @ts-expect-error
     <Stack
       ref={drop}
       alignItems={"center"}

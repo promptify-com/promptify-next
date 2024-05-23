@@ -49,6 +49,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
       >
         {builderType === BUILDER_TYPE.USER ? (
           <>
+            {/* @ts-expect-error */}
             <Button
               ref={dragPreview}
               sx={{
