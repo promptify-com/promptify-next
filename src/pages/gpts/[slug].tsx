@@ -24,8 +24,7 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
         <Stack
           gap={1}
           sx={{
-            bgcolor: "surface.1",
-            p: "60px 50px",
+            bgcolor: "common.white",
           }}
         >
           <Header workflow={selectedWorkflow} />

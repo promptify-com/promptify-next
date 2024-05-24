@@ -5,6 +5,10 @@ import CardMedia from "@mui/material/CardMedia";
 import { ElectricBoltIcon } from "@/assets/icons/ElectricBoltIcon";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { IconButton, alpha } from "@mui/material";
+import { theme } from "../../theme";
+import Settings from "@mui/icons-material/Settings";
+import { SettingsOutlined } from "@mui/icons-material";
 
 interface Props {
   workflow: IWorkflow;
@@ -12,7 +16,14 @@ interface Props {
 
 export default function Header({ workflow }: Props) {
   return (
-    <Stack gap={6}>
+    <Stack
+      gap={6}
+      sx={{
+        p: "64px 48px",
+        borderBottom: "1px solid #ECECF3",
+        background: "linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, rgba(110, 69, 233, 0.05) 100%), #FFF;",
+      }}
+    >
       <CardMedia
         sx={{
           width: { xs: 32, sm: 48 },
@@ -29,7 +40,7 @@ export default function Header({ workflow }: Props) {
           style={{ borderRadius: "16%", objectFit: "contain", width: "100%", height: "100%" }}
         />
       </CardMedia>
-      <Stack gap={2}>
+      <Stack gap={3}>
         <Stack
           direction={"row"}
           alignItems={"center"}
@@ -96,6 +107,21 @@ export default function Header({ workflow }: Props) {
             />
             Active
           </Stack>
+        </Stack>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={2}
+          sx={{
+            fontSize: 14,
+            fontWeight: 400,
+            color: alpha(theme.palette.onSurface, 0.5),
+          }}
+        >
+          Scheduled: Daily @ 9:00 AM
+          <IconButton sx={{}}>
+            <SettingsOutlined />
+          </IconButton>
         </Stack>
       </Stack>
     </Stack>
