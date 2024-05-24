@@ -195,7 +195,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
               ) : templates?.length === 0 ? (
                 <Stack
                   justifyContent={"center"}
-                  alignContent={"center"}
                   minHeight={{ xs: "50svh", md: "60svh" }}
                 >
                   <Typography
