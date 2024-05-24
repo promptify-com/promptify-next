@@ -1,12 +1,9 @@
-import { type ReactNode, useRef } from "react";
+import { type ReactNode } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import useCarousel from "@/hooks/useCarousel";
-
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import useBrowser from "@/hooks/useBrowser";
-import WorkflowCard from "./WorkflowCard";
 
 interface Props {
   header: string;
@@ -17,15 +14,8 @@ interface Props {
 function CarouselSection({ header, subheader, children }: Props) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: false });
 
-  const { isMobile } = useBrowser();
-
-  const carouselContainerRef = useRef<HTMLDivElement | null>(null);
-
   return (
-    <Stack
-      ref={carouselContainerRef}
-      gap={"24px"}
-    >
+    <Stack gap={"24px"}>
       <Stack
         direction={"row"}
         alignItems={{ xs: "end", md: "center" }}
@@ -78,7 +68,6 @@ function CarouselSection({ header, subheader, children }: Props) {
         ml={{ xs: "24px", md: "80px" }}
       >
         <Stack
-          ref={carouselContainerRef}
           gap={{ xs: "16px", md: "24px" }}
           direction={"row"}
           sx={{
