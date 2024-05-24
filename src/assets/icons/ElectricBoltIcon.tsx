@@ -12,9 +12,9 @@ export const ElectricBoltIcon = ({ color = "#1C1B1F", small = false }) =>
       <path
         d="M7.66667 1.3335L1 9.3335H7L6.33333 14.6668L13 6.66683H7L7.66667 1.3335Z"
         stroke={color}
-        stroke-width="1.25"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ) : (

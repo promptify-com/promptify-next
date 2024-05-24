@@ -5,10 +5,10 @@ import CardMedia from "@mui/material/CardMedia";
 import { ElectricBoltIcon } from "@/assets/icons/ElectricBoltIcon";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { IconButton, alpha } from "@mui/material";
-import { theme } from "../../theme";
-import Settings from "@mui/icons-material/Settings";
-import { SettingsOutlined } from "@mui/icons-material";
+import { alpha } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import { theme } from "@/theme";
+import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
 
 interface Props {
   workflow: IWorkflow;
@@ -38,6 +38,7 @@ export default function Header({ workflow }: Props) {
           src={workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
           alt={workflow.name}
           style={{ borderRadius: "16%", objectFit: "contain", width: "100%", height: "100%" }}
+          priority={true}
         />
       </CardMedia>
       <Stack gap={3}>
