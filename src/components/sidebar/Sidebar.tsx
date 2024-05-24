@@ -140,6 +140,10 @@ function Sidebar() {
         outline: 0,
         left: 0,
         borderRight: "none",
+        overflow: "auto",
+        "&::-webkit-scrollbar": {
+          width: 0,
+        },
       }}
     >
       <Grid
