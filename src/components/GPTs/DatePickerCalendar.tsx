@@ -1,4 +1,3 @@
-// src/DatePickerCalendar.tsx
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
@@ -37,8 +36,8 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
         retryOf: null,
         retrySuccessId: null,
         status: "success",
-        startedAt: "2024-05-24T16:13:13.626Z",
-        stoppedAt: "2024-05-24T16:13:17.122Z",
+        startedAt: "2024-05-10T16:13:13.626Z",
+        stoppedAt: "2024-05-10T16:13:17.122Z",
         workflowId: "LkQGmazWmp1WMFmg",
         waitTill: null,
       },
@@ -48,9 +47,9 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
         mode: "webhook",
         retryOf: null,
         retrySuccessId: null,
-        status: "success",
-        startedAt: "2024-05-24T16:12:19.279Z",
-        stoppedAt: "2024-05-24T16:12:22.494Z",
+        status: "failed",
+        startedAt: "2024-05-15T16:12:19.279Z",
+        stoppedAt: "2024-05-15T16:12:22.494Z",
         workflowId: "LkQGmazWmp1WMFmg",
         waitTill: null,
       },
@@ -115,20 +114,6 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
     );
   };
 
-  const renderDays = () => {
-    const days = [];
-    const startDate = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 });
-    const endDate = endOfWeek(endOfMonth(currentMonth), { weekStartsOn: 1 });
-
-    let day = startDate;
-    while (day <= endDate) {
-      days.push(day);
-      day = addDays(day, 1);
-    }
-
-    return days;
-  };
-
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
     const rows = [];
@@ -136,14 +121,18 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
     let day = startOfWeek(monthStart, { weekStartsOn: 1 });
     let formattedDate = "";
 
-    const executionDates = executions?.data.map(execution => parseISO(execution.startedAt)) ?? [];
+    const executionDates = executions.data.map(execution => ({
+      date: parseISO(execution.startedAt),
+      status: execution.status,
+    }));
 
     while (day <= endOfMonth(currentMonth)) {
       for (let i = 0; i < 7; i++) {
         formattedDate = format(day, "d");
         const isCurrentMonth = isSameMonth(day, monthStart);
-        const hasExecution = executionDates.some(execDate => isSameDay(execDate, day));
-
+        const execution = executionDates.find(exec => isSameDay(exec.date, day));
+        const hasExecution = !!execution;
+        const isSuccess = hasExecution && execution!.status === "success";
         daysInMonth.push(
           <Grid
             key={day.toString()}
@@ -155,17 +144,23 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: 40,
-                width: 40,
+                height: 32,
+                width: 32,
                 borderRadius: "50%",
                 cursor: "pointer",
-                backgroundColor: hasExecution ? "#F4F1FF" : "transparent",
+                backgroundColor: hasExecution ? (isSuccess ? "#E4FEE7" : "#E94545") : "transparent",
               }}
             >
               <Typography
                 fontSize={"12px"}
                 sx={{
-                  color: !isCurrentMonth ? "#8F8F8F" : hasExecution ? "#6E45E9" : "text.primary",
+                  color: !isCurrentMonth
+                    ? "text.disabled"
+                    : hasExecution
+                    ? isSuccess
+                      ? "#228B22"
+                      : "white"
+                    : "text.primary",
                 }}
               >
                 {formattedDate}
@@ -179,7 +174,7 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
         <Grid
           container
           spacing={1}
-          ml={"-3px"}
+          ml={"0px"}
           key={day.toString()}
         >
           {daysInMonth}
