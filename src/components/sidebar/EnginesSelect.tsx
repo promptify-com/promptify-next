@@ -106,7 +106,11 @@ function EnginesSelect({ value, onSelect }: Props) {
             overflow: "auto",
             overscrollBehavior: "contain",
             "&::-webkit-scrollbar": {
-              width: 0,
+              width: "5px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "surfaceContainerHigh",
+              borderRadius: "8px",
             },
           },
           ".MuiMenuItem-root": {
