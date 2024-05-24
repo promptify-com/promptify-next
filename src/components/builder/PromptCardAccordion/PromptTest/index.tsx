@@ -334,6 +334,9 @@ const buttonStyle = {
   fontSize: 14,
   fontWeight: 500,
   color: "secondary.main",
+  ":hover": {
+    bgcolor: "surfaceContainer",
+  },
 };
 
 export default PromptTestDialog;
