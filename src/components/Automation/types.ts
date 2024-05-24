@@ -71,6 +71,23 @@ export interface UserWorkflowsResponse {
   cursor: string | null;
 }
 
+export interface WorkflowExecution {
+  id: string;
+  finished: boolean;
+  mode: string;
+  retryOf: string | null;
+  retrySuccessId: string | null;
+  status: string;
+  startedAt: string;
+  stoppedAt: string;
+  workflowId: string;
+  waitTill: string | null;
+}
+export interface UserWorkflowExecutionsResponse {
+  data: WorkflowExecution[];
+  nextCursor: null | string;
+}
+
 export interface IWorkflowCreateResponse {
   id: string;
   name: string;

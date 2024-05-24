@@ -17,6 +17,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAvailableCredentials } from "@/components/Automation/types";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import DatePickerCalendar from "../GPTs/DatePickerCalendar";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -100,6 +101,8 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
           description={template.description}
         />
       )}
+
+      {clonedWorkflow?.id && <DatePickerCalendar workflowId={clonedWorkflow?.id} />}
 
       {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
 
