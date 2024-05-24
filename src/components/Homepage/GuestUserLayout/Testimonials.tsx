@@ -155,14 +155,16 @@ function Testimonials() {
             What people says about Promptify
           </Typography>
         </Stack>
-        <Box ml={"auto"}>
-          <CarouselButtons
-            scrollPrev={scrollPrev}
-            scrollNext={scrollNext}
-            canScrollNext={canScrollNext}
-            canScrollPrev={canScrollPrev}
-          />
-        </Box>
+        {TestimonialExamples.length > 2 && (
+          <Box ml={"auto"}>
+            <CarouselButtons
+              scrollPrev={scrollPrev}
+              scrollNext={scrollNext}
+              canScrollNext={canScrollNext}
+              canScrollPrev={canScrollPrev}
+            />
+          </Box>
+        )}
       </Stack>
       <Stack
         ref={containerRef}
