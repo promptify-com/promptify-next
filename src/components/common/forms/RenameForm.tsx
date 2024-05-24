@@ -62,7 +62,7 @@ export const RenameForm: React.FC<Props> = ({
             ":hover": { color: "primary.main" },
             ":disabled": { bgcolor: "transparent", borderColor: alpha(theme.palette.primary.main, 0.15) },
           }}
-          disabled={!value?.length || disabled}
+          disabled={!value?.trim().length || disabled}
           onClick={() => onSave(value)}
         >
           Ok
