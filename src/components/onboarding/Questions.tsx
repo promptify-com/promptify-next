@@ -44,6 +44,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
         if (step === questions.length) {
           skip();
         } else {
+          setSelectedOptionId(null);
           setStep(step + 1);
         }
       })
