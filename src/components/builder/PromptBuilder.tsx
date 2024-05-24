@@ -9,14 +9,14 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
 import useToken from "@/hooks/useToken";
 import { useTheme } from "@mui/material/styles";
-import { setToast } from "@/core/store/toastSlice";
+import toastSlice, { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { updateTemplate } from "@/hooks/api/templates";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
-import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
+import builderSlice, { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
 import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import { Layout } from "@/layout";
@@ -30,6 +30,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import { DesktopIcon } from "@/assets/icons/DesktopIcon";
 import useBrowser from "@/hooks/useBrowser";
+import store from "@/core/store";
 
 export const PromptBuilder = ({ isNewTemplate = false }) => {
   const router = useRouter();
@@ -52,6 +53,16 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const [templateData, setTemplateData] = useState<Templates | undefined>(
     isNewTemplate ? ({ title: "new_template_12345" } as Templates) : undefined,
   );
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+    store.injectReducers([
+      { key: "builder", asyncReducer: builderSlice },
+      { key: "toast", asyncReducer: toastSlice },
+    ]);
+  }, [store]);
 
   useEffect(() => {
     if (engines) {
