@@ -240,6 +240,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             <TextField
               {...params}
               label="Difficulty"
+              error={Boolean(formik.errors.difficulty)}
+              helperText={formik.errors.difficulty ? formik.errors.difficulty : ""}
             />
           )}
           getOptionLabel={option => option.charAt(0).toUpperCase() + option.slice(1).toLowerCase()}
@@ -273,6 +275,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             />
           )}
           getOptionLabel={option => (option === "1" ? "Yes" : "No")}
+          disableClearable
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -288,6 +291,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             <TextField
               {...params}
               label="Language"
+              error={Boolean(formik.errors.language)}
+              helperText={formik.errors.language ? formik.errors.language : ""}
             />
           )}
           getOptionLabel={getLanguageFromCode}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -55,6 +55,12 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
       onScrollToBottom?.();
     }, 100);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      onScrollToBottom?.();
+    }, 100);
+  }, []);
 
   const handleNewChat = async () => {
     let templateData = template;

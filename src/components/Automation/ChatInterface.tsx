@@ -12,14 +12,11 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import AccordionContentAutomation from "@/components/common/AccordionMessage/AccordionDetails/AccordionContentAutomation";
 import Form from "@/components/Prompt/Common/Chat/Form";
+import RefreshCredentials from "@/components/RefreshCredentials";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import { IAvailableCredentials, IStoredWorkflows } from "./types";
-import { LocalStorage } from "@/common/storage";
-import { useRouter } from "next/router";
-import { workflowsApi } from "@/core/api/workflows";
-import RefreshCredentials from "@/components/RefreshCredentials";
-import { IChatSliceState } from "@/core/store/types";
+import type { IAvailableCredentials } from "@/components/Automation/types";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -33,16 +30,16 @@ interface Props {
 }
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating, processData }: Props) => {
-  const router = useRouter();
   const [availableCredentials, setAvailableCredentials] = useState<IAvailableCredentials[]>([]);
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { inputs = [], areCredentialsStored = false } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
-  const workflowId = router.query?.workflowId as string;
+  const {
+    inputs = [],
+    areCredentialsStored = false,
+    clonedWorkflow,
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [getWorkflow] = workflowsApi.endpoints.getWorkflow.useLazyQuery();
-
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
@@ -59,11 +56,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
 
   useEffect(() => {
     async function updateRefreshButtons() {
-      const storedWorkflows = (LocalStorage.get("workflows") as unknown as IStoredWorkflows) || {};
-
-      if (workflowId && storedWorkflows[workflowId]?.id) {
-        const _workflow = await getWorkflow(storedWorkflows[workflowId].id).unwrap();
-        const clonedWorkflow = structuredClone(_workflow);
+      if (clonedWorkflow?.id) {
         const listedCredentials: IAvailableCredentials[] = [];
 
         clonedWorkflow.nodes.forEach(node => {
@@ -84,11 +77,9 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
             });
           }
         });
-
         setAvailableCredentials(listedCredentials);
       }
     }
-
     updateRefreshButtons();
   }, [areCredentialsStored]);
 
@@ -168,7 +159,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
           {availableCredentials.length > 0 &&
             availableCredentials.map((_credential, idx) => (
               <RefreshCredentials
-                key={idx}
+                key={_credential.id}
                 credential={_credential}
                 showLabel
                 onClick={() => {

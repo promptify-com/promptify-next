@@ -23,9 +23,10 @@ interface Props {
   onGenerate: () => void;
   onAbort: () => void;
   onExecuteWorkflow?: () => void;
+  lastMessage: IMessage;
 }
 
-function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow }: Props) {
+function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow, lastMessage }: Props) {
   const dispatch = useAppDispatch();
   const generatedExecution = useAppSelector(
     state => state.executions?.generatedExecution ?? initialExecutionsState.generatedExecution,
@@ -44,6 +45,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         <TextMessage
           message={message}
           onScrollToBottom={onScrollToBottom}
+          lastMessage={lastMessage}
         />
       )}
 
