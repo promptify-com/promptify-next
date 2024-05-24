@@ -136,7 +136,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 className="icon-text-style"
               >
                 <Favorite />
-                {template.favorites_count || 0}
+                {template.likes || 0}
               </Stack>
               {!isMobile && (
                 <Stack
@@ -147,7 +147,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                   className="icon-text-style"
                 >
                   <Bolt />
-                  {template.likes || template.executions_count || 0}
+                  {template.executions_count || 0}
                 </Stack>
               )}
             </Box>

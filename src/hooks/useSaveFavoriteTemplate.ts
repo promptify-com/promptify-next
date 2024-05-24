@@ -23,6 +23,7 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
 
   const { data: fetchedTemplate } = useGetTemplateByIdQuery(selectedTemplate.id, {
     skip: Boolean(template || !selectedTemplate.id),
+    refetchOnMountOrArgChange: true,
   });
   const [templateData, setTemplateData] = useState<Templates | ITemplateSliceState>(selectedTemplate);
 
