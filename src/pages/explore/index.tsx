@@ -25,8 +25,7 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { authClient } from "@/common/axios";
-import filtersSlice from "@/core/store/filtersSlice";
-import store from "@/core/store";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -63,7 +62,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isFavorite = useAppSelector(state => state.filters?.isFavourite ?? false);
+  const { filters } = usePromptsFilter();
 
   const {
     data: suggestedTemplates,
@@ -90,14 +89,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMobile]);
-
-  useEffect(() => {
-    if (!store) {
-      return;
-    }
-
-    store.injectReducers([{ key: "filters", asyncReducer: filtersSlice }]);
-  }, [store]);
 
   return (
     <Layout>
@@ -132,7 +123,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
           <FiltersSelected show={!allFilterParamsNull} />
 
           {allFilterParamsNull &&
-            !isFavorite &&
+            !filters.isFavorite &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
                 <Typography
@@ -205,8 +196,11 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                 <Typography
                   fontSize={{ xs: 14, md: 18 }}
                   fontWeight={400}
-                  textAlign={"center"}
                   color={"onSurface"}
+                  sx={{
+                    textAlign: "center",
+                    my: "50px",
+                  }}
                 >
                   No templates found. Please adjust your filters.
                 </Typography>

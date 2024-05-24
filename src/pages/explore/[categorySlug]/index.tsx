@@ -17,9 +17,6 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
 import useBrowser from "@/hooks/useBrowser";
-import { useEffect } from "react";
-import store from "@/core/store";
-import filtersSlice from "@/core/store/filtersSlice";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -47,14 +44,6 @@ export default function Page({ category }: { category: Category }) {
   const goBack = () => {
     router.push("/explore");
   };
-
-  useEffect(() => {
-    if (!store) {
-      return;
-    }
-
-    store.injectReducers([{ key: "filters", asyncReducer: filtersSlice }]);
-  }, [store]);
 
   return (
     <ThemeProvider theme={dynamicTheme}>
@@ -204,8 +193,11 @@ export default function Page({ category }: { category: Category }) {
                   <Typography
                     fontSize={{ xs: 14, md: 18 }}
                     fontWeight={400}
-                    textAlign={"center"}
                     color={"onSurface"}
+                    sx={{
+                      textAlign: "center",
+                      my: "50px",
+                    }}
                   >
                     No templates found. Please adjust your filters.
                   </Typography>

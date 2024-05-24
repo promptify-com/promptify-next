@@ -67,13 +67,13 @@ export interface IExecutionsSliceState {
 }
 
 export interface IFilterSliceState {
-  engine: Engine | null;
-  tag: Tag[];
   title: string | null;
-  category: Category | null;
-  subCategory: Category | null;
+  engine: Engine | null;
   engineType: EngineType[];
-  isFavourite?: boolean;
+  tag: Tag[];
+  category?: Category | null;
+  subCategory?: Category | null;
+  isFavorite?: boolean;
 }
 
 export interface ISidebarSliceState {

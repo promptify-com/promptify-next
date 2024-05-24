@@ -27,7 +27,7 @@ export const getSearchParams = (params: FilterParams) => {
   params.offset && searchParams.append("offset", String(params.offset));
   params.status && searchParams.append("status", String(params.status));
   params.engine_type && params.engine_type.forEach(engine => searchParams.append("engine_type", String(engine.id)));
-  params.isFavourite && searchParams.append("is_favorite", String(params.isFavourite));
+  params.isFavorite && searchParams.append("is_favorite", String(params.isFavorite));
   typeof params.isInternal === "boolean" && searchParams.append("is_internal", String(params.isInternal));
   params.include && searchParams.append("include", params.include);
 

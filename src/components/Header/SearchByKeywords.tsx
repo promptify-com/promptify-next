@@ -1,13 +1,14 @@
 import React from "react";
 import { Keywords } from "@/common/constants";
 import { Grid, MenuItem, MenuList, Typography } from "@mui/material";
-import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import { setSelectedKeyword } from "@/core/store/filtersSlice";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 const SearchByKeywords = ({ title }: { title: string | null }) => {
-  const dispatch = useDispatch();
   const router = useRouter();
+  const isExplorePage = router.pathname === "/explore";
+  const { handleSelectKeyword } = usePromptsFilter();
+
   return (
     <Grid>
       <Grid
@@ -99,8 +100,11 @@ const SearchByKeywords = ({ title }: { title: string | null }) => {
           <MenuItem
             key={el.name}
             onClick={() => {
-              dispatch(setSelectedKeyword(el.name));
-              router.push({ pathname: "/explore" });
+              if (isExplorePage) {
+                handleSelectKeyword(el.name);
+              } else {
+                router.push(`/explore?key=${el.name}`);
+              }
             }}
             sx={{
               display: "flex",

@@ -11,7 +11,7 @@ import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setAnswers, initialState as initialChatState } from "@/core/store/chatSlice";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
@@ -33,7 +33,7 @@ function FormInput({ input }: Props) {
   }, 400);
 
   useEffect(() => {
-    const answersStored = Storage.get("answers") as unknown as IAnswer[];
+    const answersStored = LocalStorage.get("answers") as unknown as IAnswer[];
 
     if (!answersStored) return;
 
@@ -41,7 +41,7 @@ function FormInput({ input }: Props) {
 
     if (isRelevantAnswer) {
       dispatch(setAnswers(answersStored));
-      Storage.remove("answers");
+      LocalStorage.remove("answers");
     }
   }, []);
 

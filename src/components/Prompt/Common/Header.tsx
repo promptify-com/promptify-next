@@ -6,7 +6,6 @@ import { alpha } from "@mui/material/styles";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIos";
 import { theme } from "@/theme";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
 
@@ -17,7 +16,6 @@ interface TemplateHeaderProps {
 
 export default function Header({ template, close }: TemplateHeaderProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const breadcrumbs = [
     <Link
       key="0"
@@ -33,11 +31,10 @@ export default function Header({ template, close }: TemplateHeaderProps) {
     </Link>,
     <Link
       key="1"
-      href="/explore"
+      href={`/explore/${template.category.slug}`}
       onClick={e => {
         e.preventDefault();
-        dispatch(setSelectedTag(template.category));
-        router.push("/explore");
+        router.push(`/explore/${template.category.slug}`);
         close?.();
       }}
       sx={breadcrumbStyle}

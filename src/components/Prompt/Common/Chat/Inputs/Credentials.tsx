@@ -13,7 +13,7 @@ import { object, string } from "yup";
 
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import {
   useCreateCredentialsMutation,
   useDeleteCredentialMutation,
@@ -272,7 +272,7 @@ function Credentials({ input }: Props) {
             {oAuthConnected ? (
               <>
                 {() => {
-                  const _credentials = (Storage.get("credentials") || []) as ICredential[];
+                  const _credentials = (LocalStorage.get("credentials") || []) as ICredential[];
                   const _credential = _credentials.find(cred => cred.type === credential?.name);
                   if (!_credential) {
                     return null;

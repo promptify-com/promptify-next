@@ -14,35 +14,35 @@ import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import Search from "@mui/icons-material/Search";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import Grid from "@mui/material/Grid";
-import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import useDebounce from "@/hooks/useDebounce";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
-import { BLOG_URL } from "@/common/constants";
 import { isValidUserFn } from "@/core/store/userSlice";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import EditorIcon from "@/components/builder/Assets/EditorIcon";
 import CardTemplateResult from "@/components/common/cards/CardTemplateResult";
 import type { Link } from "@/components/SidebarMobile/Types";
 import Book3 from "@/assets/icons/Book3";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface Props {
   onCloseDrawer: () => void;
 }
 
 function Navigations({ onCloseDrawer }: Props) {
-  const dispatch = useAppDispatch();
   const router = useRouter();
+  const isValidUser = useAppSelector(isValidUserFn);
 
   const pathname = router.pathname;
 
-  const title = useAppSelector(state => state.filters?.title ?? "");
-  const isValidUser = useAppSelector(isValidUserFn);
+  const { filters, handleSelectKeyword } = usePromptsFilter();
+  const title = filters.title ?? "";
 
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+  const isExplorePage = pathname === "/explore";
   const isLearnPage = ["learn", "terms-of-use", "privacy-policy"].includes(pathname.split("/")[1]);
 
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
@@ -111,8 +111,11 @@ function Navigations({ onCloseDrawer }: Props) {
   ];
 
   const onSearchClicked = () => {
-    dispatch(setSelectedKeyword(textInput));
-    router.push({ pathname: "/explore" });
+    if (isExplorePage) {
+      handleSelectKeyword(textInput);
+    } else {
+      router.push(`/explore?key=${textInput}`);
+    }
     onCloseDrawer();
   };
 

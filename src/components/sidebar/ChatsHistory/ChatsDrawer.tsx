@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyChatHistory } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import ChatsHistory from "./ChatsHistory";
@@ -26,7 +26,7 @@ export default function ChatsDrawer({ expandedOnHover, style = {} }: Props) {
   };
 
   useEffect(() => {
-    const isChatHistorySticky = Boolean(Storage.get("isChatHistorySticky"));
+    const isChatHistorySticky = Boolean(LocalStorage.get("isChatHistorySticky"));
     if (isChatHistorySticky === null) {
       dispatch(setStickyChatHistory(true));
     } else {

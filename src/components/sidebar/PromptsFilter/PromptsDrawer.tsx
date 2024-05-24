@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import PromptsFilters from "@/components/sidebar/PromptsFilter/PromptsFilters";
 import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
-import { countSelectedFilters, resetFilters, initialState as initialFiltersState } from "@/core/store/filtersSlice";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface Props {
   expandedOnHover?: boolean;
@@ -16,15 +16,14 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
   const dispatch = useAppDispatch();
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
-  const filters = useAppSelector(state => state.filters ?? initialFiltersState);
-  const filterCount = countSelectedFilters(filters);
+  const { resetFilters, filtersCount } = usePromptsFilter();
 
   const toggleSidebar = () => {
     dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
   };
 
   useEffect(() => {
-    const storedIsPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
+    const storedIsPromptsFiltersSticky = LocalStorage.get("isPromptsFiltersSticky");
     if (storedIsPromptsFiltersSticky !== null) {
       dispatch(setStickyPromptsFilters(JSON.parse(storedIsPromptsFiltersSticky)));
     }
@@ -40,12 +39,12 @@ export default function PromptsDrawer({ expandedOnHover = false }: Props) {
       >
         <FilterFloatButton
           expanded={isExpanded}
-          count={filterCount}
+          count={filtersCount}
           onClick={() => dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky))}
           onClose={() => {
-            dispatch(resetFilters());
+            resetFilters();
             dispatch(setStickyPromptsFilters(false));
-            Storage.set("isPromptsFiltersSticky", JSON.stringify(false));
+            LocalStorage.set("isPromptsFiltersSticky", JSON.stringify(false));
           }}
         />
       </Stack>
