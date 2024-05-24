@@ -23,6 +23,7 @@ export const RenameForm: React.FC<Props> = ({
   disabled,
 }) => {
   const [value, setValue] = useState(initialValue || "");
+  const [error, setError] = useState(false);
 
   return (
     <Box
@@ -40,7 +41,14 @@ export const RenameForm: React.FC<Props> = ({
           onChange={e => {
             setValue(e.target.value);
             onChange(e.target.value);
+            if (e.target.value.trim().length === 0) {
+              setError(true);
+            } else {
+              setError(false);
+            }
           }}
+          error={error}
+          helperText={error ? "Title cannot be empty" : ""}
         />
       </Box>
       <Stack
