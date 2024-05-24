@@ -1,9 +1,11 @@
-import { Search } from "@mui/icons-material";
-import { InputBase, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import InputBase from "@mui/material/InputBase";
+import Search from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Image from "../design-system/Image";
-import BoltOutlined from "./Icons/BoltOutlined";
+
+import Image from "@/components/design-system/Image";
+import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import useBrowser from "@/hooks/useBrowser";
 
 function HeroSection() {
@@ -101,7 +103,7 @@ function HeroSection() {
           src={renderImageByViewport}
           alt="GPTs-hero"
           priority={true}
-          sizes="(max-width: 600px) 682px, (max-width: 900px) 682px, 682px"
+          sizes="(max-width: 600px) 330px, (max-width: 900px) 330px, 682px"
         />
         <Box
           width={"100%"}

@@ -90,7 +90,7 @@ function Sidebar() {
     },
     {
       name: "GPTs",
-      href: "/GPTs",
+      href: "/automation",
       icon: <ElectricBoltIcon />,
       active: isAutomationPage,
       external: false,

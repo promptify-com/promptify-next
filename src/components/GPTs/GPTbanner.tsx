@@ -1,9 +1,9 @@
-import { Typography } from "@mui/material";
-import Stack from "@mui/material/Stack";
-import React from "react";
-import GmailSvg from "./Icons/GmailSvg";
 import Link from "next/link";
-import { KeyboardArrowRightRounded } from "@mui/icons-material";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import KeyboardArrowRightRounded from "@mui/icons-material/KeyboardArrowRightRounded";
+
+import GmailSvg from "@/components/GPTs/Icons/GmailSvg";
 import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
@@ -19,8 +19,7 @@ function GPTbanner({ title, description, href }: Props) {
       width={"100%"}
       height={{ md: "260px" }}
       sx={{
-        background:
-          "linear-gradient(0deg, #EEE8FF 0%, #EEE8FF 100%), url(<path-to-image>) lightgray 50% / cover no-repeat",
+        background: "linear-gradient(0deg, #EEE8FF 0%, #EEE8FF 100%)",
         borderRadius: "16px",
       }}
       direction={{ md: "row" }}
