@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { Box, Button, Stack, TextField, alpha } from "@mui/material";
-import { Done } from "@mui/icons-material";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Done from "@mui/icons-material/Done";
+import { alpha } from "@mui/material";
 import { theme } from "@/theme";
 
 interface Props {
@@ -24,6 +28,21 @@ export const RenameForm: React.FC<Props> = ({
 }) => {
   const [value, setValue] = useState(initialValue || "");
   const [error, setError] = useState(false);
+  const [hasChanged, setHasChanged] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    onChange(newValue);
+
+    if (newValue.trim().length === 0) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+
+    setHasChanged(newValue !== initialValue);
+  };
 
   return (
     <Box
@@ -38,15 +57,7 @@ export const RenameForm: React.FC<Props> = ({
           label={label ? `Rename ${label}` : ""}
           placeholder={placeholder}
           value={value}
-          onChange={e => {
-            setValue(e.target.value);
-            onChange(e.target.value);
-            if (e.target.value.trim().length === 0) {
-              setError(true);
-            } else {
-              setError(false);
-            }
-          }}
+          onChange={handleChange}
           error={error}
           helperText={error ? "Title cannot be empty" : ""}
         />
@@ -70,7 +81,7 @@ export const RenameForm: React.FC<Props> = ({
             ":hover": { color: "primary.main" },
             ":disabled": { bgcolor: "transparent", borderColor: alpha(theme.palette.primary.main, 0.15) },
           }}
-          disabled={!value?.trim().length || disabled}
+          disabled={!hasChanged || !value.trim().length || disabled}
           onClick={() => onSave(value)}
         >
           Ok
