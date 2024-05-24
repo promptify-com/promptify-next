@@ -9,7 +9,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
 import useToken from "@/hooks/useToken";
 import { useTheme } from "@mui/material/styles";
-import toastSlice, { setToast } from "@/core/store/toastSlice";
+import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { useGetEnginesQuery } from "@/core/api/engines";
@@ -58,10 +58,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
     if (!store) {
       return;
     }
-    store.injectReducers([
-      { key: "builder", asyncReducer: builderSlice },
-      { key: "toast", asyncReducer: toastSlice },
-    ]);
+    store.injectReducers([{ key: "builder", asyncReducer: builderSlice }]);
   }, [store]);
 
   useEffect(() => {
