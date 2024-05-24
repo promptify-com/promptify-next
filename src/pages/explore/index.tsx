@@ -193,17 +193,23 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                   <CardTemplatePlaceholder count={4} />
                 </Grid>
               ) : templates?.length === 0 ? (
-                <Typography
-                  fontSize={{ xs: 14, md: 18 }}
-                  fontWeight={400}
-                  color={"onSurface"}
-                  sx={{
-                    textAlign: "center",
-                    my: "50px",
-                  }}
+                <Stack
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  minHeight={{ xs: "50svh", md: "60svh" }}
                 >
-                  No templates found. Please adjust your filters.
-                </Typography>
+                  <Typography
+                    fontSize={{ xs: 14, md: 18 }}
+                    fontWeight={400}
+                    color={"onSurface"}
+                    sx={{
+                      textAlign: "center",
+                      my: "50px",
+                    }}
+                  >
+                    No templates found. Please adjust your filters.
+                  </Typography>
+                </Stack>
               ) : (
                 <PaginatedList
                   loading={isFetching}
