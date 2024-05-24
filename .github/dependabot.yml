@@ -12,5 +12,8 @@ updates:
       day: "monday"
       time: "04:00"
     commit-message:
-      prefix: "deps"
+      prefix: "deps_prod"
+      prefix-development: "deps_dev"
     open-pull-requests-limit: 10
+    assignees:
+      - "belyas"

@@ -11,7 +11,7 @@ import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
@@ -41,7 +41,7 @@ function App({ Component, pageProps }: AppProps) {
     };
 
     if (!isValidUser && storedToken) {
-      const _currentUser = Storage.get("currentUser") as unknown as User;
+      const _currentUser = LocalStorage.get("currentUser") as unknown as User;
 
       if (_currentUser && Object.values(_currentUser).length) {
         store.dispatch(updateUser(_currentUser));

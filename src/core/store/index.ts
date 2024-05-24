@@ -10,7 +10,6 @@ import type {
   IChatSliceState,
   IDocumentSliceState,
   IExecutionsSliceState,
-  IFilterSliceState,
   ISidebarSliceState,
   ITemplateSliceState,
   IToastSliceState,
@@ -22,7 +21,6 @@ export type RootState = {
   chat?: IChatSliceState;
   documents?: IDocumentSliceState;
   executions?: IExecutionsSliceState;
-  filters?: IFilterSliceState;
   templates?: ITemplateSliceState;
   sidebar: ISidebarSliceState;
   toast: IToastSliceState;

@@ -1,4 +1,4 @@
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import type {
   INode,
   NodesFileData,
@@ -136,7 +136,7 @@ export const attachCredentialsToNode = (node: INode) => {
       authTypeMapping[authenticationType!] ||
       authenticationType;
 
-    const currentCredentials: ICredential[] = (Storage.get("credentials") as unknown as ICredential[]) || [];
+    const currentCredentials: ICredential[] = (LocalStorage.get("credentials") as unknown as ICredential[]) || [];
 
     const credential = oAuthTypeMapping[type]
       ? currentCredentials.find(cred => cred.type === oAuthTypeMapping[type])

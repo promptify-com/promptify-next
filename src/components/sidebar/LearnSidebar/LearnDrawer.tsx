@@ -1,12 +1,10 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyLearnSidebar } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
-import { useEffect, useState } from "react";
+import { LocalStorage } from "@/common/storage";
+import { useEffect } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import { Stack } from "@mui/material";
-import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
 import useBrowser from "@/hooks/useBrowser";
-import { countSelectedFilters, initialState as initialDocumentsState } from "@/core/store/documentsSlice";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -29,9 +27,6 @@ export default function LearnSidebar({ expandedOnHover = false }: Props) {
   const router = useRouter();
   const { isMobile } = useBrowser();
   const isLearnSidebarSticky = useAppSelector(state => state.sidebar.isLearnSidebarSticky);
-  const filters = useAppSelector(state => state.documents?.filter ?? initialDocumentsState.filter);
-  const filterCount = countSelectedFilters(filters);
-  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   const toggleSidebar = () => {
     dispatch(setStickyLearnSidebar(!isLearnSidebarSticky));
@@ -40,66 +35,52 @@ export default function LearnSidebar({ expandedOnHover = false }: Props) {
   useEffect(() => {
     if (isMobile) return;
 
-    const isLearnSidebarSticky = Boolean(Storage.get("isLearnSidebarSticky"));
+    const isLearnSidebarSticky = Boolean(LocalStorage.get("isLearnSidebarSticky"));
     if (isLearnSidebarSticky) {
       dispatch(setStickyLearnSidebar(isLearnSidebarSticky));
     }
   }, []);
 
-  const isExpanded = isLearnSidebarSticky || (expandedOnHover && !isButtonHovered);
+  const isExpanded = isLearnSidebarSticky || expandedOnHover;
 
   return (
-    <Stack position={"relative"}>
-      {isMobile && (
-        <Stack
-          onMouseEnter={() => setIsButtonHovered(true)}
-          onMouseLeave={() => setIsButtonHovered(false)}
-        >
-          <FilterFloatButton
-            expanded={isExpanded}
-            onClick={() => dispatch(setStickyLearnSidebar(!isLearnSidebarSticky))}
-            count={filterCount}
-          />
-        </Stack>
-      )}
-      <DrawerContainer
-        title="Learn"
-        expanded={isExpanded}
-        toggleExpand={toggleSidebar}
-        sticky={isLearnSidebarSticky}
-        onClose={() => dispatch(setStickyLearnSidebar(false))}
-      >
-        <Stack
-          gap={"1px"}
-          sx={{
-            py: "24px",
-            ".item": {
-              textDecoration: "none",
-              padding: "16px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              color: "secondary.main",
-              borderRadius: "8px",
-              cursor: "pointer",
-              "&.active, &:hover": {
-                bgcolor: "surfaceContainerHighest",
-                color: "onPrimaryContainer",
-              },
+    <DrawerContainer
+      title="Learn"
+      expanded={isExpanded}
+      toggleExpand={toggleSidebar}
+      sticky={isLearnSidebarSticky}
+      onClose={() => dispatch(setStickyLearnSidebar(false))}
+    >
+      <Stack
+        gap={"1px"}
+        sx={{
+          py: "24px",
+          ".item": {
+            textDecoration: "none",
+            padding: "16px 24px",
+            fontSize: 14,
+            fontWeight: 500,
+            color: "secondary.main",
+            borderRadius: "8px",
+            cursor: "pointer",
+            "&.active, &:hover": {
+              bgcolor: "surfaceContainerHighest",
+              color: "onPrimaryContainer",
             },
-          }}
-        >
-          {navItems.map((navItem, idx) => (
-            <Link
-              key={navItem.title}
-              href={navItem.link}
-              scroll={false}
-              className={`item ${router.asPath == navItem.link ? "active" : ""}`}
-            >
-              {navItem.title}
-            </Link>
-          ))}
-        </Stack>
-      </DrawerContainer>
-    </Stack>
+          },
+        }}
+      >
+        {navItems.map((navItem, idx) => (
+          <Link
+            key={navItem.title}
+            href={navItem.link}
+            scroll={false}
+            className={`item ${router.asPath == navItem.link ? "active" : ""}`}
+          >
+            {navItem.title}
+          </Link>
+        ))}
+      </Stack>
+    </DrawerContainer>
   );
 }

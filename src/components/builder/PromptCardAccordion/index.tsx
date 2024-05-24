@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import React, { memo, useMemo, useRef, useState } from "react";
+import React, { ReactElement, memo, useMemo, useRef, useState } from "react";
 import Header from "./Header";
 import StylerAccordion from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -149,6 +149,7 @@ const PromptCardAccordion = ({
 
   return (
     <Box
+      // @ts-expect-error
       ref={(node: ConnectableElement) => preview(drop(node))}
       sx={{
         bgcolor: "surface.1",

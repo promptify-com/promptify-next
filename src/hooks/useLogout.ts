@@ -1,4 +1,4 @@
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
@@ -10,7 +10,7 @@ const useLogout = () => {
     return new Promise(async resolve => {
       dispatch(updateUser(null));
 
-      Storage.clear();
+      LocalStorage.clear();
 
       redirectToPath("/");
       resolve(true);

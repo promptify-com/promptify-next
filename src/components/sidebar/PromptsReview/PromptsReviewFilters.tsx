@@ -1,77 +1,18 @@
-import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-
-import {
-  setSelectedEngine,
-  setSelectedTag,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  deleteSelectedEngineType,
-  setSelectedKeyword,
-  initialState as initialFiltersState,
-} from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import Storage from "@/common/storage";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
 import type { Item } from "@/components/sidebar/Collapsible";
-import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
 import PromptsReviewSearch from "./PromptsReviewSearch";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsReviewFilters() {
-  const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine, engineType, title } = useAppSelector(state => state.filters ?? initialFiltersState);
-
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
-    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType) || "";
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-    if (title) {
-      dispatch(setSelectedKeyword(title));
-    }
-  }, []);
-
-  const handleEngineSelect = (selectedEngine: Engine | null) => {
-    dispatch(setSelectedEngine(selectedEngine));
-  };
-
-  const handleTagSelect = (selectedTag: Tag) => {
-    const tagExists = tag.some(tagItem => tagItem.id === selectedTag.id);
-
-    if (tagExists) {
-      dispatch(deleteSelectedTag(selectedTag.id));
-    } else {
-      dispatch(setSelectedTag(selectedTag));
-    }
-  };
-
-  const handleEngineTypeSelect = (type: EngineType) => {
-    const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
-    if (isEngineTypeExisted) {
-      dispatch(deleteSelectedEngineType(type));
-    } else {
-      dispatch(setSelectedEngineType(type));
-    }
-  };
+  const { filters, handleSelectEngine, handleSelectEngineType, handleSelectTag } = usePromptsFilter();
+  const { tag, engine, engineType, title } = filters;
 
   const isSelected = (item: Item) => {
     switch (item.type) {
@@ -96,12 +37,12 @@ function PromptsReviewFilters() {
         title="Content type"
         key="contentType"
         items={contentTypeItems}
-        onSelect={item => handleEngineTypeSelect({ id: item.id, label: item.name })}
+        onSelect={item => handleSelectEngineType({ id: item.id, label: item.name })}
         isSelected={isSelected}
       />
       <EnginesSelect
         value={engine}
-        onSelect={handleEngineSelect}
+        onSelect={handleSelectEngine}
       />
       <Collapsible
         title="Popular tags"
@@ -116,7 +57,7 @@ function PromptsReviewFilters() {
           {tags?.map(tag => (
             <Box
               key={tag.id}
-              onClick={() => handleTagSelect(tag)}
+              onClick={() => handleSelectTag(tag)}
             >
               <Chip
                 label={tag.name}

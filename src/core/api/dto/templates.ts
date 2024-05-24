@@ -17,7 +17,7 @@ export interface FilterParams {
   offset?: number;
   status?: LowercaseTemplateStatus;
   engine_type?: EngineType[];
-  isFavourite?: boolean;
+  isFavorite?: boolean;
   isInternal?: boolean;
   template?: number;
   include?: string;

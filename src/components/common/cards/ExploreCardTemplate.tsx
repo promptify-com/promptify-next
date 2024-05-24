@@ -6,19 +6,17 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
-import { useRouter } from "next/router";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
-import { useAppDispatch } from "@/hooks/useStore";
 import Link from "next/link";
 import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
 import { Bolt } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -37,10 +35,9 @@ function CardTemplate({
   bgColor = "surface.2",
   showTagsOnHover = false,
 }: CardTemplateProps) {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
+  const { handleClickTag } = usePromptsFilter();
 
   const highlightSearchQuery = (text: string) => {
     if (!query) return text;
@@ -267,8 +264,7 @@ function CardTemplate({
                       }}
                       onClick={e => {
                         e.preventDefault();
-                        dispatch(setSelectedTag(tag));
-                        router.push("/explore");
+                        handleClickTag(tag);
                       }}
                     />
                   ))}
@@ -335,8 +331,7 @@ function CardTemplate({
               <Chip
                 onClick={e => {
                   e.preventDefault();
-                  dispatch(setSelectedTag(tag));
-                  router.push("/explore");
+                  handleClickTag(tag);
                 }}
                 size="small"
                 label={tag.name}

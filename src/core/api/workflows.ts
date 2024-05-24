@@ -4,6 +4,7 @@ import type {
   ICredential,
   IWorkflow,
   IWorkflowCreateResponse,
+  UserWorkflowsResponse,
 } from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
@@ -38,6 +39,13 @@ export const workflowsApi = baseApi.injectEndpoints({
           keepUnusedDataFor: 21600,
         }),
       }),
+      getUserWorkflows: builder.query<UserWorkflowsResponse, void>({
+        query: () => ({
+          url: `/api/n8n/workflows/get_user_workflows`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+      }),
 
       getCredentials: builder.query<ICredential[], void>({
         query: () => ({
@@ -59,7 +67,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "delete",
         }),
       }),
-      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: number; data: IWorkflowCreateResponse }>({
+      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: string; data: IWorkflowCreateResponse }>({
         query: ({ workflowId, data }) => ({
           url: `/api/n8n/workflows/${workflowId}/update`,
           method: "put",
