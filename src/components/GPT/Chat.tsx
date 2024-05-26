@@ -2,50 +2,79 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import type { IWorkflow } from "@/components/Automation/types";
 import Box from "@mui/material/Box";
-import { useEffect, useState } from "react";
-import ChatInput from "@/components/Chat/ChatInput";
+import { useEffect } from "react";
 import useChat from "./Hooks/useChat";
-import { Message } from "@/components/Prompt/Common/Chat/Message";
+import Message from "./Message";
 import CredentialsContainer from "./CredentialsContainer";
+import Choices from "./Choices";
+import TimeSelect from "./TimeSelect";
+
+const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
 
 interface Props {
   workflow: IWorkflow;
 }
 
 export default function Chat({ workflow }: Props) {
-  const { messages, initialMessages } = useChat({ workflow });
-  const [isValidating, setIsValidating] = useState(false);
+  const { messages, initialMessages, startSchedule, cancelSchedule, setScheduleFrequency, setScheduleTime } = useChat({
+    workflow,
+  });
 
-  const handleSubmitMessage = (message: string) => {};
+  const handleStartSchedule = (status: boolean) => {
+    if (status) {
+      startSchedule();
+    } else {
+      cancelSchedule();
+    }
+  };
 
   useEffect(() => {
     initialMessages();
   }, [workflow]);
 
-  const disableChatInput = false;
-
   return (
     <Stack
-      gap={6}
+      gap={8}
       sx={{
         p: "48px",
       }}
     >
-      <Box>
-        {messages.map(message => (
-          <React.Fragment key={message.id}>
-            {message.type === "text" && <Message message={message} />}
-            {message.type === "credentials" && <CredentialsContainer workflow={workflow} />}
-          </React.Fragment>
-        ))}
-      </Box>
-      <ChatInput
-        onSubmit={(value: string) => {
-          handleSubmitMessage(value);
-        }}
-        disabled={disableChatInput}
-        isValidating={isValidating}
-      />
+      {messages.map(message => (
+        <Box
+          key={message.id}
+          sx={{
+            ...(message.fromUser && {
+              ml: "auto",
+            }),
+            ...(message.noHeader && {
+              mt: "-34px",
+            }),
+          }}
+        >
+          {message.type === "text" && <Message message={message} />}
+          {message.type === "credentials" && <CredentialsContainer workflow={workflow} />}
+          {message.type === "schedule_start" && (
+            <Choices
+              message={message.text}
+              items={["Yes", "No"]}
+              onSelect={item => handleStartSchedule(item === "Yes")}
+            />
+          )}
+          {message.type === "schedule_frequency" && (
+            <Choices
+              message={message.text}
+              items={FREQUENCY_ITEMS}
+              onSelect={frequency => setScheduleFrequency(frequency.toLowerCase())}
+            />
+          )}
+          {message.type === "schedule_time" && (
+            <TimeSelect
+              message={message.text}
+              onSelect={setScheduleTime}
+            />
+          )}
+        </Box>
+      ))}
     </Stack>
   );
 }
