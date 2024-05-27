@@ -82,6 +82,7 @@ export interface WorkflowExecution {
   stoppedAt: string;
   workflowId: string;
   waitTill: string | null;
+  error?: string;
 }
 export interface UserWorkflowExecutionsResponse {
   data: WorkflowExecution[];
