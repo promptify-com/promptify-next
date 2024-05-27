@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { client } from "@/common/axios";
+import { client, authClient } from "@/common/axios";
 import { getCategories } from "@/hooks/api/categories";
 
 type IData = Record<string, string>;
@@ -115,7 +115,7 @@ export async function getStaticProps() {
     client.get<IData[]>("/api/meta/templates/"),
     getCategories(),
     client.get<IData[]>("/api/n8n/workflows"),
-    client.get<IData[]>("/api/users/public"),
+    authClient.get<IData[]>("/api/meta/users/public"),
   ]);
 
   if (_templates.status === "fulfilled") {
