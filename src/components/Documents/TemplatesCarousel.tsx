@@ -31,9 +31,9 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   };
 
   const isEmpty = !isLoading && !templates?.length;
+  const hideCarousel = templates && templates?.length > 1;
 
   if (isEmpty) return;
-
   return (
     <Stack
       gap={3}
@@ -52,7 +52,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
         >
           Top prompts
         </Typography>
-        {isCarousel && (
+        {isCarousel && hideCarousel && (
           <Stack
             direction={"row"}
             alignItems={"center"}
