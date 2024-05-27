@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { Layout } from "@/layout";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
@@ -7,6 +8,8 @@ import { authClient } from "@/common/axios";
 import type { IWorkflow } from "@/components/Automation/types";
 import Header from "@/components/GPT/Header";
 import Chat from "@/components/GPT/Chat";
+import store from "@/core/store";
+import chatSlice from "@/core/store/chatSlice";
 
 interface Props {
   workflow: IWorkflow;
@@ -14,8 +17,15 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default function GPT({ workflow = {} as IWorkflow }: Props) {
-  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
-    useWorkflow(workflow);
+  const { selectedWorkflow, isWorkflowLoading } = useWorkflow(workflow);
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    store.injectReducers([{ key: "chat", asyncReducer: chatSlice }]);
+  }, [store]);
 
   return (
     <Layout>

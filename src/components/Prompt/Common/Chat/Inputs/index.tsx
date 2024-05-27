@@ -60,7 +60,15 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
         />
       );
     case "credentials":
-      return <Credentials input={input} />;
+      return (
+        <Credentials
+          input={{
+            name: input.name,
+            displayName: input.fullName,
+            properties: [],
+          }}
+        />
+      );
     default:
       return (
         <Textual

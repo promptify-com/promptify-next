@@ -34,10 +34,8 @@ export async function getNodeNames(nodes: INode[] = [], slice = 3) {
       /* webpackMode: "lazy" */
       "@/components/Automation/nodes.json"
     )
-  ).default;
-  const filteredTypes = Array.from(
-    new Set(types.map(type => (nodesData as NodesFileData)[type]?.name).filter(name => name)),
-  );
+  ).default as unknown as NodesFileData;
+  const filteredTypes = Array.from(new Set(types.map(type => nodesData[type]?.name).filter(name => name)));
 
   return filteredTypes.slice(0, slice);
 }
@@ -61,10 +59,19 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     )
   ).default as unknown as ICredentialJson;
 
+  const nodesData = (
+    await import(
+      /* webpackChunkName: "workflow_nodes" */
+      /* webpackMode: "lazy" */
+      "@/components/Automation/nodes.json"
+    )
+  ).default as unknown as NodesFileData;
+
   for (const node of nodes) {
     if (node.credentials) {
       continue;
     }
+    const iconUrl = nodesData[node.type]?.iconUrl;
 
     if (oAuthTypeMapping[node.type!]) {
       const authType = oAuthTypeMapping[node.type!];
@@ -91,6 +98,7 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
           name: authType,
           displayName: creds[authType].displayName,
           properties,
+          iconUrl,
         });
       }
       continue;
@@ -112,6 +120,7 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
           name: authType,
           displayName: creds[authType].displayName,
           properties: creds[authType].properties,
+          iconUrl,
         });
       }
     }

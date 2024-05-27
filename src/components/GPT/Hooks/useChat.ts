@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { IWorkflow } from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
+import { setAreCredentialsStored } from "@/core/store/chatSlice";
 
 interface IScheduleData {
   frequency?: string;
@@ -15,11 +16,12 @@ interface Props {
 }
 
 const useChat = ({ workflow }: Props) => {
+  const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const schedulingData = useRef<IScheduleData | null>(null);
 
-  const { extractCredentialsInputFromNodes } = useCredentials();
+  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
   const initialMessages = async () => {
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on  ${
@@ -27,11 +29,13 @@ const useChat = ({ workflow }: Props) => {
     }?`;
     const welcomeMessage = createMessage({ type: "text", text: greeting });
 
-    const credentials = await extractCredentialsInputFromNodes(workflow.data.nodes);
+    const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
+    let areAllCredentialsStored = true;
+    areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
     const credentialsMessage = createMessage({
       type: "credentials",
-      noHeader: true,
-      text: `Connect your ${credentials.map(cred => cred.displayName).join(",")}`,
+      text: `Connect your ${credentialsInput.map(cred => cred.displayName).join(",")}:`,
     });
     const startScheduleMessage = createMessage({
       type: "text",
@@ -79,14 +83,10 @@ const useChat = ({ workflow }: Props) => {
     });
     const providersMessage = createMessage({
       type: "text",
-      text: "Where should we send you your daily summaries?",
+      text: "Where should we send your scheduled GPT?",
       noHeader: true,
     });
-    const tetxMessage = createMessage({
-      type: "text",
-      text: "Where should we send you your daily summaries?",
-    });
-    setMessages(prev => prev.concat([confirmMessage, providersMessage, tetxMessage]));
+    setMessages(prev => prev.concat([confirmMessage, providersMessage]));
   };
 
   return {
