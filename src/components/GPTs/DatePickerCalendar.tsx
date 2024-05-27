@@ -122,7 +122,6 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
       spacing={1}
       justifyContent="center"
       sx={{ mt: 2 }}
-      px={"6px"}
     >
       {WEEK_DAYS.map(day => (
         <Grid
@@ -179,7 +178,7 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
             key={day.toString()}
             item
             xs
-            m={"6px"}
+            mb={"10px"}
           >
             {executionsForDay.some(exec => exec.status === "failed") ? (
               <CustomTooltip
