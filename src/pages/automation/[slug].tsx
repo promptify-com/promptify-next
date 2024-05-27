@@ -226,6 +226,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
               direction="row"
               justifyContent="center"
               p={{ md: "16px 8px 16px 16px" }}
+              m={"auto"}
             >
               <SigninButton onClick={() => router.push("/signin")} />
             </Stack>

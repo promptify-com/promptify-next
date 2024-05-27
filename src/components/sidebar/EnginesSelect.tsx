@@ -84,7 +84,6 @@ function EnginesSelect({ value, onSelect }: Props) {
           p: "16px",
           display: "flex",
           gap: 2,
-          mr: "32px",
         },
         input: {
           p: 0,
