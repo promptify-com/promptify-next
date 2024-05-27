@@ -15,7 +15,7 @@ interface Props {
   workflow: IWorkflow;
 }
 
-export default function Chat({ workflow }: Props) {
+export default function ScheduledChatSteps({ workflow }: Props) {
   const { messages, initialMessages, startSchedule, cancelSchedule, setScheduleFrequency, setScheduleTime } = useChat({
     workflow,
   });
