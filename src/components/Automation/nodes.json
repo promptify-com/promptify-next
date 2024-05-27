@@ -2,2227 +2,2881 @@
   "n8n-nodes-base.actionNetwork": {
     "name": "Action Network",
     "type": "n8n-nodes-base.actionNetwork",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActionNetwork/actionNetwork.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActionNetwork/actionNetwork.svg",
+    "description": "Consume the Action Network API"
   },
   "n8n-nodes-base.activeCampaign": {
     "name": "ActiveCampaign",
     "type": "n8n-nodes-base.activeCampaign",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActiveCampaign/activeCampaign.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActiveCampaign/activeCampaign.png",
+    "description": "Create and edit data in ActiveCampaign"
   },
   "n8n-nodes-base.activeCampaignTrigger": {
     "name": "ActiveCampaign Trigger",
     "type": "n8n-nodes-base.activeCampaignTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActiveCampaign/activeCampaign.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActiveCampaign/activeCampaign.png",
+    "description": "Handle ActiveCampaign events via webhooks"
   },
   "n8n-nodes-base.acuitySchedulingTrigger": {
     "name": "Acuity Scheduling Trigger",
     "type": "n8n-nodes-base.acuitySchedulingTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/AcuityScheduling/acuityScheduling.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/AcuityScheduling/acuityScheduling.png",
+    "description": "Handle Acuity Scheduling events via webhooks"
   },
   "n8n-nodes-base.adalo": {
     "name": "Adalo",
     "type": "n8n-nodes-base.adalo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Adalo/adalo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Adalo/adalo.svg",
+    "description": "Consume Adalo API"
   },
   "n8n-nodes-base.affinity": {
     "name": "Affinity",
     "type": "n8n-nodes-base.affinity",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Affinity/affinity.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Affinity/affinity.png",
+    "description": "Consume Affinity API"
   },
   "n8n-nodes-base.affinityTrigger": {
     "name": "Affinity Trigger",
     "type": "n8n-nodes-base.affinityTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Affinity/affinity.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Affinity/affinity.png",
+    "description": "Handle Affinity events via webhooks"
   },
   "n8n-nodes-base.agileCrm": {
     "name": "Agile CRM",
     "type": "n8n-nodes-base.agileCrm",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/AgileCrm/agilecrm.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/AgileCrm/agilecrm.png",
+    "description": "Consume Agile CRM API"
   },
   "n8n-nodes-base.airtable": {
     "name": "Airtable",
     "type": "n8n-nodes-base.airtable",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg",
+    "description": "Read, update, write and delete data from Airtable"
   },
   "n8n-nodes-base.airtableTrigger": {
     "name": "Airtable Trigger",
     "type": "n8n-nodes-base.airtableTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg",
+    "description": "Starts the workflow when Airtable events occur"
   },
   "n8n-nodes-base.amqp": {
     "name": "AMQP Sender",
     "type": "n8n-nodes-base.amqp",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Amqp/amqp.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Amqp/amqp.png",
+    "description": "Sends a raw-message via AMQP 1.0, executed once per item"
   },
   "n8n-nodes-base.amqpTrigger": {
     "name": "AMQP Trigger",
     "type": "n8n-nodes-base.amqpTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Amqp/amqp.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Amqp/amqp.png",
+    "description": "Listens to AMQP 1.0 Messages"
   },
   "n8n-nodes-base.apiTemplateIo": {
     "name": "APITemplate.io",
     "type": "n8n-nodes-base.apiTemplateIo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ApiTemplateIo/apiTemplateIo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ApiTemplateIo/apiTemplateIo.svg",
+    "description": "Consume the APITemplate.io API"
   },
   "n8n-nodes-base.asana": {
     "name": "Asana",
     "type": "n8n-nodes-base.asana",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Asana/asana.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Asana/asana.svg",
+    "description": "Consume Asana REST API"
   },
   "n8n-nodes-base.asanaTrigger": {
     "name": "Asana Trigger",
     "type": "n8n-nodes-base.asanaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Asana/asana.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Asana/asana.svg",
+    "description": "Starts the workflow when Asana events occur."
   },
   "n8n-nodes-base.automizy": {
     "name": "Automizy",
     "type": "n8n-nodes-base.automizy",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Automizy/automizy.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Automizy/automizy.png",
+    "description": "Consume Automizy API"
   },
   "n8n-nodes-base.autopilot": {
     "name": "Autopilot",
     "type": "n8n-nodes-base.autopilot",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Autopilot/autopilot.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Autopilot/autopilot.svg",
+    "description": "Consume Autopilot API"
   },
   "n8n-nodes-base.autopilotTrigger": {
     "name": "Autopilot Trigger",
     "type": "n8n-nodes-base.autopilotTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Autopilot/autopilot.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Autopilot/autopilot.svg",
+    "description": "Handle Autopilot events via webhooks"
   },
   "n8n-nodes-base.awsLambda": {
     "name": "AWS Lambda",
     "type": "n8n-nodes-base.awsLambda",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/lambda.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/lambda.svg",
+    "description": "Invoke functions on AWS Lambda"
   },
   "n8n-nodes-base.awsSns": {
     "name": "AWS SNS",
     "type": "n8n-nodes-base.awsSns",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/sns.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/sns.svg",
+    "description": "Sends data to AWS SNS"
   },
   "n8n-nodes-base.awsSnsTrigger": {
     "name": "AWS SNS Trigger",
     "type": "n8n-nodes-base.awsSnsTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/sns.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/sns.svg",
+    "description": "Handle AWS SNS events via webhooks"
   },
   "n8n-nodes-base.awsCertificateManager": {
     "name": "AWS Certificate Manager",
     "type": "n8n-nodes-base.awsCertificateManager",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/CertificateManager/acm.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/CertificateManager/acm.svg",
+    "description": "Sends data to AWS Certificate Manager"
   },
   "n8n-nodes-base.awsComprehend": {
     "name": "AWS Comprehend",
     "type": "n8n-nodes-base.awsComprehend",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Comprehend/comprehend.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Comprehend/comprehend.svg",
+    "description": "Sends data to Amazon Comprehend"
   },
   "n8n-nodes-base.awsDynamoDb": {
     "name": "AWS DynamoDB",
     "type": "n8n-nodes-base.awsDynamoDb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/DynamoDB/dynamodb.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/DynamoDB/dynamodb.svg",
+    "description": "Consume the AWS DynamoDB API"
   },
   "n8n-nodes-base.awsElb": {
     "name": "AWS ELB",
     "type": "n8n-nodes-base.awsElb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/ELB/elb.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/ELB/elb.svg",
+    "description": "Sends data to AWS ELB API"
   },
   "n8n-nodes-base.awsRekognition": {
     "name": "AWS Rekognition",
     "type": "n8n-nodes-base.awsRekognition",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Rekognition/rekognition.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Rekognition/rekognition.svg",
+    "description": "Sends data to AWS Rekognition"
   },
   "n8n-nodes-base.awsS3": {
     "name": "AWS S3",
     "type": "n8n-nodes-base.awsS3",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/S3/s3.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/S3/s3.svg",
+    "description": "Sends data to AWS S3"
   },
   "n8n-nodes-base.awsSes": {
     "name": "AWS SES",
     "type": "n8n-nodes-base.awsSes",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/SES/ses.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/SES/ses.svg",
+    "description": "Sends data to AWS SES"
   },
   "n8n-nodes-base.awsSqs": {
     "name": "AWS SQS",
     "type": "n8n-nodes-base.awsSqs",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/SQS/sqs.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/SQS/sqs.svg",
+    "description": "Sends messages to AWS SQS"
   },
   "n8n-nodes-base.awsTextract": {
     "name": "AWS Textract",
     "type": "n8n-nodes-base.awsTextract",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Textract/textract.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Textract/textract.svg",
+    "description": "Sends data to Amazon Textract"
   },
   "n8n-nodes-base.awsTranscribe": {
     "name": "AWS Transcribe",
     "type": "n8n-nodes-base.awsTranscribe",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Transcribe/transcribe.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Transcribe/transcribe.svg",
+    "description": "Sends data to AWS Transcribe"
   },
   "n8n-nodes-base.bambooHr": {
     "name": "BambooHR",
     "type": "n8n-nodes-base.bambooHr",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/BambooHr/bambooHr.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/BambooHr/bambooHr.png",
+    "description": "Consume BambooHR API"
   },
   "n8n-nodes-base.bannerbear": {
     "name": "Bannerbear",
     "type": "n8n-nodes-base.bannerbear",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bannerbear/bannerbear.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bannerbear/bannerbear.png",
+    "description": "Consume Bannerbear API"
   },
   "n8n-nodes-base.baserow": {
     "name": "Baserow",
     "type": "n8n-nodes-base.baserow",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Baserow/baserow.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Baserow/baserow.svg",
+    "description": "Consume the Baserow API"
   },
   "n8n-nodes-base.beeminder": {
     "name": "Beeminder",
     "type": "n8n-nodes-base.beeminder",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Beeminder/beeminder.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Beeminder/beeminder.png",
+    "description": "Consume Beeminder API"
   },
   "n8n-nodes-base.bitbucketTrigger": {
     "name": "Bitbucket Trigger",
     "type": "n8n-nodes-base.bitbucketTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitbucket/bitbucket.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitbucket/bitbucket.svg",
+    "description": "Handle Bitbucket events via webhooks"
   },
   "n8n-nodes-base.bitly": {
     "name": "Bitly",
     "type": "n8n-nodes-base.bitly",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitly/bitly.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitly/bitly.svg",
+    "description": "Consume Bitly API"
   },
   "n8n-nodes-base.bitwarden": {
     "name": "Bitwarden",
     "type": "n8n-nodes-base.bitwarden",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitwarden/bitwarden.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitwarden/bitwarden.svg",
+    "description": "Consume the Bitwarden API"
   },
   "n8n-nodes-base.box": {
     "name": "Box",
     "type": "n8n-nodes-base.box",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Box/box.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Box/box.png",
+    "description": "Consume Box API"
   },
   "n8n-nodes-base.boxTrigger": {
     "name": "Box Trigger",
     "type": "n8n-nodes-base.boxTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Box/box.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Box/box.png",
+    "description": "Starts the workflow when Box events occur"
   },
   "n8n-nodes-base.Brandfetch": {
     "name": "Brandfetch",
     "type": "n8n-nodes-base.Brandfetch",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brandfetch/brandfetch.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brandfetch/brandfetch.png",
+    "description": "Consume Brandfetch API"
   },
   "n8n-nodes-base.bubble": {
     "name": "Bubble",
     "type": "n8n-nodes-base.bubble",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bubble/bubble.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bubble/bubble.svg",
+    "description": "Consume the Bubble Data API"
   },
   "n8n-nodes-base.calTrigger": {
     "name": "Cal Trigger",
     "type": "n8n-nodes-base.calTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cal/cal.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cal/cal.svg",
+    "description": "Handle Cal events via webhooks"
   },
   "n8n-nodes-base.calendlyTrigger": {
     "name": "Calendly Trigger",
     "type": "n8n-nodes-base.calendlyTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Calendly/calendly.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Calendly/calendly.svg",
+    "description": "Starts the workflow when Calendly events occur"
   },
   "n8n-nodes-base.chargebee": {
     "name": "Chargebee",
     "type": "n8n-nodes-base.chargebee",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Chargebee/chargebee.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Chargebee/chargebee.png",
+    "description": "Retrieve data from Chargebee API"
   },
   "n8n-nodes-base.chargebeeTrigger": {
     "name": "Chargebee Trigger",
     "type": "n8n-nodes-base.chargebeeTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Chargebee/chargebee.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Chargebee/chargebee.png",
+    "description": "Starts the workflow when Chargebee events occur"
   },
   "n8n-nodes-base.circleCi": {
     "name": "CircleCI",
     "type": "n8n-nodes-base.circleCi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CircleCi/circleCi.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CircleCi/circleCi.png",
+    "description": "Consume CircleCI API"
   },
   "n8n-nodes-base.ciscoWebex": {
     "name": "Webex by Cisco",
     "type": "n8n-nodes-base.ciscoWebex",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cisco/Webex/ciscoWebex.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cisco/Webex/ciscoWebex.png",
+    "description": "Consume the Cisco Webex API"
   },
   "n8n-nodes-base.citrixAdc": {
     "name": "Citrix ADC",
     "type": "n8n-nodes-base.citrixAdc",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Citrix/ADC/citrix.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Citrix/ADC/citrix.svg",
+    "description": "Consume Citrix ADC API"
   },
   "n8n-nodes-base.ciscoWebexTrigger": {
     "name": "Webex by Cisco Trigger",
     "type": "n8n-nodes-base.ciscoWebexTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cisco/Webex/ciscoWebex.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cisco/Webex/ciscoWebex.png",
+    "description": "Starts the workflow when Cisco Webex events occur."
   },
   "n8n-nodes-base.cloudflare": {
     "name": "Cloudflare",
     "type": "n8n-nodes-base.cloudflare",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cloudflare/cloudflare.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cloudflare/cloudflare.svg",
+    "description": "Consume Cloudflare API"
   },
   "n8n-nodes-base.clearbit": {
     "name": "Clearbit",
     "type": "n8n-nodes-base.clearbit",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clearbit/clearbit.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clearbit/clearbit.svg",
+    "description": "Consume Clearbit API"
   },
   "n8n-nodes-base.clickUp": {
     "name": "ClickUp",
     "type": "n8n-nodes-base.clickUp",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ClickUp/clickup.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ClickUp/clickup.svg",
+    "description": "Consume ClickUp API (Beta)"
   },
   "n8n-nodes-base.clickUpTrigger": {
     "name": "ClickUp Trigger",
     "type": "n8n-nodes-base.clickUpTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ClickUp/clickup.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ClickUp/clickup.svg",
+    "description": "Handle ClickUp events via webhooks (Beta)"
   },
   "n8n-nodes-base.clockify": {
     "name": "Clockify",
     "type": "n8n-nodes-base.clockify",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clockify/clockify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clockify/clockify.svg",
+    "description": "Consume Clockify REST API"
   },
   "n8n-nodes-base.clockifyTrigger": {
     "name": "Clockify Trigger",
     "type": "n8n-nodes-base.clockifyTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clockify/clockify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clockify/clockify.svg",
+    "description": "Listens to Clockify events"
   },
   "n8n-nodes-base.cockpit": {
     "name": "Cockpit",
     "type": "n8n-nodes-base.cockpit",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cockpit/cockpit.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cockpit/cockpit.png",
+    "description": "Consume Cockpit API"
   },
   "n8n-nodes-base.coda": {
     "name": "Coda",
     "type": "n8n-nodes-base.coda",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Coda/coda.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Coda/coda.svg",
+    "description": "Consume Coda API"
   },
   "n8n-nodes-base.code": {
     "name": "Code",
-    "type": "n8n-nodes-base.code"
+    "type": "n8n-nodes-base.code",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Code/code.svg",
+    "description": "Run custom JavaScript or Python code"
   },
   "n8n-nodes-base.coinGecko": {
     "name": "CoinGecko",
     "type": "n8n-nodes-base.coinGecko",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CoinGecko/coinGecko.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CoinGecko/coinGecko.svg",
+    "description": "Consume CoinGecko API"
   },
   "n8n-nodes-base.compareDatasets": {
     "name": "Compare Datasets",
     "type": "n8n-nodes-base.compareDatasets",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CompareDatasets/compare.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CompareDatasets/compare.svg",
+    "description": "Compare two inputs for changes"
   },
   "n8n-nodes-base.compression": {
     "name": "Compression",
-    "type": "n8n-nodes-base.compression"
+    "type": "n8n-nodes-base.compression",
+    "iconUrl": "",
+    "description": "Compress and decompress files"
   },
   "n8n-nodes-base.contentful": {
     "name": "Contentful",
     "type": "n8n-nodes-base.contentful",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Contentful/contentful.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Contentful/contentful.png",
+    "description": "Consume Contentful API"
   },
   "n8n-nodes-base.convertKit": {
     "name": "ConvertKit",
     "type": "n8n-nodes-base.convertKit",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ConvertKit/convertKit.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ConvertKit/convertKit.svg",
+    "description": "Consume ConvertKit API"
   },
   "n8n-nodes-base.convertKitTrigger": {
     "name": "ConvertKit Trigger",
     "type": "n8n-nodes-base.convertKitTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ConvertKit/convertKit.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ConvertKit/convertKit.svg",
+    "description": "Handle ConvertKit events via webhooks"
   },
   "n8n-nodes-base.copper": {
     "name": "Copper",
     "type": "n8n-nodes-base.copper",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Copper/copper.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Copper/copper.svg",
+    "description": "Consume the Copper API"
   },
   "n8n-nodes-base.copperTrigger": {
     "name": "Copper Trigger",
     "type": "n8n-nodes-base.copperTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Copper/copper.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Copper/copper.svg",
+    "description": "Handle Copper events via webhooks"
   },
   "n8n-nodes-base.cortex": {
     "name": "Cortex",
     "type": "n8n-nodes-base.cortex",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cortex/cortex.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cortex/cortex.svg",
+    "description": "Apply the Cortex analyzer/responder on the given entity"
   },
   "n8n-nodes-base.crateDb": {
     "name": "CrateDB",
     "type": "n8n-nodes-base.crateDb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrateDb/cratedb.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrateDb/cratedb.png",
+    "description": "Add and update data in CrateDB"
   },
   "n8n-nodes-base.cron": {
     "name": "Cron",
-    "type": "n8n-nodes-base.cron"
+    "type": "n8n-nodes-base.cron",
+    "iconUrl": "",
+    "description": "Triggers the workflow at a specific time"
   },
   "n8n-nodes-base.crowdDev": {
     "name": "crowd.dev",
     "type": "n8n-nodes-base.crowdDev",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrowdDev/crowdDev.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrowdDev/crowdDev.svg",
+    "description": "crowd.dev is an open-source suite of community and data tools built to unlock community-led growth for your organization."
   },
   "n8n-nodes-base.crowdDevTrigger": {
     "name": "crowd.dev Trigger",
     "type": "n8n-nodes-base.crowdDevTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrowdDev/crowdDev.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrowdDev/crowdDev.svg",
+    "description": "Starts the workflow when crowd.dev events occur."
   },
   "n8n-nodes-base.crypto": {
     "name": "Crypto",
-    "type": "n8n-nodes-base.crypto"
+    "type": "n8n-nodes-base.crypto",
+    "iconUrl": "",
+    "description": "Provide cryptographic utilities"
   },
   "n8n-nodes-base.customerIo": {
     "name": "Customer.io",
     "type": "n8n-nodes-base.customerIo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CustomerIo/customerio.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CustomerIo/customerio.svg",
+    "description": "Consume Customer.io API"
   },
   "n8n-nodes-base.customerIoTrigger": {
     "name": "Customer.io Trigger",
     "type": "n8n-nodes-base.customerIoTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CustomerIo/customerio.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/CustomerIo/customerio.svg",
+    "description": "Starts the workflow on a Customer.io update (Beta)"
   },
   "n8n-nodes-base.dateTime": {
     "name": "Date & Time",
-    "type": "n8n-nodes-base.dateTime"
+    "type": "n8n-nodes-base.dateTime",
+    "iconUrl": "",
+    "description": "Allows you to manipulate date and time values"
   },
   "n8n-nodes-base.debugHelper": {
     "name": "DebugHelper",
     "type": "n8n-nodes-base.debugHelper",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/DebugHelper/DebugHelper.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/DebugHelper/DebugHelper.svg",
+    "description": "Causes problems intentionally and generates useful data for debugging"
   },
   "n8n-nodes-base.deepL": {
     "name": "DeepL",
     "type": "n8n-nodes-base.deepL",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/DeepL/deepl.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/DeepL/deepl.svg",
+    "description": "Translate data using DeepL"
   },
   "n8n-nodes-base.demio": {
     "name": "Demio",
     "type": "n8n-nodes-base.demio",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Demio/demio.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Demio/demio.svg",
+    "description": "Consume the Demio API"
   },
   "n8n-nodes-base.dhl": {
     "name": "DHL",
     "type": "n8n-nodes-base.dhl",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dhl/dhl.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dhl/dhl.svg",
+    "description": "Consume DHL API"
   },
   "n8n-nodes-base.discord": {
     "name": "Discord",
     "type": "n8n-nodes-base.discord",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discord/discord.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discord/discord.svg",
+    "description": "Sends data to Discord"
   },
   "n8n-nodes-base.discourse": {
     "name": "Discourse",
     "type": "n8n-nodes-base.discourse",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discourse/discourse.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discourse/discourse.svg",
+    "description": "Consume Discourse API"
   },
   "n8n-nodes-base.disqus": {
     "name": "Disqus",
     "type": "n8n-nodes-base.disqus",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Disqus/disqus.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Disqus/disqus.png",
+    "description": "Access data on Disqus"
   },
   "n8n-nodes-base.drift": {
     "name": "Drift",
     "type": "n8n-nodes-base.drift",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Drift/drift.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Drift/drift.png",
+    "description": "Consume Drift API"
   },
   "n8n-nodes-base.dropbox": {
     "name": "Dropbox",
     "type": "n8n-nodes-base.dropbox",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dropbox/dropbox.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dropbox/dropbox.svg",
+    "description": "Access data on Dropbox"
   },
   "n8n-nodes-base.dropcontact": {
     "name": "Dropcontact",
     "type": "n8n-nodes-base.dropcontact",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dropcontact/dropcontact.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dropcontact/dropcontact.svg",
+    "description": "Find B2B emails and enrich contacts"
   },
   "n8n-nodes-base.editImage": {
     "name": "Edit Image",
-    "type": "n8n-nodes-base.editImage"
+    "type": "n8n-nodes-base.editImage",
+    "iconUrl": "",
+    "description": "Edits an image like blur, resize or adding border and text"
   },
   "n8n-nodes-base.egoi": {
     "name": "E-goi",
     "type": "n8n-nodes-base.egoi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Egoi/egoi.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Egoi/egoi.png",
+    "description": "Consume E-goi API"
   },
   "n8n-nodes-base.elasticsearch": {
     "name": "Elasticsearch",
     "type": "n8n-nodes-base.elasticsearch",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Elastic/Elasticsearch/elasticsearch.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Elastic/Elasticsearch/elasticsearch.svg",
+    "description": "Consume the Elasticsearch API"
   },
   "n8n-nodes-base.elasticSecurity": {
     "name": "Elastic Security",
     "type": "n8n-nodes-base.elasticSecurity",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Elastic/ElasticSecurity/elasticSecurity.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Elastic/ElasticSecurity/elasticSecurity.svg",
+    "description": "Consume the Elastic Security API"
   },
   "n8n-nodes-base.emailReadImap": {
     "name": "Email Trigger (IMAP)",
-    "type": "n8n-nodes-base.emailReadImap"
+    "type": "n8n-nodes-base.emailReadImap",
+    "iconUrl": "",
+    "description": "Triggers the workflow when a new email is received"
   },
   "n8n-nodes-base.emailSend": {
     "name": "Send Email",
-    "type": "n8n-nodes-base.emailSend"
+    "type": "n8n-nodes-base.emailSend",
+    "iconUrl": "",
+    "description": "Sends an Email"
   },
   "n8n-nodes-base.emelia": {
     "name": "Emelia",
     "type": "n8n-nodes-base.emelia",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Emelia/emelia.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Emelia/emelia.svg",
+    "description": "Consume the Emelia API"
   },
   "n8n-nodes-base.emeliaTrigger": {
     "name": "Emelia Trigger",
     "type": "n8n-nodes-base.emeliaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Emelia/emelia.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Emelia/emelia.svg",
+    "description": "Handle Emelia campaign activity events via webhooks"
   },
   "n8n-nodes-base.erpNext": {
     "name": "ERPNext",
     "type": "n8n-nodes-base.erpNext",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ERPNext/erpnext.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ERPNext/erpnext.svg",
+    "description": "Consume ERPNext API"
   },
   "n8n-nodes-base.errorTrigger": {
     "name": "Error Trigger",
-    "type": "n8n-nodes-base.errorTrigger"
+    "type": "n8n-nodes-base.errorTrigger",
+    "iconUrl": "",
+    "description": "Triggers the workflow when another workflow has an error"
   },
   "n8n-nodes-base.eventbriteTrigger": {
     "name": "Eventbrite Trigger",
     "type": "n8n-nodes-base.eventbriteTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Eventbrite/eventbrite.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Eventbrite/eventbrite.png",
+    "description": "Handle Eventbrite events via webhooks"
   },
   "n8n-nodes-base.executeCommand": {
     "name": "Execute Command",
-    "type": "n8n-nodes-base.executeCommand"
+    "type": "n8n-nodes-base.executeCommand",
+    "iconUrl": "",
+    "description": "Executes a command on the host"
   },
   "n8n-nodes-base.executeWorkflow": {
     "name": "Execute Workflow",
-    "type": "n8n-nodes-base.executeWorkflow"
+    "type": "n8n-nodes-base.executeWorkflow",
+    "iconUrl": "",
+    "description": "Execute another workflow"
   },
   "n8n-nodes-base.executeWorkflowTrigger": {
     "name": "Execute Workflow Trigger",
-    "type": "n8n-nodes-base.executeWorkflowTrigger"
+    "type": "n8n-nodes-base.executeWorkflowTrigger",
+    "iconUrl": "",
+    "description": "Helpers for calling other n8n workflows. Used for designing modular, microservice-like workflows."
   },
   "n8n-nodes-base.executionData": {
     "name": "Execution Data",
-    "type": "n8n-nodes-base.executionData"
+    "type": "n8n-nodes-base.executionData",
+    "iconUrl": "",
+    "description": "Add execution data for search"
   },
   "n8n-nodes-base.facebookGraphApi": {
     "name": "Facebook Graph API",
     "type": "n8n-nodes-base.facebookGraphApi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Facebook/facebook.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Facebook/facebook.svg",
+    "description": "Interacts with Facebook using the Graph API"
   },
   "n8n-nodes-base.facebookTrigger": {
     "name": "Facebook Trigger",
     "type": "n8n-nodes-base.facebookTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Facebook/facebook.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Facebook/facebook.svg",
+    "description": "Starts the workflow when Facebook events occur"
   },
   "n8n-nodes-base.facebookLeadAdsTrigger": {
     "name": "Facebook Lead Ads Trigger",
     "type": "n8n-nodes-base.facebookLeadAdsTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FacebookLeadAds/facebook.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FacebookLeadAds/facebook.svg",
+    "description": "Handle Facebook Lead Ads events via webhooks"
   },
   "n8n-nodes-base.figmaTrigger": {
     "name": "Figma Trigger (Beta)",
     "type": "n8n-nodes-base.figmaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Figma/figma.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Figma/figma.svg",
+    "description": "Starts the workflow when Figma events occur"
   },
   "n8n-nodes-base.filemaker": {
     "name": "FileMaker",
     "type": "n8n-nodes-base.filemaker",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FileMaker/filemaker.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FileMaker/filemaker.png",
+    "description": "Retrieve data from the FileMaker data API"
+  },
+  "n8n-nodes-base.readWriteFile": {
+    "name": "Read/Write Files from Disk",
+    "type": "n8n-nodes-base.readWriteFile",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Files/ReadWriteFile/readWriteFile.svg",
+    "description": "Read or write files from the computer that runs n8n"
+  },
+  "n8n-nodes-base.convertToFile": {
+    "name": "Convert to File",
+    "type": "n8n-nodes-base.convertToFile",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Files/ConvertToFile/convertToFile.svg",
+    "description": "Convert JSON data to binary data"
+  },
+  "n8n-nodes-base.extractFromFile": {
+    "name": "Extract from File",
+    "type": "n8n-nodes-base.extractFromFile",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Files/ExtractFromFile/extractFromFile.svg",
+    "description": "Convert binary data to JSON"
   },
   "n8n-nodes-base.filter": {
     "name": "Filter",
-    "type": "n8n-nodes-base.filter"
+    "type": "n8n-nodes-base.filter",
+    "iconUrl": "",
+    "description": "Remove items matching a condition"
   },
   "n8n-nodes-base.flow": {
     "name": "Flow",
     "type": "n8n-nodes-base.flow",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Flow/flow.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Flow/flow.png",
+    "description": "Consume Flow API"
   },
   "n8n-nodes-base.flowTrigger": {
     "name": "Flow Trigger",
     "type": "n8n-nodes-base.flowTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Flow/flow.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Flow/flow.png",
+    "description": "Handle Flow events via webhooks"
   },
   "n8n-nodes-base.formTrigger": {
     "name": "n8n Form Trigger",
     "type": "n8n-nodes-base.formTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Form/form.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Form/form.svg",
+    "description": "Runs the flow when an n8n generated webform is submitted"
   },
   "n8n-nodes-base.formIoTrigger": {
     "name": "Form.io Trigger",
     "type": "n8n-nodes-base.formIoTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FormIo/formio.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FormIo/formio.svg",
+    "description": "Handle form.io events via webhooks"
   },
   "n8n-nodes-base.formstackTrigger": {
     "name": "Formstack Trigger",
     "type": "n8n-nodes-base.formstackTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Formstack/formstack.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Formstack/formstack.svg",
+    "description": "Starts the workflow on a Formstack form submission."
   },
   "n8n-nodes-base.freshdesk": {
     "name": "Freshdesk",
     "type": "n8n-nodes-base.freshdesk",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Freshdesk/freshdesk.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Freshdesk/freshdesk.png",
+    "description": "Consume Freshdesk API"
   },
   "n8n-nodes-base.freshservice": {
     "name": "Freshservice",
     "type": "n8n-nodes-base.freshservice",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Freshservice/freshservice.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Freshservice/freshservice.svg",
+    "description": "Consume the Freshservice API"
   },
   "n8n-nodes-base.freshworksCrm": {
     "name": "Freshworks CRM",
     "type": "n8n-nodes-base.freshworksCrm",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FreshworksCrm/freshworksCrm.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/FreshworksCrm/freshworksCrm.svg",
+    "description": "Consume the Freshworks CRM API"
   },
   "n8n-nodes-base.ftp": {
     "name": "FTP",
-    "type": "n8n-nodes-base.ftp"
+    "type": "n8n-nodes-base.ftp",
+    "iconUrl": "",
+    "description": "Transfer files via FTP or SFTP"
   },
   "n8n-nodes-base.function": {
     "name": "Function",
-    "type": "n8n-nodes-base.function"
+    "type": "n8n-nodes-base.function",
+    "iconUrl": "",
+    "description": "Run custom function code which gets executed once and allows you to add, remove, change and replace items"
   },
   "n8n-nodes-base.functionItem": {
     "name": "Function Item",
-    "type": "n8n-nodes-base.functionItem"
+    "type": "n8n-nodes-base.functionItem",
+    "iconUrl": "",
+    "description": "Run custom function code which gets executed once per item"
   },
   "n8n-nodes-base.getResponse": {
     "name": "GetResponse",
     "type": "n8n-nodes-base.getResponse",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GetResponse/getResponse.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GetResponse/getResponse.png",
+    "description": "Consume GetResponse API"
   },
   "n8n-nodes-base.getResponseTrigger": {
     "name": "GetResponse Trigger",
     "type": "n8n-nodes-base.getResponseTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GetResponse/getResponse.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GetResponse/getResponse.png",
+    "description": "Starts the workflow when GetResponse events occur"
   },
   "n8n-nodes-base.ghost": {
     "name": "Ghost",
     "type": "n8n-nodes-base.ghost",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Ghost/ghost.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Ghost/ghost.svg",
+    "description": "Consume Ghost API"
   },
   "n8n-nodes-base.git": {
     "name": "Git",
     "type": "n8n-nodes-base.git",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Git/git.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Git/git.svg",
+    "description": "Control git."
   },
   "n8n-nodes-base.github": {
     "name": "GitHub",
     "type": "n8n-nodes-base.github",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Github/github.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Github/github.svg",
+    "description": "Consume GitHub API"
   },
   "n8n-nodes-base.githubTrigger": {
     "name": "Github Trigger",
     "type": "n8n-nodes-base.githubTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Github/github.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Github/github.svg",
+    "description": "Starts the workflow when Github events occur"
   },
   "n8n-nodes-base.gitlab": {
     "name": "GitLab",
     "type": "n8n-nodes-base.gitlab",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gitlab/gitlab.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gitlab/gitlab.svg",
+    "description": "Retrieve data from GitLab API"
   },
   "n8n-nodes-base.gitlabTrigger": {
     "name": "GitLab Trigger",
     "type": "n8n-nodes-base.gitlabTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gitlab/gitlab.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gitlab/gitlab.svg",
+    "description": "Starts the workflow when GitLab events occur"
   },
   "n8n-nodes-base.googleAds": {
     "name": "Google Ads",
     "type": "n8n-nodes-base.googleAds",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Ads/googleAds.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Ads/googleAds.svg",
+    "description": "Use the Google Ads API"
   },
   "n8n-nodes-base.googleAnalytics": {
     "name": "Google Analytics",
     "type": "n8n-nodes-base.googleAnalytics",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Analytics/analytics.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Analytics/analytics.svg",
+    "description": "Use the Google Analytics API"
   },
   "n8n-nodes-base.googleBigQuery": {
     "name": "Google BigQuery",
     "type": "n8n-nodes-base.googleBigQuery",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/BigQuery/googleBigQuery.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/BigQuery/googleBigQuery.svg",
+    "description": "Consume Google BigQuery API"
   },
   "n8n-nodes-base.googleBooks": {
     "name": "Google Books",
     "type": "n8n-nodes-base.googleBooks",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Books/googlebooks.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Books/googlebooks.svg",
+    "description": "Read data from Google Books"
   },
   "n8n-nodes-base.googleCalendar": {
     "name": "Google Calendar",
     "type": "n8n-nodes-base.googleCalendar",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Calendar/googleCalendar.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Calendar/googleCalendar.svg",
+    "description": "Consume Google Calendar API"
   },
   "n8n-nodes-base.googleCalendarTrigger": {
     "name": "Google Calendar Trigger",
     "type": "n8n-nodes-base.googleCalendarTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Calendar/googleCalendar.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Calendar/googleCalendar.svg",
+    "description": "Starts the workflow when Google Calendar events occur"
   },
   "n8n-nodes-base.googleChat": {
     "name": "Google Chat",
     "type": "n8n-nodes-base.googleChat",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Chat/googleChat.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Chat/googleChat.svg",
+    "description": "Consume Google Chat API"
   },
   "n8n-nodes-base.googleCloudNaturalLanguage": {
     "name": "Google Cloud Natural Language",
     "type": "n8n-nodes-base.googleCloudNaturalLanguage",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/CloudNaturalLanguage/googlecloudnaturallanguage.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/CloudNaturalLanguage/googlecloudnaturallanguage.png",
+    "description": "Consume Google Cloud Natural Language API"
   },
   "n8n-nodes-base.googleCloudStorage": {
     "name": "Google Cloud Storage",
     "type": "n8n-nodes-base.googleCloudStorage",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/CloudStorage/googleCloudStorage.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/CloudStorage/googleCloudStorage.svg",
+    "description": "Use the Google Cloud Storage API"
   },
   "n8n-nodes-base.googleContacts": {
     "name": "Google Contacts",
     "type": "n8n-nodes-base.googleContacts",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Contacts/googleContacts.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Contacts/googleContacts.png",
+    "description": "Consume Google Contacts API"
   },
   "n8n-nodes-base.googleDocs": {
     "name": "Google Docs",
     "type": "n8n-nodes-base.googleDocs",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Docs/googleDocs.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Docs/googleDocs.svg",
+    "description": "Consume Google Docs API."
   },
   "n8n-nodes-base.googleDrive": {
     "name": "Google Drive",
     "type": "n8n-nodes-base.googleDrive",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg",
+    "description": "Access data on Google Drive"
   },
   "n8n-nodes-base.googleDriveTrigger": {
     "name": "Google Drive Trigger",
     "type": "n8n-nodes-base.googleDriveTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg",
+    "description": "Starts the workflow when Google Drive events occur"
   },
   "n8n-nodes-base.googleFirebaseCloudFirestore": {
     "name": "Google Cloud Firestore",
     "type": "n8n-nodes-base.googleFirebaseCloudFirestore",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Firebase/CloudFirestore/googleFirebaseCloudFirestore.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Firebase/CloudFirestore/googleFirebaseCloudFirestore.png",
+    "description": "Interact with Google Firebase - Cloud Firestore API"
   },
   "n8n-nodes-base.googleFirebaseRealtimeDatabase": {
     "name": "Google Cloud Realtime Database",
     "type": "n8n-nodes-base.googleFirebaseRealtimeDatabase",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Firebase/RealtimeDatabase/googleFirebaseRealtimeDatabase.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Firebase/RealtimeDatabase/googleFirebaseRealtimeDatabase.svg",
+    "description": "Interact with Google Firebase - Realtime Database API"
   },
   "n8n-nodes-base.gmail": {
     "name": "Gmail",
     "type": "n8n-nodes-base.gmail",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg",
+    "description": "Consume the Gmail API"
   },
   "n8n-nodes-base.gmailTrigger": {
     "name": "Gmail Trigger",
     "type": "n8n-nodes-base.gmailTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg",
+    "description": "Fetches emails from Gmail and starts the workflow on specified polling intervals."
   },
   "n8n-nodes-base.gSuiteAdmin": {
     "name": "Google Workspace Admin",
     "type": "n8n-nodes-base.gSuiteAdmin",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/GSuiteAdmin/google-workspace-admin.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/GSuiteAdmin/google-workspace-admin.png",
+    "description": "Consume Google Workspace Admin API"
   },
   "n8n-nodes-base.googlePerspective": {
     "name": "Google Perspective",
     "type": "n8n-nodes-base.googlePerspective",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Perspective/perspective.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Perspective/perspective.svg",
+    "description": "Consume Google Perspective API"
   },
   "n8n-nodes-base.googleSheets": {
     "name": "Google Sheets ",
     "type": "n8n-nodes-base.googleSheets",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg",
+    "description": "Read, update and write data to Google Sheets"
   },
   "n8n-nodes-base.googleSheetsTrigger": {
     "name": "Google Sheets Trigger",
     "type": "n8n-nodes-base.googleSheetsTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg",
+    "description": "Starts the workflow when Google Sheets events occur"
   },
   "n8n-nodes-base.googleSlides": {
     "name": "Google Slides",
     "type": "n8n-nodes-base.googleSlides",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Slides/googleslides.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Slides/googleslides.svg",
+    "description": "Consume the Google Slides API"
   },
   "n8n-nodes-base.googleTasks": {
     "name": "Google Tasks",
     "type": "n8n-nodes-base.googleTasks",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Task/googleTasks.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Task/googleTasks.png",
+    "description": "Consume Google Tasks API"
   },
   "n8n-nodes-base.googleTranslate": {
     "name": "Google Translate",
     "type": "n8n-nodes-base.googleTranslate",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Translate/googletranslate.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Translate/googletranslate.png",
+    "description": "Translate data using Google Translate"
   },
   "n8n-nodes-base.youTube": {
     "name": "YouTube",
     "type": "n8n-nodes-base.youTube",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/YouTube/youTube.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/YouTube/youTube.png",
+    "description": "Consume YouTube API"
   },
   "n8n-nodes-base.gotify": {
     "name": "Gotify",
     "type": "n8n-nodes-base.gotify",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gotify/gotify.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gotify/gotify.png",
+    "description": "Consume Gotify API"
   },
   "n8n-nodes-base.goToWebinar": {
     "name": "GoToWebinar",
     "type": "n8n-nodes-base.goToWebinar",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GoToWebinar/gotowebinar.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GoToWebinar/gotowebinar.svg",
+    "description": "Consume the GoToWebinar API"
   },
   "n8n-nodes-base.grafana": {
     "name": "Grafana",
     "type": "n8n-nodes-base.grafana",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Grafana/grafana.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Grafana/grafana.svg",
+    "description": "Consume the Grafana API"
   },
   "n8n-nodes-base.graphql": {
     "name": "GraphQL",
     "type": "n8n-nodes-base.graphql",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GraphQL/graphql.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/GraphQL/graphql.png",
+    "description": "Makes a GraphQL request and returns the received data"
   },
   "n8n-nodes-base.grist": {
     "name": "Grist",
     "type": "n8n-nodes-base.grist",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Grist/grist.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Grist/grist.svg",
+    "description": "Consume the Grist API"
   },
   "n8n-nodes-base.gumroadTrigger": {
     "name": "Gumroad Trigger",
     "type": "n8n-nodes-base.gumroadTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gumroad/gumroad.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gumroad/gumroad.png",
+    "description": "Handle Gumroad events via webhooks"
   },
   "n8n-nodes-base.hackerNews": {
     "name": "Hacker News",
     "type": "n8n-nodes-base.hackerNews",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HackerNews/hackernews.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HackerNews/hackernews.png",
+    "description": "Consume Hacker News API"
   },
   "n8n-nodes-base.haloPSA": {
     "name": "HaloPSA",
     "type": "n8n-nodes-base.haloPSA",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HaloPSA/halopsa.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HaloPSA/halopsa.svg",
+    "description": "Consume HaloPSA API"
   },
   "n8n-nodes-base.harvest": {
     "name": "Harvest",
     "type": "n8n-nodes-base.harvest",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Harvest/harvest.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Harvest/harvest.png",
+    "description": "Access data on Harvest"
   },
   "n8n-nodes-base.helpScout": {
     "name": "HelpScout",
     "type": "n8n-nodes-base.helpScout",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HelpScout/helpScout.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HelpScout/helpScout.svg",
+    "description": "Consume HelpScout API"
   },
   "n8n-nodes-base.helpScoutTrigger": {
     "name": "HelpScout Trigger",
     "type": "n8n-nodes-base.helpScoutTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HelpScout/helpScout.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HelpScout/helpScout.svg",
+    "description": "Starts the workflow when HelpScout events occur"
   },
   "n8n-nodes-base.highLevel": {
     "name": "HighLevel",
     "type": "n8n-nodes-base.highLevel",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HighLevel/highLevel.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HighLevel/highLevel.svg",
+    "description": "Consume HighLevel API"
   },
   "n8n-nodes-base.homeAssistant": {
     "name": "Home Assistant",
     "type": "n8n-nodes-base.homeAssistant",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HomeAssistant/homeAssistant.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HomeAssistant/homeAssistant.svg",
+    "description": "Consume Home Assistant API"
   },
   "n8n-nodes-base.htmlExtract": {
     "name": "HTML Extract",
-    "type": "n8n-nodes-base.htmlExtract"
+    "type": "n8n-nodes-base.htmlExtract",
+    "iconUrl": "",
+    "description": "Extracts data from HTML"
   },
   "n8n-nodes-base.html": {
     "name": "HTML",
     "type": "n8n-nodes-base.html",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Html/html.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Html/html.svg",
+    "description": "Work with HTML"
   },
   "n8n-nodes-base.httpRequest": {
     "name": "HTTP Request",
     "type": "n8n-nodes-base.httpRequest",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HttpRequest/httprequest.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HttpRequest/httprequest.svg",
+    "description": "Makes an HTTP request and returns the response data"
   },
   "n8n-nodes-base.hubspot": {
     "name": "HubSpot",
     "type": "n8n-nodes-base.hubspot",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg",
+    "description": "Consume HubSpot API"
   },
   "n8n-nodes-base.hubspotTrigger": {
     "name": "HubSpot Trigger",
     "type": "n8n-nodes-base.hubspotTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg",
+    "description": "Starts the workflow when HubSpot events occur"
   },
   "n8n-nodes-base.humanticAi": {
     "name": "Humantic AI",
     "type": "n8n-nodes-base.humanticAi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HumanticAI/humanticai.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HumanticAI/humanticai.png",
+    "description": "Consume Humantic AI API"
   },
   "n8n-nodes-base.hunter": {
     "name": "Hunter",
     "type": "n8n-nodes-base.hunter",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hunter/hunter.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hunter/hunter.png",
+    "description": "Consume Hunter API"
   },
   "n8n-nodes-base.iCal": {
     "name": "iCalendar",
-    "type": "n8n-nodes-base.iCal"
+    "type": "n8n-nodes-base.iCal",
+    "iconUrl": "",
+    "description": "Create iCalendar file"
   },
   "n8n-nodes-base.if": {
-    "name": "IF",
-    "type": "n8n-nodes-base.if"
+    "name": "If",
+    "type": "n8n-nodes-base.if",
+    "iconUrl": "",
+    "description": "Route items to different branches (true/false)"
   },
   "n8n-nodes-base.intercom": {
     "name": "Intercom",
     "type": "n8n-nodes-base.intercom",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Intercom/intercom.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Intercom/intercom.png",
+    "description": "Consume Intercom API"
   },
   "n8n-nodes-base.interval": {
     "name": "Interval",
-    "type": "n8n-nodes-base.interval"
+    "type": "n8n-nodes-base.interval",
+    "iconUrl": "",
+    "description": "Triggers the workflow in a given interval"
   },
   "n8n-nodes-base.invoiceNinja": {
     "name": "Invoice Ninja",
     "type": "n8n-nodes-base.invoiceNinja",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/InvoiceNinja/invoiceNinja.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/InvoiceNinja/invoiceNinja.svg",
+    "description": "Consume Invoice Ninja API"
   },
   "n8n-nodes-base.invoiceNinjaTrigger": {
     "name": "Invoice Ninja Trigger",
     "type": "n8n-nodes-base.invoiceNinjaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/InvoiceNinja/invoiceNinja.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/InvoiceNinja/invoiceNinja.svg",
+    "description": "Starts the workflow when Invoice Ninja events occur"
   },
   "n8n-nodes-base.itemLists": {
     "name": "Item Lists",
     "type": "n8n-nodes-base.itemLists",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ItemLists/itemLists.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ItemLists/itemLists.svg",
+    "description": "Helper for working with lists of items and transforming arrays"
   },
   "n8n-nodes-base.iterable": {
     "name": "Iterable",
     "type": "n8n-nodes-base.iterable",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Iterable/iterable.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Iterable/iterable.png",
+    "description": "Consume Iterable API"
   },
   "n8n-nodes-base.jenkins": {
     "name": "Jenkins",
     "type": "n8n-nodes-base.jenkins",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jenkins/jenkins.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jenkins/jenkins.svg",
+    "description": "Consume Jenkins API"
   },
   "n8n-nodes-base.jira": {
     "name": "Jira Software",
     "type": "n8n-nodes-base.jira",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jira/jira.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jira/jira.svg",
+    "description": "Consume Jira Software API"
   },
   "n8n-nodes-base.jiraTrigger": {
     "name": "Jira Trigger",
     "type": "n8n-nodes-base.jiraTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jira/jira.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jira/jira.svg",
+    "description": "Starts the workflow when Jira events occur"
   },
   "n8n-nodes-base.jotFormTrigger": {
     "name": "JotForm Trigger",
     "type": "n8n-nodes-base.jotFormTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/JotForm/jotform.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/JotForm/jotform.png",
+    "description": "Handle JotForm events via webhooks"
   },
   "n8n-nodes-base.kafka": {
     "name": "Kafka",
     "type": "n8n-nodes-base.kafka",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kafka/kafka.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kafka/kafka.svg",
+    "description": "Sends messages to a Kafka topic"
   },
   "n8n-nodes-base.kafkaTrigger": {
     "name": "Kafka Trigger",
     "type": "n8n-nodes-base.kafkaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kafka/kafka.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kafka/kafka.svg",
+    "description": "Consume messages from a Kafka topic"
   },
   "n8n-nodes-base.keap": {
     "name": "Keap",
     "type": "n8n-nodes-base.keap",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Keap/keap.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Keap/keap.png",
+    "description": "Consume Keap API"
   },
   "n8n-nodes-base.keapTrigger": {
     "name": "Keap Trigger",
     "type": "n8n-nodes-base.keapTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Keap/keap.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Keap/keap.png",
+    "description": "Starts the workflow when Infusionsoft events occur"
   },
   "n8n-nodes-base.kitemaker": {
     "name": "Kitemaker",
     "type": "n8n-nodes-base.kitemaker",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kitemaker/kitemaker.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kitemaker/kitemaker.svg",
+    "description": "Consume the Kitemaker GraphQL API"
   },
   "n8n-nodes-base.koBoToolbox": {
     "name": "KoBoToolbox",
     "type": "n8n-nodes-base.koBoToolbox",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/KoBoToolbox/koBoToolbox.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/KoBoToolbox/koBoToolbox.svg",
+    "description": "Work with KoBoToolbox forms and submissions"
   },
   "n8n-nodes-base.koBoToolboxTrigger": {
     "name": "KoBoToolbox Trigger",
     "type": "n8n-nodes-base.koBoToolboxTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/KoBoToolbox/koBoToolbox.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/KoBoToolbox/koBoToolbox.svg",
+    "description": "Process KoBoToolbox submissions"
   },
   "n8n-nodes-base.ldap": {
     "name": "Ldap",
     "type": "n8n-nodes-base.ldap",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Ldap/ldap.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Ldap/ldap.svg",
+    "description": "Interact with LDAP servers"
   },
   "n8n-nodes-base.lemlist": {
     "name": "Lemlist",
     "type": "n8n-nodes-base.lemlist",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Lemlist/lemlist.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Lemlist/lemlist.svg",
+    "description": "Consume the Lemlist API"
   },
   "n8n-nodes-base.lemlistTrigger": {
     "name": "Lemlist Trigger",
     "type": "n8n-nodes-base.lemlistTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Lemlist/lemlist.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Lemlist/lemlist.svg",
+    "description": "Handle Lemlist events via webhooks"
   },
   "n8n-nodes-base.line": {
     "name": "Line",
     "type": "n8n-nodes-base.line",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Line/line.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Line/line.png",
+    "description": "Consume Line API"
   },
   "n8n-nodes-base.linear": {
     "name": "Linear",
     "type": "n8n-nodes-base.linear",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Linear/linear.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Linear/linear.svg",
+    "description": "Consume Linear API"
   },
   "n8n-nodes-base.linearTrigger": {
     "name": "Linear Trigger",
     "type": "n8n-nodes-base.linearTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Linear/linear.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Linear/linear.svg",
+    "description": "Starts the workflow when Linear events occur"
   },
   "n8n-nodes-base.lingvaNex": {
     "name": "LingvaNex",
     "type": "n8n-nodes-base.lingvaNex",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LingvaNex/lingvanex.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LingvaNex/lingvanex.png",
+    "description": "Consume LingvaNex API"
   },
   "n8n-nodes-base.linkedIn": {
     "name": "LinkedIn",
     "type": "n8n-nodes-base.linkedIn",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LinkedIn/linkedin.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LinkedIn/linkedin.svg",
+    "description": "Consume LinkedIn API"
   },
   "n8n-nodes-base.localFileTrigger": {
     "name": "Local File Trigger",
-    "type": "n8n-nodes-base.localFileTrigger"
+    "type": "n8n-nodes-base.localFileTrigger",
+    "iconUrl": "",
+    "description": "Triggers a workflow on file system changes"
   },
   "n8n-nodes-base.loneScaleTrigger": {
     "name": "LoneScale Trigger",
     "type": "n8n-nodes-base.loneScaleTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LoneScale/lonescale-logo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LoneScale/lonescale-logo.svg",
+    "description": "Trigger LoneScale Workflow"
   },
   "n8n-nodes-base.loneScale": {
     "name": "LoneScale",
     "type": "n8n-nodes-base.loneScale",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LoneScale/lonescale-logo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/LoneScale/lonescale-logo.svg",
+    "description": "Create List, add / delete items"
   },
   "n8n-nodes-base.magento2": {
     "name": "Magento 2",
     "type": "n8n-nodes-base.magento2",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Magento/magento.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Magento/magento.svg",
+    "description": "Consume Magento API"
   },
   "n8n-nodes-base.mailcheck": {
     "name": "Mailcheck",
     "type": "n8n-nodes-base.mailcheck",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailcheck/mailcheck.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailcheck/mailcheck.svg",
+    "description": "Consume Mailcheck API"
   },
   "n8n-nodes-base.mailchimp": {
     "name": "Mailchimp",
     "type": "n8n-nodes-base.mailchimp",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailchimp/mailchimp.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailchimp/mailchimp.svg",
+    "description": "Consume Mailchimp API"
   },
   "n8n-nodes-base.mailchimpTrigger": {
     "name": "Mailchimp Trigger",
     "type": "n8n-nodes-base.mailchimpTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailchimp/mailchimp.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailchimp/mailchimp.svg",
+    "description": "Handle Mailchimp events via webhooks"
   },
   "n8n-nodes-base.mailerLite": {
     "name": "MailerLite",
     "type": "n8n-nodes-base.mailerLite",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MailerLite/mailerLite.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MailerLite/mailerLite.png",
+    "description": "Consume Mailer Lite API"
   },
   "n8n-nodes-base.mailerLiteTrigger": {
     "name": "MailerLite Trigger",
     "type": "n8n-nodes-base.mailerLiteTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MailerLite/mailerLite.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MailerLite/mailerLite.png",
+    "description": "Starts the workflow when MailerLite events occur"
   },
   "n8n-nodes-base.mailgun": {
     "name": "Mailgun",
     "type": "n8n-nodes-base.mailgun",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailgun/mailgun.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailgun/mailgun.svg",
+    "description": "Sends an email via Mailgun"
   },
   "n8n-nodes-base.mailjet": {
     "name": "Mailjet",
     "type": "n8n-nodes-base.mailjet",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailjet/mailjet.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailjet/mailjet.svg",
+    "description": "Consume Mailjet API"
   },
   "n8n-nodes-base.mailjetTrigger": {
     "name": "Mailjet Trigger",
     "type": "n8n-nodes-base.mailjetTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailjet/mailjet.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailjet/mailjet.svg",
+    "description": "Handle Mailjet events via webhooks"
   },
   "n8n-nodes-base.mandrill": {
     "name": "Mandrill",
     "type": "n8n-nodes-base.mandrill",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mandrill/mandrill.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mandrill/mandrill.svg",
+    "description": "Consume Mandrill API"
   },
   "n8n-nodes-base.manualTrigger": {
     "name": "Manual Trigger",
-    "type": "n8n-nodes-base.manualTrigger"
+    "type": "n8n-nodes-base.manualTrigger",
+    "iconUrl": "",
+    "description": "Runs the flow on clicking a button in n8n"
   },
   "n8n-nodes-base.markdown": {
     "name": "Markdown",
     "type": "n8n-nodes-base.markdown",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Markdown/markdown.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Markdown/markdown.svg",
+    "description": "Convert data between Markdown and HTML"
   },
   "n8n-nodes-base.marketstack": {
     "name": "Marketstack",
     "type": "n8n-nodes-base.marketstack",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Marketstack/marketstack.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Marketstack/marketstack.svg",
+    "description": "Consume Marketstack API"
   },
   "n8n-nodes-base.matrix": {
     "name": "Matrix",
     "type": "n8n-nodes-base.matrix",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Matrix/matrix.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Matrix/matrix.png",
+    "description": "Consume Matrix API"
   },
   "n8n-nodes-base.mattermost": {
     "name": "Mattermost",
     "type": "n8n-nodes-base.mattermost",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mattermost/mattermost.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mattermost/mattermost.svg",
+    "description": "Sends data to Mattermost"
   },
   "n8n-nodes-base.mautic": {
     "name": "Mautic",
     "type": "n8n-nodes-base.mautic",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mautic/mautic.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mautic/mautic.svg",
+    "description": "Consume Mautic API"
   },
   "n8n-nodes-base.mauticTrigger": {
     "name": "Mautic Trigger",
     "type": "n8n-nodes-base.mauticTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mautic/mautic.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mautic/mautic.svg",
+    "description": "Handle Mautic events via webhooks"
   },
   "n8n-nodes-base.medium": {
     "name": "Medium",
     "type": "n8n-nodes-base.medium",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Medium/medium.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Medium/medium.png",
+    "description": "Consume Medium API"
   },
   "n8n-nodes-base.merge": {
     "name": "Merge",
-    "type": "n8n-nodes-base.merge"
+    "type": "n8n-nodes-base.merge",
+    "iconUrl": "",
+    "description": "Merges data of multiple streams once data from both is available"
   },
   "n8n-nodes-base.messageBird": {
     "name": "MessageBird",
     "type": "n8n-nodes-base.messageBird",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MessageBird/messagebird.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MessageBird/messagebird.svg",
+    "description": "Sends SMS via MessageBird"
   },
   "n8n-nodes-base.metabase": {
     "name": "Metabase",
     "type": "n8n-nodes-base.metabase",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Metabase/metabase.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Metabase/metabase.svg",
+    "description": "Use the Metabase API"
   },
   "n8n-nodes-base.microsoftDynamicsCrm": {
     "name": "Microsoft Dynamics CRM",
     "type": "n8n-nodes-base.microsoftDynamicsCrm",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Dynamics/dynamicsCrm.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Dynamics/dynamicsCrm.svg",
+    "description": "Consume Microsoft Dynamics CRM API"
   },
   "n8n-nodes-base.microsoftExcel": {
     "name": "Microsoft Excel",
     "type": "n8n-nodes-base.microsoftExcel",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Excel/excel.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Excel/excel.svg",
+    "description": "Consume Microsoft Excel API"
   },
   "n8n-nodes-base.microsoftGraphSecurity": {
     "name": "Microsoft Graph Security",
     "type": "n8n-nodes-base.microsoftGraphSecurity",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/GraphSecurity/microsoftGraph.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/GraphSecurity/microsoftGraph.svg",
+    "description": "Consume the Microsoft Graph Security API"
   },
   "n8n-nodes-base.microsoftOneDrive": {
     "name": "Microsoft OneDrive",
     "type": "n8n-nodes-base.microsoftOneDrive",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/OneDrive/oneDrive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/OneDrive/oneDrive.svg",
+    "description": "Consume Microsoft OneDrive API"
+  },
+  "n8n-nodes-base.microsoftOneDriveTrigger": {
+    "name": "Microsoft OneDrive Trigger",
+    "type": "n8n-nodes-base.microsoftOneDriveTrigger",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/OneDrive/oneDrive.svg",
+    "description": "Trigger for Microsoft OneDrive API."
   },
   "n8n-nodes-base.microsoftOutlook": {
     "name": "Microsoft Outlook",
     "type": "n8n-nodes-base.microsoftOutlook",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Outlook/outlook.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Outlook/outlook.svg",
+    "description": "Consume Microsoft Outlook API"
+  },
+  "n8n-nodes-base.microsoftOutlookTrigger": {
+    "name": "Microsoft Outlook Trigger",
+    "type": "n8n-nodes-base.microsoftOutlookTrigger",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Outlook/outlook.svg",
+    "description": "Fetches emails from Microsoft Outlook and starts the workflow on specified polling intervals."
   },
   "n8n-nodes-base.microsoftSql": {
     "name": "Microsoft SQL",
     "type": "n8n-nodes-base.microsoftSql",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Sql/mssql.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Sql/mssql.svg",
+    "description": "Get, add and update data in Microsoft SQL"
   },
   "n8n-nodes-base.microsoftTeams": {
     "name": "Microsoft Teams",
     "type": "n8n-nodes-base.microsoftTeams",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Teams/teams.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Teams/teams.svg",
+    "description": "Consume Microsoft Teams API"
   },
   "n8n-nodes-base.microsoftToDo": {
     "name": "Microsoft To Do",
     "type": "n8n-nodes-base.microsoftToDo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/ToDo/todo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/ToDo/todo.svg",
+    "description": "Consume Microsoft To Do API."
   },
   "n8n-nodes-base.mindee": {
     "name": "Mindee",
     "type": "n8n-nodes-base.mindee",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mindee/mindee.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mindee/mindee.svg",
+    "description": "Consume Mindee API"
   },
   "n8n-nodes-base.misp": {
     "name": "MISP",
     "type": "n8n-nodes-base.misp",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Misp/misp.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Misp/misp.svg",
+    "description": "Consume the MISP API"
   },
   "n8n-nodes-base.mocean": {
     "name": "Mocean",
     "type": "n8n-nodes-base.mocean",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mocean/mocean.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mocean/mocean.svg",
+    "description": "Send SMS and voice messages via Mocean"
   },
   "n8n-nodes-base.mondayCom": {
     "name": "Monday.com",
     "type": "n8n-nodes-base.mondayCom",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MondayCom/mondayCom.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MondayCom/mondayCom.svg",
+    "description": "Consume Monday.com API"
   },
   "n8n-nodes-base.mongoDb": {
     "name": "MongoDB",
     "type": "n8n-nodes-base.mongoDb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MongoDb/mongodb.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MongoDb/mongodb.svg",
+    "description": "Find, insert and update documents in MongoDB"
   },
   "n8n-nodes-base.monicaCrm": {
     "name": "Monica CRM",
     "type": "n8n-nodes-base.monicaCrm",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MonicaCrm/monicaCrm.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MonicaCrm/monicaCrm.png",
+    "description": "Consume the Monica CRM API"
   },
   "n8n-nodes-base.moveBinaryData": {
     "name": "Convert to/from binary data",
-    "type": "n8n-nodes-base.moveBinaryData"
+    "type": "n8n-nodes-base.moveBinaryData",
+    "iconUrl": "",
+    "description": "Move data between binary and JSON properties"
   },
   "n8n-nodes-base.mqtt": {
     "name": "MQTT",
     "type": "n8n-nodes-base.mqtt",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MQTT/mqtt.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MQTT/mqtt.svg",
+    "description": "Push messages to MQTT"
   },
   "n8n-nodes-base.mqttTrigger": {
     "name": "MQTT Trigger",
     "type": "n8n-nodes-base.mqttTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MQTT/mqtt.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MQTT/mqtt.svg",
+    "description": "Listens to MQTT events"
   },
   "n8n-nodes-base.msg91": {
     "name": "MSG91",
     "type": "n8n-nodes-base.msg91",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Msg91/msg91.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Msg91/msg91.png",
+    "description": "Sends transactional SMS via MSG91"
   },
   "n8n-nodes-base.mySql": {
     "name": "MySQL",
     "type": "n8n-nodes-base.mySql",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MySql/mysql.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MySql/mysql.svg",
+    "description": "Get, add and update data in MySQL"
   },
   "n8n-nodes-base.n8n": {
     "name": "n8n",
     "type": "n8n-nodes-base.n8n",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8n/n8n.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8n/n8n.svg",
+    "description": "Handle events and perform actions on your n8n instance"
   },
   "n8n-nodes-base.n8nTrainingCustomerDatastore": {
     "name": "Customer Datastore (n8n training)",
     "type": "n8n-nodes-base.n8nTrainingCustomerDatastore",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrainingCustomerDatastore/n8nTrainingCustomerDatastore.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrainingCustomerDatastore/n8nTrainingCustomerDatastore.svg",
+    "description": "Dummy node used for n8n training"
   },
   "n8n-nodes-base.n8nTrainingCustomerMessenger": {
     "name": "Customer Messenger (n8n training)",
     "type": "n8n-nodes-base.n8nTrainingCustomerMessenger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrainingCustomerMessenger/n8nTrainingCustomerMessenger.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrainingCustomerMessenger/n8nTrainingCustomerMessenger.svg",
+    "description": "Dummy node used for n8n training"
   },
   "n8n-nodes-base.n8nTrigger": {
     "name": "n8n Trigger",
     "type": "n8n-nodes-base.n8nTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrigger/n8nTrigger.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrigger/n8nTrigger.svg",
+    "description": "Handle events and perform actions on your n8n instance"
   },
   "n8n-nodes-base.nasa": {
     "name": "NASA",
     "type": "n8n-nodes-base.nasa",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Nasa/nasa.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Nasa/nasa.png",
+    "description": "Retrieve data from the NASA API"
   },
   "n8n-nodes-base.netlify": {
     "name": "Netlify",
     "type": "n8n-nodes-base.netlify",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Netlify/netlify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Netlify/netlify.svg",
+    "description": "Consume Netlify API"
   },
   "n8n-nodes-base.netlifyTrigger": {
     "name": "Netlify Trigger",
     "type": "n8n-nodes-base.netlifyTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Netlify/netlify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Netlify/netlify.svg",
+    "description": "Handle netlify events via webhooks"
   },
   "n8n-nodes-base.nextCloud": {
     "name": "Nextcloud",
     "type": "n8n-nodes-base.nextCloud",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/NextCloud/nextcloud.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/NextCloud/nextcloud.svg",
+    "description": "Access data on Nextcloud"
   },
   "n8n-nodes-base.nocoDb": {
     "name": "NocoDB",
     "type": "n8n-nodes-base.nocoDb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/NocoDB/nocodb.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/NocoDB/nocodb.svg",
+    "description": "Read, update, write and delete data from NocoDB"
   },
   "n8n-nodes-base.sendInBlue": {
     "name": "Brevo",
     "type": "n8n-nodes-base.sendInBlue",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brevo/brevo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brevo/brevo.svg",
+    "description": "Consume Brevo API"
   },
   "n8n-nodes-base.sendInBlueTrigger": {
     "name": "Brevo Trigger",
     "type": "n8n-nodes-base.sendInBlueTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brevo/brevo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brevo/brevo.svg",
+    "description": "Starts the workflow when Brevo events occur"
   },
   "n8n-nodes-base.stickyNote": {
     "name": "Sticky Note",
-    "type": "n8n-nodes-base.stickyNote"
+    "type": "n8n-nodes-base.stickyNote",
+    "iconUrl": "",
+    "description": "Make your workflow easier to understand"
   },
   "n8n-nodes-base.noOp": {
     "name": "No Operation, do nothing",
-    "type": "n8n-nodes-base.noOp"
+    "type": "n8n-nodes-base.noOp",
+    "iconUrl": "",
+    "description": "No Operation"
   },
   "n8n-nodes-base.onfleet": {
     "name": "Onfleet",
     "type": "n8n-nodes-base.onfleet",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Onfleet/Onfleet.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Onfleet/Onfleet.svg",
+    "description": "Consume Onfleet API"
   },
   "n8n-nodes-base.onfleetTrigger": {
     "name": "Onfleet Trigger",
     "type": "n8n-nodes-base.onfleetTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Onfleet/Onfleet.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Onfleet/Onfleet.svg",
+    "description": "Starts the workflow when Onfleet events occur"
   },
   "n8n-nodes-base.notion": {
     "name": "Notion",
     "type": "n8n-nodes-base.notion",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg",
+    "description": "Consume Notion API"
   },
   "n8n-nodes-base.notionTrigger": {
     "name": "Notion Trigger",
     "type": "n8n-nodes-base.notionTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg",
+    "description": "Starts the workflow when Notion events occur"
   },
   "n8n-nodes-base.npm": {
     "name": "Npm",
     "type": "n8n-nodes-base.npm",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Npm/npm.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Npm/npm.svg",
+    "description": "Consume NPM registry API"
   },
   "n8n-nodes-base.odoo": {
     "name": "Odoo",
     "type": "n8n-nodes-base.odoo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Odoo/odoo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Odoo/odoo.svg",
+    "description": "Consume Odoo API"
   },
   "n8n-nodes-base.oneSimpleApi": {
     "name": "One Simple API",
     "type": "n8n-nodes-base.oneSimpleApi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/OneSimpleApi/onesimpleapi.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/OneSimpleApi/onesimpleapi.svg",
+    "description": "A toolbox of no-code utilities"
   },
   "n8n-nodes-base.openAi": {
     "name": "OpenAI",
     "type": "n8n-nodes-base.openAi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/OpenAi/openAi.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/OpenAi/openAi.svg",
+    "description": "Consume Open AI"
   },
   "n8n-nodes-base.openThesaurus": {
     "name": "OpenThesaurus",
     "type": "n8n-nodes-base.openThesaurus",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/OpenThesaurus/openthesaurus.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/OpenThesaurus/openthesaurus.png",
+    "description": "Get synonmns for German words using the OpenThesaurus API"
   },
   "n8n-nodes-base.openWeatherMap": {
     "name": "OpenWeatherMap",
-    "type": "n8n-nodes-base.openWeatherMap"
+    "type": "n8n-nodes-base.openWeatherMap",
+    "iconUrl": "",
+    "description": "Gets current and future weather information"
   },
   "n8n-nodes-base.orbit": {
     "name": "Orbit",
     "type": "n8n-nodes-base.orbit",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Orbit/orbit.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Orbit/orbit.svg",
+    "description": "Consume Orbit API"
   },
   "n8n-nodes-base.oura": {
     "name": "Oura",
     "type": "n8n-nodes-base.oura",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Oura/oura.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Oura/oura.svg",
+    "description": "Consume Oura API"
   },
   "n8n-nodes-base.paddle": {
     "name": "Paddle",
     "type": "n8n-nodes-base.paddle",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Paddle/paddle.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Paddle/paddle.png",
+    "description": "Consume Paddle API"
   },
   "n8n-nodes-base.pagerDuty": {
     "name": "PagerDuty",
     "type": "n8n-nodes-base.pagerDuty",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PagerDuty/pagerDuty.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PagerDuty/pagerDuty.svg",
+    "description": "Consume PagerDuty API"
   },
   "n8n-nodes-base.payPal": {
     "name": "PayPal",
     "type": "n8n-nodes-base.payPal",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PayPal/paypal.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PayPal/paypal.svg",
+    "description": "Consume PayPal API"
   },
   "n8n-nodes-base.payPalTrigger": {
     "name": "PayPal Trigger",
     "type": "n8n-nodes-base.payPalTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PayPal/paypal.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PayPal/paypal.svg",
+    "description": "Handle PayPal events via webhooks"
   },
   "n8n-nodes-base.peekalink": {
     "name": "Peekalink",
     "type": "n8n-nodes-base.peekalink",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Peekalink/peekalink.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Peekalink/peekalink.png",
+    "description": "Consume the Peekalink API"
   },
   "n8n-nodes-base.phantombuster": {
     "name": "Phantombuster",
     "type": "n8n-nodes-base.phantombuster",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Phantombuster/phantombuster.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Phantombuster/phantombuster.png",
+    "description": "Consume Phantombuster API"
   },
   "n8n-nodes-base.philipsHue": {
     "name": "Philips Hue",
     "type": "n8n-nodes-base.philipsHue",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PhilipsHue/philipshue.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PhilipsHue/philipshue.png",
+    "description": "Consume Philips Hue API"
   },
   "n8n-nodes-base.pipedrive": {
     "name": "Pipedrive",
     "type": "n8n-nodes-base.pipedrive",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pipedrive/pipedrive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pipedrive/pipedrive.svg",
+    "description": "Create and edit data in Pipedrive"
   },
   "n8n-nodes-base.pipedriveTrigger": {
     "name": "Pipedrive Trigger",
     "type": "n8n-nodes-base.pipedriveTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pipedrive/pipedrive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pipedrive/pipedrive.svg",
+    "description": "Starts the workflow when Pipedrive events occur"
   },
   "n8n-nodes-base.plivo": {
     "name": "Plivo",
     "type": "n8n-nodes-base.plivo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Plivo/plivo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Plivo/plivo.svg",
+    "description": "Send SMS/MMS messages or make phone calls"
   },
   "n8n-nodes-base.postBin": {
     "name": "PostBin",
     "type": "n8n-nodes-base.postBin",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PostBin/postbin.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PostBin/postbin.svg",
+    "description": "Consume PostBin API"
   },
   "n8n-nodes-base.postgres": {
     "name": "Postgres",
     "type": "n8n-nodes-base.postgres",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg",
+    "description": "Get, add and update data in Postgres"
   },
   "n8n-nodes-base.postgresTrigger": {
     "name": "Postgres Trigger",
     "type": "n8n-nodes-base.postgresTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg",
+    "description": "Listens to Postgres messages"
   },
   "n8n-nodes-base.postHog": {
     "name": "PostHog",
     "type": "n8n-nodes-base.postHog",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PostHog/postHog.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/PostHog/postHog.svg",
+    "description": "Consume PostHog API"
   },
   "n8n-nodes-base.postmarkTrigger": {
     "name": "Postmark Trigger",
     "type": "n8n-nodes-base.postmarkTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postmark/postmark.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postmark/postmark.png",
+    "description": "Starts the workflow when Postmark events occur"
   },
   "n8n-nodes-base.profitWell": {
     "name": "ProfitWell",
     "type": "n8n-nodes-base.profitWell",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ProfitWell/profitwell.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ProfitWell/profitwell.png",
+    "description": "Consume ProfitWell API"
   },
   "n8n-nodes-base.pushbullet": {
     "name": "Pushbullet",
     "type": "n8n-nodes-base.pushbullet",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushbullet/pushbullet.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushbullet/pushbullet.svg",
+    "description": "Consume Pushbullet API"
   },
   "n8n-nodes-base.pushcut": {
     "name": "Pushcut",
     "type": "n8n-nodes-base.pushcut",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushcut/pushcut.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushcut/pushcut.png",
+    "description": "Consume Pushcut API"
   },
   "n8n-nodes-base.pushcutTrigger": {
     "name": "Pushcut Trigger",
     "type": "n8n-nodes-base.pushcutTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushcut/pushcut.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushcut/pushcut.png",
+    "description": "Starts the workflow when Pushcut events occur"
   },
   "n8n-nodes-base.pushover": {
     "name": "Pushover",
     "type": "n8n-nodes-base.pushover",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushover/pushover.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushover/pushover.svg",
+    "description": "Consume Pushover API"
   },
   "n8n-nodes-base.questDb": {
     "name": "QuestDB",
     "type": "n8n-nodes-base.questDb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuestDb/questdb.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuestDb/questdb.png",
+    "description": "Get, add and update data in QuestDB"
   },
   "n8n-nodes-base.quickbase": {
     "name": "Quick Base",
     "type": "n8n-nodes-base.quickbase",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickBase/quickbase.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickBase/quickbase.png",
+    "description": "Integrate with the Quick Base RESTful API"
   },
   "n8n-nodes-base.quickbooks": {
     "name": "QuickBooks Online",
     "type": "n8n-nodes-base.quickbooks",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickBooks/quickbooks.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickBooks/quickbooks.svg",
+    "description": "Consume the QuickBooks Online API"
   },
   "n8n-nodes-base.quickChart": {
     "name": "QuickChart",
     "type": "n8n-nodes-base.quickChart",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickChart/quickChart.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickChart/quickChart.svg",
+    "description": "Create a chart via QuickChart"
   },
   "n8n-nodes-base.rabbitmq": {
     "name": "RabbitMQ",
     "type": "n8n-nodes-base.rabbitmq",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/RabbitMQ/rabbitmq.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/RabbitMQ/rabbitmq.png",
+    "description": "Sends messages to a RabbitMQ topic"
   },
   "n8n-nodes-base.rabbitmqTrigger": {
     "name": "RabbitMQ Trigger",
     "type": "n8n-nodes-base.rabbitmqTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/RabbitMQ/rabbitmq.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/RabbitMQ/rabbitmq.png",
+    "description": "Listens to RabbitMQ messages"
   },
   "n8n-nodes-base.raindrop": {
     "name": "Raindrop",
     "type": "n8n-nodes-base.raindrop",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Raindrop/raindrop.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Raindrop/raindrop.svg",
+    "description": "Consume the Raindrop API"
   },
   "n8n-nodes-base.readBinaryFile": {
     "name": "Read Binary File",
-    "type": "n8n-nodes-base.readBinaryFile"
+    "type": "n8n-nodes-base.readBinaryFile",
+    "iconUrl": "",
+    "description": "Reads a binary file from disk"
   },
   "n8n-nodes-base.readBinaryFiles": {
     "name": "Read Binary Files",
-    "type": "n8n-nodes-base.readBinaryFiles"
+    "type": "n8n-nodes-base.readBinaryFiles",
+    "iconUrl": "",
+    "description": "Reads binary files from disk"
   },
   "n8n-nodes-base.readPDF": {
     "name": "Read PDF",
-    "type": "n8n-nodes-base.readPDF"
+    "type": "n8n-nodes-base.readPDF",
+    "iconUrl": "",
+    "description": "Reads a PDF and extracts its content"
   },
   "n8n-nodes-base.reddit": {
     "name": "Reddit",
     "type": "n8n-nodes-base.reddit",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Reddit/reddit.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Reddit/reddit.svg",
+    "description": "Consume the Reddit API"
   },
   "n8n-nodes-base.redis": {
     "name": "Redis",
     "type": "n8n-nodes-base.redis",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Redis/redis.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Redis/redis.svg",
+    "description": "Get, send and update data in Redis"
   },
   "n8n-nodes-base.redisTrigger": {
     "name": "Redis Trigger",
     "type": "n8n-nodes-base.redisTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Redis/redis.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Redis/redis.svg",
+    "description": "Subscribe to redis channel"
   },
   "n8n-nodes-base.renameKeys": {
     "name": "Rename Keys",
-    "type": "n8n-nodes-base.renameKeys"
+    "type": "n8n-nodes-base.renameKeys",
+    "iconUrl": "",
+    "description": "Update item field names"
   },
   "n8n-nodes-base.respondToWebhook": {
     "name": "Respond to Webhook",
     "type": "n8n-nodes-base.respondToWebhook",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/RespondToWebhook/webhook.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/RespondToWebhook/webhook.svg",
+    "description": "Returns data for Webhook"
   },
   "n8n-nodes-base.rocketchat": {
     "name": "RocketChat",
     "type": "n8n-nodes-base.rocketchat",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Rocketchat/rocketchat.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Rocketchat/rocketchat.svg",
+    "description": "Consume RocketChat API"
   },
   "n8n-nodes-base.rssFeedRead": {
     "name": "RSS Read",
-    "type": "n8n-nodes-base.rssFeedRead"
+    "type": "n8n-nodes-base.rssFeedRead",
+    "iconUrl": "",
+    "description": "Reads data from an RSS Feed"
   },
   "n8n-nodes-base.rssFeedReadTrigger": {
     "name": "RSS Feed Trigger",
-    "type": "n8n-nodes-base.rssFeedReadTrigger"
+    "type": "n8n-nodes-base.rssFeedReadTrigger",
+    "iconUrl": "",
+    "description": "Starts a workflow when an RSS feed is updated"
   },
   "n8n-nodes-base.rundeck": {
     "name": "Rundeck",
     "type": "n8n-nodes-base.rundeck",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Rundeck/rundeck.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Rundeck/rundeck.png",
+    "description": "Manage Rundeck API"
   },
   "n8n-nodes-base.s3": {
     "name": "S3",
     "type": "n8n-nodes-base.s3",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/S3/s3.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/S3/s3.png",
+    "description": "Sends data to any S3-compatible service"
   },
   "n8n-nodes-base.salesforce": {
     "name": "Salesforce",
     "type": "n8n-nodes-base.salesforce",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Salesforce/salesforce.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Salesforce/salesforce.svg",
+    "description": "Consume Salesforce API"
   },
   "n8n-nodes-base.salesmate": {
     "name": "Salesmate",
     "type": "n8n-nodes-base.salesmate",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Salesmate/salesmate.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Salesmate/salesmate.png",
+    "description": "Consume Salesmate API"
   },
   "n8n-nodes-base.scheduleTrigger": {
     "name": "Schedule Trigger",
-    "type": "n8n-nodes-base.scheduleTrigger"
+    "type": "n8n-nodes-base.scheduleTrigger",
+    "iconUrl": "",
+    "description": "Triggers the workflow on a given schedule"
   },
   "n8n-nodes-base.seaTable": {
     "name": "SeaTable",
     "type": "n8n-nodes-base.seaTable",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SeaTable/seaTable.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SeaTable/seaTable.svg",
+    "description": "Consume the SeaTable API"
   },
   "n8n-nodes-base.seaTableTrigger": {
     "name": "SeaTable Trigger",
     "type": "n8n-nodes-base.seaTableTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SeaTable/seaTable.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SeaTable/seaTable.svg",
+    "description": "Starts the workflow when SeaTable events occur"
   },
   "n8n-nodes-base.securityScorecard": {
     "name": "SecurityScorecard",
     "type": "n8n-nodes-base.securityScorecard",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SecurityScorecard/securityScorecard.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SecurityScorecard/securityScorecard.svg",
+    "description": "Consume SecurityScorecard API"
   },
   "n8n-nodes-base.segment": {
     "name": "Segment",
     "type": "n8n-nodes-base.segment",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Segment/segment.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Segment/segment.svg",
+    "description": "Consume Segment API"
   },
   "n8n-nodes-base.sendGrid": {
     "name": "SendGrid",
     "type": "n8n-nodes-base.sendGrid",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SendGrid/sendGrid.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SendGrid/sendGrid.svg",
+    "description": "Consume SendGrid API"
   },
   "n8n-nodes-base.sendy": {
     "name": "Sendy",
     "type": "n8n-nodes-base.sendy",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Sendy/sendy.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Sendy/sendy.png",
+    "description": "Consume Sendy API"
   },
   "n8n-nodes-base.sentryIo": {
     "name": "Sentry.io",
     "type": "n8n-nodes-base.sentryIo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SentryIo/sentryio.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SentryIo/sentryio.svg",
+    "description": "Consume Sentry.io API"
   },
   "n8n-nodes-base.serviceNow": {
     "name": "ServiceNow",
     "type": "n8n-nodes-base.serviceNow",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ServiceNow/servicenow.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ServiceNow/servicenow.svg",
+    "description": "Consume ServiceNow API"
   },
   "n8n-nodes-base.set": {
     "name": "Set",
-    "type": "n8n-nodes-base.set"
+    "type": "n8n-nodes-base.set",
+    "iconUrl": "",
+    "description": "Sets values on items and optionally remove other values"
   },
   "n8n-nodes-base.shopify": {
     "name": "Shopify",
     "type": "n8n-nodes-base.shopify",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Shopify/shopify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Shopify/shopify.svg",
+    "description": "Consume Shopify API"
   },
   "n8n-nodes-base.shopifyTrigger": {
     "name": "Shopify Trigger",
     "type": "n8n-nodes-base.shopifyTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Shopify/shopify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Shopify/shopify.svg",
+    "description": "Handle Shopify events via webhooks"
   },
   "n8n-nodes-base.signl4": {
     "name": "SIGNL4",
     "type": "n8n-nodes-base.signl4",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Signl4/signl4.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Signl4/signl4.png",
+    "description": "Consume SIGNL4 API"
   },
   "n8n-nodes-base.slack": {
     "name": "Slack",
     "type": "n8n-nodes-base.slack",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Slack/slack.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Slack/slack.svg",
+    "description": "Consume Slack API"
   },
   "n8n-nodes-base.sms77": {
     "name": "seven",
     "type": "n8n-nodes-base.sms77",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Sms77/seven.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Sms77/seven.svg",
+    "description": "Send SMS and make text-to-speech calls"
   },
   "n8n-nodes-base.snowflake": {
     "name": "Snowflake",
     "type": "n8n-nodes-base.snowflake",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Snowflake/snowflake.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Snowflake/snowflake.svg",
+    "description": "Get, add and update data in Snowflake"
   },
   "n8n-nodes-base.splitInBatches": {
     "name": "Split In Batches",
-    "type": "n8n-nodes-base.splitInBatches"
+    "type": "n8n-nodes-base.splitInBatches",
+    "iconUrl": "",
+    "description": "Split data into batches and iterate over each batch"
   },
   "n8n-nodes-base.splunk": {
     "name": "Splunk",
     "type": "n8n-nodes-base.splunk",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Splunk/splunk.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Splunk/splunk.svg",
+    "description": "Consume the Splunk Enterprise API"
   },
   "n8n-nodes-base.spontit": {
     "name": "Spontit",
     "type": "n8n-nodes-base.spontit",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Spontit/spontit.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Spontit/spontit.png",
+    "description": "Consume Spontit API"
   },
   "n8n-nodes-base.spotify": {
     "name": "Spotify",
     "type": "n8n-nodes-base.spotify",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Spotify/spotify.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Spotify/spotify.svg",
+    "description": "Access public song data via the Spotify API"
   },
   "n8n-nodes-base.spreadsheetFile": {
     "name": "Spreadsheet File",
-    "type": "n8n-nodes-base.spreadsheetFile"
+    "type": "n8n-nodes-base.spreadsheetFile",
+    "iconUrl": "",
+    "description": "Reads and writes data from a spreadsheet file like CSV, XLS, ODS, etc"
   },
   "n8n-nodes-base.sseTrigger": {
     "name": "SSE Trigger",
-    "type": "n8n-nodes-base.sseTrigger"
+    "type": "n8n-nodes-base.sseTrigger",
+    "iconUrl": "",
+    "description": "Triggers the workflow when Server-Sent Events occur"
   },
   "n8n-nodes-base.ssh": {
     "name": "SSH",
-    "type": "n8n-nodes-base.ssh"
+    "type": "n8n-nodes-base.ssh",
+    "iconUrl": "",
+    "description": "Execute commands via SSH"
   },
   "n8n-nodes-base.stackby": {
     "name": "Stackby",
     "type": "n8n-nodes-base.stackby",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stackby/stackby.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stackby/stackby.png",
+    "description": "Read, write, and delete data in Stackby"
   },
   "n8n-nodes-base.start": {
     "name": "Start",
-    "type": "n8n-nodes-base.start"
+    "type": "n8n-nodes-base.start",
+    "iconUrl": "",
+    "description": "Starts the workflow execution from this node"
   },
   "n8n-nodes-base.stopAndError": {
     "name": "Stop and Error",
-    "type": "n8n-nodes-base.stopAndError"
+    "type": "n8n-nodes-base.stopAndError",
+    "iconUrl": "",
+    "description": "Throw an error in the workflow"
   },
   "n8n-nodes-base.storyblok": {
     "name": "Storyblok",
     "type": "n8n-nodes-base.storyblok",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Storyblok/storyblok.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Storyblok/storyblok.svg",
+    "description": "Consume Storyblok API"
   },
   "n8n-nodes-base.strapi": {
     "name": "Strapi",
     "type": "n8n-nodes-base.strapi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strapi/strapi.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strapi/strapi.svg",
+    "description": "Consume Strapi API"
   },
   "n8n-nodes-base.strava": {
     "name": "Strava",
     "type": "n8n-nodes-base.strava",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strava/strava.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strava/strava.svg",
+    "description": "Consume Strava API"
   },
   "n8n-nodes-base.stravaTrigger": {
     "name": "Strava Trigger",
     "type": "n8n-nodes-base.stravaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strava/strava.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strava/strava.svg",
+    "description": "Starts the workflow when Strava events occur"
   },
   "n8n-nodes-base.stripe": {
     "name": "Stripe",
     "type": "n8n-nodes-base.stripe",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stripe/stripe.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stripe/stripe.svg",
+    "description": "Consume the Stripe API"
   },
   "n8n-nodes-base.stripeTrigger": {
     "name": "Stripe Trigger",
     "type": "n8n-nodes-base.stripeTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stripe/stripe.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stripe/stripe.svg",
+    "description": "Handle Stripe events via webhooks"
   },
   "n8n-nodes-base.supabase": {
     "name": "Supabase",
     "type": "n8n-nodes-base.supabase",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Supabase/supabase.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Supabase/supabase.svg",
+    "description": "Add, get, delete and update data in a table"
   },
   "n8n-nodes-base.surveyMonkeyTrigger": {
     "name": "SurveyMonkey Trigger",
     "type": "n8n-nodes-base.surveyMonkeyTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SurveyMonkey/surveyMonkey.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SurveyMonkey/surveyMonkey.svg",
+    "description": "Starts the workflow when Survey Monkey events occur"
   },
   "n8n-nodes-base.switch": {
     "name": "Switch",
-    "type": "n8n-nodes-base.switch"
+    "type": "n8n-nodes-base.switch",
+    "iconUrl": "",
+    "description": "Route items depending on defined expression or rules"
   },
   "n8n-nodes-base.syncroMsp": {
     "name": "SyncroMSP",
     "type": "n8n-nodes-base.syncroMsp",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SyncroMSP/syncromsp.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/SyncroMSP/syncromsp.png",
+    "description": "Gets data from SyncroMSP"
   },
   "n8n-nodes-base.taiga": {
     "name": "Taiga",
     "type": "n8n-nodes-base.taiga",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Taiga/taiga.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Taiga/taiga.svg",
+    "description": "Consume Taiga API"
   },
   "n8n-nodes-base.taigaTrigger": {
     "name": "Taiga Trigger",
     "type": "n8n-nodes-base.taigaTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Taiga/taiga.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Taiga/taiga.svg",
+    "description": "Handle Taiga events via webhook"
   },
   "n8n-nodes-base.tapfiliate": {
     "name": "Tapfiliate",
     "type": "n8n-nodes-base.tapfiliate",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Tapfiliate/tapfiliate.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Tapfiliate/tapfiliate.svg",
+    "description": "Consume Tapfiliate API"
   },
   "n8n-nodes-base.telegram": {
     "name": "Telegram",
     "type": "n8n-nodes-base.telegram",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Telegram/telegram.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Telegram/telegram.svg",
+    "description": "Sends data to Telegram"
   },
   "n8n-nodes-base.telegramTrigger": {
     "name": "Telegram Trigger",
     "type": "n8n-nodes-base.telegramTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Telegram/telegram.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Telegram/telegram.svg",
+    "description": "Starts the workflow on a Telegram update"
   },
   "n8n-nodes-base.theHiveProject": {
     "name": "TheHive 5",
     "type": "n8n-nodes-base.theHiveProject",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHiveProject/thehiveproject.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHiveProject/thehiveproject.svg",
+    "description": "Consume TheHive 5 API"
   },
   "n8n-nodes-base.theHiveProjectTrigger": {
     "name": "TheHive 5 Trigger",
     "type": "n8n-nodes-base.theHiveProjectTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHiveProject/thehiveproject.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHiveProject/thehiveproject.svg",
+    "description": "Starts the workflow when TheHive events occur"
   },
   "n8n-nodes-base.theHive": {
     "name": "TheHive",
     "type": "n8n-nodes-base.theHive",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHive/thehive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHive/thehive.svg",
+    "description": "Consume TheHive API"
   },
   "n8n-nodes-base.theHiveTrigger": {
     "name": "TheHive Trigger",
     "type": "n8n-nodes-base.theHiveTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHive/thehive.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHive/thehive.svg",
+    "description": "Starts the workflow when TheHive events occur"
   },
   "n8n-nodes-base.timescaleDb": {
     "name": "TimescaleDB",
     "type": "n8n-nodes-base.timescaleDb",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TimescaleDb/timescale.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TimescaleDb/timescale.svg",
+    "description": "Add and update data in TimescaleDB"
   },
   "n8n-nodes-base.todoist": {
     "name": "Todoist",
     "type": "n8n-nodes-base.todoist",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Todoist/todoist.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Todoist/todoist.svg",
+    "description": "Consume Todoist API"
   },
   "n8n-nodes-base.togglTrigger": {
     "name": "Toggl Trigger",
     "type": "n8n-nodes-base.togglTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Toggl/toggl.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Toggl/toggl.png",
+    "description": "Starts the workflow when Toggl events occur"
   },
   "n8n-nodes-base.totp": {
     "name": "TOTP",
-    "type": "n8n-nodes-base.totp"
+    "type": "n8n-nodes-base.totp",
+    "iconUrl": "",
+    "description": "Generate a time-based one-time password"
   },
   "n8n-nodes-base.travisCi": {
     "name": "TravisCI",
     "type": "n8n-nodes-base.travisCi",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TravisCi/travisci.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/TravisCi/travisci.png",
+    "description": "Consume TravisCI API"
   },
   "n8n-nodes-base.trello": {
     "name": "Trello",
     "type": "n8n-nodes-base.trello",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Trello/trello.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Trello/trello.svg",
+    "description": "Create, change and delete boards and cards"
   },
   "n8n-nodes-base.trelloTrigger": {
     "name": "Trello Trigger",
     "type": "n8n-nodes-base.trelloTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Trello/trello.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Trello/trello.svg",
+    "description": "Starts the workflow when Trello events occur"
   },
   "n8n-nodes-base.twake": {
     "name": "Twake",
     "type": "n8n-nodes-base.twake",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twake/twake.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twake/twake.png",
+    "description": "Consume Twake API"
   },
   "n8n-nodes-base.twilio": {
     "name": "Twilio",
     "type": "n8n-nodes-base.twilio",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twilio/twilio.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twilio/twilio.svg",
+    "description": "Send SMS and WhatsApp messages or make phone calls"
   },
   "n8n-nodes-base.twist": {
     "name": "Twist",
     "type": "n8n-nodes-base.twist",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twist/twist.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twist/twist.png",
+    "description": "Consume Twist API"
   },
   "n8n-nodes-base.twitter": {
     "name": "X (Formerly Twitter)",
     "type": "n8n-nodes-base.twitter",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twitter/x.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twitter/x.svg",
+    "description": "Consume Twitter API"
   },
   "n8n-nodes-base.typeformTrigger": {
     "name": "Typeform Trigger",
     "type": "n8n-nodes-base.typeformTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Typeform/typeform.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Typeform/typeform.svg",
+    "description": "Starts the workflow on a Typeform form submission"
   },
   "n8n-nodes-base.unleashedSoftware": {
     "name": "Unleashed Software",
     "type": "n8n-nodes-base.unleashedSoftware",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UnleashedSoftware/unleashedSoftware.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UnleashedSoftware/unleashedSoftware.png",
+    "description": "Consume Unleashed Software API"
   },
   "n8n-nodes-base.uplead": {
     "name": "Uplead",
     "type": "n8n-nodes-base.uplead",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Uplead/uplead.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Uplead/uplead.png",
+    "description": "Consume Uplead API"
   },
   "n8n-nodes-base.uproc": {
     "name": "uProc",
     "type": "n8n-nodes-base.uproc",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UProc/uproc.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UProc/uproc.png",
+    "description": "Consume uProc API"
   },
   "n8n-nodes-base.uptimeRobot": {
     "name": "UptimeRobot",
     "type": "n8n-nodes-base.uptimeRobot",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UptimeRobot/uptimerobot.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UptimeRobot/uptimerobot.svg",
+    "description": "Consume UptimeRobot API"
   },
   "n8n-nodes-base.urlScanIo": {
     "name": "urlscan.io",
     "type": "n8n-nodes-base.urlScanIo",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UrlScanIo/urlScanIo.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/UrlScanIo/urlScanIo.svg",
+    "description": "Provides various utilities for monitoring websites like health checks or screenshots"
   },
   "n8n-nodes-base.vero": {
     "name": "Vero",
     "type": "n8n-nodes-base.vero",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Vero/vero.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Vero/vero.svg",
+    "description": "Consume Vero API"
   },
   "n8n-nodes-base.venafiTlsProtectCloud": {
     "name": "Venafi TLS Protect Cloud",
     "type": "n8n-nodes-base.venafiTlsProtectCloud",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg",
+    "description": "Consume Venafi TLS Protect Cloud API"
   },
   "n8n-nodes-base.venafiTlsProtectCloudTrigger": {
     "name": "Venafi TLS Protect Cloud Trigger",
     "type": "n8n-nodes-base.venafiTlsProtectCloudTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg",
+    "description": "Starts the workflow when Venafi events occur"
   },
   "n8n-nodes-base.venafiTlsProtectDatacenter": {
     "name": "Venafi TLS Protect Datacenter",
     "type": "n8n-nodes-base.venafiTlsProtectDatacenter",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg",
+    "description": "Consume Venafi TLS Protect Datacenter"
   },
   "n8n-nodes-base.vonage": {
     "name": "Vonage",
     "type": "n8n-nodes-base.vonage",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Vonage/vonage.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Vonage/vonage.png",
+    "description": "Consume Vonage API"
   },
   "n8n-nodes-base.wait": {
     "name": "Wait",
-    "type": "n8n-nodes-base.wait"
+    "type": "n8n-nodes-base.wait",
+    "iconUrl": "",
+    "description": "Wait before continue with execution"
   },
   "n8n-nodes-base.webflow": {
     "name": "Webflow",
     "type": "n8n-nodes-base.webflow",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webflow/webflow.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webflow/webflow.svg",
+    "description": "Consume the Webflow API"
   },
   "n8n-nodes-base.webflowTrigger": {
     "name": "Webflow Trigger",
     "type": "n8n-nodes-base.webflowTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webflow/webflow.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webflow/webflow.svg",
+    "description": "Handle Webflow events via webhooks"
   },
   "n8n-nodes-base.webhook": {
     "name": "Webhook",
     "type": "n8n-nodes-base.webhook",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webhook/webhook.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webhook/webhook.svg",
+    "description": "Starts the workflow when a webhook is called"
   },
   "n8n-nodes-base.wekan": {
     "name": "Wekan",
     "type": "n8n-nodes-base.wekan",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wekan/wekan.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wekan/wekan.png",
+    "description": "Consume Wekan API"
   },
   "n8n-nodes-base.whatsApp": {
     "name": "WhatsApp Business Cloud",
     "type": "n8n-nodes-base.whatsApp",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/WhatsApp/whatsapp.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/WhatsApp/whatsapp.svg",
+    "description": "Access WhatsApp API"
   },
   "n8n-nodes-base.wise": {
     "name": "Wise",
     "type": "n8n-nodes-base.wise",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wise/wise.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wise/wise.svg",
+    "description": "Consume the Wise API"
   },
   "n8n-nodes-base.wiseTrigger": {
     "name": "Wise Trigger",
     "type": "n8n-nodes-base.wiseTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wise/wise.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wise/wise.svg",
+    "description": "Handle Wise events via webhooks"
   },
   "n8n-nodes-base.wooCommerce": {
     "name": "WooCommerce",
     "type": "n8n-nodes-base.wooCommerce",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/WooCommerce/wooCommerce.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/WooCommerce/wooCommerce.svg",
+    "description": "Consume WooCommerce API"
   },
   "n8n-nodes-base.wooCommerceTrigger": {
     "name": "WooCommerce Trigger",
     "type": "n8n-nodes-base.wooCommerceTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/WooCommerce/wooCommerce.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/WooCommerce/wooCommerce.svg",
+    "description": "Handle WooCommerce events via webhooks"
   },
   "n8n-nodes-base.wordpress": {
     "name": "Wordpress",
     "type": "n8n-nodes-base.wordpress",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wordpress/wordpress.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wordpress/wordpress.svg",
+    "description": "Consume Wordpress API"
   },
   "n8n-nodes-base.workableTrigger": {
     "name": "Workable Trigger",
     "type": "n8n-nodes-base.workableTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Workable/workable.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Workable/workable.png",
+    "description": "Starts the workflow when Workable events occur"
   },
   "n8n-nodes-base.workflowTrigger": {
     "name": "Workflow Trigger",
-    "type": "n8n-nodes-base.workflowTrigger"
+    "type": "n8n-nodes-base.workflowTrigger",
+    "iconUrl": "",
+    "description": "Triggers based on various lifecycle events, like when a workflow is activated"
   },
   "n8n-nodes-base.writeBinaryFile": {
     "name": "Write Binary File",
-    "type": "n8n-nodes-base.writeBinaryFile"
+    "type": "n8n-nodes-base.writeBinaryFile",
+    "iconUrl": "",
+    "description": "Writes a binary file to disk"
   },
   "n8n-nodes-base.wufooTrigger": {
     "name": "Wufoo Trigger",
     "type": "n8n-nodes-base.wufooTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wufoo/wufoo.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wufoo/wufoo.png",
+    "description": "Handle Wufoo events via webhooks"
   },
   "n8n-nodes-base.xero": {
     "name": "Xero",
     "type": "n8n-nodes-base.xero",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Xero/xero.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Xero/xero.svg",
+    "description": "Consume Xero API"
   },
   "n8n-nodes-base.xml": {
     "name": "XML",
-    "type": "n8n-nodes-base.xml"
+    "type": "n8n-nodes-base.xml",
+    "iconUrl": "",
+    "description": "Convert data from and to XML"
   },
   "n8n-nodes-base.yourls": {
     "name": "Yourls",
     "type": "n8n-nodes-base.yourls",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Yourls/yourls.png"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Yourls/yourls.png",
+    "description": "Consume Yourls API"
   },
   "n8n-nodes-base.zammad": {
     "name": "Zammad",
     "type": "n8n-nodes-base.zammad",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zammad/zammad.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zammad/zammad.svg",
+    "description": "Consume the Zammad API"
   },
   "n8n-nodes-base.zendesk": {
     "name": "Zendesk",
     "type": "n8n-nodes-base.zendesk",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zendesk/zendesk.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zendesk/zendesk.svg",
+    "description": "Consume Zendesk API"
   },
   "n8n-nodes-base.zendeskTrigger": {
     "name": "Zendesk Trigger",
     "type": "n8n-nodes-base.zendeskTrigger",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zendesk/zendesk.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zendesk/zendesk.svg",
+    "description": "Handle Zendesk events via webhooks"
   },
   "n8n-nodes-base.zohoCrm": {
     "name": "Zoho CRM",
     "type": "n8n-nodes-base.zohoCrm",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zoho/zoho.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zoho/zoho.svg",
+    "description": "Consume Zoho CRM API"
   },
   "n8n-nodes-base.zoom": {
     "name": "Zoom",
     "type": "n8n-nodes-base.zoom",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zoom/zoom.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zoom/zoom.svg",
+    "description": "Consume Zoom API"
   },
   "n8n-nodes-base.zulip": {
     "name": "Zulip",
     "type": "n8n-nodes-base.zulip",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zulip/zulip.svg"
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zulip/zulip.svg",
+    "description": "Consume Zulip API"
+  },
+  "n8n-nodes-base.aggregate": {
+    "name": "Aggregate",
+    "type": "n8n-nodes-base.aggregate",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Transform/Aggregate/aggregate.svg",
+    "description": "Combine a field from many items into a list in a single item"
+  },
+  "n8n-nodes-base.limit": {
+    "name": "Limit",
+    "type": "n8n-nodes-base.limit",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Transform/Limit/limit.svg",
+    "description": "Restrict the number of items"
+  },
+  "n8n-nodes-base.removeDuplicates": {
+    "name": "Remove Duplicates",
+    "type": "n8n-nodes-base.removeDuplicates",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Transform/RemoveDuplicates/removeDuplicates.svg",
+    "description": "Delete items with matching field values"
+  },
+  "n8n-nodes-base.splitOut": {
+    "name": "Split Out",
+    "type": "n8n-nodes-base.splitOut",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Transform/SplitOut/splitOut.svg",
+    "description": "Turn a list inside item(s) into separate items"
+  },
+  "n8n-nodes-base.sort": {
+    "name": "Sort",
+    "type": "n8n-nodes-base.sort",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Transform/Sort/sort.svg",
+    "description": "Change items order"
+  },
+  "n8n-nodes-base.summarize": {
+    "name": "Summarize",
+    "type": "n8n-nodes-base.summarize",
+    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Transform/Summarize/summarize.svg",
+    "description": "Sum, count, max, etc. across items"
+  },
+  "@n8n/n8n-nodes-langchain.openAi": {
+    "name": "OpenAI",
+    "type": "@n8n/n8n-nodes-langchain.openAi",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vendors/OpenAi/openAi.svg",
+    "description": "Message an assistant or GPT, analyze images, generate audio, etc."
   },
   "@n8n/n8n-nodes-langchain.agent": {
     "name": "AI Agent",
-    "type": "@n8n/n8n-nodes-langchain.agent"
+    "type": "@n8n/n8n-nodes-langchain.agent",
+    "iconUrl": "",
+    "description": "Generates an action plan and executes it. Can use external tools."
   },
   "@n8n/n8n-nodes-langchain.openAiAssistant": {
     "name": "OpenAI Assistant",
-    "type": "@n8n/n8n-nodes-langchain.openAiAssistant"
+    "type": "@n8n/n8n-nodes-langchain.openAiAssistant",
+    "iconUrl": "",
+    "description": "Utilizes Assistant API from Open AI."
   },
   "@n8n/n8n-nodes-langchain.chainSummarization": {
     "name": "Summarization Chain",
-    "type": "@n8n/n8n-nodes-langchain.chainSummarization"
+    "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+    "iconUrl": "",
+    "description": "Transforms text into a concise summary"
   },
   "@n8n/n8n-nodes-langchain.chainLlm": {
     "name": "Basic LLM Chain",
-    "type": "@n8n/n8n-nodes-langchain.chainLlm"
+    "type": "@n8n/n8n-nodes-langchain.chainLlm",
+    "iconUrl": "",
+    "description": "A simple chain to prompt a large language model"
   },
   "@n8n/n8n-nodes-langchain.chainRetrievalQa": {
     "name": "Question and Answer Chain",
-    "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa"
+    "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+    "iconUrl": "",
+    "description": "Answer questions about retrieved documents"
   },
   "@n8n/n8n-nodes-langchain.code": {
     "name": "LangChain Code",
-    "type": "@n8n/n8n-nodes-langchain.code"
+    "type": "@n8n/n8n-nodes-langchain.code",
+    "iconUrl": "",
+    "description": "LangChain Code Node"
   },
   "@n8n/n8n-nodes-langchain.documentDefaultDataLoader": {
     "name": "Default Data Loader",
     "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentDefaultDataLoader/binary.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentDefaultDataLoader/binary.svg",
+    "description": "Load data from previous step in the workflow"
   },
   "@n8n/n8n-nodes-langchain.documentBinaryInputLoader": {
     "name": "Binary Input Loader",
     "type": "@n8n/n8n-nodes-langchain.documentBinaryInputLoader",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentBinaryInputLoader/binary.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentBinaryInputLoader/binary.svg",
+    "description": "Use binary data from a previous step in the workflow"
   },
   "@n8n/n8n-nodes-langchain.documentGithubLoader": {
     "name": "GitHub Document Loader",
     "type": "@n8n/n8n-nodes-langchain.documentGithubLoader",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentGithubLoader/github.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentGithubLoader/github.svg",
+    "description": "Use GitHub data as input to this chain"
   },
   "@n8n/n8n-nodes-langchain.documentJsonInputLoader": {
     "name": "JSON Input Loader",
     "type": "@n8n/n8n-nodes-langchain.documentJsonInputLoader",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentJSONInputLoader/json.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentJSONInputLoader/json.svg",
+    "description": "Use JSON data from a previous step in the workflow"
   },
   "@n8n/n8n-nodes-langchain.embeddingsCohere": {
     "name": "Embeddings Cohere",
     "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsCohere/cohere.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsCohere/cohere.svg",
+    "description": "Use Cohere Embeddings"
   },
   "@n8n/n8n-nodes-langchain.embeddingsAwsBedrock": {
     "name": "Embeddings AWS Bedrock",
     "type": "@n8n/n8n-nodes-langchain.embeddingsAwsBedrock",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsAwsBedrock/bedrock.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsAwsBedrock/bedrock.svg",
+    "description": "Use Embeddings AWS Bedrock"
+  },
+  "@n8n/n8n-nodes-langchain.embeddingsAzureOpenAi": {
+    "name": "Embeddings Azure OpenAI",
+    "type": "@n8n/n8n-nodes-langchain.embeddingsAzureOpenAi",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsAzureOpenAi/azure.svg",
+    "description": "Use Embeddings Azure OpenAI"
   },
   "@n8n/n8n-nodes-langchain.embeddingsGooglePalm": {
     "name": "Embeddings Google PaLM",
     "type": "@n8n/n8n-nodes-langchain.embeddingsGooglePalm",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsGooglePalm/google.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsGooglePalm/google.svg",
+    "description": "Use Google PaLM Embeddings"
   },
   "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference": {
     "name": "Embeddings Hugging Face Inference",
     "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsHuggingFaceInference/huggingface.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsHuggingFaceInference/huggingface.svg",
+    "description": "Use HuggingFace Inference Embeddings"
+  },
+  "@n8n/n8n-nodes-langchain.embeddingsMistralCloud": {
+    "name": "Embeddings Mistral Cloud",
+    "type": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsMistralCloud/mistral.svg",
+    "description": "Use Embeddings Mistral Cloud"
   },
   "@n8n/n8n-nodes-langchain.embeddingsOpenAi": {
     "name": "Embeddings OpenAI",
     "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsOpenAI/openAi.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsOpenAI/openAi.svg",
+    "description": "Use Embeddings OpenAI"
+  },
+  "@n8n/n8n-nodes-langchain.embeddingsOllama": {
+    "name": "Embeddings Ollama",
+    "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsOllama/ollama.svg",
+    "description": "Use Ollama Embeddings"
   },
   "@n8n/n8n-nodes-langchain.lmChatAnthropic": {
     "name": "Anthropic Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatAnthropic/anthropic.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatAnthropic/anthropic.svg",
+    "description": "Language Model Anthropic"
+  },
+  "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi": {
+    "name": "Azure OpenAI Chat Model",
+    "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatAzureOpenAi/azure.svg",
+    "description": "For advanced usage with an AI chain"
   },
   "@n8n/n8n-nodes-langchain.lmGooglePalm": {
     "name": "Google PaLM Language Model",
     "type": "@n8n/n8n-nodes-langchain.lmGooglePalm",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmGooglePalm/google.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmGooglePalm/google.svg",
+    "description": "Language Model Google PaLM"
   },
   "@n8n/n8n-nodes-langchain.lmChatAwsBedrock": {
     "name": "AWS Bedrock Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatAwsBedrock",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatAwsBedrock/bedrock.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatAwsBedrock/bedrock.svg",
+    "description": "Language Model AWS Bedrock"
   },
   "@n8n/n8n-nodes-langchain.lmChatGooglePalm": {
     "name": "Google PaLM Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatGooglePalm",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatGooglePalm/google.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatGooglePalm/google.svg",
+    "description": "Chat Model Google PaLM"
+  },
+  "@n8n/n8n-nodes-langchain.lmChatMistralCloud": {
+    "name": "Mistral Cloud Chat Model",
+    "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatMistralCloud/mistral.svg",
+    "description": "For advanced usage with an AI chain"
   },
   "@n8n/n8n-nodes-langchain.lmChatOllama": {
     "name": "Ollama Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatOllama/ollama.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatOllama/ollama.svg",
+    "description": "Language Model Ollama"
   },
   "@n8n/n8n-nodes-langchain.lmChatOpenAi": {
     "name": "OpenAI Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatOpenAi/openAi.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatOpenAi/openAi.svg",
+    "description": "For advanced usage with an AI chain"
   },
   "@n8n/n8n-nodes-langchain.lmOpenAi": {
     "name": "OpenAI Model",
     "type": "@n8n/n8n-nodes-langchain.lmOpenAi",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOpenAi/openAi.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOpenAi/openAi.svg",
+    "description": "For advanced usage with an AI chain"
   },
   "@n8n/n8n-nodes-langchain.lmCohere": {
     "name": "Cohere Model",
     "type": "@n8n/n8n-nodes-langchain.lmCohere",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMCohere/cohere.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMCohere/cohere.svg",
+    "description": "Language Model Cohere"
   },
   "@n8n/n8n-nodes-langchain.lmOllama": {
     "name": "Ollama Model",
     "type": "@n8n/n8n-nodes-langchain.lmOllama",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOllama/ollama.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOllama/ollama.svg",
+    "description": "Language Model Ollama"
   },
   "@n8n/n8n-nodes-langchain.lmOpenHuggingFaceInference": {
     "name": "Hugging Face Inference Model",
     "type": "@n8n/n8n-nodes-langchain.lmOpenHuggingFaceInference",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOpenHuggingFaceInference/huggingface.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOpenHuggingFaceInference/huggingface.svg",
+    "description": "Language Model HuggingFaceInference"
   },
   "@n8n/n8n-nodes-langchain.memoryBufferWindow": {
     "name": "Window Buffer Memory (easiest)",
-    "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow"
+    "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+    "iconUrl": "",
+    "description": "Stores in n8n memory, so no credentials required"
   },
   "@n8n/n8n-nodes-langchain.memoryMotorhead": {
     "name": "Motorhead",
-    "type": "@n8n/n8n-nodes-langchain.memoryMotorhead"
+    "type": "@n8n/n8n-nodes-langchain.memoryMotorhead",
+    "iconUrl": "",
+    "description": "Use Motorhead Memory"
   },
   "@n8n/n8n-nodes-langchain.memoryRedisChat": {
     "name": "Redis Chat Memory",
     "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryRedisChat/redis.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryRedisChat/redis.svg",
+    "description": "Stores the chat history in Redis."
+  },
+  "@n8n/n8n-nodes-langchain.memoryManager": {
+    "name": "Chat Memory Manager",
+    "type": "@n8n/n8n-nodes-langchain.memoryManager",
+    "iconUrl": "",
+    "description": "Manage chat messages memory and use it in the workflow"
   },
   "@n8n/n8n-nodes-langchain.memoryChatRetriever": {
     "name": "Chat Messages Retriever",
-    "type": "@n8n/n8n-nodes-langchain.memoryChatRetriever"
+    "type": "@n8n/n8n-nodes-langchain.memoryChatRetriever",
+    "iconUrl": "",
+    "description": "Retrieve chat messages from memory and use them in the workflow"
   },
   "@n8n/n8n-nodes-langchain.memoryXata": {
     "name": "Xata",
     "type": "@n8n/n8n-nodes-langchain.memoryXata",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryXata/xata.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryXata/xata.svg",
+    "description": "Use Xata Memory"
   },
   "@n8n/n8n-nodes-langchain.memoryZep": {
     "name": "Zep",
     "type": "@n8n/n8n-nodes-langchain.memoryZep",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryZep/zep.png"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryZep/zep.png",
+    "description": "Use Zep Memory"
   },
   "@n8n/n8n-nodes-langchain.outputParserAutofixing": {
     "name": "Auto-fixing Output Parser",
-    "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing"
+    "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+    "iconUrl": "",
+    "description": "Automatically fix the output if it is not in the correct format"
   },
   "@n8n/n8n-nodes-langchain.outputParserItemList": {
     "name": "Item List Output Parser",
-    "type": "@n8n/n8n-nodes-langchain.outputParserItemList"
+    "type": "@n8n/n8n-nodes-langchain.outputParserItemList",
+    "iconUrl": "",
+    "description": "Return the results as separate items"
   },
   "@n8n/n8n-nodes-langchain.outputParserStructured": {
     "name": "Structured Output Parser",
-    "type": "@n8n/n8n-nodes-langchain.outputParserStructured"
+    "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+    "iconUrl": "",
+    "description": "Return data in a defined JSON format"
   },
   "@n8n/n8n-nodes-langchain.retrieverContextualCompression": {
     "name": "Contextual Compression Retriever",
-    "type": "@n8n/n8n-nodes-langchain.retrieverContextualCompression"
+    "type": "@n8n/n8n-nodes-langchain.retrieverContextualCompression",
+    "iconUrl": "",
+    "description": "Enhances document similarity search by contextual compression."
   },
   "@n8n/n8n-nodes-langchain.retrieverVectorStore": {
     "name": "Vector Store Retriever",
-    "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore"
+    "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+    "iconUrl": "",
+    "description": "Use a Vector Store as Retriever"
   },
   "@n8n/n8n-nodes-langchain.retrieverMultiQuery": {
     "name": "MultiQuery Retriever",
-    "type": "@n8n/n8n-nodes-langchain.retrieverMultiQuery"
+    "type": "@n8n/n8n-nodes-langchain.retrieverMultiQuery",
+    "iconUrl": "",
+    "description": "Automates prompt tuning, generates diverse queries and expands document pool for enhanced retrieval."
   },
   "@n8n/n8n-nodes-langchain.retrieverWorkflow": {
     "name": "Workflow Retriever",
-    "type": "@n8n/n8n-nodes-langchain.retrieverWorkflow"
+    "type": "@n8n/n8n-nodes-langchain.retrieverWorkflow",
+    "iconUrl": "",
+    "description": "Use an n8n Workflow as Retriever"
   },
   "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter": {
     "name": "Character Text Splitter",
-    "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter"
+    "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+    "iconUrl": "",
+    "description": "Split text into chunks by characters"
   },
   "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter": {
     "name": "Recursive Character Text Splitter",
-    "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter"
+    "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+    "iconUrl": "",
+    "description": "Split text into chunks by characters recursively, recommended for most use cases"
   },
   "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter": {
     "name": "Token Splitter",
-    "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter"
+    "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
+    "iconUrl": "",
+    "description": "Split text into chunks by tokens"
   },
   "@n8n/n8n-nodes-langchain.toolCalculator": {
     "name": "Calculator",
-    "type": "@n8n/n8n-nodes-langchain.toolCalculator"
+    "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+    "iconUrl": "",
+    "description": "Make it easier for AI agents to perform arithmetic"
   },
   "@n8n/n8n-nodes-langchain.toolCode": {
     "name": "Custom Code Tool",
-    "type": "@n8n/n8n-nodes-langchain.toolCode"
+    "type": "@n8n/n8n-nodes-langchain.toolCode",
+    "iconUrl": "",
+    "description": "Write a tool in JS or Python"
   },
   "@n8n/n8n-nodes-langchain.toolSerpApi": {
     "name": "SerpApi (Google Search)",
     "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolSerpApi/serpApi.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolSerpApi/serpApi.svg",
+    "description": "Search in Google using SerpAPI"
   },
   "@n8n/n8n-nodes-langchain.toolWikipedia": {
     "name": "Wikipedia",
     "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolWikipedia/wikipedia.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolWikipedia/wikipedia.svg",
+    "description": "Search in Wikipedia"
   },
   "@n8n/n8n-nodes-langchain.toolWolframAlpha": {
     "name": "Wolfram|Alpha",
     "type": "@n8n/n8n-nodes-langchain.toolWolframAlpha",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolWolframAlpha/wolfram-alpha.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolWolframAlpha/wolfram-alpha.svg",
+    "description": "Connects to WolframAlpha's computational intelligence engine."
   },
   "@n8n/n8n-nodes-langchain.toolWorkflow": {
     "name": "Custom n8n Workflow Tool",
-    "type": "@n8n/n8n-nodes-langchain.toolWorkflow"
+    "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+    "iconUrl": "",
+    "description": "Uses another n8n workflow as a tool. Allows packaging any n8n node(s) as a tool."
   },
   "@n8n/n8n-nodes-langchain.manualChatTrigger": {
     "name": "Manual Chat Trigger",
-    "type": "@n8n/n8n-nodes-langchain.manualChatTrigger"
+    "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+    "iconUrl": "",
+    "description": "Runs the flow on new manual chat message"
+  },
+  "@n8n/n8n-nodes-langchain.chatTrigger": {
+    "name": "Chat Trigger",
+    "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+    "iconUrl": "",
+    "description": "Runs the workflow when an n8n generated webchat is submitted"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreInMemory": {
     "name": "In-Memory Vector Store",
-    "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory"
+    "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+    "iconUrl": "",
+    "description": "Work with your data in In-Memory Vector Store"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreInMemoryInsert": {
     "name": "In Memory Vector Store Insert",
-    "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemoryInsert"
+    "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemoryInsert",
+    "iconUrl": "",
+    "description": "Insert data into an in-memory vector store"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreInMemoryLoad": {
     "name": "In Memory Vector Store Load",
-    "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemoryLoad"
+    "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemoryLoad",
+    "iconUrl": "",
+    "description": "Load embedded data from an in-memory vector store"
   },
   "@n8n/n8n-nodes-langchain.vectorStorePinecone": {
     "name": "Pinecone Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePinecone/pinecone.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePinecone/pinecone.svg",
+    "description": "Work with your data in Pinecone Vector Store"
   },
   "@n8n/n8n-nodes-langchain.vectorStorePineconeInsert": {
     "name": "Pinecone: Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStorePineconeInsert",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePineconeInsert/pinecone.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePineconeInsert/pinecone.svg",
+    "description": "Insert data into Pinecone Vector Store index"
   },
   "@n8n/n8n-nodes-langchain.vectorStorePineconeLoad": {
     "name": "Pinecone: Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStorePineconeLoad",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePineconeLoad/pinecone.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePineconeLoad/pinecone.svg",
+    "description": "Load data from Pinecone Vector Store index"
+  },
+  "@n8n/n8n-nodes-langchain.vectorStoreQdrant": {
+    "name": "Qdrant Vector Store",
+    "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreQdrant/qdrant.svg",
+    "description": "Work with your data in a Qdrant collection"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreSupabase": {
     "name": "Supabase Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabase/supabase.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabase/supabase.svg",
+    "description": "Work with your data in Supabase Vector Store"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreSupabaseInsert": {
     "name": "Supabase: Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabaseInsert",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabaseInsert/supabase.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabaseInsert/supabase.svg",
+    "description": "Insert data into Supabase Vector Store index [https://supabase.com/docs/guides/ai/langchain]"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreSupabaseLoad": {
     "name": "Supabase: Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabaseLoad",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabaseLoad/supabase.svg"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabaseLoad/supabase.svg",
+    "description": "Load data from Supabase Vector Store index"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreZep": {
     "name": "Zep Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreZep",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZep/zep.png"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZep/zep.png",
+    "description": "Work with your data in Zep Vector Store"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreZepInsert": {
     "name": "Zep Vector Store: Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreZepInsert",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZepInsert/zep.png"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZepInsert/zep.png",
+    "description": "Insert data into Zep Vector Store index"
   },
   "@n8n/n8n-nodes-langchain.vectorStoreZepLoad": {
     "name": "Zep Vector Store: Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreZepLoad",
-    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZepLoad/zep.png"
+    "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZepLoad/zep.png",
+    "description": "Load data from Zep Vector Store index"
   },
-  "CUSTOM.promptify": {
+  "n8n-nodes-promptify.promptify": {
     "name": "Promptify",
-    "type": "CUSTOM.promptify",
-    "iconUrl": "icons/CUSTOM/n8n-promptify/dist/nodes/Promptify/promptify.svg"
+    "type": "n8n-nodes-promptify.promptify",
+    "iconUrl": "icons/n8n-nodes-promptify/dist/nodes/Promptify/promptify.svg",
+    "description": "Basic Promptify Node"
   }
 }

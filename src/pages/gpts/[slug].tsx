@@ -7,6 +7,7 @@ import { authClient } from "@/common/axios";
 import type { IWorkflow } from "@/components/Automation/types";
 import Header from "@/components/GPT/Header";
 import Chat from "@/components/GPT/Chat";
+import Workflow from "@/components/GPTs/FlowData";
 
 interface Props {
   workflow: IWorkflow;
@@ -29,7 +30,10 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
           }}
         >
           <Header workflow={selectedWorkflow} />
-          <Chat workflow={selectedWorkflow} />
+          <Stack flexDirection={"row"}>
+            <Chat workflow={selectedWorkflow} />
+            <Workflow workflow={selectedWorkflow} />
+          </Stack>
         </Stack>
       )}
     </Layout>
