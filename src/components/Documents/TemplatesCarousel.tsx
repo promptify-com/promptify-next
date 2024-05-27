@@ -31,7 +31,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   };
 
   const isEmpty = !isLoading && !templates?.length;
-  const hideCarousel = templates && templates?.length > 1;
+  const showCarousel = templates && templates?.length > 1;
 
   if (isEmpty) return;
   return (
@@ -52,7 +52,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
         >
           Top prompts
         </Typography>
-        {isCarousel && hideCarousel && (
+        {isCarousel && showCarousel && (
           <Stack
             direction={"row"}
             alignItems={"center"}
