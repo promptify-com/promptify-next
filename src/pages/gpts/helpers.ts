@@ -88,6 +88,18 @@ export const executionsData: WorkflowExecution[] = [
     workflowId: "LkQGmazWmp1WMFmg",
     waitTill: null,
   },
+  {
+    id: "13755",
+    finished: false,
+    mode: "scheduled",
+    retryOf: null,
+    retrySuccessId: null,
+    status: "scheduled",
+    startedAt: "2024-05-27T10:00:00.000Z",
+    stoppedAt: "",
+    workflowId: "LkQGmazWmp1WMFmg",
+    waitTill: null,
+  },
   // Events on the same day
   {
     id: "13756",

@@ -44,7 +44,12 @@ const DAY_BOX_STYLES = {
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const getStylesForStatus = (status: string) => {
+const getStylesForStatus = (status: string, date: Date) => {
+  const today = new Date();
+  if (status === "scheduled" && isSameDay(date, today)) {
+    return { backgroundColor: "#6E45E9", color: "white" };
+  }
+
   switch (status) {
     case "success":
       return { backgroundColor: "#E4FEE7", color: "#228B22" };
@@ -152,7 +157,7 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
         const executionsForDay = executions.data.filter(exec => isSameDay(parseISO(exec.startedAt), day));
         const highestPriorityStatus = getHighestPriorityStatus(executionsForDay);
         const { backgroundColor, color } = highestPriorityStatus
-          ? getStylesForStatus(highestPriorityStatus)
+          ? getStylesForStatus(highestPriorityStatus, day)
           : { backgroundColor: "transparent", color: "text.primary" };
 
         const cellContent = (
@@ -173,6 +178,7 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
             key={day.toString()}
             item
             xs
+            m={"6px"}
           >
             {executionsForDay.some(exec => exec.status === "failed") ? (
               <CustomTooltip
