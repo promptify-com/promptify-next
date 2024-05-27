@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { IWorkflow } from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface IScheduleData {
   frequency?: string;
@@ -21,6 +22,10 @@ const useChat = ({ workflow }: Props) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const schedulingData = useRef<IScheduleData | null>(null);
 
+  const areCredentialsStored = useAppSelector(
+    state => state.chat?.areCredentialsStored ?? initialChatState.areCredentialsStored,
+  );
+
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
   const initialMessages = async () => {
@@ -33,10 +38,17 @@ const useChat = ({ workflow }: Props) => {
     let areAllCredentialsStored = true;
     areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
+
     const credentialsMessage = createMessage({
       type: "credentials",
       text: `Connect your ${credentialsInput.map(cred => cred.displayName).join(",")}:`,
     });
+    setMessages([welcomeMessage, credentialsMessage]);
+  };
+
+  useEffect(() => {
+    if (!areCredentialsStored) return;
+
     const startScheduleMessage = createMessage({
       type: "text",
       text: "Do you want to schedule this GPT?",
@@ -46,8 +58,10 @@ const useChat = ({ workflow }: Props) => {
       text: "",
       fromUser: true,
     });
-    setMessages([welcomeMessage, credentialsMessage, startScheduleMessage, choicesMessage]);
-  };
+    setMessages(prev =>
+      prev.filter(msg => msg.type !== "schedule_frequency").concat(startScheduleMessage, choicesMessage),
+    );
+  }, [areCredentialsStored]);
 
   const startSchedule = () => {
     const frequencyMessage = createMessage({
