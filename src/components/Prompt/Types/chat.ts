@@ -20,7 +20,10 @@ export type MessageType =
   | "questionInput"
   | "questionParam"
   | "readyMessage"
-  | "workflowExecution";
+  | "workflowExecution"
+  | "schedule_start"
+  | "schedule_frequency"
+  | "schedule_time";
 
 export interface IMessage {
   id: number;
@@ -31,10 +34,10 @@ export interface IMessage {
   spark?: TemplatesExecutions;
   template?: Templates;
   isLatestExecution?: boolean;
-  choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
   noHeader?: boolean;
+  isHighlight?: boolean;
   isRequired?: boolean;
   isEditable?: boolean;
   questionIndex?: number;
@@ -72,6 +75,7 @@ export interface CreateMessageProps {
   text: string;
   fromUser?: boolean;
   noHeader?: boolean;
+  isHighlight?: boolean;
   timestamp?: string;
   isEditable?: boolean;
   isRequired?: boolean;

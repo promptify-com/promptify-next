@@ -18,14 +18,14 @@ import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   message: IMessage;
-  onScrollToBottom: () => void;
+  onScrollToBottom?: () => void;
   isExecutionShown?: boolean;
 }
 
 interface MessageContentProps {
   content: string;
   shouldStream: boolean;
-  onStreamingFinished: () => void;
+  onStreamingFinished?: () => void;
 }
 
 const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: MessageContentProps) => {
@@ -39,7 +39,7 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
     if (hasFinished) {
       dispatch(setIsSimulationStreaming(false));
 
-      onStreamingFinished();
+      onStreamingFinished?.();
     }
   }, [hasFinished]);
 
