@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import { IWorkflow } from "@/components/Automation/types";
 import { getWorkflowDataFlow } from "./helpers";
 import Image from "@/components/design-system/Image";
 
