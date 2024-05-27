@@ -156,9 +156,10 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
         const isCurrentMonth = isSameMonth(day, monthStart);
         const executionsForDay = executions.data.filter(exec => isSameDay(parseISO(exec.startedAt), day));
         const highestPriorityStatus = getHighestPriorityStatus(executionsForDay);
-        const { backgroundColor, color } = highestPriorityStatus
-          ? getStylesForStatus(highestPriorityStatus, day)
-          : { backgroundColor: "transparent", color: "text.primary" };
+        const { backgroundColor, color } =
+          highestPriorityStatus && isCurrentMonth
+            ? getStylesForStatus(highestPriorityStatus, day)
+            : { backgroundColor: "transparent", color: "text.primary" };
 
         const cellContent = (
           <Box sx={{ ...DAY_BOX_STYLES, backgroundColor }}>
