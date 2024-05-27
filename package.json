@@ -37,7 +37,7 @@
     "embla-carousel-autoplay": "^8.0.0-rc22",
     "embla-carousel-react": "^8.0.0-rc22",
     "formik": "^2.4.2",
-    "httpsnippet": "2.0.0",
+    "httpsnippet": "3.0.1",
     "isomorphic-dompurify": "^1.8.0",
     "material-dynamic-colors": "^1.1.0",
     "next": "14.2.3",
