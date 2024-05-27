@@ -122,6 +122,7 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
       spacing={1}
       justifyContent="center"
       sx={{ mt: 2 }}
+      px={"6px"}
     >
       {WEEK_DAYS.map(day => (
         <Grid
