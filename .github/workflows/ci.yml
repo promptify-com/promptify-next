@@ -31,7 +31,7 @@ jobs:
           NEXT_PUBLIC_N8N_CHAT_BASE_URL: "https://automation.promptify.com"
           LOGIN_TOKEN: ${{ secrets.LOGIN_TOKEN }}
       
-      - name: Commit and push sitemap changes
-        run: ./script/commit_sitemap.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Commit and push sitemap changes
+      #   run: ./script/commit_sitemap.sh
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
