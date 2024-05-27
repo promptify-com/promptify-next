@@ -6140,10 +6140,10 @@ rete-auto-arrange-plugin@^2.0.0-beta.6:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-rete-connection-plugin@2.0.0-beta.11:
-  version "2.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/rete-connection-plugin/-/rete-connection-plugin-2.0.0-beta.11.tgz#e87d75e08d8fafc7e303a8e2cc0aea8edcb8dadd"
-  integrity sha512-/EFHqa6dvIEzO13R+PiLBazIh/RUBYpuJkbkbb/2lKEL674zy/zaghUmLdl/XjMCO0ozycW2wPZPgfK2LOpbGw==
+rete-connection-plugin@2.0.0-beta.12:
+  version "2.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/rete-connection-plugin/-/rete-connection-plugin-2.0.0-beta.12.tgz#cd1e71373aaa14fd520f5f73825770129f3126b1"
+  integrity sha512-CDr2ctYnojWn+ZZ/Zrd7yVqaxGKs90m2+lfwmyOhYonBwsDzd1So/x6xJAMGsKm/NHJZ/eeCi2Sq0EzqAo6CYg==
   dependencies:
     "@babel/runtime" "^7.21.0"
 
