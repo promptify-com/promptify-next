@@ -49,7 +49,7 @@ export const workflowsApi = baseApi.injectEndpoints({
       }),
       getWorkflowExecutions: builder.query<UserWorkflowExecutionsResponse, string>({
         query: workflowId => ({
-          url: `/n8n/workflows/${workflowId}/executions/`,
+          url: `/api/n8n/workflows/${workflowId}/executions/`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
