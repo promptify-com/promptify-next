@@ -34,7 +34,6 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
         <WorkflowPlaceholder />
       ) : (
         <Stack
-          gap={1}
           sx={{
             bgcolor: "common.white",
           }}

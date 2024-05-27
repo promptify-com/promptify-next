@@ -35,6 +35,7 @@ export default function Chat({ workflow }: Props) {
 
   return (
     <Stack
+      flex={1}
       gap={8}
       sx={{
         p: "48px",
