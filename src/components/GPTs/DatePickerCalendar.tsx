@@ -210,6 +210,7 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
       sx={{
         border: "1px solid rgba(0, 0, 0, 0.08)",
         borderRadius: "16px",
+        bgcolor: "white",
       }}
     >
       <Stack
