@@ -34,16 +34,21 @@ const useChat = ({ workflow }: Props) => {
     }?`;
     const welcomeMessage = createMessage({ type: "text", text: greeting });
 
+    let initMessages = [welcomeMessage];
+
     const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
     let areAllCredentialsStored = true;
-    areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-    dispatch(setAreCredentialsStored(areAllCredentialsStored));
+    if (credentialsInput.length) {
+      areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
 
-    const credentialsMessage = createMessage({
-      type: "credentials",
-      text: `Connect your ${credentialsInput.map(cred => cred.displayName).join(",")}:`,
-    });
-    setMessages([welcomeMessage, credentialsMessage]);
+      const credentialsMessage = createMessage({
+        type: "credentials",
+        text: `Connect your ${credentialsInput.map(cred => cred.displayName).join(",")}:`,
+      });
+      initMessages.push(credentialsMessage);
+    }
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
+    setMessages(initMessages);
   };
 
   useEffect(() => {
