@@ -9,8 +9,9 @@ import type { IWorkflow } from "@/components/Automation/types";
 import Header from "@/components/GPT/Header";
 import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import store from "@/core/store";
-import chatSlice from "@/core/store/chatSlice";
+import chatSlice, { initialState } from "@/core/store/chatSlice";
 import Workflow from "@/components/GPTs/FlowData";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   workflow: IWorkflow;
@@ -18,9 +19,14 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default function GPT({ workflow = {} as IWorkflow }: Props) {
-  const { selectedWorkflow, isWorkflowLoading } = useWorkflow(workflow);
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+  const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded } = useWorkflow(workflow);
 
   useEffect(() => {
+    if (!clonedWorkflow) {
+      createWorkflowIfNeeded(workflow.id);
+    }
+
     if (!store) {
       return;
     }

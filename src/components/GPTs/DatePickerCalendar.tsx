@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, memo } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -20,9 +21,11 @@ import {
   parseISO,
 } from "date-fns";
 import { useGetWorkflowExecutionsQuery } from "@/core/api/workflows";
-import type { WorkflowExecution } from "@/components/Automation/types";
 import { styled } from "@mui/material/styles";
-import { executionsData, getHighestPriorityStatus } from "@/components/GPTs/helpers";
+import { getHighestPriorityStatus } from "@/components/GPTs/helpers";
+import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/chatSlice";
+import type { WorkflowExecution } from "../Automation/types";
 
 const HEADER_STYLES = {
   flexDirection: "row",
@@ -67,7 +70,7 @@ const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
     {...props}
     classes={{ popper: className }}
   />
-))(({ theme }) => ({
+))(() => ({
   [`& .MuiTooltip-tooltip`]: {
     backgroundColor: "white",
     color: "#EC2525",
@@ -88,128 +91,136 @@ const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-function DatePickerCalendar({ workflowId }: { workflowId: string }) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-
-  // const { data: executions } = useGetWorkflowExecutionsQuery(workflowId);
-
-  const executions: { data: WorkflowExecution[]; nextCursor: string | null } = {
-    data: executionsData,
-    nextCursor: null,
-  };
-
-  const renderHeader = () => (
-    <Stack sx={HEADER_STYLES}>
-      <IconButton onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-        <KeyboardArrowLeft />
-      </IconButton>
-      <Typography
-        fontSize={16}
-        lineHeight={"150%"}
-        fontWeight={"500"}
-      >
-        {format(currentMonth, "MMMM, yyyy")}
-      </Typography>
-      <IconButton onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-        <KeyboardArrowRight />
-      </IconButton>
-    </Stack>
-  );
-
-  const renderDaysOfWeek = () => (
-    <Grid
-      container
-      spacing={1}
-      justifyContent="center"
-      sx={{ mt: 2 }}
+const RenderHeader = ({
+  setCurrentMonth,
+  currentMonth,
+}: {
+  setCurrentMonth: Dispatch<SetStateAction<Date>>;
+  currentMonth: Date;
+}) => (
+  <Stack sx={HEADER_STYLES}>
+    <IconButton onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+      <KeyboardArrowLeft />
+    </IconButton>
+    <Typography
+      fontSize={16}
+      lineHeight={"150%"}
+      fontWeight={"500"}
     >
-      {WEEK_DAYS.map(day => (
+      {format(currentMonth, "MMMM, yyyy")}
+    </Typography>
+    <IconButton onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+      <KeyboardArrowRight />
+    </IconButton>
+  </Stack>
+);
+
+const RenderDaysOfWeek = memo(() => (
+  <Grid
+    container
+    spacing={1}
+    justifyContent="center"
+    sx={{ mt: 2 }}
+  >
+    {WEEK_DAYS.map(day => (
+      <Grid
+        item
+        xs
+        key={day}
+      >
+        <Typography
+          fontSize={10}
+          fontWeight={700}
+          lineHeight={"180%"}
+          textTransform={"uppercase"}
+          align="center"
+          color={"#8F8F8F"}
+        >
+          {day}
+        </Typography>
+      </Grid>
+    ))}
+  </Grid>
+));
+
+const RenderCells = ({ currentMonth, executions = [] }: { currentMonth: Date; executions: WorkflowExecution[] }) => {
+  const monthStart = startOfMonth(currentMonth);
+  const rows = [];
+  let daysInMonth = [];
+  let day = startOfWeek(monthStart, { weekStartsOn: 1 });
+
+  while (day <= endOfMonth(currentMonth)) {
+    for (let i = 0; i < 7; i++) {
+      const formattedDate = format(day, "d");
+      const isCurrentMonth = isSameMonth(day, monthStart);
+      const executionsForDay = executions.filter(exec => isSameDay(parseISO(exec.startedAt), day));
+      const highestPriorityStatus = getHighestPriorityStatus(executionsForDay);
+      const { backgroundColor, color } =
+        highestPriorityStatus && isCurrentMonth
+          ? getStylesForStatus(highestPriorityStatus, day)
+          : { backgroundColor: "transparent", color: "text.primary" };
+
+      const cellContent = (
+        <Box sx={{ ...DAY_BOX_STYLES, backgroundColor }}>
+          <Typography
+            fontSize={"12px"}
+            sx={{
+              color: !isCurrentMonth ? "text.disabled" : color,
+            }}
+          >
+            {formattedDate}
+          </Typography>
+        </Box>
+      );
+
+      daysInMonth.push(
         <Grid
+          key={day.toString()}
           item
           xs
-          key={day}
+          mb={"10px"}
         >
-          <Typography
-            fontSize={10}
-            fontWeight={700}
-            lineHeight={"180%"}
-            textTransform={"uppercase"}
-            align="center"
-            color={"#8F8F8F"}
-          >
-            {day}
-          </Typography>
-        </Grid>
-      ))}
-    </Grid>
-  );
-
-  const renderCells = () => {
-    const monthStart = startOfMonth(currentMonth);
-    const rows = [];
-    let daysInMonth = [];
-    let day = startOfWeek(monthStart, { weekStartsOn: 1 });
-
-    while (day <= endOfMonth(currentMonth)) {
-      for (let i = 0; i < 7; i++) {
-        const formattedDate = format(day, "d");
-        const isCurrentMonth = isSameMonth(day, monthStart);
-        const executionsForDay = executions.data.filter(exec => isSameDay(parseISO(exec.startedAt), day));
-        const highestPriorityStatus = getHighestPriorityStatus(executionsForDay);
-        const { backgroundColor, color } =
-          highestPriorityStatus && isCurrentMonth
-            ? getStylesForStatus(highestPriorityStatus, day)
-            : { backgroundColor: "transparent", color: "text.primary" };
-
-        const cellContent = (
-          <Box sx={{ ...DAY_BOX_STYLES, backgroundColor }}>
-            <Typography
-              fontSize={"12px"}
-              sx={{
-                color: !isCurrentMonth ? "text.disabled" : color,
-              }}
+          {executionsForDay.some(exec => exec.status === "failed") ? (
+            <CustomTooltip
+              placement="top"
+              title={executionsForDay.find(exec => exec.status === "failed")?.error || ""}
+              arrow
             >
-              {formattedDate}
-            </Typography>
-          </Box>
-        );
-
-        daysInMonth.push(
-          <Grid
-            key={day.toString()}
-            item
-            xs
-            mb={"10px"}
-          >
-            {executionsForDay.some(exec => exec.status === "failed") ? (
-              <CustomTooltip
-                placement="top"
-                title={executionsForDay.find(exec => exec.status === "failed")?.error || ""}
-                arrow
-              >
-                {cellContent}
-              </CustomTooltip>
-            ) : (
-              cellContent
-            )}
-          </Grid>,
-        );
-        day = addDays(day, 1);
-      }
-      rows.push(
-        <Grid
-          container
-          spacing={1}
-          ml={"0px"}
-          key={day.toString()}
-        >
-          {daysInMonth}
+              {cellContent}
+            </CustomTooltip>
+          ) : (
+            cellContent
+          )}
         </Grid>,
       );
-      daysInMonth = [];
+      day = addDays(day, 1);
     }
-    return <Box sx={{ mt: 2 }}>{rows}</Box>;
-  };
+    rows.push(
+      <Grid
+        container
+        spacing={1}
+        ml={"0px"}
+        key={day.toString()}
+      >
+        {daysInMonth}
+      </Grid>,
+    );
+    daysInMonth = [];
+  }
+
+  return <Box sx={{ mt: 2 }}>{rows}</Box>;
+};
+
+function DatePickerCalendar() {
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { data: executions } = useGetWorkflowExecutionsQuery(clonedWorkflow?.id!, {
+    skip: !clonedWorkflow?.id,
+  });
+
+  if (!executions?.data?.length) {
+    return null;
+  }
 
   return (
     <Stack
@@ -233,16 +244,26 @@ function DatePickerCalendar({ workflowId }: { workflowId: string }) {
           Current Schedule
         </Typography>
       </Stack>
-      {renderHeader()}
+      {
+        <RenderHeader
+          currentMonth={currentMonth}
+          setCurrentMonth={setCurrentMonth}
+        />
+      }
       <Stack
         p={"8px"}
         mb={"16px"}
       >
-        {renderDaysOfWeek()}
-        {renderCells()}
+        {<RenderDaysOfWeek />}
+        {
+          <RenderCells
+            executions={executions.data}
+            currentMonth={currentMonth}
+          />
+        }
       </Stack>
     </Stack>
   );
 }
 
-export default DatePickerCalendar;
+export default memo(DatePickerCalendar);

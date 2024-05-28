@@ -11,7 +11,6 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import { includes } from "cypress/types/lodash";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
