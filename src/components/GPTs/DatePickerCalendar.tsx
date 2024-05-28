@@ -22,7 +22,7 @@ import {
 import { useGetWorkflowExecutionsQuery } from "@/core/api/workflows";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import { styled } from "@mui/material/styles";
-import { executionsData, getHighestPriorityStatus } from "@/pages/gpts/helpers";
+import { executionsData, getHighestPriorityStatus } from "@/components/GPTs/helpers";
 
 const HEADER_STYLES = {
   flexDirection: "row",
