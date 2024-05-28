@@ -49,10 +49,28 @@ export const workflowsApi = baseApi.injectEndpoints({
       }),
       getWorkflowExecutions: builder.query<UserWorkflowExecutionsResponse, string>({
         query: workflowId => ({
-          url: `/api/n8n/workflows/${workflowId}/executions/`,
+          url: `/api/n8n/workflows/${workflowId}/executions?includeData=true`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
+        transformResponse(executions: UserWorkflowExecutionsResponse) {
+          if (!executions?.data?.length) {
+            return {
+              data: [],
+              nextCursor: null,
+            };
+          }
+
+          return {
+            data: executions.data.map(execution => ({
+              id: execution.id,
+              status: execution.status,
+              startedAt: execution.startedAt,
+              error: execution.data?.resultData?.error?.message ?? "",
+            })),
+            nextCursor: executions.nextCursor,
+          };
+        },
       }),
       getCredentials: builder.query<ICredential[], void>({
         query: () => ({

@@ -131,7 +131,8 @@ export default function Header({ workflow }: Props) {
           </Stack>
         </Stack>
       </Stack>
-      <DatePickerCalendar workflowId={"11"} />
+      {/* TODO: to render only if the template workflow is a scheduling */}
+      <DatePickerCalendar />
     </Stack>
   );
 }
