@@ -46,7 +46,7 @@ export interface INode {
   description?: string;
 }
 
-export type NodesFileData = Record<string, Pick<INode, "name" | "type" | "iconUrl" | "description">>;
+export type NodesFileData = Record<string, { iconUrl: string; name: string; type: string; description: string }>;
 
 export interface IConnections {
   [key: string]: [{ node: string; type: string; index: number }][];
