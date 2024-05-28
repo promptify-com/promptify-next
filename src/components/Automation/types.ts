@@ -43,11 +43,12 @@ export interface INode {
   includeFields?: string;
   httpMethod?: string;
   responseMode?: string;
+  description?: string;
 }
 
-export type NodesFileData = Record<string, Pick<INode, "name" | "type" | "iconUrl">>;
+export type NodesFileData = Record<string, Pick<INode, "name" | "type" | "iconUrl" | "description">>;
 
-interface IConnections {
+export interface IConnections {
   [key: string]: [{ node: string; type: string; index: number }][];
 }
 

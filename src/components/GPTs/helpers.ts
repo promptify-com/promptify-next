@@ -39,7 +39,7 @@ function buildNextConnectedData({
       nextNode: connections[nodeName].main[0][0].node,
       type: nodeType,
       iconUrl: nodeInfo.iconUrl ? `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${nodeInfo.iconUrl}` : "",
-      description: nodeInfo.description,
+      description: nodeInfo.description ?? "",
     });
 
     buildNextConnectedData({
