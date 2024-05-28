@@ -2,45 +2,54 @@ import React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { IWorkflow } from "@/components/Automation/types";
 import { getWorkflowDataFlow } from "./helpers";
 import Image from "@/components/design-system/Image";
+import Stack from "@mui/material/Stack";
 
 function Workflow({ workflow }: { workflow: IWorkflow }) {
   const steps = getWorkflowDataFlow(workflow);
 
   return (
-    <Container
+    <Stack
+      gap={7}
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        p: "40px",
+        borderLeft: "1px solid #ECECF3",
       }}
     >
-      {steps.map((step, index) => (
-        <React.Fragment key={index}>
-          <FlowDataCard
-            title={step[0]}
-            description={step[1].description}
-            iconUrl={step[1].iconUrl}
-          />
-          {index < steps.length - 1 && (
-            <Box
-              sx={{
-                width: "2px",
-                height: "20px",
-                backgroundColor: "#ccc",
-                margin: "0 auto",
-              }}
+      <Typography
+        fontSize={14}
+        fontWeight={500}
+        color={"common.black"}
+      >
+        Data flow
+      </Typography>
+      <Stack>
+        {steps.map((step, index) => (
+          <React.Fragment key={index}>
+            <FlowDataCard
+              title={step[0]}
+              description={step[1].description}
+              iconUrl={step[1].iconUrl}
             />
-          )}
-        </React.Fragment>
-      ))}
-    </Container>
+            {index < steps.length - 1 && (
+              <Box
+                sx={{
+                  width: "2px",
+                  height: "20px",
+                  backgroundColor: "#ccc",
+                  margin: "0 auto",
+                }}
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </Stack>
+    </Stack>
   );
 }
 

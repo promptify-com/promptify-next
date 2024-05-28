@@ -10,7 +10,6 @@ import FormControl from "@mui/material/FormControl";
 import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { object, string } from "yup";
-
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { LocalStorage } from "@/common/storage";
@@ -24,13 +23,12 @@ import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored, setClonedWorkflow, initialState as initialChatState } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredential, ICredentialProperty } from "@/components/Automation/types";
-import type { IPromptInput } from "@/common/types/prompt";
+import type { ICredential, ICredentialInput, ICredentialProperty } from "@/components/Automation/types";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import RefreshCredentials from "@/components/RefreshCredentials";
 
 interface Props {
-  input: IPromptInput;
+  input: ICredentialInput;
 }
 
 interface FormValues {
@@ -51,7 +49,7 @@ function Credentials({ input }: Props) {
 
   const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
     useCredentials();
-  const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
+  const credential = credentialsInput.find(cred => cred.displayName === input.displayName);
   const credentialProperties = credential?.properties || [];
   const isOauthCredential = credential?.name.includes("OAuth2");
 
@@ -131,7 +129,7 @@ function Credentials({ input }: Props) {
   };
 
   const handleSubmit = async (values: FormValues = {}) => {
-    const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
+    const credential = credentialsInput.find(cred => cred.displayName === input.displayName);
 
     if (!credential) {
       dispatch(setToast({ message: "Credential was not found, please try again.", severity: "error" }));
@@ -218,7 +216,7 @@ function Credentials({ input }: Props) {
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           setOAuthConnected(true);
 
-          const remainingCredentials = credentialsInput.filter(cred => cred.displayName !== input.fullName);
+          const remainingCredentials = credentialsInput.filter(cred => cred.displayName !== input.displayName);
 
           if (!remainingCredentials.length) {
             dispatch(setAreCredentialsStored(true));
@@ -341,8 +339,9 @@ function Credentials({ input }: Props) {
           open
           maxWidth={"md"}
           fullWidth
+          disableScrollLock
         >
-          <DialogTitle>{input.fullName} Credentials</DialogTitle>
+          <DialogTitle>{input.displayName} Credentials</DialogTitle>
           <DialogContent>
             <Formik
               initialValues={initialValues}
