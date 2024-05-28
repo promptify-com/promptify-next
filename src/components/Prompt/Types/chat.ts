@@ -23,7 +23,8 @@ export type MessageType =
   | "workflowExecution"
   | "schedule_start"
   | "schedule_frequency"
-  | "schedule_time";
+  | "schedule_time"
+  | "schedule_providers";
 
 export interface IMessage {
   id: number;

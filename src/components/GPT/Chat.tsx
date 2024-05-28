@@ -9,6 +9,7 @@ import CredentialsContainer from "./CredentialsContainer";
 import Choices from "./Choices";
 import TimeSelect from "./TimeSelect";
 import MessageContainer from "./MessageContainer";
+import ResponseProvidersContainer from "./ResponseProvidersContainer";
 
 const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
 
@@ -85,6 +86,7 @@ export default function Chat({ workflow }: Props) {
               onSelect={setScheduleTime}
             />
           )}
+          {message.type === "schedule_providers" && <ResponseProvidersContainer message={message.text} />}
         </Box>
       ))}
     </Stack>

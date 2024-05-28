@@ -101,11 +101,12 @@ const useChat = ({ workflow }: Props) => {
       isHighlight: true,
     });
     const providersMessage = createMessage({
-      type: "text",
+      type: "schedule_providers",
       text: "Where should we send your scheduled GPT?",
-      noHeader: true,
     });
-    setMessages(prev => prev.concat([confirmMessage, providersMessage]));
+    setMessages(prev =>
+      prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
+    );
   };
 
   return {

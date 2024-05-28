@@ -18,6 +18,16 @@ function getNodeByName(nodes: INode[], name: string): INode {
   return node;
 }
 
+export function getNodeInfoByType(type: string) {
+  const node = (nodesData as NodesFileData)[type];
+
+  if (!node) {
+    throw new Error(`Node ${name} not found`);
+  }
+
+  return node;
+}
+
 function buildNextConnectedData({
   nodeName,
   connections,
