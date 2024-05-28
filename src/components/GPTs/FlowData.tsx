@@ -80,7 +80,7 @@ function FlowDataCard({ title, description, borderColor = "#6E45E9", iconUrl }: 
       sx={{
         display: "flex",
         alignItems: "center",
-        gap: "15px",
+        gap: "16px",
         padding: "10px 24px 10px 10px;",
         borderRadius: "100px",
         border: `1px solid ${borderColor}`,
@@ -89,22 +89,27 @@ function FlowDataCard({ title, description, borderColor = "#6E45E9", iconUrl }: 
         width: "288px",
         position: "relative",
         overflow: "visible",
+        boxShadow: "none",
       }}
     >
       <Box
         sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           borderRadius: "50%",
-          marginRight: "10px",
-          width: "24px",
-          height: "24px",
+          width: "28px",
+          height: "28px",
           flexShrink: 0,
+          overflow: "hidden",
+          // backgroundColor: "#6E45E9",
         }}
       >
         {iconUrl ? (
           <Image
             src={iconUrl}
-            width={28}
-            height={28}
+            width={14}
+            height={14}
             alt={title}
             style={{ objectFit: "contain" }}
           />
