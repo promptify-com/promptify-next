@@ -75,16 +75,10 @@ export interface UserWorkflowsResponse {
 
 export interface WorkflowExecution {
   id: string;
-  finished: boolean;
-  mode: string;
-  retryOf: string | null;
-  retrySuccessId: string | null;
   status: string;
   startedAt: string;
-  stoppedAt: string;
-  workflowId: string;
-  waitTill: string | null;
   error?: string;
+  data?: { resultData?: { error?: { message: string } } };
 }
 export interface UserWorkflowExecutionsResponse {
   data: WorkflowExecution[];
