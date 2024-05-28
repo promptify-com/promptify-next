@@ -26,6 +26,7 @@ interface IParameters {
 export interface INode {
   id: string;
   name: string;
+  iconUrl: string;
   type: string;
   position: [number, number];
   webhookId: string;
@@ -138,6 +139,7 @@ export interface ICredentialInput {
   name: string;
   displayName: string;
   properties: ICredentialProperty[];
+  iconUrl?: string;
 }
 
 export interface INodeCredentials {

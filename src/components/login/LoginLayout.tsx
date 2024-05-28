@@ -279,7 +279,15 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               textAlign: "center",
             }}
           >
-            © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
+            © {thisYear}{" "}
+            <a
+              href="https://promptify.com/"
+              target="_blank"
+              style={{ textDecoration: "none", color: "blue" }}
+            >
+              Promptify.com
+            </a>{" "}
+            - Promptify LLC. All rights reserved.
           </Typography>
         </Box>
       </Stack>
