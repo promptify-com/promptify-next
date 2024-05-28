@@ -28,6 +28,7 @@ export interface INode {
   name: string;
   iconUrl: string;
   type: string;
+  description: string;
   position: [number, number];
   webhookId: string;
   parameters: IParameters;
@@ -70,6 +71,24 @@ export interface IWorkflow {
 export interface UserWorkflowsResponse {
   data: IWorkflowCreateResponse[];
   cursor: string | null;
+}
+
+export interface WorkflowExecution {
+  id: string;
+  finished: boolean;
+  mode: string;
+  retryOf: string | null;
+  retrySuccessId: string | null;
+  status: string;
+  startedAt: string;
+  stoppedAt: string;
+  workflowId: string;
+  waitTill: string | null;
+  error?: string;
+}
+export interface UserWorkflowExecutionsResponse {
+  data: WorkflowExecution[];
+  nextCursor: null | string;
 }
 
 export interface IWorkflowCreateResponse {
