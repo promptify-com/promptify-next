@@ -45,7 +45,7 @@ export interface INode {
   responseMode?: string;
 }
 
-export type NodesFileData = Record<string, Pick<INode, "name" | "type">>;
+export type NodesFileData = Record<string, Pick<INode, "name" | "type" | "iconUrl">>;
 
 interface IConnections {
   [key: string]: [{ node: string; type: string; index: number }][];
