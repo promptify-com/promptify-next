@@ -28,6 +28,7 @@ export interface INode {
   name: string;
   iconUrl: string;
   type: string;
+  description: string;
   position: [number, number];
   webhookId: string;
   parameters: IParameters;
@@ -43,7 +44,6 @@ export interface INode {
   includeFields?: string;
   httpMethod?: string;
   responseMode?: string;
-  description?: string;
 }
 
 export type NodesFileData = Record<string, { iconUrl: string; name: string; type: string; description: string }>;
