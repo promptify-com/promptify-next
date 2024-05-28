@@ -48,6 +48,9 @@ export const oAuthTypeMapping: { [key: string]: string } = {
   "n8n-nodes-base.googleCalendar": "googleCalendarOAuth2Api",
   "n8n-nodes-base.gmail": "gmailOAuth2",
 };
+export const apiAuthTypeMapping: { [key: string]: string } = {
+  "n8n-nodes-base.slack": "slackApi",
+};
 
 export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {
   const credentialsInput: ICredentialInput[] = [];
@@ -73,25 +76,32 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     }
     const iconUrl = nodesData[node.type]?.iconUrl;
 
-    if (oAuthTypeMapping[node.type!]) {
-      const authType = oAuthTypeMapping[node.type!];
+    if (oAuthTypeMapping[node.type]) {
+      const authType = oAuthTypeMapping[node.type];
+
+      if (authType && creds[authType]) {
+        credentialsInput.push({
+          name: authType,
+          displayName: creds[authType].displayName,
+          properties: [],
+          iconUrl,
+        });
+      }
+      continue;
+    }
+    if (apiAuthTypeMapping[node.type]) {
+      const authType = apiAuthTypeMapping[node.type];
 
       if (authType && creds[authType]) {
         const properties = [
           {
-            displayName: "Client ID",
-            name: "clientId",
+            displayName: "Access Token",
+            name: "accessToken",
             type: "string",
             default: "",
-          },
-          {
-            displayName: "Client Secret",
-            name: "clientSecret",
-            type: "string",
             typeOptions: {
               password: true,
             },
-            default: "",
           },
         ];
         credentialsInput.push({

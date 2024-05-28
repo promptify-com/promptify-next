@@ -35,12 +35,5 @@ export const PROVIDERS = {
     type: "n8n-nodes-base.gmail",
     typeVersion: 2.1,
     position: [1020, 460] as [number, number],
-    credentials: {
-      // if there's already credentials
-      gmailOAuth2: {
-        id: "XXXXXXX",
-        name: "Gmail OAuth2 API Credentials",
-      },
-    },
   },
 };

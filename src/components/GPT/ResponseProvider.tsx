@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
@@ -6,13 +6,22 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import { PROVIDERS } from "./Constants";
 import { getNodeInfoByType } from "@/components/GPTs/helpers";
+import { extractCredentialsInput } from "@/components/Automation/helpers";
+import { ICredentialInput, INode } from "@/components/Automation/types";
+import useCredentialsActions from "./Hooks/useCredentialsActions";
+import CredentialsForm from "./CredentialsForm";
 
 interface Props {
   providerType: string;
 }
 
 function ResponseProvider({ providerType }: Props) {
-  const [connected, setConnected] = useState(false);
+  const [credentialInput, setCredentialInput] = useState<ICredentialInput | null>(null);
+  const [oauthModalOpened, setOauthModalOpened] = useState(false);
+
+  const { isOauthCredential, isConnected, handleOauthConnect, handleAuthFormSubmit } = useCredentialsActions({
+    credentialInput,
+  });
 
   const providerData = useMemo(() => {
     const node = getNodeInfoByType(providerType);
@@ -20,8 +29,26 @@ function ResponseProvider({ providerType }: Props) {
     return { ...provider, ...node };
   }, [providerType]);
 
-  const handleConnect = () => {
-    setConnected(true);
+  const prepareCredentials = async () => {
+    const credentialsInput = (await extractCredentialsInput([providerData as INode]))[0];
+    setCredentialInput(credentialsInput);
+  };
+
+  useEffect(() => {
+    prepareCredentials();
+  }, []);
+
+  const handleConnect = async () => {
+    if (isOauthCredential) {
+      await handleOauthConnect();
+    } else {
+      setOauthModalOpened(true);
+    }
+  };
+
+  const submitAuthCredentialsForm = async (values: Record<string, string>) => {
+    await handleAuthFormSubmit(values);
+    setOauthModalOpened(false);
   };
 
   return (
@@ -34,8 +61,8 @@ function ResponseProvider({ providerType }: Props) {
         p: "24px",
         borderRadius: "16px",
         border: "1px solid",
-        borderColor: connected ? "#4EB972" : "#E9E7EC",
-        bgcolor: connected ? "#F2FFF7" : "#FFFFFF",
+        borderColor: isConnected ? "#4EB972" : "#E9E7EC",
+        bgcolor: isConnected ? "#F2FFF7" : "#FFFFFF",
       }}
     >
       <Stack
@@ -74,7 +101,7 @@ function ResponseProvider({ providerType }: Props) {
           {providerData.name}
         </Typography>
       </Stack>
-      {connected ? (
+      {isConnected ? (
         <Button
           onClick={handleConnect}
           variant="contained"
@@ -90,6 +117,12 @@ function ResponseProvider({ providerType }: Props) {
         >
           Connect
         </Button>
+      )}
+      {credentialInput && oauthModalOpened && (
+        <CredentialsForm
+          credentialInput={credentialInput}
+          onSubmit={values => submitAuthCredentialsForm(values)}
+        />
       )}
     </Stack>
   );
