@@ -84,7 +84,7 @@ export default function ScheduledChatSteps({ workflow }: Props) {
               prepareWorkflow={provider => prepareWorkflow(provider)}
             />
           )}
-          {message.type === "schedule_ready" && (
+          {message.type === "schedule_activation" && (
             <ActivateWorkflowMessage
               message={message}
               onActivate={activateWorkflow}

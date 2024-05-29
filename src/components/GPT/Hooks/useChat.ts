@@ -63,41 +63,45 @@ const useChat = ({ workflow }: Props) => {
 
   const setScheduleFrequency = (frequency: string) => {
     schedulingData.current = { ...schedulingData.current, frequency };
-    const timeMessage = createMessage({
-      type: "schedule_time",
-      text: "At what time?",
-    });
-    setMessages(prev => prev.filter(msg => msg.type !== "schedule_time").concat(timeMessage));
+    if (!messages.find(msg => msg.type === "schedule_time")) {
+      const timeMessage = createMessage({
+        type: "schedule_time",
+        text: "At what time?",
+      });
+      setMessages(prev => prev.filter(msg => msg.type !== "schedule_time").concat(timeMessage));
+    }
   };
 
   const setScheduleTime = (time: string) => {
     schedulingData.current = { ...schedulingData.current, time };
-    const confirmMessage = createMessage({
-      type: "text",
-      text: `Awesome, We’ll run this GPT for you here ${schedulingData.current.frequency} at ${schedulingData.current.time}, do you want to receive them in your favorite platforms?`,
-      isHighlight: true,
-    });
-    const providersMessage = createMessage({
-      type: "schedule_providers",
-      text: "Where should we send your scheduled GPT?",
-    });
-    setMessages(prev =>
-      prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
-    );
+    if (!messages.find(msg => msg.type === "schedule_providers")) {
+      const confirmMessage = createMessage({
+        type: "text",
+        text: `Awesome, We’ll run this GPT for you here ${schedulingData.current.frequency} at ${schedulingData.current.time}, do you want to receive them in your favorite platforms?`,
+        isHighlight: true,
+      });
+      const providersMessage = createMessage({
+        type: "schedule_providers",
+        text: "Where should we send your scheduled GPT?",
+      });
+      setMessages(prev =>
+        prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
+      );
+    }
   };
 
   const prepareWorkflow = (providerType: ProviderType) => {
     const provider = PROVIDERS[providerType];
     const providersMessage = createMessage({
-      type: "schedule_ready",
+      type: "schedule_activation",
       text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
       isHighlight: true,
     });
-    setMessages(prev => prev.filter(msg => msg.type !== "schedule_ready").concat(providersMessage));
+    setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(providersMessage));
   };
 
   const activateWorkflow = () => {
-    console.log(selectedWorkflow);
+    console.log({ selectedWorkflow, schedulingData });
   };
 
   return {

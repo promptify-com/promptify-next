@@ -1,4 +1,4 @@
-import type { IConnections, INode, IProvideNode, IWorkflow, NodesFileData } from "@/components/Automation/types";
+import type { IConnections, INode, IProviderNode, IWorkflow, NodesFileData } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
@@ -9,6 +9,8 @@ interface IRelation {
   iconUrl: string;
   description: string;
 }
+
+export const cleanCredentialName = (name: string) => name.replace(/Api\s*|Oauth2\s*/gi, "").trim();
 
 function getNodeByName(nodes: INode[], name: string): INode {
   const node = nodes.find(node => node.name === name);
@@ -85,7 +87,7 @@ export function getWorkflowDataFlow(workflow: IWorkflow) {
   );
 }
 
-export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node }: IProvideNode) {
+export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node }: IProviderNode) {
   const clonedWorkflow = structuredClone(workflow);
 
   const nodes = clonedWorkflow.data.nodes;
@@ -180,29 +182,29 @@ export function getProviderParams(providerType: ProviderType) {
   }
 }
 
-export function replaceProviderParamValue(providerType: ProviderType, values: Record<string, string>) {
-  let params = {};
-  if (providerType === "n8n-nodes-base.slack") {
-    params = {
-      select: "channel",
-      channelId: {
-        __rl: true,
-        value: values.channelId,
-        mode: "name",
-      },
-      text: values.content,
-      otherOptions: {},
-    };
+export function replaceProviderParamValue(providerType: ProviderType, values: Record<string, string>): {} {
+  switch (providerType) {
+    case "n8n-nodes-base.slack":
+      return {
+        select: "channel",
+        channelId: {
+          __rl: true,
+          value: values.channelId.startsWith("@") ? values.channelId : `@${values.channelId}`,
+          mode: "name",
+        },
+        text: values.content,
+        otherOptions: {},
+      };
+    case "n8n-nodes-base.gmail":
+      return {
+        sendTo: values.sendTo,
+        subject: values.subject,
+        message: values.content,
+        options: {},
+      };
+    default:
+      return {};
   }
-  if (providerType === "n8n-nodes-base.gmail") {
-    params = {
-      sendTo: values.sendTo,
-      subject: values.subject,
-      message: values.content,
-      options: {},
-    };
-  }
-  return params;
 }
 
 const statusPriority = ["failed", "success", "scheduled"];

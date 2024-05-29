@@ -8,6 +8,7 @@ import Image from "@/components/design-system/Image";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Check from "@mui/icons-material/Check";
+import { cleanCredentialName } from "../GPTs/helpers";
 
 interface Props {
   message: string;
@@ -89,7 +90,7 @@ function CredentialsContainer({ message, workflow }: Props) {
                 fontWeight={500}
                 color={"onSurface"}
               >
-                {input.displayName}
+                {cleanCredentialName(input.displayName)}
               </Typography>
             </Stack>
             {areCredentialsStored ? (

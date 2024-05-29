@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import { BtnStyle, PROVIDERS } from "./Constants";
 import {
+  cleanCredentialName,
   getNodeInfoByType,
   getProviderParams,
   injectProviderNode,
@@ -49,7 +50,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
     setCredentialInput(credentialsInput);
   };
 
-  const displayName = credentialInput?.displayName.replace(/Api\s*|Oauth2\s*/gi, "").trim();
+  const displayName = cleanCredentialName(credentialInput?.displayName ?? "");
   const providerNodeName = `Send ${displayName} Message`;
 
   const providerData = useMemo(() => {
@@ -117,6 +118,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
       alignItems={"center"}
       gap={2}
       sx={{
+        height: "calc(100% - 48px)",
         p: "24px",
         borderRadius: "16px",
         border: "1px solid",
@@ -152,13 +154,29 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
             style={{ objectFit: "contain", width: "100%", height: "100%" }}
           />
         </CardMedia>
-        <Typography
-          fontSize={16}
-          fontWeight={500}
-          color={"onSurface"}
+        <Stack
+          alignItems={"flex-start"}
+          gap={1}
         >
-          {providerData.name}
-        </Typography>
+          {isConnected && !isInjected && (
+            <Typography
+              fontSize={10}
+              fontWeight={600}
+              color={"#6E45E9"}
+              textTransform={"uppercase"}
+              letterSpacing={".5px"}
+            >
+              Previously Connected
+            </Typography>
+          )}
+          <Typography
+            fontSize={16}
+            fontWeight={500}
+            color={"onSurface"}
+          >
+            {providerData.name}
+          </Typography>
+        </Stack>
       </Stack>
       {isInjected ? (
         <Check

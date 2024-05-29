@@ -24,7 +24,7 @@ export type MessageType =
   | "schedule_frequency"
   | "schedule_time"
   | "schedule_providers"
-  | "schedule_ready";
+  | "schedule_activation";
 
 export interface IMessage {
   id: number;

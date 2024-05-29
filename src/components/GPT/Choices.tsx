@@ -41,7 +41,6 @@ export default function Choices({ message, items, onSelect }: Props) {
               key={item}
               onClick={() => handleSelectItem(item)}
               {...(selected && { endIcon: <Check /> })}
-              disabled={!!selectedItem}
               sx={{
                 bgcolor: selected ? "#6E45E9" : "#F7F5FC",
                 color: selected ? "common.white" : "common.black",
@@ -52,10 +51,10 @@ export default function Choices({ message, items, onSelect }: Props) {
                 ":hover": {
                   border: "1px solid rgba(0, 0, 0, 0.2)",
                 },
-                ...(!!selectedItem && {
-                  ":hover, :disabled": {
-                    bgcolor: selected ? "#6E45E9" : "#F7F5FC",
-                    color: selected ? "#ffffff" : "#00000073",
+                ...(!!selected && {
+                  ":hover": {
+                    bgcolor: "#6E45E9",
+                    color: "#ffffff",
                   },
                 }),
               }}

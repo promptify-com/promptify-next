@@ -49,7 +49,7 @@ export interface INode {
   responseMode?: string;
 }
 
-export interface IProvideNode {
+export interface IProviderNode {
   nodeParametersCB: (content: string) => Record<string, string | number | INodeCredentials>;
   node: INode;
 }

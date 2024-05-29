@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import { Formik, Form, Field } from "formik";
-import { object, string } from "yup";
+import { StringSchema, object, string } from "yup";
 
 interface FormValues {
   [key: string]: string;
@@ -47,7 +47,7 @@ function FormModal({ title, inputs, onSubmit, onClose }: Props) {
   }, {});
 
   const validationSchema = object().shape(
-    inputs.reduce<Record<string, any>>((acc, input) => {
+    inputs.reduce<Record<string, StringSchema>>((acc, input) => {
       if (requiredFields.includes(input.name)) {
         acc[input.name] = string().required(`${input.displayName} is required`);
       } else {

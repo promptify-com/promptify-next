@@ -61,8 +61,6 @@ const useCredentialsActions = ({ credentialInput }: Props) => {
         return response.id;
       }
 
-      //  _updateWorkflow();
-
       dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
     } catch (error) {
       console.error("Error:", error);
@@ -112,7 +110,6 @@ const useCredentialsActions = ({ credentialInput }: Props) => {
 
         if (event.data.status === "success") {
           clearPopupCheck();
-          //   _updateWorkflow();
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
         } else {
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
