@@ -233,7 +233,7 @@ function ProfilePrompts() {
                   component={"span"}
                   color={"primary.main"}
                 >
-                  www.promptify.com/users/{currentUser?.username}
+                  {typeof window !== "undefined" ? window.location.origin : ""}/users/{currentUser?.username}
                 </Box>
               </Typography>
             </Stack>
