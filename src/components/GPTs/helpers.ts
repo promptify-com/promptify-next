@@ -167,7 +167,7 @@ export function getProviderParams(providerType: ProviderType) {
         {
           name: "sendTo",
           displayName: "Send to:",
-          type: "text",
+          type: "email",
           required: true,
         },
         {
@@ -181,26 +181,28 @@ export function getProviderParams(providerType: ProviderType) {
 }
 
 export function replaceProviderParamValue(providerType: ProviderType, values: Record<string, string>) {
-  switch (providerType) {
-    case "n8n-nodes-base.slack":
-      return {
-        select: "channel",
-        channelId: {
-          __rl: true,
-          value: values.channelId,
-          mode: "name",
-        },
-        text: values.content,
-        otherOptions: {},
-      };
-    case "n8n-nodes-base.gmail":
-      return {
-        sendTo: values.sendTo,
-        subject: values.subject,
-        message: values.content,
-        options: {},
-      };
+  let params = {};
+  if (providerType === "n8n-nodes-base.slack") {
+    params = {
+      select: "channel",
+      channelId: {
+        __rl: true,
+        value: values.channelId,
+        mode: "name",
+      },
+      text: values.content,
+      otherOptions: {},
+    };
   }
+  if (providerType === "n8n-nodes-base.gmail") {
+    params = {
+      sendTo: values.sendTo,
+      subject: values.subject,
+      message: values.content,
+      options: {},
+    };
+  }
+  return params;
 }
 
 const statusPriority = ["failed", "success", "scheduled"];
