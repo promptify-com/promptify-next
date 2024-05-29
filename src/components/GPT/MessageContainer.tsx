@@ -45,7 +45,12 @@ export default function MessageContainer({ message, children }: Props) {
             <LogoApp width={20} />
           ))}
       </CardMedia>
-      <Stack gap={2}>{children}</Stack>
+      <Stack
+        flex={1}
+        gap={2}
+      >
+        {children}
+      </Stack>
     </Stack>
   );
 }

@@ -30,3 +30,15 @@ export const PROVIDERS = {
     position: [1020, 460] as [number, number],
   },
 };
+
+export const BtnStyle = {
+  bgcolor: "#6E45E9",
+  color: "common.white",
+  fontSize: 13,
+  fontWeight: 500,
+  p: "6px 24px",
+  ":hover": {
+    bgcolor: "#5632c2",
+    color: "common.white",
+  },
+};

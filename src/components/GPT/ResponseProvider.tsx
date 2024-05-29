@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
-import { PROVIDERS } from "./Constants";
+import { BtnStyle, PROVIDERS } from "./Constants";
 import {
   getNodeInfoByType,
   getProviderParams,
@@ -175,7 +175,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
         <Button
           onClick={() => setParamsModalOpened(true)}
           variant="contained"
-          sx={btnStyle}
+          sx={BtnStyle}
         >
           Add
         </Button>
@@ -183,7 +183,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
         <Button
           onClick={handleConnect}
           variant="contained"
-          sx={btnStyle}
+          sx={BtnStyle}
         >
           Connect
         </Button>
@@ -213,15 +213,3 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
 }
 
 export default ResponseProvider;
-
-const btnStyle = {
-  bgcolor: "#6E45E9",
-  color: "common.white",
-  fontSize: 13,
-  fontWeight: 500,
-  p: "6px 24px",
-  ":hover": {
-    bgcolor: "#5632c2",
-    color: "common.white",
-  },
-};

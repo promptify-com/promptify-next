@@ -13,6 +13,7 @@ import ResponseProvidersContainer from "./ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedWorkflow } from "@/core/store/chatSlice";
+import ActivateWorkflowMessage from "./ActivateWorkflowMessage";
 
 const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
 
@@ -23,25 +24,10 @@ interface Props {
 export default function Chat({ workflow }: Props) {
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
-  const {
-    messages,
-    initialMessages,
-    startSchedule,
-    cancelSchedule,
-    setScheduleFrequency,
-    setScheduleTime,
-    prepareWorkflow,
-  } = useChat({
-    workflow,
-  });
-
-  const handleStartSchedule = (status: boolean) => {
-    if (status) {
-      startSchedule();
-    } else {
-      cancelSchedule();
-    }
-  };
+  const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
+    useChat({
+      workflow,
+    });
 
   useEffect(() => {
     initialMessages();
@@ -79,15 +65,6 @@ export default function Chat({ workflow }: Props) {
               workflow={workflow}
             />
           )}
-          {message.type === "schedule_start" && (
-            <MessageContainer message={message}>
-              <Choices
-                message={message.text}
-                items={["Yes", "No"]}
-                onSelect={item => handleStartSchedule(item === "Yes")}
-              />
-            </MessageContainer>
-          )}
           {message.type === "schedule_frequency" && (
             <Choices
               message={message.text}
@@ -106,6 +83,12 @@ export default function Chat({ workflow }: Props) {
               message={message.text}
               workflow={workflow}
               prepareWorkflow={provider => prepareWorkflow(provider)}
+            />
+          )}
+          {message.type === "schedule_ready" && (
+            <ActivateWorkflowMessage
+              message={message}
+              onActivate={activateWorkflow}
             />
           )}
         </Box>

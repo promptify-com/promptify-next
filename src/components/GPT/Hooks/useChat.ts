@@ -24,9 +24,7 @@ const useChat = ({ workflow }: Props) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const schedulingData = useRef<IScheduleData | null>(null);
 
-  const areCredentialsStored = useAppSelector(
-    state => state.chat?.areCredentialsStored ?? initialChatState.areCredentialsStored,
-  );
+  const { areCredentialsStored, selectedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
@@ -56,35 +54,12 @@ const useChat = ({ workflow }: Props) => {
   useEffect(() => {
     if (!areCredentialsStored) return;
 
-    const startScheduleMessage = createMessage({
-      type: "text",
-      text: "Do you want to schedule this GPT?",
-    });
-    const choicesMessage = createMessage({
-      type: "schedule_start",
-      text: "",
-      fromUser: true,
-    });
-    setMessages(prev =>
-      prev.filter(msg => msg.type !== "schedule_frequency").concat(startScheduleMessage, choicesMessage),
-    );
-  }, [areCredentialsStored]);
-
-  const startSchedule = () => {
     const frequencyMessage = createMessage({
       type: "schedule_frequency",
       text: "How often do you want to repeat this GPT?",
     });
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
-  };
-
-  const cancelSchedule = () => {
-    const cancelMessage = createMessage({
-      type: "text",
-      text: "Got it, scheduling canceled.",
-    });
-    setMessages(prev => prev.concat(cancelMessage));
-  };
+  }, [areCredentialsStored]);
 
   const setScheduleFrequency = (frequency: string) => {
     schedulingData.current = { ...schedulingData.current, frequency };
@@ -113,28 +88,25 @@ const useChat = ({ workflow }: Props) => {
 
   const prepareWorkflow = (providerType: ProviderType) => {
     const provider = PROVIDERS[providerType];
-    const confirmMessage = createMessage({
-      type: "text",
+    const providersMessage = createMessage({
+      type: "schedule_ready",
       text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
       isHighlight: true,
     });
-    const providersMessage = createMessage({
-      type: "text",
-      text: "Ready to turn on this GPT?",
-    });
-    setMessages(prev =>
-      prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
-    );
+    setMessages(prev => prev.filter(msg => msg.type !== "schedule_ready").concat(providersMessage));
+  };
+
+  const activateWorkflow = () => {
+    console.log(selectedWorkflow);
   };
 
   return {
     messages,
     initialMessages,
-    startSchedule,
-    cancelSchedule,
     setScheduleFrequency,
     setScheduleTime,
     prepareWorkflow,
+    activateWorkflow,
   };
 };
 

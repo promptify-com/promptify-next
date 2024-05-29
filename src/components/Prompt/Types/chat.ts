@@ -21,10 +21,10 @@ export type MessageType =
   | "questionParam"
   | "readyMessage"
   | "workflowExecution"
-  | "schedule_start"
   | "schedule_frequency"
   | "schedule_time"
-  | "schedule_providers";
+  | "schedule_providers"
+  | "schedule_ready";
 
 export interface IMessage {
   id: number;
