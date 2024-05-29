@@ -4,6 +4,7 @@ import type {
   ICredential,
   IWorkflow,
   IWorkflowCreateResponse,
+  UserWorkflowExecutionsResponse,
   UserWorkflowsResponse,
 } from "@/components/Automation/types";
 
@@ -46,7 +47,31 @@ export const workflowsApi = baseApi.injectEndpoints({
           keepUnusedDataFor: 21600,
         }),
       }),
+      getWorkflowExecutions: builder.query<UserWorkflowExecutionsResponse, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/executions?includeData=true`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+        transformResponse(executions: UserWorkflowExecutionsResponse) {
+          if (!executions?.data?.length) {
+            return {
+              data: [],
+              nextCursor: null,
+            };
+          }
 
+          return {
+            data: executions.data.map(execution => ({
+              id: execution.id,
+              status: execution.status,
+              startedAt: execution.startedAt,
+              error: execution.data?.resultData?.error?.message ?? "",
+            })),
+            nextCursor: executions.nextCursor,
+          };
+        },
+      }),
       getCredentials: builder.query<ICredential[], void>({
         query: () => ({
           url: `/api/n8n/workflows/credentials/`,
@@ -94,4 +119,5 @@ export const {
   useGetAuthUrlQuery,
   useGetWorkflowQuery,
   useGetWorkflowByslugQuery,
+  useGetWorkflowExecutionsQuery,
 } = workflowsApi;

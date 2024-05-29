@@ -32,6 +32,7 @@ export interface INode {
   name: string;
   iconUrl?: string;
   type: string;
+  description: string;
   position: [number, number];
   parameters: IParameters;
   typeVersion: number;
@@ -78,6 +79,18 @@ export interface IWorkflow {
 export interface UserWorkflowsResponse {
   data: IWorkflowCreateResponse[];
   cursor: string | null;
+}
+
+export interface WorkflowExecution {
+  id: string;
+  status: string;
+  startedAt: string;
+  error?: string;
+  data?: { resultData?: { error?: { message: string } } };
+}
+export interface UserWorkflowExecutionsResponse {
+  data: WorkflowExecution[];
+  nextCursor: null | string;
 }
 
 export interface IWorkflowCreateResponse {

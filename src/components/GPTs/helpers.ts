@@ -1,4 +1,5 @@
 import type { IConnections, INode, IProvideNode, IWorkflow, NodesFileData } from "@/components/Automation/types";
+import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
 
@@ -50,7 +51,7 @@ function buildNextConnectedData({
       nextNode: connections[nodeName].main[0][0].node,
       type: nodeType,
       iconUrl: nodeInfo.iconUrl ? `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${nodeInfo.iconUrl}` : "",
-      description: nodeInfo.description,
+      description: nodeInfo.description ?? "",
     });
 
     buildNextConnectedData({
@@ -151,60 +152,64 @@ export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node
 }
 
 export function getProviderParams(providerType: ProviderType) {
-  let params;
-  if (providerType === "n8n-nodes-base.gmail") {
-    params = [
-      {
-        name: "sendTo",
-        displayName: "Send to:",
-        type: "text",
-        required: true,
-      },
-      {
-        name: "subject",
-        displayName: "Subject:",
-        type: "text",
-        required: true,
-      },
-    ];
+  switch (providerType) {
+    case "n8n-nodes-base.slack":
+      return [
+        {
+          name: "channelId",
+          displayName: "Channel name:",
+          type: "text",
+          required: true,
+        },
+      ];
+    case "n8n-nodes-base.gmail":
+      return [
+        {
+          name: "sendTo",
+          displayName: "Send to:",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "subject",
+          displayName: "Subject:",
+          type: "text",
+          required: true,
+        },
+      ];
   }
-  if (providerType === "n8n-nodes-base.slack") {
-    params = [
-      {
-        name: "channelId",
-        displayName: "Channel name:",
-        type: "text",
-        required: true,
-      },
-    ];
-  }
-
-  return params ?? [];
 }
 
 export function replaceProviderParamValue(providerType: ProviderType, values: Record<string, string>) {
-  let params = {};
-  if (providerType === "n8n-nodes-base.slack") {
-    params = {
-      select: "channel",
-      channelId: {
-        __rl: true,
-        value: values.channelId,
-        mode: "name",
-      },
-      text: values.content,
-      otherOptions: {},
-    };
+  switch (providerType) {
+    case "n8n-nodes-base.slack":
+      return {
+        select: "channel",
+        channelId: {
+          __rl: true,
+          value: values.channelId,
+          mode: "name",
+        },
+        text: values.content,
+        otherOptions: {},
+      };
+    case "n8n-nodes-base.gmail":
+      return {
+        sendTo: values.sendTo,
+        subject: values.subject,
+        message: values.content,
+        options: {},
+      };
   }
-  if (providerType === "n8n-nodes-base.gmail") {
-    params = {
-      sendTo: values.sendTo,
-      subject: values.subject,
-      message: values.content,
-      options: {},
-    };
-  }
-  console.log(values);
+}
 
-  return params;
+const statusPriority = ["failed", "success", "scheduled"];
+
+export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
+  for (const status of statusPriority) {
+    if (executions?.some(execution => execution.status === status)) {
+      return status;
+    }
+  }
+  return null;
 }

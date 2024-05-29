@@ -8,7 +8,6 @@ import Message from "./Message";
 import CredentialsContainer from "./CredentialsContainer";
 import Choices from "./Choices";
 import TimeSelect from "./TimeSelect";
-import MessageContainer from "./MessageContainer";
 import ResponseProvidersContainer from "./ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -21,7 +20,7 @@ interface Props {
   workflow: IWorkflow;
 }
 
-export default function Chat({ workflow }: Props) {
+export default function ScheduledChatSteps({ workflow }: Props) {
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =

@@ -22,7 +22,7 @@ export const n8nClient = axios.create({
 
 authClient.interceptors.request.use(
   config => {
-    const token = getToken();
+    const token = getToken() ?? process.env.PROMPTIFY_TOKEN;
 
     if (token) {
       config.headers["Authorization"] = `Token ${token}`;
