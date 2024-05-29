@@ -47,7 +47,7 @@ export default function Choices({ message, items, onSelect }: Props) {
                 color: selected ? "common.white" : "common.black",
                 fontSize: 13,
                 fontWeight: 500,
-                p: "10px 24px",
+                p: "6px 24px",
                 border: "1px solid rgba(0, 0, 0, 0.08)",
                 ":hover": {
                   border: "1px solid rgba(0, 0, 0, 0.2)",

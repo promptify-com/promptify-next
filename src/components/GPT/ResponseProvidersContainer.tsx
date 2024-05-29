@@ -4,13 +4,15 @@ import Stack from "@mui/material/Stack";
 import { PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
 import type { IWorkflow } from "@/components/Automation/types";
+import type { ProviderType } from "./Types";
 
 interface Props {
   message: string;
   workflow: IWorkflow;
+  prepareWorkflow(provider: ProviderType): void;
 }
 
-function ResponseProvidersContainer({ message, workflow }: Props) {
+function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Props) {
   return (
     <Stack gap={4}>
       {message && (
@@ -26,18 +28,22 @@ function ResponseProvidersContainer({ message, workflow }: Props) {
         container
         spacing={2}
       >
-        {Object.keys(PROVIDERS).map(provider => (
-          <Grid
-            item
-            xs={6}
-            key={provider}
-          >
-            <ResponseProvider
-              providerType={provider}
-              workflow={workflow}
-            />
-          </Grid>
-        ))}
+        {Object.keys(PROVIDERS).map(provider => {
+          const providerType = provider as ProviderType;
+          return (
+            <Grid
+              item
+              xs={6}
+              key={provider}
+            >
+              <ResponseProvider
+                providerType={providerType}
+                workflow={workflow}
+                onInject={() => prepareWorkflow(providerType)}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
     </Stack>
   );

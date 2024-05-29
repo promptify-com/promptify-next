@@ -30,7 +30,7 @@ interface IParameters {
 export interface INode {
   id: string;
   name: string;
-  iconUrl: string;
+  iconUrl?: string;
   type: string;
   position: [number, number];
   parameters: IParameters;

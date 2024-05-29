@@ -97,7 +97,7 @@ function CredentialsContainer({ message, workflow }: Props) {
                 sx={{
                   width: 18,
                   height: 18,
-                  p: "6px",
+                  p: "7px",
                   borderRadius: "50%",
                   bgcolor: "#4EB972",
                   color: "#FFF",

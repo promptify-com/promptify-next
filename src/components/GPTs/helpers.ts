@@ -1,6 +1,6 @@
 import type { IConnections, INode, IProvideNode, IWorkflow, NodesFileData } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
-import { PROVIDERS } from "@/components/GPT/Constants";
+import type { ProviderType } from "@/components/GPT/Types";
 
 interface IRelation {
   nextNode: string;
@@ -150,7 +150,7 @@ export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node
   return clonedWorkflow;
 }
 
-export function getProviderParams(providerType: keyof typeof PROVIDERS) {
+export function getProviderParams(providerType: ProviderType) {
   let params;
   if (providerType === "n8n-nodes-base.gmail") {
     params = [
@@ -182,7 +182,7 @@ export function getProviderParams(providerType: keyof typeof PROVIDERS) {
   return params ?? [];
 }
 
-export function replaceProviderParamValue(providerType: keyof typeof PROVIDERS, values: Record<string, string>) {
+export function replaceProviderParamValue(providerType: ProviderType, values: Record<string, string>) {
   let params = {};
   if (providerType === "n8n-nodes-base.slack") {
     params = {

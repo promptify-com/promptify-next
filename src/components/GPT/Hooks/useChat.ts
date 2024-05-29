@@ -6,6 +6,8 @@ import { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { ProviderType } from "@/components/GPT/Types";
+import { PROVIDERS } from "@/components/GPT/Constants";
 
 interface IScheduleData {
   frequency?: string;
@@ -109,6 +111,22 @@ const useChat = ({ workflow }: Props) => {
     );
   };
 
+  const prepareWorkflow = (providerType: ProviderType) => {
+    const provider = PROVIDERS[providerType];
+    const confirmMessage = createMessage({
+      type: "text",
+      text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
+      isHighlight: true,
+    });
+    const providersMessage = createMessage({
+      type: "text",
+      text: "Ready to turn on this GPT?",
+    });
+    setMessages(prev =>
+      prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
+    );
+  };
+
   return {
     messages,
     initialMessages,
@@ -116,6 +134,7 @@ const useChat = ({ workflow }: Props) => {
     cancelSchedule,
     setScheduleFrequency,
     setScheduleTime,
+    prepareWorkflow,
   };
 };
 

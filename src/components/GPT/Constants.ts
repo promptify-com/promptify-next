@@ -11,7 +11,7 @@ export const PROVIDERS = {
       otherOptions: {},
     },
     id: "8bdc522a-39d3-4eed-8d75-282e49ec7498",
-    name: "Slack1",
+    name: "Slack",
     type: "n8n-nodes-base.slack",
     typeVersion: 2.1,
     position: [1020, 160] as [number, number],

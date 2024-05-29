@@ -15,17 +15,25 @@ import { extractCredentialsInput } from "@/components/Automation/helpers";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 import useCredentialsActions from "./Hooks/useCredentialsActions";
 import FormModal from "@/components/common/forms/FormModal";
+import Check from "@mui/icons-material/Check";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setSelectedWorkflow } from "@/core/store/chatSlice";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
+import type { ProviderType } from "./Types";
 
 interface Props {
-  providerType: string;
+  providerType: ProviderType;
   workflow: IWorkflow;
+  onInject(): void;
 }
 
-function ResponseProvider({ providerType, workflow }: Props) {
+function ResponseProvider({ providerType, workflow, onInject }: Props) {
+  const dispatch = useAppDispatch();
   const [credentialInput, setCredentialInput] = useState<ICredentialInput | null>(null);
   const [oauthModalOpened, setOauthModalOpened] = useState(false);
   const [paramsModalOpened, setParamsModalOpened] = useState(false);
-  const type = providerType as keyof typeof PROVIDERS;
+
+  const { selectedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { credential, isOauthCredential, isConnected, handleOauthConnect, handleAuthFormSubmit } =
     useCredentialsActions({
@@ -42,10 +50,11 @@ function ResponseProvider({ providerType, workflow }: Props) {
   };
 
   const displayName = credentialInput?.displayName.replace(/Api\s*|Oauth2\s*/gi, "").trim();
+  const providerNodeName = `Send ${displayName} Message`;
 
   const providerData = useMemo(() => {
-    const node = getNodeInfoByType(type);
-    const provider = PROVIDERS[type];
+    const node = getNodeInfoByType(providerType);
+    const provider = PROVIDERS[providerType];
     return { ...provider, ...node };
   }, [providerType]);
 
@@ -67,14 +76,16 @@ function ResponseProvider({ providerType, workflow }: Props) {
       throw new Error(`Credential ${credentialInput?.displayName} not connected`);
     }
 
+    setParamsModalOpened(false);
+
     const prepareParameters = (content: string) => {
       values.content = content;
-      return replaceProviderParamValue(type, values);
+      return replaceProviderParamValue(providerType, values);
     };
 
     const nodeData: INode = {
       ...providerData,
-      name: `Send ${displayName} Message`,
+      name: providerNodeName,
       credentials: {
         [credential.type]: {
           id: credential.id,
@@ -87,13 +98,17 @@ function ResponseProvider({ providerType, workflow }: Props) {
       nodeParametersCB: prepareParameters,
       node: nodeData,
     });
-    console.log(workflow);
-    console.log(generatedWorkflow);
+
+    dispatch(setSelectedWorkflow(generatedWorkflow));
+    onInject();
   };
 
   if (!credentialInput) return;
 
-  const parametersInputs = getProviderParams(type);
+  const parametersInputs = getProviderParams(providerType);
+  const isInjected = !!selectedWorkflow?.data.nodes.find(
+    node => node.name === providerNodeName && node.credentials?.[credentialInput.name],
+  );
 
   return (
     <Stack
@@ -105,8 +120,8 @@ function ResponseProvider({ providerType, workflow }: Props) {
         p: "24px",
         borderRadius: "16px",
         border: "1px solid",
-        borderColor: isConnected ? "#4EB972" : "#E9E7EC",
-        bgcolor: isConnected ? "#F2FFF7" : "#FFFFFF",
+        borderColor: isInjected ? "#4EB972" : isConnected ? "#6E45E9" : "#E9E7EC",
+        bgcolor: isInjected ? "#F2FFF7" : isConnected ? "#F7F5FC" : "#FFFFFF",
       }}
     >
       <Stack
@@ -145,7 +160,18 @@ function ResponseProvider({ providerType, workflow }: Props) {
           {providerData.name}
         </Typography>
       </Stack>
-      {isConnected ? (
+      {isInjected ? (
+        <Check
+          sx={{
+            width: 18,
+            height: 18,
+            p: "7px",
+            borderRadius: "50%",
+            bgcolor: "#4EB972",
+            color: "#FFF",
+          }}
+        />
+      ) : isConnected ? (
         <Button
           onClick={() => setParamsModalOpened(true)}
           variant="contained"
@@ -193,7 +219,7 @@ const btnStyle = {
   color: "common.white",
   fontSize: 13,
   fontWeight: 500,
-  p: "10px 24px",
+  p: "6px 24px",
   ":hover": {
     bgcolor: "#5632c2",
     color: "common.white",

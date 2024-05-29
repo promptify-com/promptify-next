@@ -63,6 +63,9 @@ export default function TimeSelect({ message, onSelect }: Props) {
             setSelectedTime(e.target.value);
           }}
           IconComponent={ExpandMore}
+          MenuProps={{
+            disableScrollLock: true,
+          }}
           sx={{
             borderRadius: "99px",
             bgcolor: "#F7F5FC",
@@ -70,7 +73,7 @@ export default function TimeSelect({ message, onSelect }: Props) {
             fontSize: 13,
             fontWeight: 500,
             ".MuiSelect-select": {
-              p: "10px 24px",
+              p: "9px 24px",
             },
             svg: {
               width: 20,
@@ -100,7 +103,7 @@ export default function TimeSelect({ message, onSelect }: Props) {
           sx={{
             bgcolor: "#6E45E9",
             color: "common.white",
-            p: "10px 24px",
+            p: "7px 24px",
             fontSize: 13,
             fontWeight: 500,
             lineHeight: "unset",

@@ -11,6 +11,8 @@ import TimeSelect from "./TimeSelect";
 import MessageContainer from "./MessageContainer";
 import ResponseProvidersContainer from "./ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setSelectedWorkflow } from "@/core/store/chatSlice";
 
 const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
 
@@ -19,8 +21,17 @@ interface Props {
 }
 
 export default function Chat({ workflow }: Props) {
+  const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
-  const { messages, initialMessages, startSchedule, cancelSchedule, setScheduleFrequency, setScheduleTime } = useChat({
+  const {
+    messages,
+    initialMessages,
+    startSchedule,
+    cancelSchedule,
+    setScheduleFrequency,
+    setScheduleTime,
+    prepareWorkflow,
+  } = useChat({
     workflow,
   });
 
@@ -35,6 +46,7 @@ export default function Chat({ workflow }: Props) {
   useEffect(() => {
     initialMessages();
     initializeCredentials();
+    dispatch(setSelectedWorkflow(undefined));
   }, [workflow]);
 
   return (
@@ -93,6 +105,7 @@ export default function Chat({ workflow }: Props) {
             <ResponseProvidersContainer
               message={message.text}
               workflow={workflow}
+              prepareWorkflow={provider => prepareWorkflow(provider)}
             />
           )}
         </Box>
