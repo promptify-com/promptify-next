@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import { SEO_DESCRIPTION } from "@/common/constants";
@@ -34,17 +34,10 @@ function ProfilePrompts() {
   const logout = useLogout();
 
   const [open, setOpen] = useState(false);
-  const [baseUrl, setBaseUrl] = useState("");
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
   const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
   const [updateUserPreferences, { isLoading: isLoadingPreferences }] = useUpdateUserPreferencesMutation();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setBaseUrl(window.location.origin);
-    }
-  }, []);
 
   const handleDeleteAccount = async () => {
     setOpen(false);
@@ -240,7 +233,7 @@ function ProfilePrompts() {
                   component={"span"}
                   color={"primary.main"}
                 >
-                  {baseUrl}/users/{currentUser?.username}
+                  {typeof window !== "undefined" ? window.location.origin : ""}/users/{currentUser?.username}
                 </Box>
               </Typography>
             </Stack>
