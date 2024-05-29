@@ -1,18 +1,11 @@
 export const PROVIDERS = {
   "n8n-nodes-base.slack": {
     parameters: {
-      select: "channel/user",
+      select: "channel",
       channelId: {
-        // if select was channel
         __rl: true,
-        value: "#selectedchannelname",
+        value: "",
         mode: "name",
-      },
-      user: {
-        // if select was user -> TO BE IGNORED
-        __rl: true,
-        value: "@selectedusername",
-        mode: "username",
       },
       text: "={{ $json.content }}",
       otherOptions: {},
@@ -25,8 +18,8 @@ export const PROVIDERS = {
   },
   "n8n-nodes-base.gmail": {
     parameters: {
-      sendTo: "selected@email.com",
-      subject: "entered subject",
+      sendTo: "",
+      subject: "",
       message: "={{ $json.content }}",
       options: {},
     },

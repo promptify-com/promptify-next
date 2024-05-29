@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
 import Button from "@mui/material/Button";
-import type { ICredentialInput, ICredentialProperty } from "@/components/Automation/types";
-import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, TextField } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 
@@ -9,38 +13,45 @@ interface FormValues {
   [key: string]: string;
 }
 
-interface Props {
-  credentialInput: ICredentialInput;
-  onSubmit(data: Record<string, string>): void;
+interface IInput {
+  name: string;
+  displayName: string;
+  type: string;
+  required: boolean;
 }
 
-function CredentialsForm({ credentialInput, onSubmit }: Props) {
+interface Props {
+  title: string;
+  inputs: IInput[];
+  onSubmit(data: Record<string, string>): void;
+  onClose(): void;
+}
+
+function FormModal({ title, inputs, onSubmit, onClose }: Props) {
   const [open, setOpen] = useState(true);
 
-  const credentialProperties = credentialInput.properties || [];
-
-  function getRequiredFields(credentialProperties: ICredentialProperty[]) {
-    let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
+  function getRequiredFields() {
+    let requiredFields = inputs.filter(input => input.required).map(input => input.name);
 
     if (requiredFields.length === 0) {
-      requiredFields = credentialProperties.map(prop => prop.name);
+      requiredFields = inputs.map(input => input.name);
     }
     return requiredFields;
   }
 
-  const requiredFields = useMemo(() => getRequiredFields(credentialProperties), [credentialProperties]);
+  const requiredFields = useMemo(() => getRequiredFields(), [inputs]);
 
-  const initialValues: FormValues = credentialProperties.reduce<FormValues>((acc, prop) => {
-    acc[prop.name] = "";
+  const initialValues: FormValues = inputs.reduce<FormValues>((acc, input) => {
+    acc[input.name] = "";
     return acc;
   }, {});
 
   const validationSchema = object().shape(
-    credentialProperties.reduce<Record<string, any>>((acc, prop) => {
-      if (requiredFields.includes(prop.name)) {
-        acc[prop.name] = string().required(`${prop.displayName} is required`);
+    inputs.reduce<Record<string, any>>((acc, input) => {
+      if (requiredFields.includes(input.name)) {
+        acc[input.name] = string().required(`${input.displayName} is required`);
       } else {
-        acc[prop.name] = string();
+        acc[input.name] = string();
       }
       return acc;
     }, {}),
@@ -58,14 +69,20 @@ function CredentialsForm({ credentialInput, onSubmit }: Props) {
     onSubmit(data);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    onClose();
+  };
+
   return (
     <Dialog
       open={open}
       maxWidth={"md"}
       fullWidth
       disableScrollLock
+      onClose={handleClose}
     >
-      <DialogTitle>{credentialInput?.displayName} Credentials</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Formik
           initialValues={initialValues}
@@ -79,7 +96,7 @@ function CredentialsForm({ credentialInput, onSubmit }: Props) {
                   p: "16px 8px",
                 }}
               >
-                {credentialProperties.map((prop, index) => (
+                {inputs.map((input, index) => (
                   <FormControl
                     fullWidth
                     margin="dense"
@@ -88,20 +105,20 @@ function CredentialsForm({ credentialInput, onSubmit }: Props) {
                     <Field
                       as={TextField}
                       autoFocus={index === 0}
-                      required={requiredFields.includes(prop.name)}
-                      label={prop.displayName}
-                      name={prop.name}
-                      type={prop.typeOptions?.password ? "password" : prop.type}
+                      required={requiredFields.includes(input.name)}
+                      label={input.displayName}
+                      name={input.name}
+                      type={input.type}
                       variant="outlined"
                       fullWidth
-                      helperText={touched[prop.name] && errors[prop.name]}
-                      error={touched[prop.name] && Boolean(errors[prop.name])}
+                      helperText={touched[input.name] && errors[input.name]}
+                      error={touched[input.name] && Boolean(errors[input.name])}
                     />
                   </FormControl>
                 ))}
               </DialogContent>
               <DialogActions>
-                <Button onClick={() => setOpen(false)}>Cancel</Button>
+                <Button onClick={handleClose}>Cancel</Button>
                 <Button
                   type="submit"
                   sx={{
@@ -128,4 +145,4 @@ function CredentialsForm({ credentialInput, onSubmit }: Props) {
   );
 }
 
-export default CredentialsForm;
+export default FormModal;

@@ -21,6 +21,10 @@ interface IParameters {
       value: string;
     }[];
   };
+
+  save_output?: boolean;
+  template_streaming?: boolean;
+  responseBody?: string;
 }
 
 export interface INode {

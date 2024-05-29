@@ -1,7 +1,7 @@
 import { useAppDispatch } from "@/hooks/useStore";
 import { useCreateCredentialsMutation, useDeleteCredentialMutation, workflowsApi } from "@/core/api/workflows";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { ICredentialInput } from "@/components/Automation/types";
 import { setToast } from "@/core/store/toastSlice";
 
@@ -12,20 +12,15 @@ interface Props {
 const useCredentialsActions = ({ credentialInput }: Props) => {
   const dispatch = useAppDispatch();
 
-  // const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
-
-  // const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
   const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
 
-  const { updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } = useCredentials();
+  const { credentials, updateCredentials, checkCredentialInserted, removeCredential } = useCredentials();
 
   const isOauthCredential = credentialInput?.name.includes("OAuth2");
 
   const isCredentialInserted = checkCredentialInserted(credentialInput!);
-
-  const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
 
@@ -44,31 +39,6 @@ const useCredentialsActions = ({ credentialInput }: Props) => {
       clearTimeout(timeoutId);
     };
   }, []);
-
-  // const _updateWorkflow = async () => {
-  //   if (!clonedWorkflow) {
-  //     return;
-  //   }
-
-  //   const areAllCredentialsStored = checkAllCredentialsStored([credentialInput]);
-
-  //   if (areAllCredentialsStored) {
-  //     const _updatedWorkflow = structuredClone(clonedWorkflow);
-  //     _updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
-
-  //     try {
-  //       const response = await updateWorkflow({
-  //         workflowId: clonedWorkflow.id,
-  //         data: _updatedWorkflow,
-  //       }).unwrap();
-
-  //       dispatch(setClonedWorkflow(response));
-  //     } catch (error) {
-  //       console.error("Error updating workflow:", error);
-  //     }
-  //   }
-  //   dispatch(setAreCredentialsStored(areAllCredentialsStored));
-  // };
 
   const handleAuthFormSubmit = async (values: Record<string, string> = {}) => {
     if (!credentialInput) {
@@ -144,13 +114,11 @@ const useCredentialsActions = ({ credentialInput }: Props) => {
           clearPopupCheck();
           //   _updateWorkflow();
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
-          setOAuthConnected(true);
         } else {
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           await deleteCredential(credentialId);
           removeCredential(credentialId);
           clearPopupCheck();
-          setOAuthConnected(false);
         }
         if (oauthPopup) {
           oauthPopup.close();
@@ -187,6 +155,7 @@ const useCredentialsActions = ({ credentialInput }: Props) => {
   };
 
   return {
+    credential: credentials.find(cred => cred.type === credentialInput?.name),
     isOauthCredential,
     isConnected: isOauthCredential ? isOauthCredential && isCredentialInserted : isCredentialInserted,
     handleAuthFormSubmit,

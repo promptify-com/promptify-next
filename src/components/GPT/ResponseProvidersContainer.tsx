@@ -3,12 +3,14 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
+import type { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
-  message?: string;
+  message: string;
+  workflow: IWorkflow;
 }
 
-function ResponseProvidersContainer({ message }: Props) {
+function ResponseProvidersContainer({ message, workflow }: Props) {
   return (
     <Stack gap={4}>
       {message && (
@@ -30,7 +32,10 @@ function ResponseProvidersContainer({ message }: Props) {
             xs={6}
             key={provider}
           >
-            <ResponseProvider providerType={provider} />
+            <ResponseProvider
+              providerType={provider}
+              workflow={workflow}
+            />
           </Grid>
         ))}
       </Grid>

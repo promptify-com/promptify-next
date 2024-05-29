@@ -89,7 +89,12 @@ export default function Chat({ workflow }: Props) {
               onSelect={setScheduleTime}
             />
           )}
-          {message.type === "schedule_providers" && <ResponseProvidersContainer message={message.text} />}
+          {message.type === "schedule_providers" && (
+            <ResponseProvidersContainer
+              message={message.text}
+              workflow={workflow}
+            />
+          )}
         </Box>
       ))}
     </Stack>
