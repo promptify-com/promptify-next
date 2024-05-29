@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CheckIcon from "@mui/icons-material/Check";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { IWorkflow } from "@/components/Automation/types";
 import { getWorkflowDataFlow } from "./helpers";
@@ -15,16 +15,21 @@ function Workflow({ workflow }: { workflow: IWorkflow }) {
 
   return (
     <Stack
-      gap={7}
+      gap={5}
       sx={{
         p: "40px",
         borderLeft: "1px solid #ECECF3",
+        backgroundColor: "#fcfbff",
+        backgroundImage: "radial-gradient(circle, #e9e6f3 1px, transparent 1px)",
+        backgroundSize: "10px 10px",
       }}
     >
       <Typography
         fontSize={14}
         fontWeight={500}
         color={"common.black"}
+        fontStyle={"normal"}
+        lineHeight={"100%"}
       >
         Data flow
       </Typography>
@@ -37,14 +42,23 @@ function Workflow({ workflow }: { workflow: IWorkflow }) {
               iconUrl={step[1].iconUrl}
             />
             {index < steps.length - 1 && (
-              <Box
-                sx={{
-                  width: "2px",
-                  height: "20px",
-                  backgroundColor: "#ccc",
-                  margin: "0 auto",
-                }}
-              />
+              <Stack
+                alignItems={"center"}
+                my={"8px"}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="6"
+                  height="36"
+                  viewBox="0 0 6 36"
+                  fill="none"
+                >
+                  <path
+                    d="M0.333333 3C0.333333 4.47276 1.52724 5.66667 3 5.66667C4.47276 5.66667 5.66667 4.47276 5.66667 3C5.66667 1.52724 4.47276 0.333333 3 0.333333C1.52724 0.333333 0.333333 1.52724 0.333333 3ZM0.333333 33C0.333333 34.4728 1.52724 35.6667 3 35.6667C4.47276 35.6667 5.66667 34.4728 5.66667 33C5.66667 31.5272 4.47276 30.3333 3 30.3333C1.52724 30.3333 0.333333 31.5272 0.333333 33ZM2.5 4.875C2.5 5.15114 2.72386 5.375 3 5.375C3.27614 5.375 3.5 5.15114 3.5 4.875H2.5ZM3.5 8.625C3.5 8.34886 3.27614 8.125 3 8.125C2.72386 8.125 2.5 8.34886 2.5 8.625H3.5ZM2.5 12.375C2.5 12.6511 2.72386 12.875 3 12.875C3.27614 12.875 3.5 12.6511 3.5 12.375H2.5ZM3.5 16.125C3.5 15.8489 3.27614 15.625 3 15.625C2.72386 15.625 2.5 15.8489 2.5 16.125H3.5ZM2.5 19.875C2.5 20.1511 2.72386 20.375 3 20.375C3.27614 20.375 3.5 20.1511 3.5 19.875H2.5ZM3.5 23.625C3.5 23.3489 3.27614 23.125 3 23.125C2.72386 23.125 2.5 23.3489 2.5 23.625H3.5ZM2.5 27.375C2.5 27.6511 2.72386 27.875 3 27.875C3.27614 27.875 3.5 27.6511 3.5 27.375H2.5ZM3.5 31.125C3.5 30.8489 3.27614 30.625 3 30.625C2.72386 30.625 2.5 30.8489 2.5 31.125H3.5ZM2.5 3V4.875H3.5V3H2.5ZM2.5 8.625V12.375H3.5V8.625H2.5ZM2.5 16.125V19.875H3.5V16.125H2.5ZM2.5 23.625V27.375H3.5V23.625H2.5ZM2.5 31.125V33H3.5V31.125H2.5Z"
+                    fill="#575462"
+                  />
+                </svg>
+              </Stack>
             )}
           </React.Fragment>
         ))}
@@ -70,26 +84,32 @@ function FlowDataCard({ title, description, borderColor = "#6E45E9", iconUrl }: 
         padding: "10px 24px 10px 10px;",
         borderRadius: "100px",
         border: `1px solid ${borderColor}`,
-        backgroundColor: "#f8f8f8",
+        backgroundColor: "rgba(243, 239, 255, 0.50)",
+        backdropFilter: "blur(1px)",
         width: "288px",
         position: "relative",
         overflow: "visible",
+        boxShadow: "none",
       }}
     >
       <Box
         sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           borderRadius: "50%",
-          marginRight: "10px",
-          width: "24px",
-          height: "24px",
+          width: "28px",
+          height: "28px",
           flexShrink: 0,
+          overflow: "hidden",
+          // backgroundColor: "#6E45E9",
         }}
       >
         {iconUrl ? (
           <Image
             src={iconUrl}
-            width={28}
-            height={28}
+            width={14}
+            height={14}
             alt={title}
             style={{ objectFit: "contain" }}
           />
@@ -132,7 +152,6 @@ function FlowDataCard({ title, description, borderColor = "#6E45E9", iconUrl }: 
           sx={{
             alignSelf: "stretch",
             color: "#6E45E9",
-            fontFamily: "Poppins",
             fontSize: "10px",
             fontWeight: "600",
             lineHeight: "100%",
@@ -146,7 +165,6 @@ function FlowDataCard({ title, description, borderColor = "#6E45E9", iconUrl }: 
         <Typography
           sx={{
             color: "#000",
-            fontFamily: "Poppins",
             fontSize: "12px",
             fontWeight: "500",
             lineHeight: "100%",
@@ -164,15 +182,29 @@ function FlowDataCard({ title, description, borderColor = "#6E45E9", iconUrl }: 
           flexShrink: 0,
         }}
       />
-      <CheckCircleIcon
+      <Stack
         sx={{
+          justifyContent: "center",
+          alignItems: "center",
           position: "absolute",
           right: "-11px",
-          top: 0,
+          top: "-3px",
           width: "28px",
           height: "28px",
+          gap: "8px",
+          borderRadius: "100px",
+          border: "2px solid #FCFBFF",
+          background: "#2C2B30",
         }}
-      />
+      >
+        <CheckIcon
+          sx={{
+            width: "12px",
+            height: "12px",
+            color: "onPrimary",
+          }}
+        />
+      </Stack>
     </Card>
   );
 }
