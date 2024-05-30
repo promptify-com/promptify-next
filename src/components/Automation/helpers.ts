@@ -50,6 +50,8 @@ export const oAuthTypeMapping: { [key: string]: string } = {
 };
 export const apiAuthTypeMapping: { [key: string]: string } = {
   "n8n-nodes-base.slack": "slackApi",
+  "n8n-nodes-base.whatsApp": "whatsAppApi",
+  "n8n-nodes-base.telegram": "telegramApi",
 };
 
 export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {
@@ -93,17 +95,8 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
       const authType = apiAuthTypeMapping[node.type];
 
       if (authType && creds[authType]) {
-        const properties = [
-          {
-            displayName: "Access Token",
-            name: "accessToken",
-            type: "string",
-            default: "",
-            typeOptions: {
-              password: true,
-            },
-          },
-        ];
+        const properties = creds[authType].properties;
+
         credentialsInput.push({
           name: authType,
           displayName: creds[authType].displayName,

@@ -179,6 +179,26 @@ export function getProviderParams(providerType: ProviderType) {
           required: true,
         },
       ];
+    case "n8n-nodes-base.whatsApp":
+      return [
+        {
+          name: "phoneNumberId",
+          displayName: "Phone Number:",
+          type: "text",
+          required: true,
+        },
+      ];
+    case "n8n-nodes-base.telegram":
+      return [
+        {
+          name: "chatId",
+          displayName: "Chat ID:",
+          type: "text",
+          required: true,
+        },
+      ];
+    default:
+      throw new Error(`Provider "${providerType}" is not recognized!`);
   }
 }
 
@@ -202,8 +222,22 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
         message: values.content,
         options: {},
       };
+    case "n8n-nodes-base.whatsApp":
+      return {
+        operation: "send",
+        phoneNumberId: values.phoneNumberId,
+        recipientPhoneNumber: values.phoneNumberId, // recipient phone number is the same as sender
+        textBody: values.content,
+        additionalFields: {},
+      };
+    case "n8n-nodes-base.whatsApp":
+      return {
+        chatId: values.chatId,
+        text: values.content,
+        additionalFields: {},
+      };
     default:
-      return {};
+      throw new Error(`Provider "${providerType}" is not recognized!`);
   }
 }
 

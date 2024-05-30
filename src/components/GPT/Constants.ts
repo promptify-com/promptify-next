@@ -29,6 +29,32 @@ export const PROVIDERS = {
     typeVersion: 2.1,
     position: [1020, 460] as [number, number],
   },
+  "n8n-nodes-base.whatsApp": {
+    parameters: {
+      operation: "send",
+      phoneNumberId: "",
+      recipientPhoneNumber: "",
+      textBody: "={{ $json.content }}",
+      additionalFields: {},
+    },
+    id: "c2c7ccac-1745-4430-b6cc-811e31d5b616",
+    name: "WhatsApp",
+    type: "n8n-nodes-base.whatsApp",
+    typeVersion: 1,
+    position: [1140, 460] as [number, number],
+  },
+  "n8n-nodes-base.telegram": {
+    parameters: {
+      chatId: "",
+      text: "={{ $json.content }}",
+      additionalFields: {},
+    },
+    id: "9bc467d2-7227-41f6-aa0b-917fd5a7aa1d",
+    name: "Telegram",
+    type: "n8n-nodes-base.telegram",
+    typeVersion: 1.1,
+    position: [940, 540] as [number, number],
+  },
 };
 
 export const BtnStyle = {
