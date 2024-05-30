@@ -18,7 +18,7 @@ import useCredentialsActions from "./Hooks/useCredentialsActions";
 import FormModal from "@/components/common/forms/FormModal";
 import Check from "@mui/icons-material/Check";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setSelectedWorkflow } from "@/core/store/chatSlice";
+import { setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import type { ProviderType } from "./Types";
 
@@ -34,7 +34,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
   const [oauthModalOpened, setOauthModalOpened] = useState(false);
   const [paramsModalOpened, setParamsModalOpened] = useState(false);
 
-  const { selectedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { credential, isOauthCredential, isConnected, handleOauthConnect, handleAuthFormSubmit } =
     useCredentialsActions({
@@ -101,14 +101,20 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
       node: nodeData,
     });
 
-    dispatch(setSelectedWorkflow(generatedWorkflow));
+    dispatch(
+      setClonedWorkflow({
+        ...clonedWorkflow!,
+        nodes: generatedWorkflow.data.nodes,
+        connections: generatedWorkflow.data.connections,
+      }),
+    );
     onInject();
   };
 
   if (!credentialInput) return;
 
   const parametersInputs = getProviderParams(providerType);
-  const isInjected = !!selectedWorkflow?.data.nodes.find(
+  const isInjected = !!clonedWorkflow?.nodes.find(
     node => node.name === providerNodeName && node.credentials?.[credentialInput.name],
   );
 
@@ -156,6 +162,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
           />
         </CardMedia>
         <Stack
+          flex={1}
           alignItems={"flex-start"}
           gap={1}
         >

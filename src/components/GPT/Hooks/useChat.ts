@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
+import { FrequencyType, IWorkflow, IWorkflowCreateResponse, IWorkflowSchedule } from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
@@ -17,7 +17,9 @@ const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule | null>(null);
+  const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
 
   const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
 
@@ -110,7 +112,15 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const activateWorkflow = () => {
-    console.log({ clonedWorkflow, schedulingData });
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
+
+    const scheduledWorkflow: IWorkflowCreateResponse = {
+      ...clonedWorkflow,
+      ...schedulingData,
+    };
+    console.log({ scheduledWorkflow });
   };
 
   return {

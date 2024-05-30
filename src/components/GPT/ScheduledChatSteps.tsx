@@ -9,8 +9,6 @@ import CredentialsContainer from "./CredentialsContainer";
 import Choices from "./Choices";
 import ResponseProvidersContainer from "./ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedWorkflow } from "@/core/store/chatSlice";
 import ActivateWorkflowMessage from "./ActivateWorkflowMessage";
 import { FREQUENCY_ITEMS } from "./Constants";
 import FrequencyTimeSelector from "./FrequencyTimeSelector";
@@ -20,7 +18,6 @@ interface Props {
 }
 
 export default function ScheduledChatSteps({ workflow }: Props) {
-  const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
     useChat({
@@ -30,7 +27,6 @@ export default function ScheduledChatSteps({ workflow }: Props) {
   useEffect(() => {
     initialMessages();
     initializeCredentials();
-    dispatch(setSelectedWorkflow(undefined));
   }, [workflow]);
 
   return (
