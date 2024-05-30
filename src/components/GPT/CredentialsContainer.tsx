@@ -12,13 +12,13 @@ import Check from "@mui/icons-material/Check";
 interface Props {
   message: string;
   workflow: IWorkflow;
+  isScheduled?: boolean;
 }
 
-function CredentialsContainer({ message, workflow }: Props) {
+function CredentialsContainer({ message, workflow, isScheduled }: Props) {
   const [localInputs, setLocalInputs] = useState<ICredentialInput[]>([]);
-  const { areCredentialsStored } = useAppSelector(state => state.chat ?? initialChatState);
 
-  const { extractCredentialsInputFromNodes } = useCredentials();
+  const { extractCredentialsInputFromNodes, checkCredentialInserted } = useCredentials();
 
   const prepareCredential = async () => {
     const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
@@ -55,8 +55,8 @@ function CredentialsContainer({ message, workflow }: Props) {
               p: "24px",
               borderRadius: "16px",
               border: "1px solid",
-              borderColor: areCredentialsStored ? "#4EB972" : "#E9E7EC",
-              bgcolor: areCredentialsStored ? "#F2FFF7" : "#F8F7FF",
+              borderColor: checkCredentialInserted(input) ? "#4EB972" : "#E9E7EC",
+              bgcolor: checkCredentialInserted(input) ? "#F2FFF7" : "#F8F7FF",
             }}
           >
             <Stack
@@ -95,7 +95,7 @@ function CredentialsContainer({ message, workflow }: Props) {
                 {input.displayName}
               </Typography>
             </Stack>
-            {areCredentialsStored ? (
+            {isScheduled && checkCredentialInserted(input) ? (
               <Check
                 sx={{
                   width: 18,

@@ -83,7 +83,6 @@ export function prepareQuestions(inputs: IPromptInput[], params: PromptParams[])
     required: input.required,
     type: "input",
     prompt: input.prompt,
-    choices: input.choices,
   }));
 
   const paramQuestions: IQuestion[] = params.map(param => ({

@@ -1,20 +1,20 @@
 import { useRef } from "react";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+
 import { useAppSelector } from "@/hooks/useStore";
 
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
-import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
-
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Message from "./Message";
 import MessageInputs from "./MessageInputs";
 import CredentialsContainer from "./CredentialsContainer";
-import { IWorkflow } from "../Automation/types";
-import Box from "@mui/material/Box";
-import RunButton from "./RunButton";
+import RunButton from "@/components/GPT/RunButton";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import type { IWorkflow } from "../Automation/types";
 
 interface Props {
   messages: IMessage[];
@@ -25,7 +25,7 @@ interface Props {
   workflow: IWorkflow;
 }
 
-export const NoScheduleGPTChat = ({ messages, onGenerate, showGenerate, isValidating, workflow }: Props) => {
+function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, workflow }: Props) {
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
@@ -117,4 +117,6 @@ export const NoScheduleGPTChat = ({ messages, onGenerate, showGenerate, isValida
       </Stack>
     </Stack>
   );
-};
+}
+
+export default NoScheduleGPTChat;

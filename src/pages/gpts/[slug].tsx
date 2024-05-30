@@ -1,26 +1,26 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
+
 import { Layout } from "@/layout";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
-import type { INode, IWorkflow } from "@/components/Automation/types";
-import Header from "@/components/GPT/Header";
-import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
-import store from "@/core/store";
 import chatSlice, { initialState, setInputs } from "@/core/store/chatSlice";
-import Workflow from "@/components/GPTs/FlowData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { NoScheduleGPTChat } from "@/components/GPT/NoScheduleGPTChat";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import executionsSlice, { setGeneratedExecution } from "@/core/store/executionsSlice";
-import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import Header from "@/components/GPT/Header";
+import store from "@/core/store";
+import Workflow from "@/components/GPTs/FlowData";
 import useMessageManager from "@/components/GPT/Hooks/useMessageManager";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
+import type { IWorkflow } from "@/components/Automation/types";
+import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 
 interface Props {
   workflow: IWorkflow;

@@ -2,15 +2,9 @@ import { useState, useEffect } from "react";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import {
-  initialState as initialChatState,
-  setAnswers,
-  setAreCredentialsStored,
-  setIsSimulationStreaming,
-} from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { oAuthTypeMapping } from "@/components/Automation/helpers";
-import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode } from "@/components/Automation/types";
 
@@ -97,8 +91,6 @@ function useMessageManager({ initialMessageTitle }: Props) {
         .concat([botMessage, createMessage({ type: "form", noHeader: true })]),
     );
   };
-
-  console.log(messages);
 
   function allRequiredInputsAnswered(): boolean {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);

@@ -1,21 +1,18 @@
-import { useEffect, useRef, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
+
 import RenderInputType from "@/components/Prompt/Common/Chat/Inputs";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import type { IPromptInput } from "@/common/types/prompt";
 import { setAnswers, initialState as initialChatState } from "@/core/store/chatSlice";
-import { LocalStorage } from "@/common/storage";
-import { PromptInputType } from "@/components/Prompt/Types";
-import { IAnswer } from "@/components/Prompt/Types/chat";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
-import RadioGroup from "@mui/material/RadioGroup";
+import type { PromptInputType } from "@/components/Prompt/Types";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
+import type { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   input: IPromptInput;
@@ -32,19 +29,6 @@ function FormInput({ input }: Props) {
   const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
     updateAnswers(value);
   }, 400);
-
-  useEffect(() => {
-    const answersStored = LocalStorage.get("answers") as unknown as IAnswer[];
-
-    if (!answersStored) return;
-
-    const isRelevantAnswer = answersStored.some((answer: IAnswer) => answer.prompt === answer.prompt);
-
-    if (isRelevantAnswer) {
-      dispatch(setAnswers(answersStored));
-      LocalStorage.remove("answers");
-    }
-  }, []);
 
   const onChange = (value: PromptInputType) => {
     if (isSimulationStreaming) return;
