@@ -58,7 +58,7 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
 export async function getServerSideProps({ params }: any) {
   const { slug } = params;
   try {
-    const res = await authClient.get(`/api/n8n/workflow_by_slug/${slug}/`);
+    const res = await authClient.get(`/api/n8n/workflows/by-slug/${slug}/`);
     const workflow: IWorkflow = res.data;
 
     return {

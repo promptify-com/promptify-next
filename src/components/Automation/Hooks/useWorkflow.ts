@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
   useCreateUserWorkflowMutation,
-  useGetWorkflowByslugQuery,
+  useGetWorkflowBySlugQuery,
   useUpdateWorkflowMutation,
 } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -15,7 +15,7 @@ import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
   const workflowSlug = router.query?.slug as string;
-  const { data, isLoading: isWorkflowLoading } = useGetWorkflowByslugQuery(workflowSlug, {
+  const { data, isLoading: isWorkflowLoading } = useGetWorkflowBySlugQuery(workflowSlug, {
     skip: Boolean(workflow.slug || !workflowSlug),
   });
 
