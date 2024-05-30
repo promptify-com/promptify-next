@@ -21,7 +21,7 @@ export const workflowsApi = baseApi.injectEndpoints({
 
       getWorkflowByslug: builder.query<IWorkflow, string>({
         query: workflowSlug => ({
-          url: `/api/n8n/workflow_by_slug/${workflowSlug}`,
+          url: `/api/n8n/workflows/by-slug/${workflowSlug}`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
