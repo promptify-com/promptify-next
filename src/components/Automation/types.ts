@@ -93,6 +93,18 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
+export type FrequencyType = "Daily" | "Weekly" | "Bi-Weekly" | "Monthly";
+
+export interface IWorkflowSchedule {
+  frequency?: FrequencyType;
+  hour?: number;
+  minute?: number;
+  day_of_week?: number;
+  day_of_month?: number;
+  timezone?: string;
+  // month: number,
+  // workflow_data : {}
+}
 export interface IWorkflowCreateResponse {
   id: string;
   name: string;
@@ -113,6 +125,7 @@ export interface IWorkflowCreateResponse {
   settings: any;
   active: boolean;
   connections: any;
+  schedule?: IWorkflowSchedule;
 }
 
 export interface IAuthenticateBase {

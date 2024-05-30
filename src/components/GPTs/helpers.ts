@@ -81,7 +81,6 @@ export function getWorkflowDataFlow(workflow: IWorkflow) {
     workflow,
   });
 
-  // filter out unnecessary nodes
   return Array.from(relations).filter(
     ([_, { type }]) => !["n8n-nodes-base.set", "n8n-nodes-base.webhook"].includes(type),
   );
@@ -93,23 +92,18 @@ export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node
   const nodes = clonedWorkflow.data.nodes;
   const respondToWebhookNode = nodes.find(node => node.type === "n8n-nodes-base.respondToWebhook");
 
-  // Workflow must implement response to webhook node
   if (!respondToWebhookNode) {
     throw new Error('Could not find the "Respond to Webhook" node');
   }
 
-  // Find the last Promptify node
   const promptifyNode = nodes.filter(node => node.type === "n8n-nodes-promptify.promptify").pop();
 
   if (promptifyNode) {
-    // Update the Promptify node parameters
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
   }
 
-  // get the content
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
-  // Create a new provider node
   const providerNode = {
     ...node,
     parameters: nodeParametersCB(responseBody),
@@ -119,14 +113,12 @@ export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node
   nodes.push(providerNode);
 
   const connections = clonedWorkflow.data.connections;
-  // get the previous node to the respondToWebhookNode
   const adjacentNode = nodes.find(node => connections[node.name]?.main[0][0].node === respondToWebhookNode.name);
 
   if (!adjacentNode) {
     throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
   }
 
-  // Update the connections
   connections[adjacentNode.name] = {
     main: [
       [

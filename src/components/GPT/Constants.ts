@@ -31,6 +31,35 @@ export const PROVIDERS = {
   },
 };
 
+export const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
+export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+export const TIMES = [
+  "12:00 AM - EST",
+  "1:00 AM - EST",
+  "2:00 AM - EST",
+  "3:00 AM - EST",
+  "4:00 AM - EST",
+  "5:00 AM - EST",
+  "6:00 AM - EST",
+  "7:00 AM - EST",
+  "8:00 AM - EST",
+  "9:00 AM - EST",
+  "10:00 AM - EST",
+  "11:00 AM - EST",
+  "12:00 PM - EST",
+  "1:00 PM - EST",
+  "2:00 PM - EST",
+  "3:00 PM - EST",
+  "4:00 PM - EST",
+  "5:00 PM - EST",
+  "6:00 PM - EST",
+  "7:00 PM - EST",
+  "8:00 PM - EST",
+  "9:00 PM - EST",
+  "10:00 PM - EST",
+  "11:00 PM - EST",
+];
+
 export const BtnStyle = {
   bgcolor: "#6E45E9",
   color: "common.white",

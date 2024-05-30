@@ -1,20 +1,19 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
 import useChat from "./Hooks/useChat";
 import Message from "./Message";
 import CredentialsContainer from "./CredentialsContainer";
 import Choices from "./Choices";
-import TimeSelect from "./TimeSelect";
 import ResponseProvidersContainer from "./ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedWorkflow } from "@/core/store/chatSlice";
 import ActivateWorkflowMessage from "./ActivateWorkflowMessage";
-
-const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
+import { FREQUENCY_ITEMS } from "./Constants";
+import FrequencyTimeSelector from "./FrequencyTimeSelector";
 
 interface Props {
   workflow: IWorkflow;
@@ -68,11 +67,11 @@ export default function ScheduledChatSteps({ workflow }: Props) {
             <Choices
               message={message.text}
               items={FREQUENCY_ITEMS}
-              onSelect={frequency => setScheduleFrequency(frequency.toLowerCase())}
+              onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
             />
           )}
           {message.type === "schedule_time" && (
-            <TimeSelect
+            <FrequencyTimeSelector
               message={message.text}
               onSelect={setScheduleTime}
             />

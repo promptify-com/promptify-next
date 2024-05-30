@@ -1,18 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { IWorkflow } from "@/components/Automation/types";
+import { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { setAreCredentialsStored } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { ProviderType } from "@/components/GPT/Types";
-import { PROVIDERS } from "@/components/GPT/Constants";
-
-interface IScheduleData {
-  frequency?: string;
-  time?: string;
-}
+import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
 
 interface Props {
   workflow: IWorkflow;
@@ -22,9 +17,9 @@ const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const schedulingData = useRef<IScheduleData | null>(null);
+  const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule | null>(null);
 
-  const { areCredentialsStored, selectedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
@@ -61,8 +56,14 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   }, [areCredentialsStored]);
 
-  const setScheduleFrequency = (frequency: string) => {
-    schedulingData.current = { ...schedulingData.current, frequency };
+  useEffect(() => {
+    if (schedulingData && clonedWorkflow) {
+      dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
+    }
+  }, [schedulingData]);
+
+  const setScheduleFrequency = (frequency: FrequencyType) => {
+    setSchedulingData({ ...schedulingData, frequency });
     if (!messages.find(msg => msg.type === "schedule_time")) {
       const timeMessage = createMessage({
         type: "schedule_time",
@@ -72,12 +73,20 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const setScheduleTime = (time: string) => {
-    schedulingData.current = { ...schedulingData.current, time };
+  const setScheduleTime = (frequencyTime: { day?: number; time: number }) => {
+    const isWeekly = schedulingData?.frequency === "Weekly";
+    const frequencyDay = isWeekly ? { day_of_week: frequencyTime.day } : { day_of_month: frequencyTime.day };
+    setSchedulingData({
+      ...schedulingData,
+      hour: frequencyTime.time,
+      ...frequencyDay,
+    });
+
     if (!messages.find(msg => msg.type === "schedule_providers")) {
+      const hour = schedulingData?.hour ? ` at ${TIMES[schedulingData?.hour]}` : "";
       const confirmMessage = createMessage({
         type: "text",
-        text: `Awesome, We’ll run this GPT for you here ${schedulingData.current.frequency} at ${schedulingData.current.time}, do you want to receive them in your favorite platforms?`,
+        text: `Awesome, We’ll run this GPT for you here ${schedulingData?.frequency}${hour}, do you want to receive them in your favorite platforms?`,
         isHighlight: true,
       });
       const providersMessage = createMessage({
@@ -101,7 +110,7 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const activateWorkflow = () => {
-    console.log({ selectedWorkflow, schedulingData });
+    console.log({ clonedWorkflow, schedulingData });
   };
 
   return {
