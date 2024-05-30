@@ -81,7 +81,7 @@ export function prepareQuestions(inputs: IPromptInput[], params: PromptParams[])
     inputName: input.name,
     question: input.question || ` what is your ${input.fullName}?`,
     required: input.required,
-    type: input.type,
+    type: "input",
     prompt: input.prompt,
     choices: input.choices,
   }));
@@ -112,7 +112,6 @@ export const createMessage = ({
   template,
   isLatestExecution,
   data,
-  choices,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -129,7 +128,6 @@ export const createMessage = ({
   template,
   isLatestExecution,
   data,
-  choices,
 });
 
 export const suggestionsMessageText = (content?: string) => {
