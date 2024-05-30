@@ -25,7 +25,7 @@ interface Props {
   workflow: IWorkflow;
 }
 
-export const WorkflowChatInterface = ({ messages, onGenerate, showGenerate, isValidating, workflow }: Props) => {
+export const NoScheduleGPTChat = ({ messages, onGenerate, showGenerate, isValidating, workflow }: Props) => {
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
@@ -43,6 +43,8 @@ export const WorkflowChatInterface = ({ messages, onGenerate, showGenerate, isVa
   function showForm(messageType: MessageType): boolean {
     return Boolean((messageType === "credentials" && !areCredentialsStored) || (messageType === "form" && hasInputs));
   }
+
+  console.log(messages);
   return (
     <Stack
       ref={messagesContainerRef}

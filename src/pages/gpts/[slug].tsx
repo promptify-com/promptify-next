@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { WorkflowChatInterface } from "@/components/GPT/WorflowChatInterface";
+import { NoScheduleGPTChat } from "@/components/GPT/NoScheduleGPTChat";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import executionsSlice, { setGeneratedExecution } from "@/core/store/executionsSlice";
@@ -157,7 +157,7 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
             direction={"row"}
             justifyContent={"space-between"}
           >
-            <WorkflowChatInterface
+            <NoScheduleGPTChat
               workflow={workflow}
               messages={messages}
               showGenerate={showGenerate}
