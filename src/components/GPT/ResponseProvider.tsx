@@ -56,6 +56,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
   const providerData = useMemo(() => {
     const node = getNodeInfoByType(providerType);
     const provider = PROVIDERS[providerType];
+
     return { ...provider, ...node };
   }, [providerType]);
 
