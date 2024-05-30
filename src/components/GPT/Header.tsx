@@ -28,7 +28,10 @@ export default function Header({ workflow }: Props) {
         background: "linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, rgba(110, 69, 233, 0.05) 100%), #FFF;",
       }}
     >
-      <Stack gap={6}>
+      <Stack
+        gap={6}
+        width={"50%"}
+      >
         <CardMedia
           sx={{
             width: { xs: 32, sm: 48 },

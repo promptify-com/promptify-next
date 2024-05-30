@@ -139,6 +139,13 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={message}
         />
       )}
+
+      {message.type === "choices" && (
+        <QuestionMessage
+          variant="input"
+          message={message}
+        />
+      )}
       {message.type === "questionParam" && (
         <QuestionMessage
           variant="param"

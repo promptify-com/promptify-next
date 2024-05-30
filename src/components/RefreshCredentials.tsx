@@ -21,6 +21,8 @@ function RefreshCredentials({ credential, showLabel = false, onClick }: Props) {
   const { removeCredential, updateWorkflowAfterCredentialsDeletion } = useCredentials();
   const [deleteCredential] = useDeleteCredentialMutation();
 
+  console.log(credential);
+
   return (
     <Stack
       direction={"row"}

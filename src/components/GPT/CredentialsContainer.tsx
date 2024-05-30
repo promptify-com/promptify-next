@@ -40,7 +40,10 @@ function CredentialsContainer({ message, workflow }: Props) {
           {message}
         </Typography>
       )}
-      <Stack gap={2}>
+      <Stack
+        gap={2}
+        minWidth={"600px"}
+      >
         {localInputs.map(input => (
           <Stack
             key={input.name}

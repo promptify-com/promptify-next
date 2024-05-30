@@ -55,6 +55,8 @@ function Credentials({ input }: Props) {
 
   const isCredentialInserted = checkCredentialInserted(credential!);
 
+  console.log(isCredentialInserted);
+
   const [openModal, setOpenModal] = useState(false);
   const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
 
