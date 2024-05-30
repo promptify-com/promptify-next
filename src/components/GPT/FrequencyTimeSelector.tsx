@@ -22,7 +22,6 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
     time: 0,
   });
 
-  console.log({ scheduleTime });
   const selectedFrequency = clonedWorkflow?.schedule?.frequency ?? "";
 
   return (
@@ -44,7 +43,7 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
           alignItems={"flex-end"}
           gap={2}
         >
-          {["Weekly", "Monthly"].includes(selectedFrequency) && (
+          {["weekly", "monthly"].includes(selectedFrequency) && (
             <DateTimeSelect
               type="date"
               onChange={day => setScheduleTime(prev => ({ ...prev, day }))}

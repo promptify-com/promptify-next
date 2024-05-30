@@ -1,4 +1,11 @@
-import type { IConnections, INode, IProviderNode, IWorkflow, NodesFileData } from "@/components/Automation/types";
+import type {
+  IConnections,
+  INode,
+  IProviderNode,
+  IWorkflow,
+  IWorkflowCreateResponse,
+  NodesFileData,
+} from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
@@ -86,10 +93,10 @@ export function getWorkflowDataFlow(workflow: IWorkflow) {
   );
 }
 
-export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node }: IProviderNode) {
+export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
   const clonedWorkflow = structuredClone(workflow);
 
-  const nodes = clonedWorkflow.data.nodes;
+  const nodes = clonedWorkflow.nodes;
   const respondToWebhookNode = nodes.find(node => node.type === "n8n-nodes-base.respondToWebhook");
 
   if (!respondToWebhookNode) {
@@ -112,7 +119,7 @@ export function injectProviderNode(workflow: IWorkflow, { nodeParametersCB, node
 
   nodes.push(providerNode);
 
-  const connections = clonedWorkflow.data.connections;
+  const connections = clonedWorkflow.connections;
   const adjacentNode = nodes.find(node => connections[node.name]?.main[0][0].node === respondToWebhookNode.name);
 
   if (!adjacentNode) {
@@ -222,9 +229,9 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
         textBody: values.content,
         additionalFields: {},
       };
-    case "n8n-nodes-base.whatsApp":
+    case "n8n-nodes-base.telegram":
       return {
-        chatId: values.chatId,
+        chatId: values.chatId.startsWith("@") ? values.chatId : `@${values.chatId}`,
         text: values.content,
         additionalFields: {},
       };

@@ -77,6 +77,9 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
     if (!credential) {
       throw new Error(`Credential ${credentialInput?.displayName} not connected`);
     }
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
 
     setParamsModalOpened(false);
 
@@ -96,7 +99,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
       },
       parameters: {},
     };
-    const generatedWorkflow = injectProviderNode(workflow, {
+    const generatedWorkflow = injectProviderNode(clonedWorkflow, {
       nodeParametersCB: prepareParameters,
       node: nodeData,
     });
@@ -104,8 +107,8 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
     dispatch(
       setClonedWorkflow({
         ...clonedWorkflow!,
-        nodes: generatedWorkflow.data.nodes,
-        connections: generatedWorkflow.data.connections,
+        nodes: generatedWorkflow.nodes,
+        connections: generatedWorkflow.connections,
       }),
     );
     onInject();

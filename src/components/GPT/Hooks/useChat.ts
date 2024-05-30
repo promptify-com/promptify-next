@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { FrequencyType, IWorkflow, IWorkflowCreateResponse, IWorkflowSchedule } from "@/components/Automation/types";
+import type {
+  FrequencyType,
+  IWorkflow,
+  IWorkflowCreateResponse,
+  IWorkflowSchedule,
+} from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
-import { IMessage } from "@/components/Prompt/Types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
-import { ProviderType } from "@/components/GPT/Types";
+import type { ProviderType } from "@/components/GPT/Types";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
+import { getTimezone } from "@/common/helpers/timeManipulation";
+import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 
 interface Props {
   workflow: IWorkflow;
@@ -18,12 +25,20 @@ const useChat = ({ workflow }: Props) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezone: getTimezone()!,
+    workflow_data: {},
+    frequency: "daily",
+    hour: 0,
+    minute: 0,
+    day_of_week: 0,
+    day_of_month: 0,
   });
 
   const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
+
+  const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const initialMessages = async () => {
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on  ${
@@ -76,12 +91,13 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const setScheduleTime = (frequencyTime: { day?: number; time: number }) => {
-    const isWeekly = schedulingData?.frequency === "Weekly";
-    const frequencyDay = isWeekly ? { day_of_week: frequencyTime.day } : { day_of_month: frequencyTime.day };
+    const isWeekly = schedulingData?.frequency === "weekly";
+    const day = frequencyTime.day ?? 0;
+    const frequencyDay = isWeekly ? { day_of_week: day } : { day_of_month: day };
     setSchedulingData({
       ...schedulingData,
-      hour: frequencyTime.time,
       ...frequencyDay,
+      hour: frequencyTime.time,
     });
 
     if (!messages.find(msg => msg.type === "schedule_providers")) {
@@ -116,11 +132,21 @@ const useChat = ({ workflow }: Props) => {
       throw new Error("Cloned workflow not found");
     }
 
-    const scheduledWorkflow: IWorkflowCreateResponse = {
-      ...clonedWorkflow,
-      ...schedulingData,
-    };
-    console.log({ scheduledWorkflow });
+    try {
+      updateWorkflow({
+        workflowId: clonedWorkflow.id,
+        data: clonedWorkflow,
+      });
+
+      const finishMessage = createMessage({
+        type: "text",
+        text: "GPT scheduled successfully.",
+        isHighlight: true,
+      });
+      setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
+    } catch (error) {
+      console.error("Error updating workflow:", error);
+    }
   };
 
   return {

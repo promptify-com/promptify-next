@@ -57,7 +57,7 @@ export const PROVIDERS = {
   },
 };
 
-export const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
+export const FREQUENCY_ITEMS = ["daily", "weekly", "bi-weekly", "monthly"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 export const TIMES = [
   "12:00 AM - EST",
