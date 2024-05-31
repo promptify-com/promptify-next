@@ -56,7 +56,8 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
           <Image
             src={workflow?.image ?? ""}
             fill
-            alt=""
+            alt={workflow?.name ?? "workflow"}
+            style={{ objectFit: "cover" }}
           />
           <Stack
             direction={"row"}
