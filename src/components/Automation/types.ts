@@ -33,7 +33,7 @@ export interface INode {
   name: string;
   iconUrl?: string;
   type: string;
-  description: string;
+  description?: string;
   position: [number, number];
   parameters: IParameters;
   typeVersion: number;
@@ -57,13 +57,9 @@ export interface IProviderNode {
 
 export type NodesFileData = Record<string, { iconUrl: string; name: string; type: string; description: string }>;
 
-export interface IConnections {
-  [key: string]: [{ node: string; type: string; index: number }][];
-}
-
 interface IData {
   nodes: INode[];
-  connections: Record<string, IConnections>;
+  connections: Record<string, INodeConnection>;
 }
 
 export interface IWorkflow {
@@ -112,7 +108,7 @@ export interface IWorkflowSchedule {
   workflow_data: {};
 }
 
-interface INodeConnection {
+export interface INodeConnection {
   main: {
     node: string;
     type: string;

@@ -84,6 +84,12 @@ const useWorkflow = (workflow: IWorkflow) => {
       createdWorkflow = undefined;
       console.error("Error creating workflow:", error);
     } finally {
+      // TODO: remove this dummy inserted data
+      if (createdWorkflow) {
+        createdWorkflow = {
+          ...createdWorkflow,
+        };
+      }
       dispatch(setClonedWorkflow(createdWorkflow));
     }
 

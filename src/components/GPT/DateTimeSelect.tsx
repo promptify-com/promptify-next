@@ -7,10 +7,11 @@ import { DAYS, TIMES } from "./Constants";
 interface Props {
   type: "date" | "time";
   onChange(item: number): void;
+  defaultValue?: number;
 }
 
-export default function DateTimeSelect({ type, onChange }: Props) {
-  const [selectedItem, setSelectedItem] = useState(0);
+export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Props) {
+  const [selectedItem, setSelectedItem] = useState(defaultValue);
 
   useEffect(() => onChange?.(selectedItem), [selectedItem]);
 

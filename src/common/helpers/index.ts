@@ -14,6 +14,8 @@ export const getBaseUrl = typeof window !== "undefined" && window.location.origi
 
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
 
+export const capitalizeString = (text: string) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+
 export const promptComputeDomId = ({ title = "" }): string => `prompt-${title.toLowerCase().replace(/[^\w]/g, "-")}`;
 
 export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
