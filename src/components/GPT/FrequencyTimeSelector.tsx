@@ -18,11 +18,15 @@ interface Props {
 
 export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const scheduledData = clonedWorkflow?.periodic_task?.crontab;
+
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    time: 0,
+    day: scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month,
+    time: scheduledData?.hour ?? 0,
   });
 
-  const selectedFrequency = clonedWorkflow?.schedule?.frequency ?? "";
+  const localScheduleData = clonedWorkflow?.schedule;
+  const selectedFrequency = localScheduleData?.frequency ?? scheduledData?.frequency ?? "";
 
   return (
     <Stack gap={4}>
@@ -47,11 +51,13 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
             <DateTimeSelect
               type="date"
               onChange={day => setScheduleTime(prev => ({ ...prev, day }))}
+              defaultValue={scheduleTime.day}
             />
           )}
           <DateTimeSelect
             type="time"
             onChange={time => setScheduleTime(prev => ({ ...prev, time }))}
+            defaultValue={scheduleTime.time}
           />
         </Stack>
         <Button

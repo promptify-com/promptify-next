@@ -88,20 +88,6 @@ const useWorkflow = (workflow: IWorkflow) => {
       if (createdWorkflow) {
         createdWorkflow = {
           ...createdWorkflow,
-          periodic_task: {
-            task: "schedule_task",
-            name: "random_name",
-            enabled: true,
-            crontab: {
-              frequency: "daily",
-              hour: 0,
-              minute: 0,
-              day_of_week: 0,
-              day_of_month: 0,
-              timezone: "GMT+1",
-              workflow_data: {},
-            },
-          },
         };
       }
       dispatch(setClonedWorkflow(createdWorkflow));
