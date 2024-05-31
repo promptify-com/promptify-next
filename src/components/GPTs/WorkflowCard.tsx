@@ -45,7 +45,7 @@ function WorkflowCard({ index, workflow }: Props) {
           position={"relative"}
         >
           <Image
-            src={workflow?.image ?? "/assets/images/animals/City.jpg"}
+            src={workflow?.image ?? ""}
             fill
             alt=""
           />
@@ -111,19 +111,21 @@ function WorkflowCard({ index, workflow }: Props) {
               {truncate(workflow?.description || "", { length: 70 })}
             </Typography>
           </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-          >
-            <Typography
-              fontSize={11}
-              fontWeight={400}
-              lineHeight={"150%"}
-              color={"#000"}
+          {scheduleData && scheduleData.enabled && (
+            <Stack
+              direction={"row"}
+              justifyContent={"space-between"}
             >
-              Scheduled: {frequency} @ {time}
-            </Typography>
-          </Stack>
+              <Typography
+                fontSize={11}
+                fontWeight={400}
+                lineHeight={"150%"}
+                color={"#000"}
+              >
+                Scheduled: {frequency} @ {time}
+              </Typography>
+            </Stack>
+          )}
         </Stack>
       </Stack>
     </Link>
