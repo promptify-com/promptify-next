@@ -158,13 +158,13 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const activateWorkflow = () => {
+  const activateWorkflow = async () => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
 
     try {
-      updateWorkflow({
+      await updateWorkflow({
         workflowId: clonedWorkflow.id,
         data: clonedWorkflow,
       });
@@ -175,8 +175,16 @@ const useChat = ({ workflow }: Props) => {
         isHighlight: true,
       });
       setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
-      console.error("Error updating workflow:", error);
+      const errorMessage = createMessage({
+        type: "text",
+        text: "Activating your GPT failed, please try again.",
+      });
+      setMessages(prev => prev.concat(errorMessage));
     }
   };
 

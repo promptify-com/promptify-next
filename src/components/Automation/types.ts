@@ -32,7 +32,7 @@ export interface INode {
   name: string;
   iconUrl?: string;
   type: string;
-  description: string;
+  description?: string;
   position: [number, number];
   parameters: IParameters;
   typeVersion: number;
