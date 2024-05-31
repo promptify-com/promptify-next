@@ -1,33 +1,33 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import type {
-  FrequencyType,
-  IWorkflow,
-  IWorkflowCreateResponse,
-  IWorkflowSchedule,
-} from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
+import { initialState, setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
-import type { ProviderType } from "@/components/GPT/Types";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { getTimezone } from "@/common/helpers/timeManipulation";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import type { ProviderType } from "@/components/GPT/Types";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
 
 interface Props {
   workflow: IWorkflow;
 }
 
+type WorkflowData = {
+  [key: string]: any;
+};
+
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const inputs = useAppSelector(state => state.chat?.inputs ?? []);
+  const { inputs, answers } = useAppSelector(state => state.chat ?? initialState);
+
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
     timezone: getTimezone()!,
-    workflow_data: {},
+    workflow_data: {} as WorkflowData,
     frequency: "daily",
     hour: 0,
     minute: 0,
@@ -144,6 +144,21 @@ const useChat = ({ workflow }: Props) => {
       return newMessages;
     });
   };
+
+  useEffect(() => {
+    const workflowData: WorkflowData = { ...schedulingData.workflow_data };
+
+    answers.forEach(answer => {
+      if (answer.required && answer.answer) {
+        workflowData[answer.inputName] = answer.answer;
+      }
+    });
+
+    setSchedulingData(prev => ({
+      ...prev,
+      workflow_data: workflowData,
+    }));
+  }, [answers]);
 
   const activateWorkflow = () => {
     if (!clonedWorkflow) {
