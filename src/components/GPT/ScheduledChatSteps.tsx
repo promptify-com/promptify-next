@@ -40,19 +40,24 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       initialMessages();
       initializeCredentials();
       workflowLoaded.current = true;
-      const workflowData = clonedWorkflow?.periodic_task?.crontab.workflow_data || {};
 
-      const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
-        inputName,
-        required: true,
-        question: ``,
-        answer: answer as PromptInputType,
-        prompt: 0,
-      }));
+      const kwargs = clonedWorkflow.periodic_task?.kwargs;
+      if (kwargs) {
+        const parsedKwargs = JSON.parse(kwargs || "{}");
+        const workflowData = parsedKwargs.workflow_data || {};
 
-      dispatch(setAnswers(answers));
+        const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
+          inputName,
+          required: true,
+          question: ``,
+          answer: answer as PromptInputType,
+          prompt: 0,
+        }));
+
+        dispatch(setAnswers(answers));
+      }
     }
-  }, [clonedWorkflow]);
+  }, [clonedWorkflow, dispatch]);
 
   return (
     <Stack
