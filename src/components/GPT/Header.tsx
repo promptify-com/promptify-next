@@ -142,9 +142,9 @@ export default function Header({ workflow }: Props) {
                 }}
               >
                 Scheduled: {frequency} @ {time}
-                <IconButton>
+                {/* <IconButton>
                   <SettingsOutlined />
-                </IconButton>
+                </IconButton> */}
               </Stack>
             </>
           )}
