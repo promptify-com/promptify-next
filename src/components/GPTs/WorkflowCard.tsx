@@ -27,7 +27,6 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
   const { truncate } = useTruncate();
 
   const scheduleData = periodic_task?.enabled;
-  console.log(periodic_task);
   const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
   return (
