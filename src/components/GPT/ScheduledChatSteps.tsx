@@ -12,12 +12,14 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import ActivateWorkflowMessage from "./ActivateWorkflowMessage";
 import { FREQUENCY_ITEMS } from "./Constants";
 import FrequencyTimeSelector from "./FrequencyTimeSelector";
+import MessageInputs from "./MessageInputs";
 
 interface Props {
   workflow: IWorkflow;
+  allowActivateButton?: boolean;
 }
 
-export default function ScheduledChatSteps({ workflow }: Props) {
+export default function ScheduledChatSteps({ workflow, allowActivateButton }: Props) {
   const { initializeCredentials } = useCredentials();
   const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
     useChat({
@@ -80,10 +82,19 @@ export default function ScheduledChatSteps({ workflow }: Props) {
               prepareWorkflow={provider => prepareWorkflow(provider)}
             />
           )}
+          {message.type === "form" && (
+            <MessageInputs
+              allowGenerate={false}
+              onGenerate={() => {}}
+              message={message}
+            />
+          )}
+
           {message.type === "schedule_activation" && (
             <ActivateWorkflowMessage
               message={message}
               onActivate={activateWorkflow}
+              allowActivateButton={allowActivateButton}
             />
           )}
         </Box>

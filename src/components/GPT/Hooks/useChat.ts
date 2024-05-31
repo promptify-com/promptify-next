@@ -23,6 +23,7 @@ interface Props {
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const inputs = useAppSelector(state => state.chat?.inputs ?? []);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
     timezone: getTimezone()!,
@@ -35,13 +36,11 @@ const useChat = ({ workflow }: Props) => {
   });
 
   const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
-
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
-
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const initialMessages = async () => {
-    const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on  ${
+    const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${
       workflow.name
     }?`;
     const welcomeMessage = createMessage({ type: "text", text: greeting });
@@ -119,12 +118,31 @@ const useChat = ({ workflow }: Props) => {
 
   const prepareWorkflow = (providerType: ProviderType) => {
     const provider = PROVIDERS[providerType];
-    const providersMessage = createMessage({
-      type: "schedule_activation",
+    const providerConnectionMessage = createMessage({
+      type: "text",
       text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
       isHighlight: true,
     });
-    setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(providersMessage));
+
+    const activationMessage = createMessage({
+      type: "schedule_activation",
+      text: "Ready to turn on this GPT?",
+    });
+
+    setMessages(prev => {
+      const newMessages = [...prev, providerConnectionMessage];
+
+      if (inputs.length > 0) {
+        const inputsMessage = createMessage({
+          type: "form",
+          text: "Please fill out the following details:",
+        });
+        newMessages.push(inputsMessage);
+      }
+
+      newMessages.push(activationMessage);
+      return newMessages;
+    });
   };
 
   const activateWorkflow = () => {

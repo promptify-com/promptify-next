@@ -35,6 +35,7 @@ function MessageInputs({ message, onGenerate, allowGenerate }: Props) {
           minWidth={"560px"}
           borderRadius={"8px"}
           gap={"8px"}
+          width={"98%"}
           padding={"8px"}
         >
           <Typography
