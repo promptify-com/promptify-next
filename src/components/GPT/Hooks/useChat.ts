@@ -10,6 +10,7 @@ import { cleanCredentialName } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
+import { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   workflow: IWorkflow;
@@ -80,6 +81,7 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const showAllSteps = () => {
+    const availableSteps: IMessage[] = [];
     const schedulesMessage = createMessage({
       type: "schedule_time",
       text: "At what time?",
@@ -88,11 +90,34 @@ const useChat = ({ workflow }: Props) => {
       type: "schedule_providers",
       text: "Where should we send your scheduled GPT?",
     });
+
+    availableSteps.push(schedulesMessage, providersMessage);
+
+    const inputs: IPromptInput[] = workflow.data.nodes
+      .filter(node => node.type === "n8n-nodes-base.set")
+      .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
+      .map(value => ({
+        name: value.name,
+        fullName: value.name,
+        type: "text",
+        required: true,
+      }));
+
+    if (inputs.length > 0) {
+      const inputsMessage = createMessage({
+        type: "form",
+        text: "Please fill out the following details:",
+      });
+      availableSteps.push(inputsMessage);
+    }
+
     const updateWorkflowMessage = createMessage({
       type: "schedule_update",
       text: "",
     });
-    setMessages(prev => prev.concat(schedulesMessage, providersMessage, updateWorkflowMessage));
+    availableSteps.push(updateWorkflowMessage);
+
+    setMessages(prev => prev.concat(availableSteps));
   };
 
   useEffect(() => {
