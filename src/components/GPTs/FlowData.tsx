@@ -12,7 +12,7 @@ import Stack from "@mui/material/Stack";
 
 function Workflow({ workflow }: { workflow: IWorkflow }) {
   const steps = getWorkflowDataFlow(workflow);
-  console.log({ workflow, steps });
+
   return (
     <Stack
       gap={5}

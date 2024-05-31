@@ -5,7 +5,7 @@ const ChatCredentialsPlaceholder = () => {
   return (
     <Stack
       width={"50svh"}
-      gap={3}
+      gap={8}
     >
       <Stack
         direction={"row"}
