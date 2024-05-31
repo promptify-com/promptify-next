@@ -9,6 +9,8 @@ import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import Link from "next/link";
 import { IWorkflow } from "../Automation/types";
 import useTruncate from "@/hooks/useTruncate";
+import { capitalizeString } from "@/common/helpers";
+import { TIMES } from "../GPT/Constants";
 
 interface Props {
   index: number;
@@ -17,6 +19,9 @@ interface Props {
 function WorkflowCard({ index, workflow }: Props) {
   const { truncate } = useTruncate();
 
+  const scheduleData = workflow?.periodic_task;
+  const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "");
+  const time = TIMES[scheduleData?.crontab.hour ?? 0];
   return (
     <Link
       href={`/gpts/${workflow?.slug}`}
@@ -106,7 +111,7 @@ function WorkflowCard({ index, workflow }: Props) {
               {truncate(workflow?.description || "", { length: 70 })}
             </Typography>
           </Stack>
-          {/* <Stack
+          <Stack
             direction={"row"}
             justifyContent={"space-between"}
           >
@@ -116,9 +121,9 @@ function WorkflowCard({ index, workflow }: Props) {
               lineHeight={"150%"}
               color={"#000"}
             >
-              Scheduled: Daily @ 9:00 AM
+              Scheduled: {frequency} @ {time}
             </Typography>
-          </Stack> */}
+          </Stack>
         </Stack>
       </Stack>
     </Link>

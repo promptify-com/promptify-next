@@ -76,6 +76,12 @@ export interface IWorkflow {
     likes_count: number;
     favorites_count: number;
   };
+  periodic_task?: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+  };
 }
 
 export interface UserWorkflowsResponse {
