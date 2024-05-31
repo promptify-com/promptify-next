@@ -7,11 +7,33 @@ import Image from "@/components/design-system/Image/";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import Link from "next/link";
+import { IWorkflow, IWorkflowSchedule } from "../Automation/types";
+import useTruncate from "@/hooks/useTruncate";
+import { capitalizeString } from "@/common/helpers";
+import { TIMES } from "../GPT/Constants";
+import Chip from "@mui/material/Chip";
 
-function WorkflowCard({ index, href, isScheduled }: { index: number; href: string; isScheduled?: boolean }) {
+interface Props {
+  index: number;
+  workflow?: IWorkflow;
+  periodic_task?: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+  };
+}
+function WorkflowCard({ index, workflow, periodic_task }: Props) {
+  const { truncate } = useTruncate();
+
+  const scheduleData = periodic_task?.enabled;
+  const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
+  const time = TIMES[periodic_task?.crontab.hour ?? 0];
+
+  // const isGPTSchedule = wo
   return (
     <Link
-      href={href}
+      href={`/gpts/${workflow?.slug}`}
       style={{ textDecoration: "none" }}
     >
       <Stack
@@ -32,7 +54,7 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
           position={"relative"}
         >
           <Image
-            src={"/assets/images/animals/City.jpg"}
+            src={workflow?.image ?? ""}
             fill
             alt=""
           />
@@ -50,7 +72,8 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
               sx={iconTextStyle}
               className="icon-text-style"
             >
-              <FavoriteBorderOutlined sx={{ fontSize: 12 }} /> 0
+              <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
+              {workflow?.activities?.likes_count ?? 0}
             </Stack>
             <Stack
               direction={"row"}
@@ -63,21 +86,24 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
                 size="12"
                 color="#ffffff"
               />
-              0
+              {workflow?.activities?.favorites_count ?? 0}
             </Stack>
           </Stack>
         </Box>
-        <Stack
-          position={"absolute"}
-          top={{ xs: "24px", md: 7 }}
-          right={{ xs: "24px", md: 7 }}
-        >
-          <StatusChip status={index === 2 ? "active" : "paused"} />
-        </Stack>
+        {periodic_task && workflow?.is_schedulable && (
+          <Stack
+            position={"absolute"}
+            top={{ xs: "24px", md: 7 }}
+            right={{ xs: "24px", md: 7 }}
+          >
+            <StatusChip status={periodic_task?.enabled ? "active" : "paused"} />
+          </Stack>
+        )}
         <Stack
           p={{ xs: "16px", md: "40px 24px 16px 24px" }}
           flex={1}
           gap={"24px"}
+          alignItems={"start"}
         >
           <Stack gap={"8px"}>
             <Typography
@@ -86,7 +112,7 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
               color={"#000"}
               lineHeight={"120%"}
             >
-              Get a city’s weather
+              {workflow?.name ?? ""}
             </Typography>
             <Typography
               fontSize={11}
@@ -94,22 +120,42 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
               lineHeight={"150%"}
               color={"#000"}
             >
-              Comprehensive and structured scientific essay. Introduction, three-...
+              {truncate(workflow?.description || "", { length: 70 })}
             </Typography>
           </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-          >
-            <Typography
-              fontSize={11}
-              fontWeight={400}
-              lineHeight={"150%"}
-              color={"#000"}
+          {periodic_task && workflow?.is_schedulable ? (
+            <Stack
+              direction={"row"}
+              justifyContent={"space-between"}
             >
-              Scheduled: Daily @ 9:00 AM
-            </Typography>
-          </Stack>
+              <Typography
+                fontSize={11}
+                fontWeight={400}
+                lineHeight={"150%"}
+                color={"#000"}
+              >
+                Scheduled: {frequency} @ {time}
+              </Typography>
+            </Stack>
+          ) : (
+            <Chip
+              label={"Productivity"}
+              size="small"
+              sx={{
+                fontSize: "11px",
+                fontWeight: 500,
+                lineHeight: "16px",
+                textAlign: "left",
+                padding: "7px 12px 7px 12px",
+                borderRadius: "100px",
+                border: "1px solid rgba(0, 0, 0, 0.08)",
+                bgcolor: "white",
+                "& .MuiChip-label": {
+                  p: "10px",
+                },
+              }}
+            />
+          )}
         </Stack>
       </Stack>
     </Link>

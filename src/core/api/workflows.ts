@@ -6,6 +6,7 @@ import type {
   IWorkflowCreateResponse,
   UserWorkflowExecutionsResponse,
   UserWorkflowsResponse,
+  IWorkflowCategory,
 } from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
@@ -105,6 +106,15 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      getWorkflowByCategory: builder.query<IWorkflowCategory[], void>({
+        query: () => ({
+          url: `/api/n8n/workflows/by_category`,
+          method: "get",
+          params: {
+            exclude: "enabled",
+          },
+        }),
+      }),
     };
   },
 });
@@ -120,4 +130,6 @@ export const {
   useGetWorkflowQuery,
   useGetWorkflowBySlugQuery,
   useGetWorkflowExecutionsQuery,
+  useGetWorkflowByCategoryQuery,
+  useGetUserWorkflowsQuery,
 } = workflowsApi;
