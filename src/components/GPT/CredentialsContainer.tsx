@@ -8,6 +8,7 @@ import Image from "@/components/design-system/Image";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Check from "@mui/icons-material/Check";
+import { cleanCredentialName } from "../GPTs/helpers";
 
 interface Props {
   message: string;
@@ -92,7 +93,7 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
                 fontWeight={500}
                 color={"onSurface"}
               >
-                {input.displayName}
+                {cleanCredentialName(input.displayName)}
               </Typography>
             </Stack>
             {isScheduled && checkCredentialInserted(input) ? (
@@ -100,7 +101,7 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
                 sx={{
                   width: 18,
                   height: 18,
-                  p: "6px",
+                  p: "7px",
                   borderRadius: "50%",
                   bgcolor: "#4EB972",
                   color: "#FFF",

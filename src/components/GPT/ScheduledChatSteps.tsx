@@ -1,36 +1,32 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
 import useChat from "./Hooks/useChat";
 import Message from "./Message";
 import CredentialsContainer from "./CredentialsContainer";
 import Choices from "./Choices";
-import TimeSelect from "./TimeSelect";
-import MessageContainer from "./MessageContainer";
-
-const FREQUENCY_ITEMS = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
+import ResponseProvidersContainer from "./ResponseProvidersContainer";
+import useCredentials from "@/components/Automation/Hooks/useCredentials";
+import ActivateWorkflowMessage from "./ActivateWorkflowMessage";
+import { FREQUENCY_ITEMS } from "./Constants";
+import FrequencyTimeSelector from "./FrequencyTimeSelector";
 
 interface Props {
   workflow: IWorkflow;
 }
 
 export default function ScheduledChatSteps({ workflow }: Props) {
-  const { messages, initialMessages, startSchedule, cancelSchedule, setScheduleFrequency, setScheduleTime } = useChat({
-    workflow,
-  });
-
-  const handleStartSchedule = (status: boolean) => {
-    if (status) {
-      startSchedule();
-    } else {
-      cancelSchedule();
-    }
-  };
+  const { initializeCredentials } = useCredentials();
+  const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
+    useChat({
+      workflow,
+    });
 
   useEffect(() => {
     initialMessages();
+    initializeCredentials();
   }, [workflow]);
 
   return (
@@ -64,26 +60,30 @@ export default function ScheduledChatSteps({ workflow }: Props) {
               isScheduled
             />
           )}
-          {message.type === "schedule_start" && (
-            <MessageContainer message={message}>
-              <Choices
-                message={message.text}
-                items={["Yes", "No"]}
-                onSelect={item => handleStartSchedule(item === "Yes")}
-              />
-            </MessageContainer>
-          )}
           {message.type === "schedule_frequency" && (
             <Choices
               message={message.text}
               items={FREQUENCY_ITEMS}
-              onSelect={frequency => setScheduleFrequency(frequency.toLowerCase())}
+              onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
             />
           )}
           {message.type === "schedule_time" && (
-            <TimeSelect
+            <FrequencyTimeSelector
               message={message.text}
               onSelect={setScheduleTime}
+            />
+          )}
+          {message.type === "schedule_providers" && (
+            <ResponseProvidersContainer
+              message={message.text}
+              workflow={workflow}
+              prepareWorkflow={provider => prepareWorkflow(provider)}
+            />
+          )}
+          {message.type === "schedule_activation" && (
+            <ActivateWorkflowMessage
+              message={message}
+              onActivate={activateWorkflow}
             />
           )}
         </Box>

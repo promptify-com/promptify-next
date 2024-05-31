@@ -21,16 +21,19 @@ interface IParameters {
       value: string;
     }[];
   };
+
+  save_output?: boolean;
+  template_streaming?: boolean;
+  responseBody?: string;
 }
 
 export interface INode {
   id: string;
   name: string;
-  iconUrl: string;
+  iconUrl?: string;
   type: string;
   description: string;
   position: [number, number];
-  webhookId: string;
   parameters: IParameters;
   typeVersion: number;
   credentials?: INodeCredentials;
@@ -44,6 +47,11 @@ export interface INode {
   includeFields?: string;
   httpMethod?: string;
   responseMode?: string;
+}
+
+export interface IProviderNode {
+  nodeParametersCB: (content: string) => Record<string, string | number | INodeCredentials>;
+  node: INode;
 }
 
 export type NodesFileData = Record<string, { iconUrl: string; name: string; type: string; description: string }>;
@@ -86,6 +94,26 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
+export type FrequencyType = "daily" | "weekly" | "bi-weekly" | "monthly";
+
+export interface IWorkflowSchedule {
+  frequency: FrequencyType;
+  hour: number;
+  minute: number;
+  day_of_week: number;
+  day_of_month: number;
+  timezone: string;
+  // month: number,
+  workflow_data: {};
+}
+
+interface INodeConnection {
+  main: {
+    node: string;
+    type: string;
+    index: number;
+  }[][];
+}
 export interface IWorkflowCreateResponse {
   id: string;
   name: string;
@@ -105,8 +133,16 @@ export interface IWorkflowCreateResponse {
   staticData?: any;
   settings: any;
   active: boolean;
-  connections: any;
-  periodic_task: null | { task: string; name: string; enabled: boolean; crontab: Record<string, string> };
+  connections: {
+    [key: string]: INodeConnection;
+  };
+  schedule?: IWorkflowSchedule;
+  periodic_task: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+  };
 }
 
 export interface IAuthenticateBase {

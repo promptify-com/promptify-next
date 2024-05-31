@@ -72,3 +72,12 @@ export function getCurrentDateFormatted(): string {
   };
   return currentDate.toLocaleDateString("en-US", options);
 }
+
+export function getTimezone() {
+  const localDateOptions = Intl.DateTimeFormat().resolvedOptions();
+  const formattedDate = new Intl.DateTimeFormat(localDateOptions.locale, {
+    timeZone: localDateOptions.timeZone,
+    timeZoneName: "short",
+  }).format(new Date());
+  return formattedDate.split(" ").pop();
+}

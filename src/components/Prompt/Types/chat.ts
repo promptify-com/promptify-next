@@ -22,9 +22,10 @@ export type MessageType =
   | "questionParam"
   | "readyMessage"
   | "workflowExecution"
-  | "schedule_start"
   | "schedule_frequency"
   | "schedule_time"
+  | "schedule_providers"
+  | "schedule_activation"
   | "input"
   | InputType;
 
