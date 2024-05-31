@@ -166,7 +166,7 @@ const useChat = ({ workflow }: Props) => {
         text: "Ready to turn on this GPT?",
       });
 
-      preparedMessages = messages.filter(msg => msg.type !== "schedule_activation").concat(providerConnectionMessage);
+      preparedMessages.push(providerConnectionMessage);
 
       if (inputs.length > 0) {
         const inputsMessage = createMessage({
@@ -179,7 +179,11 @@ const useChat = ({ workflow }: Props) => {
       preparedMessages.push(activationMessage);
     }
 
-    setMessages(prevMessages => prevMessages.concat(preparedMessages));
+    setMessages(prevMessages =>
+      prevMessages
+        .filter(msg => !["schedule_activation", "schedule_update"].includes(msg.type))
+        .concat(preparedMessages),
+    );
   };
 
   useEffect(() => {
