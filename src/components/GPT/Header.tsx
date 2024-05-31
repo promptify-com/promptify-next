@@ -24,8 +24,8 @@ interface Props {
 
 export default function Header({ workflow }: Props) {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
-
   const scheduleData = clonedWorkflow?.periodic_task;
+
   const isActive = scheduleData?.enabled;
   const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "0");
   const time = TIMES[scheduleData?.crontab.hour ?? 0];
@@ -97,7 +97,7 @@ export default function Header({ workflow }: Props) {
           >
             {workflow.description}
           </Typography>
-          {scheduleData && (
+          {scheduleData?.name && (
             <>
               <Stack
                 direction={"row"}
@@ -131,7 +131,7 @@ export default function Header({ workflow }: Props) {
           )}
         </Stack>
       </Stack>
-      {workflow.is_schedulable && clonedWorkflow?.periodic_task?.task && <LazyDateCPickerCalendar />}
+      {workflow.is_schedulable && scheduleData?.task && <LazyDateCPickerCalendar />}
     </Stack>
   );
 }
