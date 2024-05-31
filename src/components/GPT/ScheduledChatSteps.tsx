@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
-import { useAppSelector } from "@/hooks/useStore";
-import { initialState } from "@/core/store/chatSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { initialState, setAnswers } from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChat";
 import Message from "@/components/GPT/Message";
 import CredentialsContainer from "@/components/GPT/CredentialsContainer";
@@ -16,6 +16,8 @@ import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
 import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
   workflow: IWorkflow;
@@ -23,6 +25,7 @@ interface Props {
 }
 
 export default function ScheduledChatSteps({ workflow, allowActivateButton }: Props) {
+  const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
   const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
@@ -37,6 +40,17 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       initialMessages();
       initializeCredentials();
       workflowLoaded.current = true;
+      const workflowData = clonedWorkflow?.periodic_task?.crontab.workflow_data || {};
+
+      const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
+        inputName,
+        required: true,
+        question: ``,
+        answer: answer as PromptInputType,
+        prompt: 0,
+      }));
+
+      dispatch(setAnswers(answers));
     }
   }, [clonedWorkflow]);
 
