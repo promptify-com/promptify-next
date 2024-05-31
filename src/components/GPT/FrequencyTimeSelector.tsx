@@ -20,8 +20,9 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const scheduledData = clonedWorkflow?.periodic_task?.crontab;
 
+  const scheduleDay = scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month;
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day: scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month,
+    day: scheduleDay?.toString() === "1,15" ? 0 : scheduleDay,
     time: scheduledData?.hour ?? 0,
   });
 

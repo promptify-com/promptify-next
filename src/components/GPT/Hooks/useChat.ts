@@ -41,6 +41,8 @@ const useChat = ({ workflow }: Props) => {
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const initialMessages = async () => {
+    loadWorkflowScheduleData();
+
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${
       workflow.name
     }?`;
@@ -71,6 +73,10 @@ const useChat = ({ workflow }: Props) => {
     if (updateScheduleMode.current) {
       showAllSteps();
     }
+  };
+
+  const loadWorkflowScheduleData = () => {
+    setSchedulingData({ ...schedulingData, ...clonedWorkflow?.periodic_task?.crontab });
   };
 
   const showAllSteps = () => {
