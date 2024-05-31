@@ -14,6 +14,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { initialState } from "@/core/store/chatSlice";
 import { capitalizeString } from "@/common/helpers";
 import { TIMES } from "./Constants";
+import StatusChip from "@/components/GPTs/StatusChip";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
@@ -109,27 +110,7 @@ export default function Header({ workflow }: Props) {
                 }}
               >
                 Status:
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={1}
-                  sx={{
-                    p: "6px 14px",
-                    bgcolor: isActive ? "#E5FFD5" : "#F4F1FF",
-                    border: "1px solid #77B94E33",
-                    borderRadius: "99px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      bgcolor: isActive ? "#77B94E" : "#6E45E9",
-                      borderRadius: "50%",
-                    }}
-                  />
-                  {isActive ? "Active" : "Paused"}
-                </Stack>
+                <StatusChip status={isActive ? "active" : "paused"} />
               </Stack>
               <Stack
                 direction={"row"}
@@ -142,9 +123,9 @@ export default function Header({ workflow }: Props) {
                 }}
               >
                 Scheduled: {frequency} @ {time}
-                <IconButton>
+                {/* <IconButton>
                   <SettingsOutlined />
-                </IconButton>
+                </IconButton> */}
               </Stack>
             </>
           )}
