@@ -90,54 +90,58 @@ export default function Header({ workflow }: Props) {
           >
             {workflow.description}
           </Typography>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            gap={2}
-            sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "onSurface",
-            }}
-          >
-            Status:
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={1}
-              sx={{
-                p: "6px 14px",
-                bgcolor: "#E5FFD5",
-                border: "1px solid #77B94E33",
-                borderRadius: "99px",
-              }}
-            >
-              <Box
+          {clonedWorkflow?.periodic_task?.name && (
+            <>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={2}
                 sx={{
-                  width: 8,
-                  height: 8,
-                  bgcolor: "#77B94E",
-                  borderRadius: "50%",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "onSurface",
                 }}
-              />
-              Active
-            </Stack>
-          </Stack>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            gap={2}
-            sx={{
-              fontSize: 14,
-              fontWeight: 400,
-              color: alpha(theme.palette.onSurface, 0.5),
-            }}
-          >
-            Scheduled: Daily @ 9:00 AM
-            <IconButton sx={{}}>
-              <SettingsOutlined />
-            </IconButton>
-          </Stack>
+              >
+                Status:
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={1}
+                  sx={{
+                    p: "6px 14px",
+                    bgcolor: "#E5FFD5",
+                    border: "1px solid #77B94E33",
+                    borderRadius: "99px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      bgcolor: "#77B94E",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  Active
+                </Stack>
+              </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={2}
+                sx={{
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: alpha(theme.palette.onSurface, 0.5),
+                }}
+              >
+                Scheduled: Daily @ 9:00 AM
+                <IconButton sx={{}}>
+                  <SettingsOutlined />
+                </IconButton>
+              </Stack>
+            </>
+          )}
         </Stack>
       </Stack>
       {workflow.is_schedulable && clonedWorkflow?.periodic_task?.task && <LazyDateCPickerCalendar />}
