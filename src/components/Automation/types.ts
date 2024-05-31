@@ -66,6 +66,7 @@ export interface IWorkflow {
   created_by: User;
   data: IData;
   created_at: string;
+  is_schedulable: boolean;
 }
 
 export interface UserWorkflowsResponse {
@@ -105,6 +106,7 @@ export interface IWorkflowCreateResponse {
   settings: any;
   active: boolean;
   connections: any;
+  periodic_task: null | { task: string; name: string; enabled: boolean; crontab: Record<string, string> };
 }
 
 export interface IAuthenticateBase {
