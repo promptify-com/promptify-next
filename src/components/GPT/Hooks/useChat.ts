@@ -1,11 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import type {
-  FrequencyType,
-  IWorkflow,
-  IWorkflowCreateResponse,
-  IWorkflowSchedule,
-} from "@/components/Automation/types";
+import type { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
 import { createMessage } from "@/components/Chat/helper";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
@@ -15,6 +10,7 @@ import type { ProviderType } from "@/components/GPT/Types";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { getTimezone } from "@/common/helpers/timeManipulation";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import { cleanCredentialName } from "@/components/GPTs/helpers";
 
 interface Props {
   workflow: IWorkflow;
@@ -24,6 +20,7 @@ const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const updateScheduleMode = useRef<boolean | null>(null);
   const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
     timezone: getTimezone()!,
     workflow_data: {},
@@ -55,22 +52,40 @@ const useChat = ({ workflow }: Props) => {
 
       const credentialsMessage = createMessage({
         type: "credentials",
-        text: `Connect your ${credentialsInput.map(cred => cred.displayName).join(",")}:`,
+        text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(",")}:`,
       });
       initMessages.push(credentialsMessage);
     }
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
     setMessages(initMessages);
+
+    if (areAllCredentialsStored) {
+      insertFrequencyMessage();
+    }
+
+    updateScheduleMode.current = !!clonedWorkflow?.periodic_task;
+
+    if (updateScheduleMode.current) {
+      showAllSteps();
+    }
+  };
+
+  const showAllSteps = () => {
+    const schedulesMessages = createMessage({
+      type: "schedule_time",
+      text: "At what time?",
+    });
+    const providersMessages = createMessage({
+      type: "schedule_providers",
+      text: "Where should we send your scheduled GPT?",
+    });
+    setMessages(prev => prev.concat(schedulesMessages, providersMessages));
   };
 
   useEffect(() => {
-    if (!areCredentialsStored) return;
-
-    const frequencyMessage = createMessage({
-      type: "schedule_frequency",
-      text: "How often do you want to repeat this GPT?",
-    });
-    setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
+    if (areCredentialsStored && updateScheduleMode.current === false) {
+      insertFrequencyMessage();
+    }
   }, [areCredentialsStored]);
 
   useEffect(() => {
@@ -78,6 +93,14 @@ const useChat = ({ workflow }: Props) => {
       dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
     }
   }, [schedulingData]);
+
+  const insertFrequencyMessage = () => {
+    const frequencyMessage = createMessage({
+      type: "schedule_frequency",
+      text: "How often do you want to repeat this GPT?",
+    });
+    setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
+  };
 
   const setScheduleFrequency = (frequency: FrequencyType) => {
     setSchedulingData({ ...schedulingData, frequency });
@@ -118,13 +141,21 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const prepareWorkflow = (providerType: ProviderType) => {
-    const provider = PROVIDERS[providerType];
-    const providersMessage = createMessage({
-      type: "schedule_activation",
-      text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
-      isHighlight: true,
-    });
-    setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(providersMessage));
+    if (updateScheduleMode.current) {
+      const updateWorkflowMessage = createMessage({
+        type: "schedule_update",
+        text: "",
+      });
+      setMessages(prev => prev.filter(msg => msg.type !== "schedule_update").concat(updateWorkflowMessage));
+    } else {
+      const provider = PROVIDERS[providerType];
+      const providersMessage = createMessage({
+        type: "schedule_activation",
+        text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
+        isHighlight: true,
+      });
+      setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(providersMessage));
+    }
   };
 
   const activateWorkflow = () => {
