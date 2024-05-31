@@ -35,7 +35,6 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
   const [paramsModalOpened, setParamsModalOpened] = useState(false);
 
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
-  const templateWorkflow = useAppSelector(state => state.chat?.selectedWorkflow ?? initialChatState.selectedWorkflow);
 
   const { credential, isOauthCredential, isConnected, handleOauthConnect, handleAuthFormSubmit } =
     useCredentialsActions({
@@ -81,7 +80,8 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
-    if (!templateWorkflow) {
+    if (!workflow) {
+      console.log("template");
       throw new Error("Template workflow not found");
     }
 
@@ -103,7 +103,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
       },
       parameters: {},
     };
-    const generatedWorkflow = injectProviderNode(clonedWorkflow, templateWorkflow, {
+    const generatedWorkflow = injectProviderNode(clonedWorkflow, workflow, {
       nodeParametersCB: prepareParameters,
       node: nodeData,
     });
