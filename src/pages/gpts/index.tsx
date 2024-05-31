@@ -93,27 +93,26 @@ function GPTsPage() {
             </Stack>
           )}
 
-          {workflowsByCategory &&
-            workflowsByCategory.map((workflows, index) => (
-              <Fragment key={`${workflows.category}-${index}`}>
-                <CarouselSection
-                  header={workflows.category || ""}
-                  subheader={`Lorem ipsum dolor sit amet consectetur adipisicing elit volantis.`}
-                >
-                  {workflows.templates.map((workflow, index) => (
-                    <Stack
-                      key={workflow.id}
-                      ml={index === 0 ? "24px" : 0}
-                    >
-                      <WorkflowCard
-                        index={index}
-                        workflow={workflow}
-                      />
-                    </Stack>
-                  ))}
-                </CarouselSection>
-              </Fragment>
-            ))}
+          {workflowsByCategory?.map((workflows, index) => (
+            <Fragment key={`${workflows.category}-${index}`}>
+              <CarouselSection
+                header={workflows.category || ""}
+                subheader={`Lorem ipsum dolor sit amet consectetur adipisicing elit volantis.`}
+              >
+                {workflows.templates.map((workflow, index) => (
+                  <Stack
+                    key={workflow.id}
+                    ml={index === 0 ? "24px" : 0}
+                  >
+                    <WorkflowCard
+                      index={index}
+                      workflow={workflow}
+                    />
+                  </Stack>
+                ))}
+              </CarouselSection>
+            </Fragment>
+          ))}
         </Stack>
       </Stack>
     </Layout>
