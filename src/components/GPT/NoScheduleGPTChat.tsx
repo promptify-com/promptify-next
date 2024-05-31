@@ -15,6 +15,7 @@ import CredentialsContainer from "./CredentialsContainer";
 import RunButton from "@/components/GPT/RunButton";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { IWorkflow } from "../Automation/types";
+import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
 
 interface Props {
   messages: IMessage[];
@@ -44,7 +45,6 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
     return Boolean((messageType === "credentials" && !areCredentialsStored) || (messageType === "form" && hasInputs));
   }
 
-  console.log(messages);
   return (
     <Stack
       ref={messagesContainerRef}
@@ -67,7 +67,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
         >
           {generatedExecution ? (
             <ExecutionMessage execution={generatedExecution} />
-          ) : (
+          ) : !!messages.length ? (
             messages.map(msg => (
               <Box
                 key={msg.id}
@@ -104,6 +104,8 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
                 )}
               </Box>
             ))
+          ) : (
+            <ChatCredentialsPlaceholder />
           )}
           {allowNoInputsRun && (
             <Stack

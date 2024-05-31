@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material";
-
 import { theme } from "@/theme";
 import Image from "@/components/design-system/Image";
 import { ElectricBoltIcon } from "@/assets/icons/ElectricBoltIcon";
@@ -13,6 +12,8 @@ import type { IWorkflow } from "@/components/Automation/types";
 import lazy from "next/dynamic";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState } from "@/core/store/chatSlice";
+import { capitalizeString } from "@/common/helpers";
+import { TIMES } from "./Constants";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
@@ -22,6 +23,11 @@ interface Props {
 
 export default function Header({ workflow }: Props) {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+
+  const scheduleData = clonedWorkflow?.periodic_task;
+  const isActive = scheduleData?.enabled;
+  const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "0");
+  const time = TIMES[scheduleData?.crontab.hour ?? 0];
 
   return (
     <Stack
@@ -90,7 +96,7 @@ export default function Header({ workflow }: Props) {
           >
             {workflow.description}
           </Typography>
-          {clonedWorkflow?.periodic_task?.name && (
+          {scheduleData?.name && (
             <>
               <Stack
                 direction={"row"}
@@ -109,7 +115,7 @@ export default function Header({ workflow }: Props) {
                   gap={1}
                   sx={{
                     p: "6px 14px",
-                    bgcolor: "#E5FFD5",
+                    bgcolor: isActive ? "#E5FFD5" : "#F4F1FF",
                     border: "1px solid #77B94E33",
                     borderRadius: "99px",
                   }}
@@ -118,11 +124,11 @@ export default function Header({ workflow }: Props) {
                     sx={{
                       width: 8,
                       height: 8,
-                      bgcolor: "#77B94E",
+                      bgcolor: isActive ? "#77B94E" : "#6E45E9",
                       borderRadius: "50%",
                     }}
                   />
-                  Active
+                  {isActive ? "Active" : "Paused"}
                 </Stack>
               </Stack>
               <Stack
@@ -135,8 +141,8 @@ export default function Header({ workflow }: Props) {
                   color: alpha(theme.palette.onSurface, 0.5),
                 }}
               >
-                Scheduled: Daily @ 9:00 AM
-                <IconButton sx={{}}>
+                Scheduled: {frequency} @ {time}
+                <IconButton>
                   <SettingsOutlined />
                 </IconButton>
               </Stack>
@@ -144,7 +150,7 @@ export default function Header({ workflow }: Props) {
           )}
         </Stack>
       </Stack>
-      {workflow.is_schedulable && clonedWorkflow?.periodic_task?.task && <LazyDateCPickerCalendar />}
+      {workflow.is_schedulable && scheduleData?.task && <LazyDateCPickerCalendar />}
     </Stack>
   );
 }
