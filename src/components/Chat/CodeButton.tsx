@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { IAnswer, IMessage } from "../Prompt/Types/chat";
 
-import { initialState as initialChatState, setAnswers, setChoiceSelected } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { PromptInputType } from "../Prompt/Types";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
