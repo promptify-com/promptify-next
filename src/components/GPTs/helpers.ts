@@ -181,7 +181,11 @@ export function injectProviderNode(
 
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
   const providerNode = {
-    ...node,
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    typeVersion: node.typeVersion,
+    credentials: node.credentials,
     parameters: nodeParametersCB(responseBody),
     position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
   };
