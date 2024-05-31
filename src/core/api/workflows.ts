@@ -19,7 +19,7 @@ export const workflowsApi = baseApi.injectEndpoints({
         }),
       }),
 
-      getWorkflowByslug: builder.query<IWorkflow, string>({
+      getWorkflowBySlug: builder.query<IWorkflow, string>({
         query: workflowSlug => ({
           url: `/api/n8n/workflows/by-slug/${workflowSlug}`,
           method: "get",
@@ -118,6 +118,6 @@ export const {
   useUpdateWorkflowMutation,
   useGetAuthUrlQuery,
   useGetWorkflowQuery,
-  useGetWorkflowByslugQuery,
+  useGetWorkflowBySlugQuery,
   useGetWorkflowExecutionsQuery,
 } = workflowsApi;

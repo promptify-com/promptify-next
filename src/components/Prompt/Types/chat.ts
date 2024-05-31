@@ -2,6 +2,7 @@ import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
 import { IParameters } from "@/common/types";
 import { IWorkflow } from "@/components/Automation/types";
+import { InputType } from "@/common/types/prompt";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
@@ -21,9 +22,12 @@ export type MessageType =
   | "questionParam"
   | "readyMessage"
   | "workflowExecution"
-  | "schedule_start"
   | "schedule_frequency"
-  | "schedule_time";
+  | "schedule_time"
+  | "schedule_providers"
+  | "schedule_activation"
+  | "input"
+  | InputType;
 
 export interface IMessage {
   id: number;
@@ -44,6 +48,7 @@ export interface IMessage {
   questionInputName?: string;
   executionId?: number;
   data?: Templates[] | IWorkflow[];
+  choices?: string[];
 }
 
 export interface IAnswer {
@@ -63,7 +68,7 @@ export interface IQuestion {
   prompt?: number;
   question: string;
   required: boolean;
-  type: "input" | "param";
+  type: InputType | "input" | "param";
   defaultValue?: string | number | null;
   choices?: string[];
   fileExtensions?: string[];
@@ -85,4 +90,5 @@ export interface CreateMessageProps {
   template?: Templates;
   isLatestExecution?: boolean;
   data?: Templates[] | IWorkflow[];
+  choices?: string[];
 }

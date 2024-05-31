@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import { IMessage } from "@/components/Prompt/Types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 import MessageContainer from "./MessageContainer";
 import { memo, useEffect, useState } from "react";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";

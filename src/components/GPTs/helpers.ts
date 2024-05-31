@@ -1,6 +1,15 @@
-import type { IConnections, INode, IWorkflow, NodesFileData } from "@/components/Automation/types";
+import type {
+  IConnections,
+  INode,
+  IProviderNode,
+  IWorkflow,
+  IWorkflowCreateResponse,
+  NodesFileData,
+} from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
+import type { ProviderType } from "@/components/GPT/Types";
+import { PROVIDERS } from "@/components/GPT/Constants";
 
 interface IRelation {
   nextNode: string;
@@ -9,11 +18,23 @@ interface IRelation {
   description: string;
 }
 
+export const cleanCredentialName = (name: string) => name.replace(/Api\s*|Oauth2\s*/gi, "").trim();
+
 function getNodeByName(nodes: INode[], name: string): INode {
   const node = nodes.find(node => node.name === name);
 
   if (!node) {
     throw new Error(`Node ${name} not found`);
+  }
+
+  return node;
+}
+
+export function getNodeInfoByType(type: string) {
+  const node = (nodesData as NodesFileData)[type];
+
+  if (!node) {
+    throw new Error(`Node ${type} not found`);
   }
 
   return node;
@@ -68,10 +89,177 @@ export function getWorkflowDataFlow(workflow: IWorkflow) {
     workflow,
   });
 
-  // filter out unnecessary nodes
   return Array.from(relations).filter(
     ([_, { type }]) => !["n8n-nodes-base.set", "n8n-nodes-base.webhook"].includes(type),
   );
+}
+
+const isProviderNode = (node: INode): boolean => node.type in PROVIDERS && /^Send .+ Message$/.test(node.name);
+
+export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
+  const clonedWorkflow = structuredClone(workflow);
+  let nodes = clonedWorkflow.nodes;
+  const connections = clonedWorkflow.connections;
+  const respondToWebhookNode = nodes.find(node => node.type === "n8n-nodes-base.respondToWebhook");
+
+  if (!respondToWebhookNode) {
+    throw new Error('Could not find the "Respond to Webhook" node');
+  }
+
+  // Already existed provider node should be removed before injecting the new provider
+  const existingProviderNodeIndex = clonedWorkflow.nodes.findIndex(node => isProviderNode(node));
+  if (existingProviderNodeIndex !== -1) {
+    const existingProviderNode = clonedWorkflow.nodes[existingProviderNodeIndex];
+
+    const connectedNodeName = Object.keys(connections).find(name => {
+      return connections[name].main[0][0].node === existingProviderNode.name;
+    });
+
+    if (connectedNodeName) {
+      delete connections[existingProviderNode.name];
+      connections[connectedNodeName].main[0][0].node = respondToWebhookNode.name;
+    }
+    nodes = nodes.filter(node => node.id !== existingProviderNode.id);
+  }
+
+  const promptifyNode = nodes.filter(node => node.type === "n8n-nodes-promptify.promptify").pop();
+
+  if (promptifyNode) {
+    promptifyNode.parameters.save_output = true;
+    promptifyNode.parameters.template_streaming = true;
+  }
+
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+  const providerNode = {
+    ...node,
+    parameters: nodeParametersCB(responseBody),
+    position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
+  };
+
+  nodes.push(providerNode);
+
+  const adjacentNode = nodes.find(node => connections[node.name]?.main[0][0].node === respondToWebhookNode.name);
+
+  if (!adjacentNode) {
+    throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
+  }
+
+  connections[adjacentNode.name] = {
+    main: [
+      [
+        {
+          node: providerNode.name,
+          type: "main",
+          index: 0,
+        },
+      ],
+    ],
+  };
+  connections[providerNode.name] = {
+    main: [
+      [
+        {
+          node: respondToWebhookNode.name,
+          type: "main",
+          index: 0,
+        },
+      ],
+    ],
+  };
+
+  return {
+    ...clonedWorkflow,
+    nodes,
+    connections,
+  };
+}
+
+export function getProviderParams(providerType: ProviderType) {
+  switch (providerType) {
+    case "n8n-nodes-base.slack":
+      return [
+        {
+          name: "channelId",
+          displayName: "Channel name:",
+          type: "text",
+          required: true,
+        },
+      ];
+    case "n8n-nodes-base.gmail":
+      return [
+        {
+          name: "sendTo",
+          displayName: "Send to:",
+          type: "email",
+          required: true,
+        },
+        {
+          name: "subject",
+          displayName: "Subject:",
+          type: "text",
+          required: true,
+        },
+      ];
+    case "n8n-nodes-base.whatsApp":
+      return [
+        {
+          name: "phoneNumberId",
+          displayName: "Phone Number:",
+          type: "text",
+          required: true,
+        },
+      ];
+    case "n8n-nodes-base.telegram":
+      return [
+        {
+          name: "chatId",
+          displayName: "Chat ID:",
+          type: "text",
+          required: true,
+        },
+      ];
+    default:
+      throw new Error(`Provider "${providerType}" is not recognized!`);
+  }
+}
+
+export function replaceProviderParamValue(providerType: ProviderType, values: Record<string, string>): {} {
+  switch (providerType) {
+    case "n8n-nodes-base.slack":
+      return {
+        select: "channel",
+        channelId: {
+          __rl: true,
+          value: values.channelId.startsWith("@") ? values.channelId : `@${values.channelId}`,
+          mode: "name",
+        },
+        text: values.content,
+        otherOptions: {},
+      };
+    case "n8n-nodes-base.gmail":
+      return {
+        sendTo: values.sendTo,
+        subject: values.subject,
+        message: values.content,
+        options: {},
+      };
+    case "n8n-nodes-base.whatsApp":
+      return {
+        operation: "send",
+        phoneNumberId: values.phoneNumberId,
+        recipientPhoneNumber: values.phoneNumberId, // recipient phone number is the same as sender
+        textBody: values.content,
+        additionalFields: {},
+      };
+    case "n8n-nodes-base.telegram":
+      return {
+        chatId: values.chatId.startsWith("@") ? values.chatId : `@${values.chatId}`,
+        text: values.content,
+        additionalFields: {},
+      };
+    default:
+      throw new Error(`Provider "${providerType}" is not recognized!`);
+  }
 }
 
 const statusPriority = ["failed", "success", "scheduled"];
