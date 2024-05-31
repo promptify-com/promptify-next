@@ -43,6 +43,7 @@ export interface IChatSliceState {
   currentExecutionDetails: { id: number | null; isFavorite: boolean };
   chats: IChat[];
   clonedWorkflow?: IWorkflowCreateResponse;
+  choiceSelected?: string;
 }
 
 export type DocumentFilterStatusType = "draft" | "saved" | null;

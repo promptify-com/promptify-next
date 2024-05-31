@@ -5,6 +5,8 @@ import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import FormParam from "@/components/Prompt/Common/Chat/FormParam";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import ChoicesButton from "../ChoicesButton";
+import CodeButton from "../CodeButton";
 
 interface Props {
   message: IMessage;
@@ -14,7 +16,7 @@ interface Props {
 function QuestionMessage({ message, variant }: Props) {
   const { inputs, params } = useAppSelector(state => state.chat ?? initialChatState);
 
-  const { questionIndex, questionInputName, text, isRequired } = message;
+  const { questionIndex, questionInputName, text, isRequired, choices, type } = message;
   const totalQuestions = inputs.length + params.length;
 
   let questionCounterText = `Question ${questionIndex} of ${totalQuestions}`;
@@ -70,6 +72,13 @@ function QuestionMessage({ message, variant }: Props) {
             variant="button"
             param={param}
           />
+        )}
+
+        {type === "choices" && choices?.length && <ChoicesButton message={message} />}
+        {type === "code" && (
+          <Stack>
+            <CodeButton message={message} />
+          </Stack>
         )}
       </Stack>
     </Stack>

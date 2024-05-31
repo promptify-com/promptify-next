@@ -93,6 +93,9 @@ export const chatSlice = createSlice({
     setClonedWorkflow: (state, action: PayloadAction<IWorkflowCreateResponse | undefined>) => {
       state.clonedWorkflow = action.payload;
     },
+    setChoiceSelected: (state, action: PayloadAction<string | undefined>) => {
+      state.choiceSelected = action.payload;
+    },
   },
 });
 
@@ -117,6 +120,7 @@ export const {
   setSelectedWorkflow,
   setChats,
   setClonedWorkflow,
+  setChoiceSelected,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
