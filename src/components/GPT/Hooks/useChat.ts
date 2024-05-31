@@ -156,6 +156,7 @@ const useChat = ({ workflow }: Props) => {
       text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
       isHighlight: true,
     });
+    preparedMessages.push(providerConnectionMessage);
 
     if (updateScheduleMode.current) {
       const updateWorkflowMessage = createMessage({
@@ -168,8 +169,6 @@ const useChat = ({ workflow }: Props) => {
         type: "schedule_activation",
         text: "Ready to turn on this GPT?",
       });
-
-      preparedMessages.push(providerConnectionMessage);
 
       if (inputs.length > 0) {
         const inputsMessage = createMessage({

@@ -115,15 +115,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               />
             )}
 
-            {message.type === "schedule_activation" ||
-              (message.type === "schedule_update" && (
-                <ActivateWorkflowMessage
-                  message={message}
-                  onActivate={activateWorkflow}
-                  allowActivateButton={allowActivateButton}
-                  updateMode={message.type === "schedule_update"}
-                />
-              ))}
+            {(message.type === "schedule_activation" || message.type === "schedule_update") && (
+              <ActivateWorkflowMessage
+                message={message}
+                onActivate={activateWorkflow}
+                allowActivateButton={allowActivateButton}
+                updateMode={message.type === "schedule_update"}
+              />
+            )}
           </Box>
         ))
       ) : (
