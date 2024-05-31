@@ -93,10 +93,10 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   }, []);
 
   useEffect(() => {
-    if (selectedWorkflow && !isWorkflowLoading) {
+    if (selectedWorkflow.id && !isWorkflowLoading) {
       processData();
     }
-  }, [isWorkflowLoading, selectedWorkflow]);
+  }, [isWorkflowLoading, selectedWorkflow.id]);
 
   useEffect(() => {
     if (!store) {

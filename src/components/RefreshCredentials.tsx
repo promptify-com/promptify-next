@@ -27,58 +27,24 @@ function RefreshCredentials({ credential, showLabel = false, onClick }: Props) {
       alignItems={"center"}
       gap={1}
     >
-      {showLabel && (
-        <Typography
-          sx={{
-            color: "primary.main",
-          }}
-        >
-          {credential.name}:
-        </Typography>
-      )}
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={0.3}
+      <IconButton
+        sx={{
+          border: "none",
+          ":hover": {
+            bgcolor: "action.hover",
+          },
+        }}
+        onClick={async e => {
+          e.preventDefault();
+          await deleteCredential(credential.id);
+          await updateWorkflowAfterCredentialsDeletion(credential.type, false);
+          dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
+          removeCredential(credential.id);
+          onClick?.();
+        }}
       >
-        <BaseButton
-          color="custom"
-          variant="text"
-          sx={{
-            border: "1px solid",
-            borderRadius: "8px",
-            borderColor: "secondary.main",
-            color: "secondary.main",
-            p: "3px 12px",
-            ml: "5px",
-            fontSize: { xs: 11, md: 14 },
-            ":hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-          disabled
-        >
-          Connected
-        </BaseButton>
-        <IconButton
-          sx={{
-            border: "none",
-            ":hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-          onClick={async e => {
-            e.preventDefault();
-            await deleteCredential(credential.id);
-            await updateWorkflowAfterCredentialsDeletion(credential.type, false);
-            dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
-            removeCredential(credential.id);
-            onClick?.();
-          }}
-        >
-          <Refresh />
-        </IconButton>
-      </Stack>
+        <Refresh />
+      </IconButton>
     </Stack>
   );
 }

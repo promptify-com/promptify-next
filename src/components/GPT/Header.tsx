@@ -9,14 +9,20 @@ import { alpha } from "@mui/material";
 import { theme } from "@/theme";
 import Image from "@/components/design-system/Image";
 import { ElectricBoltIcon } from "@/assets/icons/ElectricBoltIcon";
-import DatePickerCalendar from "../GPTs/DatePickerCalendar";
 import type { IWorkflow } from "@/components/Automation/types";
+import lazy from "next/dynamic";
+import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/chatSlice";
+
+const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
 interface Props {
   workflow: IWorkflow;
 }
 
 export default function Header({ workflow }: Props) {
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+
   return (
     <Stack
       direction={"row"}
@@ -28,7 +34,10 @@ export default function Header({ workflow }: Props) {
         background: "linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, rgba(110, 69, 233, 0.05) 100%), #FFF;",
       }}
     >
-      <Stack gap={6}>
+      <Stack
+        gap={6}
+        width={"50%"}
+      >
         <CardMedia
           sx={{
             width: { xs: 32, sm: 48 },
@@ -131,8 +140,7 @@ export default function Header({ workflow }: Props) {
           </Stack>
         </Stack>
       </Stack>
-      {/* TODO: to render only if the template workflow is a scheduling */}
-      <DatePickerCalendar />
+      {workflow.is_schedulable && clonedWorkflow?.periodic_task?.task && <LazyDateCPickerCalendar />}
     </Stack>
   );
 }

@@ -57,6 +57,7 @@ export default function ScheduledChatSteps({ workflow }: Props) {
             <CredentialsContainer
               message={message.text}
               workflow={workflow}
+              isScheduled
             />
           )}
           {message.type === "schedule_frequency" && (
