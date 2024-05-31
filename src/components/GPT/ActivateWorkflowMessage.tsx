@@ -1,17 +1,18 @@
 import Typography from "@mui/material/Typography";
-import type { IMessage } from "@/components/Prompt/Types/chat";
-import MessageContainer from "./MessageContainer";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { BtnStyle } from "./Constants";
+import MessageContainer from "@/components/GPT/MessageContainer";
+import { BtnStyle } from "@/components/GPT/Constants";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   message: IMessage;
   onActivate(): void;
+  allowActivateButton?: boolean;
   updateMode?: boolean;
 }
 
-export default function ActivateWorkflowMessage({ message, onActivate, updateMode }: Props) {
+export default function ActivateWorkflowMessage({ message, onActivate, updateMode, allowActivateButton }: Props) {
   const { fromUser, isHighlight } = message;
 
   return (
@@ -50,6 +51,7 @@ export default function ActivateWorkflowMessage({ message, onActivate, updateMod
         <Button
           onClick={onActivate}
           variant="contained"
+          disabled={!allowActivateButton}
           sx={BtnStyle}
         >
           {updateMode ? "Update Activation" : "Activate"}

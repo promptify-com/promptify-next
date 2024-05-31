@@ -44,6 +44,7 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
     setIsValidatingAnswer,
     prepareAndQueueMessages,
     messageAnswersForm,
+    showGenerateButton: allowActivateButton,
   } = useMessageManager({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
@@ -159,7 +160,10 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
             justifyContent={"space-between"}
           >
             {selectedWorkflow.is_schedulable ? (
-              <ScheduledChatSteps workflow={selectedWorkflow} />
+              <ScheduledChatSteps
+                workflow={selectedWorkflow}
+                allowActivateButton={allowActivateButton}
+              />
             ) : (
               <NoScheduleGPTChat
                 workflow={workflow}

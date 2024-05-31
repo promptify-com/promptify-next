@@ -16,7 +16,7 @@ function GPTbanner({ title, description, href }: Props) {
   const { isMobile } = useBrowser();
   return (
     <Stack
-      width={"100%"}
+      width={{ xs: "auto", md: "100%" }}
       height={{ md: "260px" }}
       sx={{
         background: "linear-gradient(0deg, #EEE8FF 0%, #EEE8FF 100%)",

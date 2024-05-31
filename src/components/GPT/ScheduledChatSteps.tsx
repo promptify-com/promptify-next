@@ -1,26 +1,31 @@
-import React, { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
-import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
 import Box from "@mui/material/Box";
-import { useEffect } from "react";
-import useChat from "./Hooks/useChat";
-import Message from "./Message";
-import CredentialsContainer from "./CredentialsContainer";
-import Choices from "./Choices";
-import ResponseProvidersContainer from "./ResponseProvidersContainer";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { initialState, setAnswers } from "@/core/store/chatSlice";
+import useChat from "@/components/GPT/Hooks/useChat";
+import Message from "@/components/GPT/Message";
+import CredentialsContainer from "@/components/GPT/CredentialsContainer";
+import Choices from "@/components/GPT/Choices";
+import ResponseProvidersContainer from "@/components/GPT/ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import ActivateWorkflowMessage from "./ActivateWorkflowMessage";
-import { FREQUENCY_ITEMS } from "./Constants";
-import FrequencyTimeSelector from "./FrequencyTimeSelector";
-import { useAppSelector } from "@/hooks/useStore";
-import { initialState } from "@/core/store/chatSlice";
-import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
+import ActivateWorkflowMessage from "@/components/GPT/ActivateWorkflowMessage";
+import { FREQUENCY_ITEMS } from "@/components/GPT/Constants";
+import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
+import MessageInputs from "@/components/GPT/MessageInputs";
+import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
+import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
   workflow: IWorkflow;
+  allowActivateButton?: boolean;
 }
 
-export default function ScheduledChatSteps({ workflow }: Props) {
+export default function ScheduledChatSteps({ workflow, allowActivateButton }: Props) {
+  const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
   const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
@@ -35,6 +40,17 @@ export default function ScheduledChatSteps({ workflow }: Props) {
       initialMessages();
       initializeCredentials();
       workflowLoaded.current = true;
+      const workflowData = clonedWorkflow?.periodic_task?.crontab.workflow_data || {};
+
+      const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
+        inputName,
+        required: true,
+        question: ``,
+        answer: answer as PromptInputType,
+        prompt: 0,
+      }));
+
+      dispatch(setAnswers(answers));
     }
   }, [clonedWorkflow]);
 
@@ -91,10 +107,19 @@ export default function ScheduledChatSteps({ workflow }: Props) {
                 prepareWorkflow={provider => prepareWorkflow(provider)}
               />
             )}
+            {message.type === "form" && (
+              <MessageInputs
+                allowGenerate={false}
+                onGenerate={() => {}}
+                message={message}
+              />
+            )}
+
             {message.type === "schedule_activation" && (
               <ActivateWorkflowMessage
                 message={message}
                 onActivate={activateWorkflow}
+                allowActivateButton={allowActivateButton}
               />
             )}
             {message.type === "schedule_update" && (
