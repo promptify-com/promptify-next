@@ -1,3 +1,4 @@
+import { ITemplate } from "@/common/types/template";
 import type { User, UserPartial } from "@/core/api/dto/user";
 
 interface IParameters {
@@ -75,6 +76,10 @@ export interface IWorkflow {
   data: IData;
   created_at: string;
   is_schedulable: boolean;
+  activities?: {
+    likes_count: number;
+    favorites_count: number;
+  };
 }
 
 export interface UserWorkflowsResponse {
@@ -143,6 +148,7 @@ export interface IWorkflowCreateResponse {
     enabled: boolean;
     crontab: IWorkflowSchedule;
   };
+  template_workflow: IWorkflow;
 }
 
 export interface IAuthenticateBase {
@@ -208,4 +214,9 @@ export interface IAvailableCredentials {
   id: string;
   name: string;
   type: string;
+}
+
+export interface IWorkflowCategory {
+  category: string;
+  templates: IWorkflow[];
 }

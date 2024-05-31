@@ -7,11 +7,19 @@ import Image from "@/components/design-system/Image/";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import Link from "next/link";
+import { IWorkflow } from "../Automation/types";
+import useTruncate from "@/hooks/useTruncate";
 
-function WorkflowCard({ index, href, isScheduled }: { index: number; href: string; isScheduled?: boolean }) {
+interface Props {
+  index: number;
+  workflow?: IWorkflow;
+}
+function WorkflowCard({ index, workflow }: Props) {
+  const { truncate } = useTruncate();
+
   return (
     <Link
-      href={href}
+      href={`/gpts/${workflow?.slug}`}
       style={{ textDecoration: "none" }}
     >
       <Stack
@@ -32,7 +40,7 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
           position={"relative"}
         >
           <Image
-            src={"/assets/images/animals/City.jpg"}
+            src={workflow?.image ?? "/assets/images/animals/City.jpg"}
             fill
             alt=""
           />
@@ -50,7 +58,8 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
               sx={iconTextStyle}
               className="icon-text-style"
             >
-              <FavoriteBorderOutlined sx={{ fontSize: 12 }} /> 0
+              <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
+              {workflow?.activities?.likes_count ?? 0}
             </Stack>
             <Stack
               direction={"row"}
@@ -63,17 +72,17 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
                 size="12"
                 color="#ffffff"
               />
-              0
+              {workflow?.activities?.favorites_count ?? 0}
             </Stack>
           </Stack>
         </Box>
-        <Stack
+        {/* <Stack
           position={"absolute"}
           top={{ xs: "24px", md: 7 }}
           right={{ xs: "24px", md: 7 }}
         >
           <StatusChip status={index === 2 ? "active" : "paused"} />
-        </Stack>
+        </Stack> */}
         <Stack
           p={{ xs: "16px", md: "40px 24px 16px 24px" }}
           flex={1}
@@ -86,7 +95,7 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
               color={"#000"}
               lineHeight={"120%"}
             >
-              Get a city’s weather
+              {workflow?.name ?? ""}
             </Typography>
             <Typography
               fontSize={11}
@@ -94,10 +103,10 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
               lineHeight={"150%"}
               color={"#000"}
             >
-              Comprehensive and structured scientific essay. Introduction, three-...
+              {truncate(workflow?.description || "", { length: 70 })}
             </Typography>
           </Stack>
-          <Stack
+          {/* <Stack
             direction={"row"}
             justifyContent={"space-between"}
           >
@@ -109,7 +118,7 @@ function WorkflowCard({ index, href, isScheduled }: { index: number; href: strin
             >
               Scheduled: Daily @ 9:00 AM
             </Typography>
-          </Stack>
+          </Stack> */}
         </Stack>
       </Stack>
     </Link>
