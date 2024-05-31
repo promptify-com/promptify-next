@@ -5,7 +5,6 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { initialState, setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
-import { getTimezone } from "@/common/helpers/timeManipulation";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
@@ -28,7 +27,7 @@ const useChat = ({ workflow }: Props) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const updateScheduleMode = useRef<boolean | null>(null);
   const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
-    timezone: getTimezone()!,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     workflow_data: {} as WorkflowData,
     frequency: "daily",
     hour: 0,
@@ -75,15 +74,19 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const showAllSteps = () => {
-    const schedulesMessages = createMessage({
+    const schedulesMessage = createMessage({
       type: "schedule_time",
       text: "At what time?",
     });
-    const providersMessages = createMessage({
+    const providersMessage = createMessage({
       type: "schedule_providers",
       text: "Where should we send your scheduled GPT?",
     });
-    setMessages(prev => prev.concat(schedulesMessages, providersMessages));
+    const updateWorkflowMessage = createMessage({
+      type: "schedule_update",
+      text: "",
+    });
+    setMessages(prev => prev.concat(schedulesMessage, providersMessage, updateWorkflowMessage));
   };
 
   useEffect(() => {
@@ -159,7 +162,7 @@ const useChat = ({ workflow }: Props) => {
         type: "schedule_update",
         text: "",
       });
-      preparedMessages = messages.filter(msg => msg.type !== "schedule_update").concat(updateWorkflowMessage);
+      preparedMessages.push(updateWorkflowMessage);
     } else {
       const activationMessage = createMessage({
         type: "schedule_activation",

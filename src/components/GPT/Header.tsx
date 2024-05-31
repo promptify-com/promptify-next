@@ -27,7 +27,7 @@ export default function Header({ workflow }: Props) {
   const scheduleData = clonedWorkflow?.periodic_task;
 
   const isActive = scheduleData?.enabled;
-  const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "0");
+  const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "");
   const time = TIMES[scheduleData?.crontab.hour ?? 0];
 
   return (
