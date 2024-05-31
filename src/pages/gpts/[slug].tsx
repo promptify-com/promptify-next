@@ -37,8 +37,6 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { streamExecutionHandler } = useGenerateExecution({});
 
-  console.log({ workflow, selectedWorkflow });
-
   const {
     messages,
     isValidatingAnswer,

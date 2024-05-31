@@ -9,25 +9,28 @@ interface Props {
   message: IMessage;
   onActivate(): void;
   allowActivateButton?: boolean;
+  updateMode?: boolean;
 }
 
-export default function ActivateWorkflowMessage({ message, onActivate, allowActivateButton }: Props) {
+export default function ActivateWorkflowMessage({ message, onActivate, updateMode, allowActivateButton }: Props) {
   const { fromUser, isHighlight } = message;
 
   return (
     <MessageContainer message={message}>
-      <Typography
-        fontSize={14}
-        fontWeight={500}
-        color={"onSurface"}
-        sx={{
-          p: "16px 20px",
-          borderRadius: fromUser ? "100px 100px 100px 0px" : "0px 100px 100px 100px",
-          bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
-        }}
-      >
-        {message.text}
-      </Typography>
+      {!updateMode && (
+        <Typography
+          fontSize={14}
+          fontWeight={500}
+          color={"onSurface"}
+          sx={{
+            p: "16px 20px",
+            borderRadius: fromUser ? "100px 100px 100px 0px" : "0px 100px 100px 100px",
+            bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
+          }}
+        >
+          {message.text}
+        </Typography>
+      )}
       <Stack
         justifyContent={"center"}
         alignItems={"center"}
@@ -43,7 +46,7 @@ export default function ActivateWorkflowMessage({ message, onActivate, allowActi
           fontWeight={500}
           color={"common.black"}
         >
-          Ready to turn on this GPT?
+          Ready to {updateMode ? "update" : "turn on"} this GPT?
         </Typography>
         <Button
           onClick={onActivate}
@@ -51,7 +54,7 @@ export default function ActivateWorkflowMessage({ message, onActivate, allowActi
           disabled={!allowActivateButton}
           sx={BtnStyle}
         >
-          Activate
+          {updateMode ? "Update Activation" : "Activate"}
         </Button>
       </Stack>
     </MessageContainer>

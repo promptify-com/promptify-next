@@ -69,7 +69,6 @@ function useMessageManager({ initialMessageTitle }: Props) {
     if (requiresAuthentication || requiresOauth) {
       areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     }
-    console.log(areAllCredentialsStored);
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
     if (requiresAuthentication || requiresOauth) {

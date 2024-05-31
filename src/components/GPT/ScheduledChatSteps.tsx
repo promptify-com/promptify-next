@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
+import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChat";
 import Message from "@/components/GPT/Message";
 import CredentialsContainer from "@/components/GPT/CredentialsContainer";
@@ -22,15 +24,21 @@ interface Props {
 
 export default function ScheduledChatSteps({ workflow, allowActivateButton }: Props) {
   const { initializeCredentials } = useCredentials();
+  const workflowLoaded = useRef(false);
   const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
     useChat({
       workflow,
     });
 
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+
   useEffect(() => {
-    initialMessages();
-    initializeCredentials();
-  }, [workflow]);
+    if (clonedWorkflow && !workflowLoaded.current) {
+      initialMessages();
+      initializeCredentials();
+      workflowLoaded.current = true;
+    }
+  }, [clonedWorkflow]);
 
   return (
     <Stack
@@ -69,6 +77,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 message={message.text}
                 items={FREQUENCY_ITEMS}
                 onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
+                defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
               />
             )}
             {message.type === "schedule_time" && (
@@ -97,6 +106,13 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 message={message}
                 onActivate={activateWorkflow}
                 allowActivateButton={allowActivateButton}
+              />
+            )}
+            {message.type === "schedule_update" && (
+              <ActivateWorkflowMessage
+                message={message}
+                onActivate={activateWorkflow}
+                updateMode
               />
             )}
           </Box>

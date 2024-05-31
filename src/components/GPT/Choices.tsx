@@ -8,10 +8,11 @@ interface Props {
   message: string;
   items: string[];
   onSelect(item: string): void;
+  defaultValue?: string;
 }
 
-export default function Choices({ message, items, onSelect }: Props) {
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+export default function Choices({ message, items, onSelect, defaultValue = "" }: Props) {
+  const [selectedItem, setSelectedItem] = useState(defaultValue);
 
   const handleSelectItem = (item: string) => {
     setSelectedItem(item);
