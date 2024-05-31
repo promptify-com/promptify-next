@@ -17,7 +17,7 @@ export default function ActivateWorkflowMessage({ message, onActivate, updateMod
 
   return (
     <MessageContainer message={message}>
-      {!updateMode && (
+      {!updateMode && message.text && (
         <Typography
           fontSize={14}
           fontWeight={500}

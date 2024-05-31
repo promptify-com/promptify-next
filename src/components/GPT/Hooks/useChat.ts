@@ -42,6 +42,8 @@ const useChat = ({ workflow }: Props) => {
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const initialMessages = async () => {
+    loadWorkflowScheduleData();
+
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${
       workflow.name
     }?`;
@@ -72,6 +74,10 @@ const useChat = ({ workflow }: Props) => {
     if (updateScheduleMode.current) {
       showAllSteps();
     }
+  };
+
+  const loadWorkflowScheduleData = () => {
+    setSchedulingData({ ...schedulingData, ...clonedWorkflow?.periodic_task?.crontab });
   };
 
   const showAllSteps = () => {
@@ -187,18 +193,21 @@ const useChat = ({ workflow }: Props) => {
       const updateWorkflowMessage = createMessage({
         type: "schedule_update",
         text: "",
+        noHeader: true,
       });
       preparedMessages.push(updateWorkflowMessage);
     } else {
       const activationMessage = createMessage({
         type: "schedule_activation",
-        text: "Ready to turn on this GPT?",
+        text: "",
+        noHeader: true,
       });
 
       if (inputs.length > 0) {
         const inputsMessage = createMessage({
           type: "form",
           text: "Please fill out the following details:",
+          noHeader: true,
         });
         preparedMessages.push(inputsMessage);
       }
