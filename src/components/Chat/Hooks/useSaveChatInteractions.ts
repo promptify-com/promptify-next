@@ -107,6 +107,8 @@ const useSaveChatInteractions = () => {
           case "questionInput":
           case "questionParam":
           case "readyMessage":
+          case "choices":
+          case "code":
             _message = {
               chat: chatId,
               text: message.text,
