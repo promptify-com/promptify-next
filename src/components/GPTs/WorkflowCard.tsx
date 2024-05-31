@@ -7,21 +7,29 @@ import Image from "@/components/design-system/Image/";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import Link from "next/link";
-import { IWorkflow } from "../Automation/types";
+import { IWorkflow, IWorkflowSchedule } from "../Automation/types";
 import useTruncate from "@/hooks/useTruncate";
 import { capitalizeString } from "@/common/helpers";
 import { TIMES } from "../GPT/Constants";
+import Chip from "@mui/material/Chip";
 
 interface Props {
   index: number;
   workflow?: IWorkflow;
+  periodic_task?: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+  };
 }
-function WorkflowCard({ index, workflow }: Props) {
+function WorkflowCard({ index, workflow, periodic_task }: Props) {
   const { truncate } = useTruncate();
 
-  const scheduleData = workflow?.periodic_task;
-  const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "");
-  const time = TIMES[scheduleData?.crontab.hour ?? 0];
+  const scheduleData = periodic_task?.enabled;
+  console.log(periodic_task);
+  const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
+  const time = TIMES[periodic_task?.crontab.hour ?? 0];
   return (
     <Link
       href={`/gpts/${workflow?.slug}`}
@@ -111,7 +119,7 @@ function WorkflowCard({ index, workflow }: Props) {
               {truncate(workflow?.description || "", { length: 70 })}
             </Typography>
           </Stack>
-          {scheduleData && scheduleData.enabled && (
+          {periodic_task && (
             <Stack
               direction={"row"}
               justifyContent={"space-between"}

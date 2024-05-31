@@ -25,7 +25,10 @@ function GPTsPage() {
 
   const showBanner = observers.bannerObserver?.isIntersecting;
   const showHistoricalCarousel = observers.historicalCarouselObserver?.isIntersecting;
-  const filteredUserWorkflows = userWorkflows?.data?.filter(workflow => workflow?.template_workflow);
+
+  const filteredUserWorkflows = userWorkflows?.data?.filter(
+    workflow => workflow?.template_workflow?.is_schedulable && workflow?.periodic_task,
+  );
 
   const schedulableWorkflows = workflowsByCategory?.flatMap(category =>
     category.templates.filter(workflow => workflow.is_schedulable),
@@ -51,6 +54,7 @@ function GPTsPage() {
                   <WorkflowCard
                     index={index}
                     workflow={workflow?.template_workflow}
+                    periodic_task={filteredUserWorkflows[index]?.periodic_task}
                   />
                 </Stack>
               ))}
