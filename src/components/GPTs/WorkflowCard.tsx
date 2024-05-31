@@ -29,6 +29,8 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
   const scheduleData = periodic_task?.enabled;
   const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
+
+  // const isGPTSchedule = wo
   return (
     <Link
       href={`/gpts/${workflow?.slug}`}
@@ -88,17 +90,20 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
             </Stack>
           </Stack>
         </Box>
-        {/* <Stack
-          position={"absolute"}
-          top={{ xs: "24px", md: 7 }}
-          right={{ xs: "24px", md: 7 }}
-        >
-          <StatusChip status={index === 2 ? "active" : "paused"} />
-        </Stack> */}
+        {periodic_task && workflow?.is_schedulable && (
+          <Stack
+            position={"absolute"}
+            top={{ xs: "24px", md: 7 }}
+            right={{ xs: "24px", md: 7 }}
+          >
+            <StatusChip status={periodic_task?.enabled ? "active" : "paused"} />
+          </Stack>
+        )}
         <Stack
           p={{ xs: "16px", md: "40px 24px 16px 24px" }}
           flex={1}
           gap={"24px"}
+          alignItems={"start"}
         >
           <Stack gap={"8px"}>
             <Typography
@@ -118,7 +123,7 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
               {truncate(workflow?.description || "", { length: 70 })}
             </Typography>
           </Stack>
-          {periodic_task && (
+          {periodic_task && workflow?.is_schedulable ? (
             <Stack
               direction={"row"}
               justifyContent={"space-between"}
@@ -132,6 +137,24 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
                 Scheduled: {frequency} @ {time}
               </Typography>
             </Stack>
+          ) : (
+            <Chip
+              label={"Productivity"}
+              size="small"
+              sx={{
+                fontSize: "11px",
+                fontWeight: 500,
+                lineHeight: "16px",
+                textAlign: "left",
+                padding: "7px 12px 7px 12px",
+                borderRadius: "100px",
+                border: "1px solid rgba(0, 0, 0, 0.08)",
+                bgcolor: "white",
+                "& .MuiChip-label": {
+                  p: "10px",
+                },
+              }}
+            />
           )}
         </Stack>
       </Stack>

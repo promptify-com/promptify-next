@@ -7,8 +7,13 @@ import Stack from "@mui/material/Stack";
 import Image from "@/components/design-system/Image";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import useBrowser from "@/hooks/useBrowser";
+import { Dispatch, SetStateAction } from "react";
 
-function HeroSection() {
+interface Props {
+  onFilter: Dispatch<SetStateAction<string>>;
+}
+
+function HeroSection({ onFilter }: Props) {
   const { isMobile } = useBrowser();
 
   const renderImageByViewport = !isMobile
@@ -79,6 +84,7 @@ function HeroSection() {
           <InputBase
             placeholder="Search for GPTs"
             fullWidth
+            onChange={event => onFilter(event.target.value)}
             sx={{
               color: "#000",
               ".MuiInputBase-input::placeholder": {
