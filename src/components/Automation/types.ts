@@ -149,6 +149,7 @@ export interface IWorkflowCreateResponse {
     name: string;
     enabled: boolean;
     crontab: IWorkflowSchedule;
+    kwargs?: string;
   };
   template_workflow: IWorkflow;
 }
