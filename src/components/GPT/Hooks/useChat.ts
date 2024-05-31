@@ -162,18 +162,21 @@ const useChat = ({ workflow }: Props) => {
       const updateWorkflowMessage = createMessage({
         type: "schedule_update",
         text: "",
+        noHeader: true,
       });
       preparedMessages.push(updateWorkflowMessage);
     } else {
       const activationMessage = createMessage({
         type: "schedule_activation",
-        text: "Ready to turn on this GPT?",
+        text: "",
+        noHeader: true,
       });
 
       if (inputs.length > 0) {
         const inputsMessage = createMessage({
           type: "form",
           text: "Please fill out the following details:",
+          noHeader: true,
         });
         preparedMessages.push(inputsMessage);
       }
