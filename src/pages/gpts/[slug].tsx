@@ -21,6 +21,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
 import type { IWorkflow } from "@/components/Automation/types";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 
 interface Props {
   workflow: IWorkflow;
@@ -35,6 +36,8 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
   const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(workflow);
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { streamExecutionHandler } = useGenerateExecution({});
+
+  console.log({ workflow, selectedWorkflow });
 
   const {
     messages,
@@ -157,15 +160,18 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
             direction={"row"}
             justifyContent={"space-between"}
           >
-            <NoScheduleGPTChat
-              workflow={workflow}
-              messages={messages}
-              showGenerate={showGenerate}
-              onGenerate={executeWorkflow}
-              isValidating={isValidatingAnswer}
-              processData={processData}
-            />
-            {/* <ScheduledChatSteps workflow={selectedWorkflow} /> */}
+            {selectedWorkflow.is_schedulable ? (
+              <ScheduledChatSteps workflow={selectedWorkflow} />
+            ) : (
+              <NoScheduleGPTChat
+                workflow={workflow}
+                messages={messages}
+                showGenerate={showGenerate}
+                onGenerate={executeWorkflow}
+                isValidating={isValidatingAnswer}
+                processData={processData}
+              />
+            )}
             <Workflow workflow={selectedWorkflow} />
           </Stack>
         </Stack>

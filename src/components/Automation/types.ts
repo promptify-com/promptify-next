@@ -106,6 +106,14 @@ export interface IWorkflowSchedule {
   // month: number,
   workflow_data: {};
 }
+
+interface INodeConnection {
+  main: {
+    node: string;
+    type: string;
+    index: number;
+  }[][];
+}
 export interface IWorkflowCreateResponse {
   id: string;
   name: string;
@@ -125,9 +133,16 @@ export interface IWorkflowCreateResponse {
   staticData?: any;
   settings: any;
   active: boolean;
-  connections: any;
+  connections: {
+    [key: string]: INodeConnection;
+  };
   schedule?: IWorkflowSchedule;
-  periodic_task: null | { task: string; name: string; enabled: boolean; crontab: Record<string, string> };
+  periodic_task: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+  };
 }
 
 export interface IAuthenticateBase {

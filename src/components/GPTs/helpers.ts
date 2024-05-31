@@ -9,6 +9,7 @@ import type {
 import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
+import { PROVIDERS } from "@/components/GPT/Constants";
 
 interface IRelation {
   nextNode: string;
@@ -93,14 +94,32 @@ export function getWorkflowDataFlow(workflow: IWorkflow) {
   );
 }
 
+const isProviderNode = (node: INode): boolean => node.type in PROVIDERS && /^Send .+ Message$/.test(node.name);
+
 export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
   const clonedWorkflow = structuredClone(workflow);
-
-  const nodes = clonedWorkflow.nodes;
+  let nodes = clonedWorkflow.nodes;
+  const connections = clonedWorkflow.connections;
   const respondToWebhookNode = nodes.find(node => node.type === "n8n-nodes-base.respondToWebhook");
 
   if (!respondToWebhookNode) {
     throw new Error('Could not find the "Respond to Webhook" node');
+  }
+
+  // Already existed provider node should be removed before injecting the new provider
+  const existingProviderNodeIndex = clonedWorkflow.nodes.findIndex(node => isProviderNode(node));
+  if (existingProviderNodeIndex !== -1) {
+    const existingProviderNode = clonedWorkflow.nodes[existingProviderNodeIndex];
+
+    const connectedNodeName = Object.keys(connections).find(name => {
+      return connections[name].main[0][0].node === existingProviderNode.name;
+    });
+
+    if (connectedNodeName) {
+      delete connections[existingProviderNode.name];
+      connections[connectedNodeName].main[0][0].node = respondToWebhookNode.name;
+    }
+    nodes = nodes.filter(node => node.id !== existingProviderNode.id);
   }
 
   const promptifyNode = nodes.filter(node => node.type === "n8n-nodes-promptify.promptify").pop();
@@ -119,7 +138,6 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
 
   nodes.push(providerNode);
 
-  const connections = clonedWorkflow.connections;
   const adjacentNode = nodes.find(node => connections[node.name]?.main[0][0].node === respondToWebhookNode.name);
 
   if (!adjacentNode) {
@@ -149,7 +167,11 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     ],
   };
 
-  return clonedWorkflow;
+  return {
+    ...clonedWorkflow,
+    nodes,
+    connections,
+  };
 }
 
 export function getProviderParams(providerType: ProviderType) {
