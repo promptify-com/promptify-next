@@ -159,13 +159,15 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
         <WorkflowPlaceholder />
       ) : (
         <Stack
+          py={{ xs: 9, md: 0 }}
           sx={{
             bgcolor: "common.white",
           }}
+          minHeight={"50svh"}
         >
           <Header workflow={selectedWorkflow} />
           <Stack
-            direction={"row"}
+            direction={{ xs: "column-reverse", md: "row" }}
             justifyContent={"space-between"}
           >
             {!isValidUser ? (

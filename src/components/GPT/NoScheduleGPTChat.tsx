@@ -49,7 +49,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      mx={{ md: "40px" }}
+      mx={{ xs: "16px", md: "40px" }}
       position={"relative"}
     >
       {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
@@ -73,10 +73,10 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
                 key={msg.id}
                 sx={{
                   ...(!msg.fromUser && {
-                    mr: "56px",
+                    mr: { md: "56px" },
                   }),
                   ...(msg.fromUser && {
-                    ml: "56px",
+                    ml: { md: "56px" },
                   }),
                 }}
               >

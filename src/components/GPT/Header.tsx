@@ -35,18 +35,19 @@ export default function Header({ workflow }: Props) {
 
   return (
     <Stack
-      direction={"row"}
+      direction={{ md: "row" }}
       justifyContent={"space-between"}
       alignItems={"center"}
+      gap={"48px"}
       sx={{
-        p: "64px 48px",
+        p: { xs: "16px", md: "64px 48px" },
         borderBottom: "1px solid #ECECF3",
         background: "linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, rgba(110, 69, 233, 0.05) 100%), #FFF;",
       }}
     >
       <Stack
         gap={6}
-        width={"50%"}
+        width={{ md: "50%" }}
       >
         <CardMedia
           sx={{
@@ -87,14 +88,14 @@ export default function Header({ workflow }: Props) {
             GPT
           </Stack>
           <Typography
-            fontSize={40}
+            fontSize={{ xs: 33, md: 40 }}
             fontWeight={500}
             color={"onSurface"}
           >
             {workflow.name}
           </Typography>
           <Typography
-            fontSize={16}
+            fontSize={{ xs: 14, md: 16 }}
             fontWeight={400}
             color={"onSurface"}
           >
