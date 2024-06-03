@@ -313,7 +313,7 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
       return {
         operation: "send",
         phoneNumberId: values.phoneNumberId,
-        recipientPhoneNumber: values.phoneNumberId, // recipient phone number is the same as sender
+        recipientPhoneNumber: values.phoneNumberId,
         textBody: values.content,
         additionalFields: {},
       };
@@ -399,6 +399,14 @@ export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart:
     const secondDate = setDate(startOfMonth(monthStart), 15);
     if (firstDate.getMonth() === currentMonth) addDate(new Date(firstDate));
     if (secondDate.getMonth() === currentMonth) addDate(new Date(secondDate));
+  } else if (frequency === "monthly") {
+    const parsedDayOfMonth = parseInt(String(day_of_month), 10);
+    if (parsedDayOfMonth > 0 && parsedDayOfMonth <= 27) {
+      let date = setDate(startOfMonth(monthStart), parsedDayOfMonth);
+      if (date.getMonth() === currentMonth) {
+        addDate(new Date(date));
+      }
+    }
   }
 
   return dates;
