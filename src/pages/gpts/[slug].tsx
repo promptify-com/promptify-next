@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
-
 import { Layout } from "@/layout";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
-import chatSlice, { initialState, setInputs } from "@/core/store/chatSlice";
+import chatSlice, { initialState, setClonedWorkflow, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
@@ -80,6 +79,10 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
 
   useEffect(() => {
     processData();
+
+    return () => {
+      dispatch(setClonedWorkflow(undefined));
+    };
   }, []);
 
   useEffect(() => {

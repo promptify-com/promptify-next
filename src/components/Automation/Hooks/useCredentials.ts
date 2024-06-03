@@ -62,8 +62,6 @@ const useCredentials = () => {
   const checkCredentialInserted = (credential: ICredentialInput) => {
     const _credentials = (LocalStorage.get("credentials") || []) as ICredential[];
 
-    // console.log(credentials);
-
     return _credentials.findIndex(c => c.type === credential?.name) !== -1;
   };
 

@@ -1,8 +1,5 @@
 import Stack from "@mui/material/Stack";
-import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
 import CardMedia from "@mui/material/CardMedia";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material";
 import { theme } from "@/theme";
@@ -13,7 +10,7 @@ import lazy from "next/dynamic";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState } from "@/core/store/chatSlice";
 import { capitalizeString } from "@/common/helpers";
-import { TIMES } from "./Constants";
+import { DAYS, TIMES } from "./Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
@@ -24,11 +21,17 @@ interface Props {
 
 export default function Header({ workflow }: Props) {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
-  const scheduleData = clonedWorkflow?.periodic_task;
+  const periodicTask = clonedWorkflow?.periodic_task;
+  const scheduleData = clonedWorkflow?.periodic_task?.crontab;
 
-  const isActive = scheduleData?.enabled;
-  const frequency = capitalizeString(scheduleData?.crontab.frequency ?? "");
-  const time = TIMES[scheduleData?.crontab.hour ?? 0];
+  const frequency = capitalizeString(scheduleData?.frequency ?? "");
+  const isWeekly = scheduleData?.frequency === "weekly";
+  const scheduleDay = isWeekly ? scheduleData?.day_of_week : scheduleData?.day_of_month;
+  const day = (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay] : scheduleDay)) || null;
+  const time = TIMES[scheduleData?.hour ?? 0];
+
+  const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";
+  const isActive = periodicTask?.enabled;
 
   return (
     <Stack
@@ -97,7 +100,7 @@ export default function Header({ workflow }: Props) {
           >
             {workflow.description}
           </Typography>
-          {scheduleData?.name && (
+          {periodicTask?.name && (
             <>
               <Stack
                 direction={"row"}
@@ -122,7 +125,7 @@ export default function Header({ workflow }: Props) {
                   color: alpha(theme.palette.onSurface, 0.5),
                 }}
               >
-                Scheduled: {frequency} @ {time}
+                Scheduled: {frequency} {formattedDay} @ {time}
                 {/* <IconButton>
                   <SettingsOutlined />
                 </IconButton> */}
@@ -131,7 +134,7 @@ export default function Header({ workflow }: Props) {
           )}
         </Stack>
       </Stack>
-      {workflow.is_schedulable && scheduleData?.task && <LazyDateCPickerCalendar />}
+      {workflow.is_schedulable && periodicTask?.task && <LazyDateCPickerCalendar />}
     </Stack>
   );
 }

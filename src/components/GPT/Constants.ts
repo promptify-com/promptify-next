@@ -96,6 +96,9 @@ export const BtnStyle = {
     bgcolor: "#5632c2",
     color: "common.white",
   },
+  ":disabled": {
+    borderColor: "transparent",
+  },
 };
 
 export const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
