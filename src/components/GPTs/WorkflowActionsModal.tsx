@@ -121,9 +121,9 @@ const menuItemStyle = {
   fontStyle: "normal",
   fontWeight: 500,
   lineHeight: "150%",
+  transition: "all 0.3s ease",
   "&:hover": {
     display: "flex",
-    padding: "5px 10px",
     alignItems: "flex-start",
     gap: "8px",
     borderRadius: "100px",

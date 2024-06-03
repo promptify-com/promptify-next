@@ -16,6 +16,7 @@ import { useDeleteWorkflowMutation } from "@/core/api/workflows";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
+import { useRouter } from "next/router";
 
 interface Props {
   index: number;
@@ -31,6 +32,7 @@ interface Props {
 
 function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   const { truncate } = useTruncate();
+  const router = useRouter();
   const [deleteWorkflow] = useDeleteWorkflowMutation();
   const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,14 +51,13 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedWorkflow(null);
   };
 
   const handleDelete = async () => {
     if (!workflowId) return;
 
     try {
-      await deleteWorkflow(workflowId!!);
+      await deleteWorkflow(workflowId);
       setSelectedWorkflow(null);
       setOpenDeleteDialog(false);
       window.location.reload();
@@ -66,7 +67,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   };
 
   const handleEdit = () => {
-    // Handle the edit action
+    router.push(`/gpts/${workflow?.slug}`);
     handleCloseModal();
   };
 
@@ -245,7 +246,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
       {openDeleteDialog && (
         <DeleteDialog
           open={true}
-          dialogContentText={`Are you sure you want to remove the workflow?`}
+          dialogContentText={`Are you sure you want to remove the "${selectedWorkflow?.name}"?`}
           onClose={() => setOpenDeleteDialog(false)}
           onSubmit={handleDelete}
         />
