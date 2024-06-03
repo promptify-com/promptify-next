@@ -55,9 +55,16 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
           alignItems={"flex-end"}
           gap={2}
         >
-          {["weekly", "monthly"].includes(selectedFrequency) && (
+          {selectedFrequency === "weekly" && (
             <DateTimeSelect
               type="date"
+              onChange={day => handleChangeScheduleTime({ ...scheduleTime, day })}
+              defaultValue={scheduleTime.day}
+            />
+          )}
+          {selectedFrequency === "monthly" && (
+            <DateTimeSelect
+              type="month_date"
               onChange={day => handleChangeScheduleTime({ ...scheduleTime, day })}
               defaultValue={scheduleTime.day}
             />
