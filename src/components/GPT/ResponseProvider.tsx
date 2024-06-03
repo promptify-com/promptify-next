@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { PROVIDERS } from "./Constants";
+import { PROMPTIFY_NODE_TYPE, PROVIDERS } from "./Constants";
 import {
   cleanCredentialName,
   getNodeInfoByType,
@@ -74,7 +74,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
   };
 
   const handleAddingProvider = (values: Record<string, string> = {}) => {
-    if (!credential && providerType !== "n8n-nodes-promptify.promptify") {
+    if (!credential && providerType !== PROMPTIFY_NODE_TYPE) {
       throw new Error(`Credential ${credentialInput?.displayName} not connected`);
     }
     if (!clonedWorkflow) {
@@ -122,7 +122,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
 
   const parametersInputs = getProviderParams(providerType);
   const isInjected = !!clonedWorkflow?.nodes.find(node => node.name === providerNodeName);
-  const isConnected = providerType === "n8n-nodes-promptify.promptify" || credentialInserted;
+  const isConnected = providerType === PROMPTIFY_NODE_TYPE || credentialInserted;
 
   return (
     <>

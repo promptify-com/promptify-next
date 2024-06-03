@@ -9,6 +9,7 @@ import type {
 import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
+import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "../GPT/Constants";
 
 interface IRelation {
   nextNode: string;
@@ -94,8 +95,6 @@ export function getWorkflowDataFlow(workflow: IWorkflow) {
 }
 
 const MAIN_CONNECTION_KEY = "main";
-const RESPOND_TO_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook";
-const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
 
 class NodeNotFoundError extends Error {
   constructor(message: string) {
@@ -113,7 +112,8 @@ const findConnectedNodeName = (connections: Record<string, INodeConnection>, nod
 const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
   return nodes.find(node => connections[node.name]?.[MAIN_CONNECTION_KEY][0][0].node === targetNodeName);
 };
-const removeExistingProviderNode = (
+
+export const removeExistingProviderNode = (
   workflow: IWorkflowCreateResponse,
   templateWorkflow: IWorkflow,
   respondToWebhookNodeName: string,

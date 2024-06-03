@@ -132,6 +132,16 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               />
             )}
 
+            {message.type === "schedule_activation_test" && (
+              <ActivateWorkflowMessage
+                message={message}
+                onActivate={activateWorkflow}
+                allowActivateButton={allowActivateButton}
+                title="Ready to run this GPT"
+                buttonMessage="Run GPT"
+              />
+            )}
+
             {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
           </Box>
         ))

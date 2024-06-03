@@ -56,13 +56,16 @@ export const PROVIDERS = {
     position: [940, 540] as [number, number],
   },
   "n8n-nodes-promptify.promptify": {
-    id: "a6671b2a-0447-4c27-ad18-a31c146695e9",
+    id: "a6671b2a-0447-4c27-ad18-a31c146695dz",
     name: "Promptify",
     type: "n8n-nodes-promptify.promptify",
     typeVersion: 2.1,
     position: [1020, 460] as [number, number],
   },
 };
+
+export const RESPOND_TO_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook";
+export const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
 
 export const FREQUENCY_ITEMS = ["daily", "weekly", "bi-weekly", "monthly"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
