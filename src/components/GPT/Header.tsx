@@ -30,7 +30,6 @@ export default function Header({ workflow }: Props) {
   const day = (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay] : scheduleDay)) || null;
   const time = TIMES[scheduleData?.hour ?? 0];
 
-  console.log(day);
   const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";
   const isActive = periodicTask?.enabled;
 
