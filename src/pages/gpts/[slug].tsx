@@ -89,7 +89,7 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
     return () => {
       dispatch(setClonedWorkflow(undefined));
     };
-  }, []);
+  }, [isValidUser]);
 
   useEffect(() => {
     if (!clonedWorkflow && isValidUser) {
