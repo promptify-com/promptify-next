@@ -12,7 +12,7 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 const Links = [
   { title: "Privacy Policy", href: "/privacy-policy" },
   { title: "Terms of Use", href: "/terms-of-use" },
-  { title: "Support", href: "#" },
+  { title: "Support", href: "https://blog.promptify.com" },
 ];
 
 const socialLinks = [
