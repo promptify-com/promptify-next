@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { initialState, setAnswers } from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChat";
@@ -18,6 +17,7 @@ import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlacehol
 import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
+import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 
 interface Props {
   workflow: IWorkflow;
@@ -34,6 +34,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     });
 
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
@@ -84,6 +85,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
             }}
           >
             {message.type === "text" && <Message message={message} />}
+            {message.type === "html" && <Message message={message} />}
+
             {message.type === "credentials" && (
               <CredentialsContainer
                 message={message.text}
@@ -128,6 +131,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 updateMode={message.type === "schedule_update"}
               />
             )}
+
+            {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
           </Box>
         ))
       ) : (

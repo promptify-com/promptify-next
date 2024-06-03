@@ -11,6 +11,9 @@ import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
 import { IPromptInput } from "@/common/types/prompt";
+import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
+import { N8N_RESPONSE_REGEX, extractWebhookPath } from "../../Automation/helpers";
+import useGenerateExecution from "../../Prompt/Hooks/useGenerateExecution";
 
 interface Props {
   workflow: IWorkflow;
@@ -39,6 +42,9 @@ const useChat = ({ workflow }: Props) => {
 
   const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
+  const { sendMessageAPI } = useWorkflow(workflow);
+  const { streamExecutionHandler } = useGenerateExecution({});
+
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const initialMessages = async () => {
@@ -195,15 +201,48 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const prepareWorkflow = (providerType: ProviderType) => {
+  const executeWorkflow = async () => {
+    try {
+      const webhook = extractWebhookPath(clonedWorkflow?.nodes ?? []);
+      const response = await sendMessageAPI(webhook);
+      if (response && typeof response === "string") {
+        if (response.toLowerCase().includes("[error")) {
+          failedExecutionHandler();
+        } else {
+          const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
+
+          if (!match) {
+            const responseMessage = createMessage({
+              type: "html",
+              text: response,
+            });
+            setMessages(prev => prev.concat(responseMessage));
+          } else if (!match[2] || match[2] === "undefined") {
+            failedExecutionHandler();
+          } else {
+            streamExecutionHandler(response);
+          }
+        }
+      }
+    } catch (error) {
+      failedExecutionHandler();
+    }
+  };
+
+  const failedExecutionHandler = () => {
+    const failMessage = createMessage({
+      type: "text",
+      text: "Running your GPT failed, please try again.",
+    });
+    setMessages(prev => prev.concat(failMessage));
+  };
+
+  const prepareWorkflow = async (providerType: ProviderType) => {
     let preparedMessages: IMessage[] = [];
 
     if (providerType === "n8n-nodes-promptify.promptify") {
-      const providersMessage = createMessage({
-        type: "text",
-        text: "TEST TEST",
-      });
-      setMessages(prev => prev.concat(providersMessage));
+      await handleUpdateWorkflow();
+      executeWorkflow();
     } else {
       const provider = PROVIDERS[providerType];
       const providerConnectionMessage = createMessage({
@@ -262,7 +301,7 @@ const useChat = ({ workflow }: Props) => {
     }));
   }, [answers]);
 
-  const activateWorkflow = async () => {
+  const handleUpdateWorkflow = async () => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
@@ -272,15 +311,6 @@ const useChat = ({ workflow }: Props) => {
         workflowId: clonedWorkflow.id,
         data: clonedWorkflow,
       });
-
-      const finishMessage = createMessage({
-        type: "text",
-        text: "GPT scheduled successfully.",
-        isHighlight: true,
-      });
-      setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
-
-      window.location.reload();
     } catch (error) {
       const errorMessage = createMessage({
         type: "text",
@@ -288,6 +318,19 @@ const useChat = ({ workflow }: Props) => {
       });
       setMessages(prev => prev.concat(errorMessage));
     }
+  };
+
+  const activateWorkflow = async () => {
+    await handleUpdateWorkflow();
+
+    const finishMessage = createMessage({
+      type: "text",
+      text: "GPT scheduled successfully.",
+      isHighlight: true,
+    });
+    setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
+
+    window.location.reload();
   };
 
   return {
