@@ -218,10 +218,6 @@ function DatePickerCalendar() {
     skip: !clonedWorkflow?.id,
   });
 
-  if (!executions?.data?.length) {
-    return null;
-  }
-
   return (
     <Stack
       width={"425px"}
@@ -257,7 +253,7 @@ function DatePickerCalendar() {
         {<RenderDaysOfWeek />}
         {
           <RenderCells
-            executions={executions.data}
+            executions={executions?.data ?? []}
             currentMonth={currentMonth}
           />
         }
