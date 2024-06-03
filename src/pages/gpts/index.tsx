@@ -107,6 +107,7 @@ function GPTsPage() {
                         index={index}
                         workflow={workflow?.template_workflow}
                         periodic_task={workflow?.periodic_task}
+                        workflowId={workflow.id}
                       />
                     </Stack>
                   ))}
