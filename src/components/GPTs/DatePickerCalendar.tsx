@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Tooltip, { type TooltipProps } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
 import {
   format,
   addMonths,
@@ -20,12 +21,18 @@ import {
   isSameDay,
   parseISO,
 } from "date-fns";
-import { styled } from "@mui/material/styles";
+
 import { useAppSelector } from "@/hooks/useStore";
+import { useGetWorkflowExecutionsQuery } from "@/core/api/workflows";
 import { initialState } from "@/core/store/chatSlice";
 import type { WorkflowExecution } from "../Automation/types";
-import { calculateScheduledDates, getHighestPriorityStatus, getStylesForSchedule, getStylesForStatus } from "./helpers";
-import { useGetWorkflowExecutionsQuery } from "@/core/api/workflows";
+import {
+  calculateScheduledDates,
+  getHighestPriorityStatus,
+  getStylesForSchedule,
+  getStylesForStatus,
+} from "@/components/GPTs/helpers";
+import { WEEK_DAYS } from "@/components/GPT/Constants";
 
 // Styles
 const HEADER_STYLES = {
@@ -45,8 +52,6 @@ const DAY_BOX_STYLES = {
   borderRadius: "50%",
   cursor: "pointer",
 };
-
-const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip

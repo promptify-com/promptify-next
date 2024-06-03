@@ -7,6 +7,9 @@ import { isSameMonth } from "date-fns/isSameMonth";
 import { addDays } from "date-fns/addDays";
 import { addWeeks } from "date-fns/addWeeks";
 import { setDate } from "date-fns/setDate";
+import { startOfMonth } from "date-fns/startOfMonth";
+
+import nodesData from "@/components/Automation/nodes.json";
 import type {
   INode,
   INodeConnection,
@@ -17,9 +20,7 @@ import type {
   NodesFileData,
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
-import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
-import { startOfMonth } from "date-fns/startOfMonth";
 
 interface IRelation {
   nextNode: string;
@@ -338,8 +339,6 @@ export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
   return null;
 }
 
-export const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
 export const getStylesForSchedule = (isScheduled: boolean, date: Date) => {
   if (isScheduled) {
     if (isSameDay(date, new Date())) {
@@ -396,29 +395,10 @@ export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart:
       date = addWeeks(date, 1);
     }
   } else if (frequency === "bi-weekly") {
-    let date = startOfWeek(startOfMonth(monthStart), { weekStartsOn: 1 });
-    date = addDays(date, parsedDayOfWeek);
-
-    while (date < startOfMonth(monthStart)) {
-      date = addWeeks(date, 2);
-    }
-
-    while (isSameMonth(date, monthStart)) {
-      addDate(new Date(date));
-      date = addWeeks(date, 2);
-    }
-  } else if (frequency === "monthly") {
-    if (typeof day_of_month === "string" && day_of_month !== "*") {
-      const parsedDayOfMonth = parseInt(day_of_month, 10);
-      if (parsedDayOfMonth > 0 && parsedDayOfMonth <= 31) {
-        let date = setDate(startOfMonth(monthStart), parsedDayOfMonth);
-        if (date.getMonth() === currentMonth) {
-          addDate(new Date(date));
-        }
-      }
-    } else {
-      console.log("Monthly frequency with invalid day_of_month is not supported for date calculations.");
-    }
+    const firstDate = setDate(startOfMonth(monthStart), 1);
+    const secondDate = setDate(startOfMonth(monthStart), 15);
+    if (firstDate.getMonth() === currentMonth) addDate(new Date(firstDate));
+    if (secondDate.getMonth() === currentMonth) addDate(new Date(secondDate));
   }
 
   return dates;
