@@ -82,7 +82,7 @@ export interface IWorkflow {
     enabled: boolean;
     crontab: IWorkflowSchedule;
   };
-  enabled?: boolean;
+  enabled: boolean;
 }
 
 export interface UserWorkflowsResponse {
