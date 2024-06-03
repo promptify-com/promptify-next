@@ -5,7 +5,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { DAYS, TIMES } from "./Constants";
 
 interface Props {
-  type: "date" | "time";
+  type: "date" | "time" | "month_date";
   onChange(item: number): void;
   defaultValue?: number;
 }
@@ -14,6 +14,9 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
   const [selectedItem, setSelectedItem] = useState(defaultValue);
 
   useEffect(() => onChange?.(selectedItem), [selectedItem]);
+
+  const items =
+    type === "date" ? DAYS : type === "time" ? TIMES : Array.from({ length: 31 }).map((_, i) => (i + 1).toString());
 
   return (
     <Select
@@ -40,7 +43,7 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
         },
       }}
     >
-      {(type === "date" ? DAYS : TIMES).map((item, idx) => (
+      {items.map((item, idx) => (
         <MenuItem
           key={item}
           value={idx}
