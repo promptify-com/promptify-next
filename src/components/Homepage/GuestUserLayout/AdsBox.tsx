@@ -51,7 +51,7 @@ function AdsBox() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.push("/automation")}
+          onClick={() => router.push("/gpts")}
           sx={{
             bgcolor: "inverseSurface",
             borderColor: "inverseSurface",
