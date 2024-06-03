@@ -47,6 +47,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "get",
           keepUnusedDataFor: 21600,
         }),
+        providesTags: ["Workflow"],
       }),
       getWorkflowExecutions: builder.query<UserWorkflowExecutionsResponse, string>({
         query: workflowId => ({
@@ -127,6 +128,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${workflowId}/delete`,
           method: "delete",
         }),
+        invalidatesTags: ["Workflow"],
       }),
     };
   },

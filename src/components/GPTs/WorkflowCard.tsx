@@ -17,6 +17,8 @@ import { DeleteDialog } from "../dialog/DeleteDialog";
 import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
 import { useRouter } from "next/router";
+import { setToast } from "@/core/store/toastSlice";
+import { useAppDispatch } from "@/hooks/useStore";
 
 interface Props {
   index: number;
@@ -31,8 +33,10 @@ interface Props {
 }
 
 function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
-  const { truncate } = useTruncate();
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const { truncate } = useTruncate();
+
   const [deleteWorkflow] = useDeleteWorkflowMutation();
   const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,9 +64,11 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
       await deleteWorkflow(workflowId);
       setSelectedWorkflow(null);
       setOpenDeleteDialog(false);
-      window.location.reload();
+
+      dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
     } catch (err) {
       console.error("Failed to delete workflow", err);
+      dispatch(setToast({ message: "Failed to delete workflow. Please try again.", severity: "error" }));
     }
   };
 
