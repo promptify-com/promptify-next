@@ -30,7 +30,6 @@ function WorkflowCard({ index, workflow, periodic_task }: Props) {
   const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
 
-  // const isGPTSchedule = wo
   return (
     <Link
       href={`/gpts/${workflow?.slug}`}
