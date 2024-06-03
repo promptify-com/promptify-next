@@ -18,18 +18,14 @@ import {
   addDays,
   isSameMonth,
   isSameDay,
-  addWeeks,
-  setHours,
-  setMinutes,
-  setSeconds,
-  getDate,
-  setDate,
+  parseISO,
 } from "date-fns";
 import { styled } from "@mui/material/styles";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState } from "@/core/store/chatSlice";
-import type { FrequencyType, IWorkflowSchedule } from "../Automation/types";
-import { calculateScheduledDates } from "./helpers";
+import type { WorkflowExecution } from "../Automation/types";
+import { calculateScheduledDates, getHighestPriorityStatus, getStylesForSchedule, getStylesForStatus } from "./helpers";
+import { useGetWorkflowExecutionsQuery } from "@/core/api/workflows";
 
 // Styles
 const HEADER_STYLES = {
@@ -51,17 +47,6 @@ const DAY_BOX_STYLES = {
 };
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-// Helper functions
-const getStylesForSchedule = (isScheduled: boolean, date: Date) => {
-  if (isScheduled) {
-    if (isSameDay(date, new Date())) {
-      return { backgroundColor: "#6E45E9", color: "white" };
-    }
-    return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
-  }
-  return { backgroundColor: "transparent", color: "text.primary" };
-};
 
 const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip
@@ -137,62 +122,90 @@ const RenderDaysOfWeek = memo(() => (
   </Grid>
 ));
 
-const RenderCells = memo(({ currentMonth, scheduledDates = [] }: { currentMonth: Date; scheduledDates: Date[] }) => {
-  const monthStart = startOfMonth(currentMonth);
-  const rows = [];
-  let daysInMonth = [];
-  let day = startOfWeek(monthStart, { weekStartsOn: 1 });
+const RenderCells = memo(
+  ({
+    currentMonth,
+    scheduledDates = [],
+    executions = [],
+  }: {
+    currentMonth: Date;
+    scheduledDates: Date[];
+    executions: WorkflowExecution[];
+  }) => {
+    const monthStart = startOfMonth(currentMonth);
+    const rows = [];
+    let daysInMonth = [];
+    let day = startOfWeek(monthStart, { weekStartsOn: 1 });
 
-  while (day <= endOfMonth(currentMonth)) {
-    for (let i = 0; i < 7; i++) {
-      const formattedDate = format(day, "d");
-      const isCurrentMonth = isSameMonth(day, monthStart);
-      const isScheduled = scheduledDates.some(scheduledDate => isSameDay(scheduledDate, day));
-      const { backgroundColor, color } = getStylesForSchedule(isScheduled, day);
+    while (day <= endOfMonth(currentMonth)) {
+      for (let i = 0; i < 7; i++) {
+        const formattedDate = format(day, "d");
+        const isCurrentMonth = isSameMonth(day, monthStart);
+        const executionsForDay = executions.filter(exec => isSameDay(parseISO(exec.startedAt), day));
+        const isScheduled = scheduledDates.some(scheduledDate => isSameDay(scheduledDate, day));
+        const highestPriorityStatus = getHighestPriorityStatus(executionsForDay);
 
-      const cellContent = (
-        <Box sx={{ ...DAY_BOX_STYLES, backgroundColor }}>
-          <Typography
-            fontSize={"12px"}
-            sx={{ color: !isCurrentMonth ? "text.disabled" : color }}
+        const { backgroundColor, color } = highestPriorityStatus
+          ? getStylesForStatus(highestPriorityStatus)
+          : getStylesForSchedule(isScheduled, day);
+
+        const cellContent = (
+          <Box sx={{ ...DAY_BOX_STYLES, backgroundColor }}>
+            <Typography
+              fontSize={"12px"}
+              sx={{ color: !isCurrentMonth ? "text.disabled" : color }}
+            >
+              {formattedDate}
+            </Typography>
+          </Box>
+        );
+
+        daysInMonth.push(
+          <Grid
+            key={day.toString()}
+            item
+            xs
+            mb={"10px"}
           >
-            {formattedDate}
-          </Typography>
-        </Box>
-      );
-
-      daysInMonth.push(
+            {executionsForDay.some(exec => exec.status === "failed") ? (
+              <CustomTooltip
+                placement="top"
+                title={executionsForDay.find(exec => exec.status === "failed")?.error || ""}
+                arrow
+              >
+                {cellContent}
+              </CustomTooltip>
+            ) : (
+              cellContent
+            )}
+          </Grid>,
+        );
+        day = addDays(day, 1);
+      }
+      rows.push(
         <Grid
+          container
+          spacing={1}
+          ml={"0px"}
           key={day.toString()}
-          item
-          xs
-          mb={"10px"}
         >
-          {cellContent}
+          {daysInMonth}
         </Grid>,
       );
-      day = addDays(day, 1);
+      daysInMonth = [];
     }
-    rows.push(
-      <Grid
-        container
-        spacing={1}
-        ml={"0px"}
-        key={day.toString()}
-      >
-        {daysInMonth}
-      </Grid>,
-    );
-    daysInMonth = [];
-  }
 
-  return <Box sx={{ mt: 2 }}>{rows}</Box>;
-});
+    return <Box sx={{ mt: 2 }}>{rows}</Box>;
+  },
+);
 
 function DatePickerCalendar() {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [scheduledDates, setScheduledDates] = useState<Date[]>([]);
+  const { data: executions } = useGetWorkflowExecutionsQuery(clonedWorkflow?.id!, {
+    skip: !clonedWorkflow?.id,
+  });
 
   useEffect(() => {
     if (clonedWorkflow?.schedule) {
@@ -231,6 +244,7 @@ function DatePickerCalendar() {
         <RenderCells
           scheduledDates={scheduledDates}
           currentMonth={currentMonth}
+          executions={executions?.data ?? []}
         />
       </Stack>
     </Stack>

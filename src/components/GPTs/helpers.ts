@@ -327,7 +327,7 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
   }
 }
 
-const statusPriority = ["failed", "success", "scheduled"];
+const statusPriority = ["failed", "success"];
 
 export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
   for (const status of statusPriority) {
@@ -340,19 +340,22 @@ export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
 
 export const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export const getStylesForStatus = (status: string, date: Date) => {
-  const today = new Date();
-  if (status === "scheduled" && isSameDay(date, today)) {
-    return { backgroundColor: "#6E45E9", color: "white" };
+export const getStylesForSchedule = (isScheduled: boolean, date: Date) => {
+  if (isScheduled) {
+    if (isSameDay(date, new Date())) {
+      return { backgroundColor: "#6E45E9", color: "white" };
+    }
+    return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
   }
+  return { backgroundColor: "transparent", color: "text.primary" };
+};
 
+export const getStylesForStatus = (status: string) => {
   switch (status) {
     case "success":
       return { backgroundColor: "#E4FEE7", color: "#228B22" };
     case "failed":
       return { backgroundColor: "#E94545", color: "white" };
-    case "scheduled":
-      return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
     default:
       return { backgroundColor: "transparent", color: "text.primary" };
   }
