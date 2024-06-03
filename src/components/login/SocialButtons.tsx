@@ -118,9 +118,43 @@ export default function SocialButtons({
     const clientId = process.env.NEXT_PUBLIC_MICROSOFT_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_MICROSOFT_REDIRECT_URI;
     const scope = "openid email profile User.Read";
-
+    const width = 600;
+    const height = 700;
+    const left = Math.ceil(window.screen.width / 2 - width / 2);
+    const top = Math.ceil(window.screen.height / 2 - height / 2);
     const authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
-    window.location.href = authUrl;
+
+    const authWindow = window.open(
+      authUrl,
+      "Microsoft Login",
+      `width=${width},height=${height},top=${top},left=${left}`,
+    );
+
+    if (authWindow) {
+      window.addEventListener(
+        "message",
+        event => {
+          if (event.origin === window.location.origin) {
+            const { authorizationCode, action } = event.data;
+
+            if (authorizationCode && action === "loginRedirectionCallback") {
+              client
+                .post(CODE_TOKEN_ENDPOINT, {
+                  provider: "microsoft",
+                  code: authorizationCode,
+                })
+                .then((response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
+                  doPostLogin(response);
+                })
+                .catch(reason => {
+                  console.warn("Could not authenticate via Microsoft:", reason);
+                });
+            }
+          }
+        },
+        { once: true },
+      );
+    }
   };
   const validateConsent = (loginMethod: Function) => {
     if (!isChecked && from === "signup") {

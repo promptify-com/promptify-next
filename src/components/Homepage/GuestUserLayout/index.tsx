@@ -1,15 +1,9 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { getPathURL, saveToken } from "@/common/utils";
-import { updateUser } from "@/core/store/userSlice";
-import { redirectToPath } from "@/common/helpers";
-import { client } from "@/common/axios";
-import { useAppDispatch } from "@/hooks/useStore";
-import { userApi } from "@/core/api/user";
 import Landing from "@/components/Homepage/GuestUserLayout/Landing";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import Services from "@/components/Homepage/GuestUserLayout/Services";
@@ -17,17 +11,8 @@ import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
-import type { AxiosResponse } from "axios";
-import type { IContinueWithSocialMediaResponse } from "@/common/types";
-
-const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
-  const dispatch = useAppDispatch();
-  const path = getPathURL();
-
-  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -54,47 +39,6 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
   );
-
-  // TODO: move authentication logic to signin page instead
-  const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-    if (typeof response.data !== "object" || response.data === null) {
-      console.error("incoming data for Microsoft authentication is not an object:", response.data);
-      return;
-    }
-
-    const { token: _token } = response.data;
-
-    if (!_token) {
-      console.error("incoming token for Microsoft authentication is not present:", _token);
-      return;
-    }
-
-    saveToken({ token: _token });
-    const payload = await getCurrentUser(_token).unwrap();
-
-    dispatch(updateUser(payload));
-    redirectToPath(path || "/");
-  };
-
-  // TODO: move authentication logic to signin page instead
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const authorizationCode = urlParams.get("code");
-
-    if (!!authorizationCode) {
-      client
-        .post(CODE_TOKEN_ENDPOINT, {
-          provider: "microsoft",
-          code: authorizationCode,
-        })
-        .then((response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-          doPostLogin(response);
-        })
-        .catch(reason => {
-          console.warn("Could not authenticate via Microsoft:", reason);
-        });
-    }
-  }, []);
 
   const showLearn = observers.learnObserver?.isIntersecting;
   const showTestimonials = observers.learnObserver?.isIntersecting;

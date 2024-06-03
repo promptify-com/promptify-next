@@ -81,7 +81,6 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
       throw new Error("Cloned workflow not found");
     }
     if (!workflow) {
-      console.log("template");
       throw new Error("Template workflow not found");
     }
 
