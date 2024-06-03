@@ -17,13 +17,10 @@ function GPTsPage() {
 
   const { data: workflowsByCategory } = useGetWorkflowByCategoryQuery();
   const { data: userWorkflows } = useGetUserWorkflowsQuery();
-  const { data: workflows } = useGetWorkflowsQuery(false);
 
   const [filter, setFilter] = useState("");
 
-  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true", {
-    skip: !filter,
-  });
+  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true");
 
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const historicalCarouselRef = useRef<HTMLDivElement | null>(null);
@@ -52,7 +49,7 @@ function GPTsPage() {
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
 
-  const sortedWorkflows = workflows
+  const sortedWorkflows = allWorkflows
     ?.slice()
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
