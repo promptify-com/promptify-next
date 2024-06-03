@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
@@ -20,14 +20,21 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const scheduledData = clonedWorkflow?.periodic_task?.crontab;
 
-  const scheduleDay = scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month;
+  const scheduleDay =
+    (scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month) ?? 0;
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day: scheduleDay?.toString() === "1,15" ? 0 : scheduleDay,
+    day: ["*", "1,15"].includes(scheduleDay.toString()) ? 0 : scheduleDay,
     time: scheduledData?.hour ?? 0,
   });
-
   const localScheduleData = clonedWorkflow?.schedule;
   const selectedFrequency = localScheduleData?.frequency ?? scheduledData?.frequency ?? "";
+
+  const handleChangeScheduleTime = (data: FrequencyTime) => {
+    setScheduleTime(data);
+    if (scheduledData) {
+      onSelect(data);
+    }
+  };
 
   return (
     <Stack gap={4}>
@@ -51,30 +58,32 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
           {["weekly", "monthly"].includes(selectedFrequency) && (
             <DateTimeSelect
               type="date"
-              onChange={day => setScheduleTime(prev => ({ ...prev, day }))}
+              onChange={day => handleChangeScheduleTime({ ...scheduleTime, day })}
               defaultValue={scheduleTime.day}
             />
           )}
           <DateTimeSelect
             type="time"
-            onChange={time => setScheduleTime(prev => ({ ...prev, time }))}
+            onChange={time => handleChangeScheduleTime({ ...scheduleTime, time })}
             defaultValue={scheduleTime.time}
           />
         </Stack>
-        <Button
-          onClick={() => onSelect(scheduleTime)}
-          variant="contained"
-          sx={{
-            bgcolor: "#6E45E9",
-            color: "common.white",
-            p: "7px 24px",
-            fontSize: 13,
-            fontWeight: 500,
-            lineHeight: "unset",
-          }}
-        >
-          Set
-        </Button>
+        {!scheduledData && (
+          <Button
+            onClick={() => onSelect(scheduleTime)}
+            variant="contained"
+            sx={{
+              bgcolor: "#6E45E9",
+              color: "common.white",
+              p: "7px 24px",
+              fontSize: 13,
+              fontWeight: 500,
+              lineHeight: "unset",
+            }}
+          >
+            Set
+          </Button>
+        )}
       </Stack>
     </Stack>
   );
