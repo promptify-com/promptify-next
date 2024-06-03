@@ -272,6 +272,8 @@ export function getProviderParams(providerType: ProviderType) {
           required: true,
         },
       ];
+    case "n8n-nodes-promptify.promptify":
+      return [];
     default:
       throw new Error(`Provider "${providerType}" is not recognized!`);
   }
@@ -311,6 +313,8 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
         text: values.content,
         additionalFields: {},
       };
+    case "n8n-nodes-promptify.promptify":
+      return {};
     default:
       throw new Error(`Provider "${providerType}" is not recognized!`);
   }

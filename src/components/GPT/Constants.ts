@@ -55,6 +55,13 @@ export const PROVIDERS = {
     typeVersion: 1.1,
     position: [940, 540] as [number, number],
   },
+  "n8n-nodes-promptify.promptify": {
+    id: "a6671b2a-0447-4c27-ad18-a31c146695e9",
+    name: "Promptify",
+    type: "n8n-nodes-promptify.promptify",
+    typeVersion: 2.1,
+    position: [1020, 460] as [number, number],
+  },
 };
 
 export const FREQUENCY_ITEMS = ["daily", "weekly", "bi-weekly", "monthly"];

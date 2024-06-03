@@ -94,7 +94,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
             {message.type === "schedule_frequency" && (
               <Choices
                 message={message.text}
-                items={FREQUENCY_ITEMS}
+                items={FREQUENCY_ITEMS.concat("Test GPT")}
                 onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
                 defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
               />

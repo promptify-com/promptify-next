@@ -140,14 +140,26 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   };
 
+  const testGPT = () => {
+    setSchedulingData({ ...schedulingData, frequency: "Test GPT" });
+    setMessages(prev => prev.filter(msg => !["schedule_frequency", "schedule_time"].includes(msg.type)));
+    insertProvidersMessages(
+      "Great, We'll run this GPT for you, do you want to receive them in your favorite platforms?",
+    );
+  };
+
   const setScheduleFrequency = (frequency: FrequencyType) => {
-    setSchedulingData({ ...schedulingData, frequency });
-    if (!messages.find(msg => msg.type === "schedule_time")) {
-      const timeMessage = createMessage({
-        type: "schedule_time",
-        text: "At what time?",
-      });
-      setMessages(prev => prev.filter(msg => msg.type !== "schedule_time").concat(timeMessage));
+    if (frequency === "Test GPT") {
+      testGPT();
+    } else {
+      setSchedulingData({ ...schedulingData, frequency });
+      if (!messages.find(msg => msg.type === "schedule_time")) {
+        const timeMessage = createMessage({
+          type: "schedule_time",
+          text: "At what time?",
+        });
+        setMessages(prev => prev.filter(msg => msg.type !== "schedule_time").concat(timeMessage));
+      }
     }
   };
 
@@ -161,11 +173,16 @@ const useChat = ({ workflow }: Props) => {
       hour: frequencyTime.time,
     });
 
+    const hour = schedulingData?.hour ? ` at ${TIMES[schedulingData?.hour]}` : "";
+    const message = `Awesome, We’ll run this GPT for you here ${schedulingData?.frequency}${hour}, do you want to receive them in your favorite platforms?`;
+    insertProvidersMessages(message);
+  };
+
+  const insertProvidersMessages = (message: string) => {
     if (!messages.find(msg => msg.type === "schedule_providers")) {
-      const hour = schedulingData?.hour ? ` at ${TIMES[schedulingData?.hour]}` : "";
       const confirmMessage = createMessage({
         type: "text",
-        text: `Awesome, We’ll run this GPT for you here ${schedulingData?.frequency}${hour}, do you want to receive them in your favorite platforms?`,
+        text: message,
         isHighlight: true,
       });
       const providersMessage = createMessage({
@@ -181,38 +198,46 @@ const useChat = ({ workflow }: Props) => {
   const prepareWorkflow = (providerType: ProviderType) => {
     let preparedMessages: IMessage[] = [];
 
-    const provider = PROVIDERS[providerType];
-    const providerConnectionMessage = createMessage({
-      type: "text",
-      text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
-      isHighlight: true,
-    });
-    preparedMessages.push(providerConnectionMessage);
-
-    if (updateScheduleMode.current) {
-      const updateWorkflowMessage = createMessage({
-        type: "schedule_update",
-        text: "",
-        noHeader: true,
+    if (providerType === "n8n-nodes-promptify.promptify") {
+      const providersMessage = createMessage({
+        type: "text",
+        text: "TEST TEST",
       });
-      preparedMessages.push(updateWorkflowMessage);
+      setMessages(prev => prev.concat(providersMessage));
     } else {
-      const activationMessage = createMessage({
-        type: "schedule_activation",
-        text: "",
-        noHeader: true,
+      const provider = PROVIDERS[providerType];
+      const providerConnectionMessage = createMessage({
+        type: "text",
+        text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
+        isHighlight: true,
       });
+      preparedMessages.push(providerConnectionMessage);
 
-      if (inputs.length > 0) {
-        const inputsMessage = createMessage({
-          type: "form",
-          text: "Please fill out the following details:",
+      if (updateScheduleMode.current) {
+        const updateWorkflowMessage = createMessage({
+          type: "schedule_update",
+          text: "",
           noHeader: true,
         });
-        preparedMessages.push(inputsMessage);
-      }
+        preparedMessages.push(updateWorkflowMessage);
+      } else {
+        const activationMessage = createMessage({
+          type: "schedule_activation",
+          text: "",
+          noHeader: true,
+        });
 
-      preparedMessages.push(activationMessage);
+        if (inputs.length > 0) {
+          const inputsMessage = createMessage({
+            type: "form",
+            text: "Please fill out the following details:",
+            noHeader: true,
+          });
+          preparedMessages.push(inputsMessage);
+        }
+
+        preparedMessages.push(activationMessage);
+      }
     }
 
     setMessages(prevMessages =>

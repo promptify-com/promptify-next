@@ -102,7 +102,7 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
-export type FrequencyType = "daily" | "weekly" | "bi-weekly" | "monthly";
+export type FrequencyType = "daily" | "weekly" | "bi-weekly" | "monthly" | "Test GPT";
 
 export interface IWorkflowSchedule {
   frequency: FrequencyType;

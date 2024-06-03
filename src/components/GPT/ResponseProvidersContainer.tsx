@@ -5,6 +5,11 @@ import { PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
 import type { IWorkflow } from "@/components/Automation/types";
 import type { ProviderType } from "./Types";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { useAppSelector } from "@/hooks/useStore";
+import ProviderCard from "./ProviderCard";
+import { getNodeInfoByType } from "../GPTs/helpers";
+import { useState } from "react";
 
 interface Props {
   message: string;
@@ -13,6 +18,9 @@ interface Props {
 }
 
 function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Props) {
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
+  const isTest = clonedWorkflow?.schedule?.frequency === "Test GPT";
+
   return (
     <Stack gap={4}>
       {message && (
