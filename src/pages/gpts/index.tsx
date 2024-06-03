@@ -20,9 +20,7 @@ function GPTsPage() {
 
   const [filter, setFilter] = useState("");
 
-  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true", {
-    skip: !filter,
-  });
+  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true");
 
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const historicalCarouselRef = useRef<HTMLDivElement | null>(null);
@@ -50,6 +48,10 @@ function GPTsPage() {
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
+
+  const sortedWorkflows = allWorkflows
+    ?.slice()
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
     <Layout>
@@ -100,10 +102,7 @@ function GPTsPage() {
                   subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                 >
                   {filteredUserWorkflows?.map((workflow, index) => (
-                    <Stack
-                      key={workflow.id}
-                      ml={index === 0 ? "24px" : 0}
-                    >
+                    <Stack key={workflow.id}>
                       <WorkflowCard
                         index={index}
                         workflow={workflow?.template_workflow}
@@ -128,6 +127,26 @@ function GPTsPage() {
                 )}
               </Stack>
 
+              {sortedWorkflows && sortedWorkflows.length > 0 && (
+                <Stack ref={historicalCarouselRef}>
+                  {showHistoricalCarousel && (
+                    <CarouselSection
+                      header="New GPTs"
+                      subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                    >
+                      {sortedWorkflows.map((workflow, index) => (
+                        <Stack key={workflow.id}>
+                          <WorkflowCard
+                            index={index}
+                            workflow={workflow}
+                          />
+                        </Stack>
+                      ))}
+                    </CarouselSection>
+                  )}
+                </Stack>
+              )}
+
               {schedulableWorkflows && schedulableWorkflows.length > 0 && (
                 <Stack ref={historicalCarouselRef}>
                   {showHistoricalCarousel && (
@@ -136,10 +155,7 @@ function GPTsPage() {
                       subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                     >
                       {schedulableWorkflows.map((workflow, index) => (
-                        <Stack
-                          key={workflow.id}
-                          ml={index === 0 ? "24px" : 0}
-                        >
+                        <Stack key={workflow.id}>
                           <WorkflowCard
                             index={index}
                             workflow={workflow}
@@ -158,10 +174,7 @@ function GPTsPage() {
                     subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                   >
                     {workflows.templates.map((workflow, index) => (
-                      <Stack
-                        key={workflow.id}
-                        ml={index === 0 ? "24px" : 0}
-                      >
+                      <Stack key={workflow.id}>
                         <WorkflowCard
                           index={index}
                           workflow={workflow}

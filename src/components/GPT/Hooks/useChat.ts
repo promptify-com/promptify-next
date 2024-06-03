@@ -255,9 +255,7 @@ const useChat = ({ workflow }: Props) => {
       });
       setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      window.location.reload();
     } catch (error) {
       const errorMessage = createMessage({
         type: "text",

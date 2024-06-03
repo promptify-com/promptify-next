@@ -111,9 +111,16 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/by_category`,
           method: "get",
           params: {
-            exclude: "enabled",
+            enabled: true,
           },
         }),
+        keepUnusedDataFor: 3600,
+        transformResponse(items: IWorkflowCategory[] = []) {
+          return items.map(item => ({
+            ...item,
+            templates: item.templates.filter((template: IWorkflow) => template.enabled),
+          }));
+        },
       }),
       deleteWorkflow: builder.mutation<void, string>({
         query: workflowId => ({
