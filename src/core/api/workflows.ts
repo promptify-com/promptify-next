@@ -115,6 +115,12 @@ export const workflowsApi = baseApi.injectEndpoints({
           },
         }),
       }),
+      deleteWorkflow: builder.mutation<void, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/delete`,
+          method: "delete",
+        }),
+      }),
     };
   },
 });
@@ -132,4 +138,5 @@ export const {
   useGetWorkflowExecutionsQuery,
   useGetWorkflowByCategoryQuery,
   useGetUserWorkflowsQuery,
+  useDeleteWorkflowMutation,
 } = workflowsApi;
