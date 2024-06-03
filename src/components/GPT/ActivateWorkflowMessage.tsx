@@ -4,16 +4,25 @@ import Button from "@mui/material/Button";
 import MessageContainer from "@/components/GPT/MessageContainer";
 import { BtnStyle } from "@/components/GPT/Constants";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import { useState } from "react";
+import { CircularProgress } from "@mui/material";
 
 interface Props {
   message: IMessage;
-  onActivate(): void;
+  onActivate(): Promise<void>;
   allowActivateButton?: boolean;
   updateMode?: boolean;
 }
 
 export default function ActivateWorkflowMessage({ message, onActivate, updateMode, allowActivateButton }: Props) {
   const { fromUser, isHighlight } = message;
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleActivate = async () => {
+    setIsProcessing(true);
+    await onActivate();
+    setIsProcessing(false);
+  };
 
   return (
     <MessageContainer message={message}>
@@ -49,11 +58,20 @@ export default function ActivateWorkflowMessage({ message, onActivate, updateMod
           Ready to {updateMode ? "update" : "turn on"} this GPT?
         </Typography>
         <Button
-          onClick={onActivate}
+          onClick={handleActivate}
           variant="contained"
-          disabled={!allowActivateButton}
+          disabled={!allowActivateButton || isProcessing}
           sx={BtnStyle}
         >
+          {isProcessing && (
+            <CircularProgress
+              size={"16px"}
+              sx={{
+                color: "common.black",
+                mr: "10px",
+              }}
+            />
+          )}
           {updateMode ? "Update Activation" : "Activate"}
         </Button>
       </Stack>
