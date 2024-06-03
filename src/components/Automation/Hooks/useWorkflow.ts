@@ -11,12 +11,14 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import { isValidUserFn } from "@/core/store/userSlice";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
+  const isValidUser = useAppSelector(isValidUserFn);
   const workflowSlug = router.query?.slug as string;
   const { data, isLoading: isWorkflowLoading } = useGetWorkflowBySlugQuery(workflowSlug, {
-    skip: Boolean(workflow.slug || !workflowSlug),
+    skip: Boolean(workflow.slug || !workflowSlug || !isValidUser),
   });
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
