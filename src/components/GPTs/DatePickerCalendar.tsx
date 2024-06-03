@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
@@ -18,15 +18,20 @@ import {
   addDays,
   isSameMonth,
   isSameDay,
-  parseISO,
+  addWeeks,
+  setHours,
+  setMinutes,
+  setSeconds,
+  getDate,
+  setDate,
 } from "date-fns";
-import { useGetWorkflowExecutionsQuery } from "@/core/api/workflows";
 import { styled } from "@mui/material/styles";
-import { getHighestPriorityStatus } from "@/components/GPTs/helpers";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState } from "@/core/store/chatSlice";
-import type { WorkflowExecution } from "../Automation/types";
+import type { FrequencyType, IWorkflowSchedule } from "../Automation/types";
+import { calculateScheduledDates } from "./helpers";
 
+// Styles
 const HEADER_STYLES = {
   flexDirection: "row",
   padding: "12px 16px",
@@ -47,22 +52,15 @@ const DAY_BOX_STYLES = {
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const getStylesForStatus = (status: string, date: Date) => {
-  const today = new Date();
-  if (status === "scheduled" && isSameDay(date, today)) {
-    return { backgroundColor: "#6E45E9", color: "white" };
+// Helper functions
+const getStylesForSchedule = (isScheduled: boolean, date: Date) => {
+  if (isScheduled) {
+    if (isSameDay(date, new Date())) {
+      return { backgroundColor: "#6E45E9", color: "white" };
+    }
+    return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
   }
-
-  switch (status) {
-    case "success":
-      return { backgroundColor: "#E4FEE7", color: "#228B22" };
-    case "failed":
-      return { backgroundColor: "#E94545", color: "white" };
-    case "scheduled":
-      return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
-    default:
-      return { backgroundColor: "transparent", color: "text.primary" };
-  }
+  return { backgroundColor: "transparent", color: "text.primary" };
 };
 
 const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -91,28 +89,24 @@ const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-const RenderHeader = ({
-  setCurrentMonth,
-  currentMonth,
-}: {
-  setCurrentMonth: Dispatch<SetStateAction<Date>>;
-  currentMonth: Date;
-}) => (
-  <Stack sx={HEADER_STYLES}>
-    <IconButton onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-      <KeyboardArrowLeft />
-    </IconButton>
-    <Typography
-      fontSize={16}
-      lineHeight={"150%"}
-      fontWeight={"500"}
-    >
-      {format(currentMonth, "MMMM, yyyy")}
-    </Typography>
-    <IconButton onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-      <KeyboardArrowRight />
-    </IconButton>
-  </Stack>
+const RenderHeader = memo(
+  ({ setCurrentMonth, currentMonth }: { setCurrentMonth: Dispatch<SetStateAction<Date>>; currentMonth: Date }) => (
+    <Stack sx={HEADER_STYLES}>
+      <IconButton onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+        <KeyboardArrowLeft />
+      </IconButton>
+      <Typography
+        fontSize={16}
+        lineHeight={"150%"}
+        fontWeight={"500"}
+      >
+        {format(currentMonth, "MMMM, yyyy")}
+      </Typography>
+      <IconButton onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+        <KeyboardArrowRight />
+      </IconButton>
+    </Stack>
+  ),
 );
 
 const RenderDaysOfWeek = memo(() => (
@@ -143,7 +137,7 @@ const RenderDaysOfWeek = memo(() => (
   </Grid>
 ));
 
-const RenderCells = ({ currentMonth, executions = [] }: { currentMonth: Date; executions: WorkflowExecution[] }) => {
+const RenderCells = memo(({ currentMonth, scheduledDates = [] }: { currentMonth: Date; scheduledDates: Date[] }) => {
   const monthStart = startOfMonth(currentMonth);
   const rows = [];
   let daysInMonth = [];
@@ -153,20 +147,14 @@ const RenderCells = ({ currentMonth, executions = [] }: { currentMonth: Date; ex
     for (let i = 0; i < 7; i++) {
       const formattedDate = format(day, "d");
       const isCurrentMonth = isSameMonth(day, monthStart);
-      const executionsForDay = executions.filter(exec => isSameDay(parseISO(exec.startedAt), day));
-      const highestPriorityStatus = getHighestPriorityStatus(executionsForDay);
-      const { backgroundColor, color } =
-        highestPriorityStatus && isCurrentMonth
-          ? getStylesForStatus(highestPriorityStatus, day)
-          : { backgroundColor: "transparent", color: "text.primary" };
+      const isScheduled = scheduledDates.some(scheduledDate => isSameDay(scheduledDate, day));
+      const { backgroundColor, color } = getStylesForSchedule(isScheduled, day);
 
       const cellContent = (
         <Box sx={{ ...DAY_BOX_STYLES, backgroundColor }}>
           <Typography
             fontSize={"12px"}
-            sx={{
-              color: !isCurrentMonth ? "text.disabled" : color,
-            }}
+            sx={{ color: !isCurrentMonth ? "text.disabled" : color }}
           >
             {formattedDate}
           </Typography>
@@ -180,17 +168,7 @@ const RenderCells = ({ currentMonth, executions = [] }: { currentMonth: Date; ex
           xs
           mb={"10px"}
         >
-          {executionsForDay.some(exec => exec.status === "failed") ? (
-            <CustomTooltip
-              placement="top"
-              title={executionsForDay.find(exec => exec.status === "failed")?.error || ""}
-              arrow
-            >
-              {cellContent}
-            </CustomTooltip>
-          ) : (
-            cellContent
-          )}
+          {cellContent}
         </Grid>,
       );
       day = addDays(day, 1);
@@ -209,23 +187,24 @@ const RenderCells = ({ currentMonth, executions = [] }: { currentMonth: Date; ex
   }
 
   return <Box sx={{ mt: 2 }}>{rows}</Box>;
-};
+});
 
 function DatePickerCalendar() {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const { data: executions } = useGetWorkflowExecutionsQuery(clonedWorkflow?.id!, {
-    skip: !clonedWorkflow?.id,
-  });
+  const [scheduledDates, setScheduledDates] = useState<Date[]>([]);
+
+  useEffect(() => {
+    if (clonedWorkflow?.schedule) {
+      const dates = calculateScheduledDates(clonedWorkflow.schedule, startOfMonth(currentMonth));
+      setScheduledDates(dates);
+    }
+  }, [clonedWorkflow, currentMonth]);
 
   return (
     <Stack
       width={"425px"}
-      sx={{
-        border: "1px solid rgba(0, 0, 0, 0.08)",
-        borderRadius: "16px",
-        bgcolor: "white",
-      }}
+      sx={{ border: "1px solid rgba(0, 0, 0, 0.08)", borderRadius: "16px", bgcolor: "white" }}
     >
       <Stack
         borderBottom={"1px solid rgba(0, 0, 0, 0.08)"}
@@ -240,23 +219,19 @@ function DatePickerCalendar() {
           Current Schedule
         </Typography>
       </Stack>
-      {
-        <RenderHeader
-          currentMonth={currentMonth}
-          setCurrentMonth={setCurrentMonth}
-        />
-      }
+      <RenderHeader
+        currentMonth={currentMonth}
+        setCurrentMonth={setCurrentMonth}
+      />
       <Stack
         p={"8px"}
         mb={"16px"}
       >
-        {<RenderDaysOfWeek />}
-        {
-          <RenderCells
-            executions={executions?.data ?? []}
-            currentMonth={currentMonth}
-          />
-        }
+        <RenderDaysOfWeek />
+        <RenderCells
+          scheduledDates={scheduledDates}
+          currentMonth={currentMonth}
+        />
       </Stack>
     </Stack>
   );

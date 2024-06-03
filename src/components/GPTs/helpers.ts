@@ -1,14 +1,25 @@
+import { isSameDay } from "date-fns/isSameDay";
+import { setHours } from "date-fns/setHours";
+import { setMinutes } from "date-fns/setMinutes";
+import { setSeconds } from "date-fns/setSeconds";
+import { startOfWeek } from "date-fns/startOfWeek";
+import { isSameMonth } from "date-fns/isSameMonth";
+import { addDays } from "date-fns/addDays";
+import { addWeeks } from "date-fns/addWeeks";
+import { setDate } from "date-fns/setDate";
 import type {
   INode,
   INodeConnection,
   IProviderNode,
   IWorkflow,
   IWorkflowCreateResponse,
+  IWorkflowSchedule,
   NodesFileData,
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
+import { startOfMonth } from "date-fns/startOfMonth";
 
 interface IRelation {
   nextNode: string;
@@ -326,3 +337,86 @@ export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
   }
   return null;
 }
+
+export const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+export const getStylesForStatus = (status: string, date: Date) => {
+  const today = new Date();
+  if (status === "scheduled" && isSameDay(date, today)) {
+    return { backgroundColor: "#6E45E9", color: "white" };
+  }
+
+  switch (status) {
+    case "success":
+      return { backgroundColor: "#E4FEE7", color: "#228B22" };
+    case "failed":
+      return { backgroundColor: "#E94545", color: "white" };
+    case "scheduled":
+      return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
+    default:
+      return { backgroundColor: "transparent", color: "text.primary" };
+  }
+};
+
+export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart: Date): Date[] => {
+  let dates: Date[] = [];
+  const { frequency, hour, minute, day_of_week, day_of_month } = schedule;
+  const currentMonth = monthStart.getMonth();
+
+  const parsedHour = parseInt(hour as unknown as string, 10);
+  const parsedMinute = parseInt(minute as unknown as string, 10);
+  const parsedDayOfWeek = parseInt(day_of_week as unknown as string, 10);
+
+  const addDate = (date: Date) => {
+    date = setHours(date, parsedHour);
+    date = setMinutes(date, parsedMinute);
+    date = setSeconds(date, 0);
+    dates.push(new Date(date));
+  };
+
+  if (frequency === "daily") {
+    let date = startOfMonth(monthStart);
+    while (date.getMonth() === currentMonth) {
+      addDate(new Date(date));
+      date = addDays(date, 1);
+    }
+  } else if (frequency === "weekly") {
+    let date = startOfWeek(startOfMonth(monthStart), { weekStartsOn: 1 });
+    date = addDays(date, parsedDayOfWeek);
+
+    while (date < startOfMonth(monthStart)) {
+      date = addWeeks(date, 1);
+    }
+
+    while (isSameMonth(date, monthStart)) {
+      addDate(new Date(date));
+      date = addWeeks(date, 1);
+    }
+  } else if (frequency === "bi-weekly") {
+    let date = startOfWeek(startOfMonth(monthStart), { weekStartsOn: 1 });
+    date = addDays(date, parsedDayOfWeek);
+
+    while (date < startOfMonth(monthStart)) {
+      date = addWeeks(date, 2);
+    }
+
+    while (isSameMonth(date, monthStart)) {
+      addDate(new Date(date));
+      date = addWeeks(date, 2);
+    }
+  } else if (frequency === "monthly") {
+    if (typeof day_of_month === "string" && day_of_month !== "*") {
+      const parsedDayOfMonth = parseInt(day_of_month, 10);
+      if (parsedDayOfMonth > 0 && parsedDayOfMonth <= 31) {
+        let date = setDate(startOfMonth(monthStart), parsedDayOfMonth);
+        if (date.getMonth() === currentMonth) {
+          addDate(new Date(date));
+        }
+      }
+    } else {
+      console.log("Monthly frequency with invalid day_of_month is not supported for date calculations.");
+    }
+  }
+
+  return dates;
+};
