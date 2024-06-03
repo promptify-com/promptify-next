@@ -8,6 +8,7 @@ interface Props {
   type: "date" | "time" | "month_date";
   onChange(item: number): void;
   defaultValue?: number;
+  isDaysSelect?: boolean;
 }
 
 export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Props) {
@@ -15,8 +16,7 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
 
   useEffect(() => onChange?.(selectedItem), [selectedItem]);
 
-  const items =
-    type === "date" ? DAYS : type === "time" ? TIMES : Array.from({ length: 27 }).map((_, i) => (i + 1).toString());
+  const items = type === "date" ? DAYS : type === "time" ? TIMES : Array.from({ length: 27 }).map((_, i) => i + 1);
 
   return (
     <Select
@@ -43,14 +43,16 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
         },
       }}
     >
-      {items.map((item, idx) => (
-        <MenuItem
-          key={item}
-          value={idx}
-        >
-          {item}
-        </MenuItem>
-      ))}
+      {items.map((item, idx) => {
+        return (
+          <MenuItem
+            key={item}
+            value={type === "month_date" ? idx + 1 : idx}
+          >
+            {item}
+          </MenuItem>
+        );
+      })}
     </Select>
   );
 }

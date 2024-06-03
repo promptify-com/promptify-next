@@ -100,3 +100,5 @@ export const BtnStyle = {
     borderColor: "transparent",
   },
 };
+
+export const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
