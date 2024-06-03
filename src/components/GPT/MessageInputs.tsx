@@ -32,10 +32,10 @@ function MessageInputs({ message, onGenerate, allowGenerate }: Props) {
       >
         <Stack
           bgcolor={"#3C3359"}
-          minWidth={"560px"}
+          minWidth={{ md: "560px" }}
           borderRadius={"8px"}
           gap={"8px"}
-          width={"98%"}
+          width={{ md: "98%" }}
           padding={"8px"}
         >
           <Typography

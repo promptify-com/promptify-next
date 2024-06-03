@@ -221,7 +221,7 @@ function DatePickerCalendar() {
 
   return (
     <Stack
-      width={"425px"}
+      width={{ xs: "100%", md: "425px" }}
       sx={{ border: "1px solid rgba(0, 0, 0, 0.08)", borderRadius: "16px", bgcolor: "white" }}
     >
       <Stack

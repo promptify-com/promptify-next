@@ -33,7 +33,7 @@ export default function Choices({ message, items, onSelect, defaultValue = "" }:
       <Stack
         direction={"row"}
         alignItems={"center"}
-        gap={2}
+        gap={{ xs: 1, md: 2 }}
       >
         {items.map(item => {
           const selected = selectedItem === item;
@@ -45,7 +45,7 @@ export default function Choices({ message, items, onSelect, defaultValue = "" }:
               sx={{
                 bgcolor: selected ? "#6E45E9" : "#F7F5FC",
                 color: selected ? "common.white" : "common.black",
-                fontSize: 13,
+                fontSize: { xs: 11, md: 13 },
                 fontWeight: 500,
                 textTransform: "capitalize",
                 p: "6px 24px",

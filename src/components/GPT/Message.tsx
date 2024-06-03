@@ -68,7 +68,6 @@ export default function Message({ message, isInitialMessage = false }: Props) {
         color={"onSurface"}
         sx={{
           p: "16px 20px",
-          width: "100%",
           borderRadius: fromUser
             ? "100px 100px 100px 0px"
             : isInitialMessage
