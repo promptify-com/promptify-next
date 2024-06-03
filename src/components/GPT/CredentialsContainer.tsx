@@ -43,7 +43,7 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
       )}
       <Stack
         gap={2}
-        minWidth={"600px"}
+        minWidth={{ md: "600px" }}
       >
         {localInputs.map(input => (
           <Stack
