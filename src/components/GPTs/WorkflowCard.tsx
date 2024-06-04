@@ -177,8 +177,8 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
           {periodic_task && workflow?.is_schedulable && (
             <Stack
               position={"absolute"}
-              top={{ xs: "24px", md: 7 }}
-              right={{ xs: "24px", md: 7 }}
+              top={{ xs: "24px", md: "16px" }}
+              right={{ xs: "24px", md: "16px" }}
             >
               <StatusChip status={!isPaused ? "active" : "paused"} />
             </Stack>
