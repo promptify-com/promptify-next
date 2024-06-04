@@ -156,6 +156,9 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   };
 
+  const cleanMessagesAfterType = (messages: IMessage[], type: string) =>
+    messages.slice(0, messages.findIndex(msg => msg.type === type) + 1);
+
   const testGPT = () => {
     setSchedulingData({ ...schedulingData, frequency: "Test GPT" });
     setMessages(prev =>
@@ -169,11 +172,16 @@ const useChat = ({ workflow }: Props) => {
     );
   };
 
+  useEffect(() => {
+    if (schedulingData.frequency !== "Test GPT") {
+      messagesMemo.current = messages;
+    }
+  }, [messages]);
+
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
 
     if (frequency === "Test GPT") {
-      messagesMemo.current = messages;
       testGPT();
     } else {
       const _messages = messagesMemo.current;
