@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { createMessage } from "@/components/Chat/helper";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { initialState, setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
 import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName, removeExistingProviderNode } from "@/components/GPTs/helpers";
@@ -31,7 +32,10 @@ type WorkflowData = {
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { inputs, answers } = useAppSelector(state => state.chat ?? initialState);
+  const { inputs, answers, areCredentialsStored, clonedWorkflow } = useAppSelector(
+    state => state.chat ?? initialChatState,
+  );
+  const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const updateScheduleMode = useRef<boolean | null>(null);
@@ -46,7 +50,6 @@ const useChat = ({ workflow }: Props) => {
     day_of_month: 0,
   });
 
-  const { areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
   const { streamExecutionHandler } = useGenerateExecution({});
@@ -154,7 +157,18 @@ const useChat = ({ workflow }: Props) => {
 
   const testGPT = () => {
     setSchedulingData({ ...schedulingData, frequency: "Test GPT" });
-    setMessages(prev => prev.filter(msg => !["schedule_frequency", "schedule_time"].includes(msg.type)));
+    setMessages(prev =>
+      prev.filter(
+        msg =>
+          ![
+            "schedule_frequency",
+            "schedule_time",
+            "schedule_activation",
+            "schedule_update",
+            "schedule_activation_test",
+          ].includes(msg.type),
+      ),
+    );
     insertProvidersMessages(
       "Great, We'll run this GPT for you, do you want to receive them in your favorite platforms?",
     );
@@ -226,7 +240,7 @@ const useChat = ({ workflow }: Props) => {
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
-            streamExecutionHandler(response);
+            await streamExecutionHandler(response);
           }
         }
       }
@@ -242,6 +256,19 @@ const useChat = ({ workflow }: Props) => {
     });
     setMessages(prev => prev.concat(failMessage));
   };
+
+  useEffect(() => {
+    if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
+      const title = generatedExecution.temp_title;
+      const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
+      const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
+      const executionMessage = createMessage({
+        type: "html",
+        text: output,
+      });
+      setMessages(prev => prev.concat(executionMessage));
+    }
+  }, [generatedExecution]);
 
   const prepareWorkflow = async (providerType: ProviderType) => {
     let preparedMessages: IMessage[] = [];
@@ -344,7 +371,7 @@ const useChat = ({ workflow }: Props) => {
         respondToWebhookNode?.name!,
       );
       await handleUpdateWorkflow(cleanWorkflow);
-      executeWorkflow();
+      await executeWorkflow();
     } else {
       await handleUpdateWorkflow();
 

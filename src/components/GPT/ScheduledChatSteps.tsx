@@ -69,82 +69,84 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       }}
     >
       {!!messages.length ? (
-        messages.map(message => (
-          <Box
-            key={message.id}
-            sx={{
-              ...(!message.fromUser && {
-                mr: "56px",
-              }),
-              ...(message.fromUser && {
-                ml: "56px",
-              }),
-              ...(message.noHeader && {
-                mt: "-34px",
-              }),
-            }}
-          >
-            {message.type === "text" && <Message message={message} />}
-            {message.type === "html" && <Message message={message} />}
+        <>
+          {messages.map(message => (
+            <Box
+              key={message.id}
+              sx={{
+                ...(!message.fromUser && {
+                  mr: "56px",
+                }),
+                ...(message.fromUser && {
+                  ml: "56px",
+                }),
+                ...(message.noHeader && {
+                  mt: "-34px",
+                }),
+              }}
+            >
+              {message.type === "text" && <Message message={message} />}
+              {message.type === "html" && <Message message={message} />}
 
-            {message.type === "credentials" && (
-              <CredentialsContainer
-                message={message.text}
-                workflow={workflow}
-                isScheduled
-              />
-            )}
-            {message.type === "schedule_frequency" && (
-              <Choices
-                message={message.text}
-                items={FREQUENCY_ITEMS.concat("Test GPT")}
-                onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
-                defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
-              />
-            )}
-            {message.type === "schedule_time" && (
-              <FrequencyTimeSelector
-                message={message.text}
-                onSelect={setScheduleTime}
-              />
-            )}
-            {message.type === "schedule_providers" && (
-              <ResponseProvidersContainer
-                message={message.text}
-                workflow={workflow}
-                prepareWorkflow={provider => prepareWorkflow(provider)}
-              />
-            )}
-            {message.type === "form" && (
-              <MessageInputs
-                allowGenerate={false}
-                onGenerate={() => {}}
-                message={message}
-              />
-            )}
+              {message.type === "credentials" && (
+                <CredentialsContainer
+                  message={message.text}
+                  workflow={workflow}
+                  isScheduled
+                />
+              )}
+              {message.type === "schedule_frequency" && (
+                <Choices
+                  message={message.text}
+                  items={FREQUENCY_ITEMS.concat("Test GPT")}
+                  onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
+                  defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
+                />
+              )}
+              {message.type === "schedule_time" && (
+                <FrequencyTimeSelector
+                  message={message.text}
+                  onSelect={setScheduleTime}
+                />
+              )}
+              {message.type === "schedule_providers" && (
+                <ResponseProvidersContainer
+                  message={message.text}
+                  workflow={workflow}
+                  prepareWorkflow={provider => prepareWorkflow(provider)}
+                />
+              )}
+              {message.type === "form" && (
+                <MessageInputs
+                  allowGenerate={false}
+                  onGenerate={() => {}}
+                  message={message}
+                />
+              )}
 
-            {(message.type === "schedule_activation" || message.type === "schedule_update") && (
-              <ActivateWorkflowMessage
-                message={message}
-                onActivate={activateWorkflow}
-                allowActivateButton={allowActivateButton}
-                updateMode={message.type === "schedule_update"}
-              />
-            )}
+              {(message.type === "schedule_activation" || message.type === "schedule_update") && (
+                <ActivateWorkflowMessage
+                  message={message}
+                  onActivate={activateWorkflow}
+                  allowActivateButton={allowActivateButton}
+                  updateMode={message.type === "schedule_update"}
+                />
+              )}
 
-            {message.type === "schedule_activation_test" && (
-              <ActivateWorkflowMessage
-                message={message}
-                onActivate={activateWorkflow}
-                allowActivateButton={allowActivateButton}
-                title="Ready to run this GPT"
-                buttonMessage="Run GPT"
-              />
-            )}
+              {message.type === "schedule_activation_test" && (
+                <ActivateWorkflowMessage
+                  message={message}
+                  onActivate={activateWorkflow}
+                  allowActivateButton={allowActivateButton}
+                  title="Ready to run this GPT"
+                  buttonMessage="Run GPT"
+                />
+              )}
+            </Box>
+          ))}
 
-            {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
-          </Box>
-        ))
+          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
+        </>
       ) : (
         <ChatCredentialsPlaceholder />
       )}
