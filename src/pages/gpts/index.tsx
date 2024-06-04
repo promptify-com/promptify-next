@@ -11,16 +11,19 @@ import CarouselSection from "@/components/GPTs/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import GPTbanner from "@/components/GPTs/GPTbanner";
 import { useGetWorkflowByCategoryQuery, useGetUserWorkflowsQuery, useGetWorkflowsQuery } from "@/core/api/workflows";
+import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCardPlaceholder";
 
 function GPTsPage() {
   const searchParams = useSearchParams();
 
-  const { data: workflowsByCategory } = useGetWorkflowByCategoryQuery();
-  const { data: userWorkflows } = useGetUserWorkflowsQuery();
+  const { data: workflowsByCategory, isLoading: isLoadingWorkflowsByCategory } = useGetWorkflowByCategoryQuery();
+  const { data: userWorkflows, isLoading: isLoadingUserWorkflows } = useGetUserWorkflowsQuery();
 
   const [filter, setFilter] = useState("");
 
-  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true");
+  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(
+    searchParams.get("enable") === "true",
+  );
 
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const historicalCarouselRef = useRef<HTMLDivElement | null>(null);
@@ -96,22 +99,27 @@ function GPTsPage() {
             </Fragment>
           ) : (
             <Fragment>
-              {filteredUserWorkflows && filteredUserWorkflows.length > 0 && (
-                <CarouselSection
-                  header="Scheduled GPTs"
-                  subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                >
-                  {filteredUserWorkflows?.map((workflow, index) => (
-                    <Stack key={workflow.id}>
-                      <WorkflowCard
-                        index={index}
-                        workflow={workflow?.template_workflow}
-                        periodic_task={workflow?.periodic_task}
-                        workflowId={workflow.id}
-                      />
-                    </Stack>
-                  ))}
-                </CarouselSection>
+              {isLoadingUserWorkflows ? (
+                <WorkflowCardPlaceholder />
+              ) : (
+                filteredUserWorkflows &&
+                filteredUserWorkflows.length > 0 && (
+                  <CarouselSection
+                    header="Scheduled GPTs"
+                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                  >
+                    {filteredUserWorkflows?.map((workflow, index) => (
+                      <Stack key={workflow.id}>
+                        <WorkflowCard
+                          index={index}
+                          workflow={workflow?.template_workflow}
+                          periodic_task={workflow?.periodic_task}
+                          workflowId={workflow.id}
+                        />
+                      </Stack>
+                    ))}
+                  </CarouselSection>
+                )
               )}
 
               <Stack
@@ -127,14 +135,66 @@ function GPTsPage() {
                 )}
               </Stack>
 
-              {sortedWorkflows && sortedWorkflows.length > 0 && (
-                <Stack ref={historicalCarouselRef}>
-                  {showHistoricalCarousel && (
+              {isLoadingAllWorkflows ? (
+                <WorkflowCardPlaceholder />
+              ) : (
+                sortedWorkflows &&
+                sortedWorkflows.length > 0 && (
+                  <Stack ref={historicalCarouselRef}>
+                    {showHistoricalCarousel && (
+                      <CarouselSection
+                        header="New GPTs"
+                        subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                      >
+                        {sortedWorkflows.map((workflow, index) => (
+                          <Stack key={workflow.id}>
+                            <WorkflowCard
+                              index={index}
+                              workflow={workflow}
+                            />
+                          </Stack>
+                        ))}
+                      </CarouselSection>
+                    )}
+                  </Stack>
+                )
+              )}
+
+              {isLoadingWorkflowsByCategory ? (
+                <WorkflowCardPlaceholder />
+              ) : (
+                schedulableWorkflows &&
+                schedulableWorkflows.length > 0 && (
+                  <Stack ref={historicalCarouselRef}>
+                    {showHistoricalCarousel && (
+                      <CarouselSection
+                        header="Historical GPTs"
+                        subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                      >
+                        {schedulableWorkflows.map((workflow, index) => (
+                          <Stack key={workflow.id}>
+                            <WorkflowCard
+                              index={index}
+                              workflow={workflow}
+                            />
+                          </Stack>
+                        ))}
+                      </CarouselSection>
+                    )}
+                  </Stack>
+                )
+              )}
+
+              {isLoadingWorkflowsByCategory ? (
+                <WorkflowCardPlaceholder />
+              ) : (
+                workflowsByCategory?.map((workflows, index) => (
+                  <Fragment key={`${workflows.category}-${index}`}>
                     <CarouselSection
-                      header="New GPTs"
+                      header={workflows.category || ""}
                       subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                     >
-                      {sortedWorkflows.map((workflow, index) => (
+                      {workflows.templates.map((workflow, index) => (
                         <Stack key={workflow.id}>
                           <WorkflowCard
                             index={index}
@@ -143,47 +203,9 @@ function GPTsPage() {
                         </Stack>
                       ))}
                     </CarouselSection>
-                  )}
-                </Stack>
+                  </Fragment>
+                ))
               )}
-
-              {schedulableWorkflows && schedulableWorkflows.length > 0 && (
-                <Stack ref={historicalCarouselRef}>
-                  {showHistoricalCarousel && (
-                    <CarouselSection
-                      header="Historical GPTs"
-                      subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                    >
-                      {schedulableWorkflows.map((workflow, index) => (
-                        <Stack key={workflow.id}>
-                          <WorkflowCard
-                            index={index}
-                            workflow={workflow}
-                          />
-                        </Stack>
-                      ))}
-                    </CarouselSection>
-                  )}
-                </Stack>
-              )}
-
-              {workflowsByCategory?.map((workflows, index) => (
-                <Fragment key={`${workflows.category}-${index}`}>
-                  <CarouselSection
-                    header={workflows.category || ""}
-                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                  >
-                    {workflows.templates.map((workflow, index) => (
-                      <Stack key={workflow.id}>
-                        <WorkflowCard
-                          index={index}
-                          workflow={workflow}
-                        />
-                      </Stack>
-                    ))}
-                  </CarouselSection>
-                </Fragment>
-              ))}
             </Fragment>
           )}
         </Stack>
