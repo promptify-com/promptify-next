@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, Suspense, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
@@ -12,30 +12,41 @@ import HeroSection from "@/components/GPTs/HeroSection";
 import CarouselSection from "@/components/GPTs/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import GPTbanner from "@/components/GPTs/GPTbanner";
+import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCardPlaceholder";
+import ScheduledGPTsSection from "@/components/GPTs/Sections/ScheduledGPTsSection";
+import HistoricalGPTsSection from "@/components/GPTs/Sections/HistoricalGPTsSection";
+import NewGPTsSection from "@/components/GPTs/Sections/NewGPTsSection";
 
 function GPTsPage() {
   const searchParams = useSearchParams();
 
   const currentUser = useAppSelector(state => state.user.currentUser ?? null);
 
-  const { data: workflowsByCategory } = useGetWorkflowByCategoryQuery();
-  const { data: userWorkflows } = useGetUserWorkflowsQuery(undefined, { skip: !currentUser?.id });
-  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true");
+  const { data: workflowsByCategory, isLoading: isLoadingWorkflowsByCategory } = useGetWorkflowByCategoryQuery();
+  const { data: userWorkflows, isLoading: isLoadingUserWorkflows } = useGetUserWorkflowsQuery(undefined, {
+    skip: !currentUser?.id,
+  });
+  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(
+    searchParams.get("enable") === "true",
+  );
 
   const [filter, setFilter] = useState("");
 
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const historicalCarouselRef = useRef<HTMLDivElement | null>(null);
   const productivityCarouselRef = useRef<HTMLDivElement | null>(null);
+  const newGPTsCarouselRef = useRef<HTMLDivElement | null>(null);
 
   const observers = {
     bannerObserver: useIntersectionObserver(bannerRef, { threshold: 0.5 }),
     historicalCarouselObserver: useIntersectionObserver(historicalCarouselRef, { threshold: 0.5 }),
     productivityCarouselObserver: useIntersectionObserver(productivityCarouselRef, { threshold: 0.5 }),
+    newGPTsCarouselObserver: useIntersectionObserver(newGPTsCarouselRef, { threshold: 0.5 }),
   };
 
   const showBanner = observers.bannerObserver?.isIntersecting;
   const showHistoricalCarousel = observers.historicalCarouselObserver?.isIntersecting;
+  const showNewGPTsCarousel = observers.historicalCarouselObserver?.isIntersecting;
 
   const schedulableWorkflows = workflowsByCategory?.flatMap(category =>
     category.templates.filter(workflow => workflow.is_schedulable),
@@ -101,23 +112,10 @@ function GPTsPage() {
             </Fragment>
           ) : (
             <Fragment>
-              {filteredUserWorkflows && filteredUserWorkflows.length > 0 && (
-                <CarouselSection
-                  header="Scheduled GPTs"
-                  subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                >
-                  {filteredUserWorkflows?.map((workflow, index) => (
-                    <Stack key={workflow.id}>
-                      <WorkflowCard
-                        index={index}
-                        workflow={workflow?.template_workflow}
-                        periodic_task={workflow?.periodic_task}
-                        workflowId={workflow.id}
-                      />
-                    </Stack>
-                  ))}
-                </CarouselSection>
-              )}
+              <ScheduledGPTsSection
+                filteredUserWorkflows={filteredUserWorkflows}
+                isLoading={isLoadingUserWorkflows}
+              />
 
               <Stack
                 ref={bannerRef}
@@ -132,59 +130,27 @@ function GPTsPage() {
                 )}
               </Stack>
 
-              {showHistoricalCarousel && sortedWorkflows && sortedWorkflows.length > 0 && (
-                <Stack ref={historicalCarouselRef}>
-                  <CarouselSection
-                    header="New GPTs"
-                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                  >
-                    {sortedWorkflows.map((workflow, index) => (
-                      <Stack key={workflow.id}>
-                        <WorkflowCard
-                          index={index}
-                          workflow={workflow}
-                        />
-                      </Stack>
-                    ))}
-                  </CarouselSection>
-                </Stack>
-              )}
+              <Stack ref={newGPTsCarouselRef}>
+                <Suspense fallback={<WorkflowCardPlaceholder />}>
+                  {showNewGPTsCarousel && (
+                    <NewGPTsSection
+                      workflows={sortedWorkflows}
+                      isLoading={isLoadingAllWorkflows}
+                    />
+                  )}
+                </Suspense>
+              </Stack>
 
-              {showHistoricalCarousel && schedulableWorkflows && schedulableWorkflows.length > 0 && (
-                <Stack ref={historicalCarouselRef}>
-                  <CarouselSection
-                    header="Historical GPTs"
-                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                  >
-                    {schedulableWorkflows.map((workflow, index) => (
-                      <Stack key={workflow.id}>
-                        <WorkflowCard
-                          index={index}
-                          workflow={workflow}
-                        />
-                      </Stack>
-                    ))}
-                  </CarouselSection>
-                </Stack>
-              )}
-
-              {workflowsByCategory?.map((workflows, index) => (
-                <Fragment key={`${workflows.category}-${index}`}>
-                  <CarouselSection
-                    header={workflows.category || ""}
-                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                  >
-                    {workflows.templates.map((workflow, index) => (
-                      <Stack key={workflow.id}>
-                        <WorkflowCard
-                          index={index}
-                          workflow={workflow}
-                        />
-                      </Stack>
-                    ))}
-                  </CarouselSection>
-                </Fragment>
-              ))}
+              <Stack ref={historicalCarouselRef}>
+                <Suspense fallback={<WorkflowCardPlaceholder />}>
+                  {showHistoricalCarousel && (
+                    <HistoricalGPTsSection
+                      schedulableWorkflows={schedulableWorkflows}
+                      isLoading={isLoadingWorkflowsByCategory}
+                    />
+                  )}
+                </Suspense>
+              </Stack>
             </Fragment>
           )}
         </Stack>
