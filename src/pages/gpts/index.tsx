@@ -17,6 +17,7 @@ import ScheduledGPTsSection from "@/components/GPTs/Sections/ScheduledGPTsSectio
 import HistoricalGPTsSection from "@/components/GPTs/Sections/HistoricalGPTsSection";
 import NewGPTsSection from "@/components/GPTs/Sections/NewGPTsSection";
 
+
 function GPTsPage() {
   const searchParams = useSearchParams();
 
@@ -116,7 +117,6 @@ function GPTsPage() {
                 filteredUserWorkflows={filteredUserWorkflows}
                 isLoading={isLoadingUserWorkflows}
               />
-
               <Stack
                 ref={bannerRef}
                 px={{ xs: "24px", md: "80px" }}
