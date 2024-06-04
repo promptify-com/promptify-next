@@ -9,7 +9,7 @@ import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE, TIMES } f
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName, removeExistingProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
-import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type {
   FrequencyType,
   IWorkflow,
@@ -156,21 +156,8 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   };
 
-  const cleanMessagesAfterType = (messages: IMessage[], type: string) =>
+  const cleanMessagesAfterType = (messages: IMessage[], type: MessageType) =>
     messages.slice(0, messages.findIndex(msg => msg.type === type) + 1);
-
-  const testGPT = () => {
-    setSchedulingData({ ...schedulingData, frequency: "Test GPT" });
-    setMessages(prev =>
-      prev.filter(
-        msg =>
-          !["schedule_time", "schedule_activation", "schedule_update", "schedule_activation_test"].includes(msg.type),
-      ),
-    );
-    insertProvidersMessages(
-      "Great, We'll run this GPT for you, do you want to receive them in your favorite platforms?",
-    );
-  };
 
   useEffect(() => {
     if (schedulingData.frequency !== "Test GPT") {
@@ -178,14 +165,32 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [messages]);
 
+  const testGPT = () => {
+    setMessages(cleanMessagesAfterType(messages, "schedule_frequency"));
+
+    insertProvidersMessages(
+      "Great, let's test this GPT for you, do you want to receive them in your favorite platforms?",
+    );
+
+    if (selectedProviderType.current) {
+      const testWorkflowMessage = createMessage({
+        type: "schedule_activation_test",
+        text: "",
+        noHeader: true,
+      });
+      setMessages(prev => prev.concat(testWorkflowMessage));
+    }
+  };
+
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
+
+    setSchedulingData({ ...schedulingData, frequency });
 
     if (frequency === "Test GPT") {
       testGPT();
     } else {
       const _messages = messagesMemo.current;
-      setSchedulingData({ ...schedulingData, frequency });
       if (!_messages.find(msg => msg.type === "schedule_time")) {
         const timeMessage = createMessage({
           type: "schedule_time",
@@ -207,26 +212,26 @@ const useChat = ({ workflow }: Props) => {
       hour: frequencyTime.time,
     });
 
-    const hour = schedulingData?.hour ? ` at ${TIMES[schedulingData?.hour]}` : "";
-    const message = `Awesome, We’ll run this GPT for you here ${schedulingData?.frequency}${hour}, do you want to receive them in your favorite platforms?`;
-    insertProvidersMessages(message);
+    if (!messages.find(msg => msg.type === "schedule_providers")) {
+      const hour = schedulingData?.hour ? ` at ${TIMES[schedulingData?.hour]}` : "";
+      const message = `Awesome, We’ll run this GPT for you here ${schedulingData?.frequency}${hour}, do you want to receive them in your favorite platforms?`;
+      insertProvidersMessages(message);
+    }
   };
 
   const insertProvidersMessages = (message: string) => {
-    if (!messages.find(msg => msg.type === "schedule_providers")) {
-      const confirmMessage = createMessage({
-        type: "text",
-        text: message,
-        isHighlight: true,
-      });
-      const providersMessage = createMessage({
-        type: "schedule_providers",
-        text: "Where should we send your scheduled GPT?",
-      });
-      setMessages(prev =>
-        prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
-      );
-    }
+    const confirmMessage = createMessage({
+      type: "text",
+      text: message,
+      isHighlight: true,
+    });
+    const providersMessage = createMessage({
+      type: "schedule_providers",
+      text: "Where should we send your scheduled GPT?",
+    });
+    setMessages(prev =>
+      prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
+    );
   };
 
   const executeWorkflow = async () => {
