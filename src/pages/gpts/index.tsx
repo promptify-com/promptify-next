@@ -17,7 +17,6 @@ import ScheduledGPTsSection from "@/components/GPTs/Sections/ScheduledGPTsSectio
 import HistoricalGPTsSection from "@/components/GPTs/Sections/HistoricalGPTsSection";
 import NewGPTsSection from "@/components/GPTs/Sections/NewGPTsSection";
 
-
 function GPTsPage() {
   const searchParams = useSearchParams();
 
@@ -131,25 +130,25 @@ function GPTsPage() {
               </Stack>
 
               <Stack ref={newGPTsCarouselRef}>
-                <Suspense fallback={<WorkflowCardPlaceholder />}>
-                  {showNewGPTsCarousel && (
+                {showNewGPTsCarousel && (
+                  <Suspense fallback={<WorkflowCardPlaceholder />}>
                     <NewGPTsSection
                       workflows={sortedWorkflows}
                       isLoading={isLoadingAllWorkflows}
                     />
-                  )}
-                </Suspense>
+                  </Suspense>
+                )}
               </Stack>
 
               <Stack ref={historicalCarouselRef}>
-                <Suspense fallback={<WorkflowCardPlaceholder />}>
-                  {showHistoricalCarousel && (
+                {showHistoricalCarousel && (
+                  <Suspense fallback={<WorkflowCardPlaceholder />}>
                     <HistoricalGPTsSection
                       schedulableWorkflows={schedulableWorkflows}
                       isLoading={isLoadingWorkflowsByCategory}
                     />
-                  )}
-                </Suspense>
+                  </Suspense>
+                )}
               </Stack>
             </Fragment>
           )}
