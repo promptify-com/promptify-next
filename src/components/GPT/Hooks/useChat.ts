@@ -49,6 +49,7 @@ const useChat = ({ workflow }: Props) => {
     day_of_week: 0,
     day_of_month: 0,
   });
+  const messagesMemo = useRef<IMessage[]>([]);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
@@ -160,13 +161,7 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev =>
       prev.filter(
         msg =>
-          ![
-            "schedule_frequency",
-            "schedule_time",
-            "schedule_activation",
-            "schedule_update",
-            "schedule_activation_test",
-          ].includes(msg.type),
+          !["schedule_time", "schedule_activation", "schedule_update", "schedule_activation_test"].includes(msg.type),
       ),
     );
     insertProvidersMessages(
@@ -175,17 +170,22 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const setScheduleFrequency = (frequency: FrequencyType) => {
+    if (schedulingData.frequency === frequency) return;
+
     if (frequency === "Test GPT") {
+      messagesMemo.current = messages;
       testGPT();
     } else {
+      const _messages = messagesMemo.current;
       setSchedulingData({ ...schedulingData, frequency });
-      if (!messages.find(msg => msg.type === "schedule_time")) {
+      if (!_messages.find(msg => msg.type === "schedule_time")) {
         const timeMessage = createMessage({
           type: "schedule_time",
           text: "At what time?",
         });
-        setMessages(prev => prev.filter(msg => msg.type !== "schedule_time").concat(timeMessage));
+        _messages.push(timeMessage);
       }
+      setMessages(_messages);
     }
   };
 
