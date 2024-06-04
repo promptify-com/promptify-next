@@ -3,24 +3,26 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
 
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Layout } from "@/layout";
+import { useGetWorkflowByCategoryQuery, useGetUserWorkflowsQuery, useGetWorkflowsQuery } from "@/core/api/workflows";
+import { useAppSelector } from "@/hooks/useStore";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/HeroSection";
 import CarouselSection from "@/components/GPTs/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import GPTbanner from "@/components/GPTs/GPTbanner";
-import { useGetWorkflowByCategoryQuery, useGetUserWorkflowsQuery, useGetWorkflowsQuery } from "@/core/api/workflows";
 
 function GPTsPage() {
   const searchParams = useSearchParams();
 
+  const currentUser = useAppSelector(state => state.user.currentUser ?? null);
+
   const { data: workflowsByCategory } = useGetWorkflowByCategoryQuery();
-  const { data: userWorkflows } = useGetUserWorkflowsQuery();
+  const { data: userWorkflows } = useGetUserWorkflowsQuery(undefined, { skip: !currentUser?.id });
+  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true");
 
   const [filter, setFilter] = useState("");
-
-  const { data: allWorkflows } = useGetWorkflowsQuery(searchParams.get("enable") === "true");
 
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const historicalCarouselRef = useRef<HTMLDivElement | null>(null);
@@ -55,7 +57,10 @@ function GPTsPage() {
 
   return (
     <Layout>
-      <Stack bgcolor={"white"}>
+      <Stack
+        bgcolor={"white"}
+        pb={7}
+      >
         <HeroSection onFilter={setFilter} />
         <Stack
           mt={{ xs: "40px", md: "80px" }}
@@ -127,43 +132,39 @@ function GPTsPage() {
                 )}
               </Stack>
 
-              {sortedWorkflows && sortedWorkflows.length > 0 && (
+              {showHistoricalCarousel && sortedWorkflows && sortedWorkflows.length > 0 && (
                 <Stack ref={historicalCarouselRef}>
-                  {showHistoricalCarousel && (
-                    <CarouselSection
-                      header="New GPTs"
-                      subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                    >
-                      {sortedWorkflows.map((workflow, index) => (
-                        <Stack key={workflow.id}>
-                          <WorkflowCard
-                            index={index}
-                            workflow={workflow}
-                          />
-                        </Stack>
-                      ))}
-                    </CarouselSection>
-                  )}
+                  <CarouselSection
+                    header="New GPTs"
+                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                  >
+                    {sortedWorkflows.map((workflow, index) => (
+                      <Stack key={workflow.id}>
+                        <WorkflowCard
+                          index={index}
+                          workflow={workflow}
+                        />
+                      </Stack>
+                    ))}
+                  </CarouselSection>
                 </Stack>
               )}
 
-              {schedulableWorkflows && schedulableWorkflows.length > 0 && (
+              {showHistoricalCarousel && schedulableWorkflows && schedulableWorkflows.length > 0 && (
                 <Stack ref={historicalCarouselRef}>
-                  {showHistoricalCarousel && (
-                    <CarouselSection
-                      header="Historical GPTs"
-                      subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                    >
-                      {schedulableWorkflows.map((workflow, index) => (
-                        <Stack key={workflow.id}>
-                          <WorkflowCard
-                            index={index}
-                            workflow={workflow}
-                          />
-                        </Stack>
-                      ))}
-                    </CarouselSection>
-                  )}
+                  <CarouselSection
+                    header="Historical GPTs"
+                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                  >
+                    {schedulableWorkflows.map((workflow, index) => (
+                      <Stack key={workflow.id}>
+                        <WorkflowCard
+                          index={index}
+                          workflow={workflow}
+                        />
+                      </Stack>
+                    ))}
+                  </CarouselSection>
                 </Stack>
               )}
 
