@@ -203,7 +203,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
                 fontWeight={400}
                 lineHeight={"150%"}
                 color={"#000"}
-                minHeight={{ xs: 0, md: "51px" }}
+                minHeight={"51px"}
                 maxWidth={"180px"}
               >
                 {truncate(workflow?.description || "", { length: 70 })}
