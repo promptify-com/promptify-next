@@ -21,6 +21,9 @@ import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
 import type { IWorkflow } from "@/components/Automation/types";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
+import { isValidUserFn } from "@/core/store/userSlice";
+import SigninButton from "@/components/common/buttons/SigninButton";
+import { useRouter } from "next/router";
 
 interface Props {
   workflow: IWorkflow;
@@ -29,11 +32,12 @@ interface Props {
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default function GPT({ workflow = {} as IWorkflow }: Props) {
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
+  const isValidUser = useAppSelector(isValidUserFn);
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const generatedExecution = useAppSelector(store => store.executions?.generatedExecution ?? undefined);
   const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(workflow);
-  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
+  const { extractCredentialsInputFromNodes } = useCredentials();
   const { streamExecutionHandler } = useGenerateExecution({});
 
   const {
@@ -49,6 +53,8 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
   });
 
   const processData = async () => {
+    if (!isValidUser) return;
+
     createWorkflowIfNeeded(selectedWorkflow.id)
       .then(async createdWorkflow => {
         if (!createdWorkflow) {
@@ -83,10 +89,10 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
     return () => {
       dispatch(setClonedWorkflow(undefined));
     };
-  }, []);
+  }, [isValidUser]);
 
   useEffect(() => {
-    if (!clonedWorkflow) {
+    if (!clonedWorkflow && isValidUser) {
       createWorkflowIfNeeded(workflow.id);
     }
 
@@ -146,23 +152,36 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
       }
     }
   }, [generatedExecution]);
-
+  console.log("isWorkflowLoading:", isWorkflowLoading);
   return (
     <Layout>
       {isWorkflowLoading ? (
         <WorkflowPlaceholder />
       ) : (
         <Stack
+          py={{ xs: 9, md: 0 }}
           sx={{
             bgcolor: "common.white",
           }}
+          minHeight={"50svh"}
         >
           <Header workflow={selectedWorkflow} />
           <Stack
-            direction={"row"}
+            direction={{ xs: "column-reverse", md: "row" }}
             justifyContent={"space-between"}
           >
-            {selectedWorkflow.is_schedulable ? (
+            {!isValidUser ? (
+              <Stack
+                flex={1}
+                gap={8}
+                sx={{
+                  p: "48px",
+                  height: "40px",
+                }}
+              >
+                <SigninButton onClick={() => router.push("/signin")} />
+              </Stack>
+            ) : selectedWorkflow.is_schedulable ? (
               <ScheduledChatSteps
                 workflow={selectedWorkflow}
                 allowActivateButton={allowActivateButton}

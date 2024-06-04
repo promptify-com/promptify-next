@@ -40,7 +40,8 @@ function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Prop
           return (
             <Grid
               item
-              xs={6}
+              xs={12}
+              md={6}
               key={provider}
             >
               <ResponseProvider

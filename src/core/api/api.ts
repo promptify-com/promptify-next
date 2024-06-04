@@ -24,6 +24,7 @@ export const baseApi = createApi({
     "Feedbacks",
     "PromptsExecutions",
     "Chats",
+    "Workflow",
   ],
   endpoints: () => ({}),
 });

@@ -65,7 +65,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       flex={1}
       gap={8}
       sx={{
-        p: "48px",
+        p: { xs: "16px", md: "48px" },
       }}
     >
       {!!messages.length ? (
@@ -75,10 +75,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               key={message.id}
               sx={{
                 ...(!message.fromUser && {
-                  mr: "56px",
+                  mr: { xs: "0px", md: "48px" },
                 }),
                 ...(message.fromUser && {
-                  ml: "56px",
+                  ml: { md: "48px" },
                 }),
                 ...(message.noHeader && {
                   mt: "-34px",

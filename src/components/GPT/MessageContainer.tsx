@@ -19,7 +19,7 @@ export default function MessageContainer({ message, children }: Props) {
     <Stack
       direction={fromUser ? "row-reverse" : "row"}
       alignItems={"flex-start"}
-      gap={2}
+      gap={{ xs: 1, md: 2 }}
     >
       <CardMedia
         sx={{

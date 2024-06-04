@@ -1,13 +1,25 @@
+import { isSameDay } from "date-fns/isSameDay";
+import { setHours } from "date-fns/setHours";
+import { setMinutes } from "date-fns/setMinutes";
+import { setSeconds } from "date-fns/setSeconds";
+import { startOfWeek } from "date-fns/startOfWeek";
+import { isSameMonth } from "date-fns/isSameMonth";
+import { addDays } from "date-fns/addDays";
+import { addWeeks } from "date-fns/addWeeks";
+import { setDate } from "date-fns/setDate";
+import { startOfMonth } from "date-fns/startOfMonth";
+
+import nodesData from "@/components/Automation/nodes.json";
 import type {
   INode,
   INodeConnection,
   IProviderNode,
   IWorkflow,
   IWorkflowCreateResponse,
+  IWorkflowSchedule,
   NodesFileData,
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
-import nodesData from "@/components/Automation/nodes.json";
 import type { ProviderType } from "@/components/GPT/Types";
 import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "../GPT/Constants";
 
@@ -303,7 +315,7 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
       return {
         operation: "send",
         phoneNumberId: values.phoneNumberId,
-        recipientPhoneNumber: values.phoneNumberId, // recipient phone number is the same as sender
+        recipientPhoneNumber: values.phoneNumberId,
         textBody: values.content,
         additionalFields: {},
       };
@@ -320,7 +332,7 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
   }
 }
 
-const statusPriority = ["failed", "success", "scheduled"];
+const statusPriority = ["failed", "success"];
 
 export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
   for (const status of statusPriority) {
@@ -330,3 +342,76 @@ export function getHighestPriorityStatus(executions: WorkflowExecution[]) {
   }
   return null;
 }
+
+export const getStylesForSchedule = (isScheduled: boolean, date: Date) => {
+  if (isScheduled) {
+    if (isSameDay(date, new Date())) {
+      return { backgroundColor: "#6E45E9", color: "white" };
+    }
+    return { backgroundColor: "#F4F1FF", color: "#6E45E9" };
+  }
+  return { backgroundColor: "transparent", color: "text.primary" };
+};
+
+export const getStylesForStatus = (status: string) => {
+  switch (status) {
+    case "success":
+      return { backgroundColor: "#E4FEE7", color: "#228B22" };
+    case "failed":
+      return { backgroundColor: "#E94545", color: "white" };
+    default:
+      return { backgroundColor: "transparent", color: "text.primary" };
+  }
+};
+
+export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart: Date): Date[] => {
+  let dates: Date[] = [];
+  const { frequency, hour, minute, day_of_week, day_of_month } = schedule;
+  const currentMonth = monthStart.getMonth();
+
+  const parsedHour = parseInt(hour as unknown as string, 10);
+  const parsedMinute = parseInt(minute as unknown as string, 10);
+  const parsedDayOfWeek = parseInt(day_of_week as unknown as string, 10);
+
+  const addDate = (date: Date) => {
+    date = setHours(date, parsedHour);
+    date = setMinutes(date, parsedMinute);
+    date = setSeconds(date, 0);
+    dates.push(new Date(date));
+  };
+
+  if (frequency === "daily") {
+    let date = startOfMonth(monthStart);
+    while (date.getMonth() === currentMonth) {
+      addDate(new Date(date));
+      date = addDays(date, 1);
+    }
+  } else if (frequency === "weekly") {
+    let date = startOfWeek(startOfMonth(monthStart), { weekStartsOn: 1 });
+    date = addDays(date, parsedDayOfWeek);
+
+    while (date < startOfMonth(monthStart)) {
+      date = addWeeks(date, 1);
+    }
+
+    while (isSameMonth(date, monthStart)) {
+      addDate(new Date(date));
+      date = addWeeks(date, 1);
+    }
+  } else if (frequency === "bi-weekly") {
+    const firstDate = setDate(startOfMonth(monthStart), 1);
+    const secondDate = setDate(startOfMonth(monthStart), 15);
+    if (firstDate.getMonth() === currentMonth) addDate(new Date(firstDate));
+    if (secondDate.getMonth() === currentMonth) addDate(new Date(secondDate));
+  } else if (frequency === "monthly") {
+    const parsedDayOfMonth = parseInt(String(day_of_month), 10);
+    if (parsedDayOfMonth > 0 && parsedDayOfMonth <= 27) {
+      let date = setDate(startOfMonth(monthStart), parsedDayOfMonth);
+      if (date.getMonth() === currentMonth) {
+        addDate(new Date(date));
+      }
+    }
+  }
+
+  return dates;
+};
