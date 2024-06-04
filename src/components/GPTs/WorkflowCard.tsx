@@ -184,7 +184,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
             </Stack>
           )}
           <Stack
-            p={{ xs: "16px", md: `${!periodic_task ? "16px 24px" : "40px 24px 16px 24px"}` }}
+            p={{ xs: "16px", md: `${!periodic_task ? "16px 24px" : "40px 10px 16px 24px"}` }}
             flex={1}
             gap={"24px"}
             alignItems={"start"}
@@ -247,7 +247,6 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
                     borderRadius: "100px",
                     border: "1px solid rgba(0, 0, 0, 0.10)",
                     background: "#FFF",
-                    mr: "-16px",
                   }}
                 >
                   <GearIcon />
