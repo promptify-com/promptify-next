@@ -274,7 +274,7 @@ const useChat = ({ workflow }: Props) => {
     let preparedMessages: IMessage[] = [];
     selectedProviderType.current = providerType;
 
-    if (providerType === PROMPTIFY_NODE_TYPE) {
+    if (schedulingData.frequency === "Test GPT") {
       const testWorkflowMessage = createMessage({
         type: "schedule_activation_test",
         text: "",
@@ -363,13 +363,12 @@ const useChat = ({ workflow }: Props) => {
       throw new Error("Cloned workflow not found");
     }
 
-    if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-      const respondToWebhookNode = clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-      const cleanWorkflow = removeExistingProviderNode(
-        structuredClone(clonedWorkflow),
-        workflow,
-        respondToWebhookNode?.name!,
-      );
+    if (schedulingData.frequency === "Test GPT") {
+      let cleanWorkflow = structuredClone(clonedWorkflow);
+      if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
+        const respondToWebhookNode = clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+        cleanWorkflow = removeExistingProviderNode(cleanWorkflow, workflow, respondToWebhookNode?.name!);
+      }
       await handleUpdateWorkflow(cleanWorkflow);
       await executeWorkflow();
     } else {
