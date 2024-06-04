@@ -58,7 +58,10 @@ function GPTsPage() {
 
   return (
     <Layout>
-      <Stack bgcolor={"white"}>
+      <Stack
+        bgcolor={"white"}
+        pb={7}
+      >
         <HeroSection onFilter={setFilter} />
         <Stack
           mt={{ xs: "40px", md: "80px" }}
