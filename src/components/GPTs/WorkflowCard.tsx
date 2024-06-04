@@ -12,7 +12,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { capitalizeString } from "@/common/helpers";
 import { TIMES } from "../GPT/Constants";
 import Chip from "@mui/material/Chip";
-import { useDeleteWorkflowMutation } from "@/core/api/workflows";
+import { useDeleteWorkflowMutation, usePauseWorkflowMutation, useResumeWorkflowMutation } from "@/core/api/workflows";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
@@ -38,9 +38,12 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   const { truncate } = useTruncate();
 
   const [deleteWorkflow] = useDeleteWorkflowMutation();
+  const [pauseWorkflow] = usePauseWorkflowMutation();
+  const [resumeWorkflow] = useResumeWorkflowMutation();
   const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
   const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
@@ -77,8 +80,31 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
     handleCloseModal();
   };
 
-  const handlePause = () => {
-    // Handle the pause action
+  const handlePause = async () => {
+    if (!workflowId) return;
+
+    try {
+      await pauseWorkflow(workflowId);
+      setIsPaused(true);
+      dispatch(setToast({ message: "Workflow paused successfully", severity: "success" }));
+    } catch (err) {
+      console.error("Failed to pause workflow", err);
+      dispatch(setToast({ message: "Failed to pause workflow. Please try again.", severity: "error" }));
+    }
+    handleCloseModal();
+  };
+
+  const handleResume = async () => {
+    if (!workflowId) return;
+
+    try {
+      await resumeWorkflow(workflowId);
+      setIsPaused(false);
+      dispatch(setToast({ message: "Workflow resumed successfully", severity: "success" }));
+    } catch (err) {
+      console.error("Failed to resume workflow", err);
+      dispatch(setToast({ message: "Failed to resume workflow. Please try again.", severity: "error" }));
+    }
     handleCloseModal();
   };
 
@@ -154,7 +180,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
               top={{ xs: "24px", md: 7 }}
               right={{ xs: "24px", md: 7 }}
             >
-              <StatusChip status={periodic_task?.enabled ? "active" : "paused"} />
+              <StatusChip status={!isPaused ? "active" : "paused"} />
             </Stack>
           )}
           <Stack
@@ -245,8 +271,10 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
           onClose={handleCloseModal}
           onEdit={handleEdit}
           onPause={handlePause}
+          onResume={handleResume}
           onRemove={handleRemove}
           anchorEl={actionsAnchorRef.current}
+          isPaused={isPaused}
         />
       )}
       {openDeleteDialog && (

@@ -130,6 +130,20 @@ export const workflowsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Workflow"],
       }),
+      pauseWorkflow: builder.mutation<void, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/pause`,
+          method: "put",
+          invalidatesTags: ["Workflow"],
+        }),
+      }),
+      resumeWorkflow: builder.mutation<void, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/resume`,
+          method: "put",
+          invalidatesTags: ["Workflow"],
+        }),
+      }),
     };
   },
 });
@@ -148,4 +162,6 @@ export const {
   useGetWorkflowByCategoryQuery,
   useGetUserWorkflowsQuery,
   useDeleteWorkflowMutation,
+  usePauseWorkflowMutation,
+  useResumeWorkflowMutation,
 } = workflowsApi;
