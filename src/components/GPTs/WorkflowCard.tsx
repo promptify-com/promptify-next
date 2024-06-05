@@ -1,24 +1,25 @@
 import { useRef, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
+import Chip from "@mui/material/Chip";
+
+import { setToast } from "@/core/store/toastSlice";
+import { useAppDispatch } from "@/hooks/useStore";
+import { useDeleteWorkflowMutation, useDislikeWorkflowMutation, useLikeWorkflowMutation } from "@/core/api/workflows";
+import { TIMES } from "@/components/GPT/Constants";
+import { GearIcon } from "@/assets/icons/GearIcon";
+import useTruncate from "@/hooks/useTruncate";
 import Image from "@/components/design-system/Image";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
-import Link from "next/link";
-import { ITemplateWorkflow, IWorkflowSchedule } from "../Automation/types";
-import useTruncate from "@/hooks/useTruncate";
 import { capitalizeString } from "@/common/helpers";
-import { TIMES } from "../GPT/Constants";
-import Chip from "@mui/material/Chip";
-import { useDeleteWorkflowMutation, useDislikeWorkflowMutation, useLikeWorkflowMutation } from "@/core/api/workflows";
-import { DeleteDialog } from "../dialog/DeleteDialog";
-import { GearIcon } from "@/assets/icons/GearIcon";
-import WorkflowActionsModal from "./WorkflowActionsModal";
-import { useRouter } from "next/router";
-import { setToast } from "@/core/store/toastSlice";
-import { useAppDispatch } from "@/hooks/useStore";
+import { DeleteDialog } from "@/components/dialog/DeleteDialog";
+import WorkflowActionsModal from "@/components/GPTs/WorkflowActionsModal";
+import type { ITemplateWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
 
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
@@ -110,7 +111,7 @@ function WorkflowCard({ templateWorkflow, periodic_task, templateWorkflowId }: P
       await likeWorklow(templateWorkflowId);
       dispatch(setToast({ message: `You liked ${templateWorkflow?.name}`, severity: "success" }));
     } catch (error) {
-      console.error("something went wrong");
+      dispatch(setToast({ message: "Something went wrong, please try again later!", severity: "error" }));
     }
   };
 
