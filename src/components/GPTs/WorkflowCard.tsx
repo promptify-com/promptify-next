@@ -102,10 +102,10 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
     }
 
     if (workflow?.is_liked) {
-      dislikeWorkflow(workflowId);
+      dislikeWorkflow(workflowId as number);
       return;
     }
-    likeWorklow(workflowId);
+    likeWorklow(workflowId as number);
   };
 
   return (
