@@ -371,6 +371,13 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
+  const removeProvider = () => {
+    let _clonedWorkflow = structuredClone(clonedWorkflow)!;
+    const respondToWebhookNode = _clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+    _clonedWorkflow = removeExistingProviderNode(_clonedWorkflow, workflow, respondToWebhookNode?.name!);
+    return _clonedWorkflow;
+  };
+
   const activateWorkflow = async () => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
@@ -379,8 +386,7 @@ const useChat = ({ workflow }: Props) => {
     if (schedulingData.frequency === "Test GPT") {
       let cleanWorkflow = structuredClone(clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        const respondToWebhookNode = clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-        cleanWorkflow = removeExistingProviderNode(cleanWorkflow, workflow, respondToWebhookNode?.name!);
+        cleanWorkflow = removeProvider();
       }
       await handleUpdateWorkflow(cleanWorkflow);
       await executeWorkflow();
@@ -405,6 +411,7 @@ const useChat = ({ workflow }: Props) => {
     setScheduleTime,
     prepareWorkflow,
     activateWorkflow,
+    removeProvider,
   };
 };
 

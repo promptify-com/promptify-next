@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { PROMPTIFY_NODE_TYPE, PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { ProviderType } from "./Types";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { useAppSelector } from "@/hooks/useStore";
@@ -12,9 +12,10 @@ interface Props {
   message: string;
   workflow: IWorkflow;
   prepareWorkflow(provider: ProviderType): void;
+  removeProvider(): IWorkflowCreateResponse;
 }
 
-function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Props) {
+function ResponseProvidersContainer({ message, workflow, prepareWorkflow, removeProvider }: Props) {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
   const isTest = clonedWorkflow?.schedule?.frequency === "Test GPT";
 
@@ -48,6 +49,7 @@ function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Prop
                 providerType={providerType}
                 workflow={workflow}
                 onInject={() => prepareWorkflow(providerType)}
+                onUnselect={removeProvider}
               />
             </Grid>
           );

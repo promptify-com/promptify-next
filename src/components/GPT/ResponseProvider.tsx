@@ -8,7 +8,7 @@ import {
   replaceProviderParamValue,
 } from "@/components/GPTs/helpers";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
-import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, INode, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import useCredentialsActions from "./Hooks/useCredentialsActions";
 import FormModal from "@/components/common/forms/FormModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -16,14 +16,16 @@ import { setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import type { ProviderType } from "./Types";
 import ProviderCard from "./ProviderCard";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   providerType: ProviderType;
   workflow: IWorkflow;
   onInject(): void;
+  onUnselect(): IWorkflowCreateResponse;
 }
 
-function ResponseProvider({ providerType, workflow, onInject }: Props) {
+function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Props) {
   const dispatch = useAppDispatch();
   const [credentialInput, setCredentialInput] = useState<ICredentialInput | null>(null);
   const [oauthModalOpened, setOauthModalOpened] = useState(false);
@@ -119,6 +121,14 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
     onInject();
   };
 
+  const handleUnSelect = () => {
+    const _cleanedWorkflow = onUnselect();
+
+    dispatch(setClonedWorkflow(_cleanedWorkflow));
+
+    dispatch(setToast({ message: `Provider ${providerNodeName} removed`, severity: "info" }));
+  };
+
   const parametersInputs = getProviderParams(providerType);
   const isInjected = !!clonedWorkflow?.nodes.find(node => node.name === providerNodeName);
   const isConnected = providerType === PROMPTIFY_NODE_TYPE || credentialInserted;
@@ -138,6 +148,7 @@ function ResponseProvider({ providerType, workflow, onInject }: Props) {
             handleAddingProvider();
           }
         }}
+        onUnselect={handleUnSelect}
       />
       {credentialInput && oauthModalOpened && (
         <FormModal
