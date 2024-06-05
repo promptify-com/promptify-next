@@ -1,21 +1,25 @@
-import { Fragment, Suspense, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
+import lazy from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useSearchParams } from "next/navigation";
 
 import { Layout } from "@/layout";
 import { useGetWorkflowByCategoryQuery, useGetUserWorkflowsQuery, useGetWorkflowsQuery } from "@/core/api/workflows";
 import { useAppSelector } from "@/hooks/useStore";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
-import HeroSection from "@/components/GPTs/HeroSection";
-import CarouselSection from "@/components/GPTs/CarouselSection";
+import HeroSection from "@/components/GPTs/Sections/HeroSection";
+import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import GPTbanner from "@/components/GPTs/GPTbanner";
-import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCardPlaceholder";
-import ScheduledGPTsSection from "@/components/GPTs/Sections/ScheduledGPTsSection";
-import HistoricalGPTsSection from "@/components/GPTs/Sections/HistoricalGPTsSection";
-import NewGPTsSection from "@/components/GPTs/Sections/NewGPTsSection";
+
+const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
+  ssr: false,
+});
+const GPTsByCategorySection = lazy(() => import("@/components/GPTs/Sections/CategoryGPTsSection"), {
+  ssr: false,
+});
 
 function GPTsPage() {
   const searchParams = useSearchParams();
@@ -34,34 +38,32 @@ function GPTsPage() {
 
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const historicalCarouselRef = useRef<HTMLDivElement | null>(null);
-  const productivityCarouselRef = useRef<HTMLDivElement | null>(null);
+  const GPTCategoriesCarouselRef = useRef<HTMLDivElement | null>(null);
   const newGPTsCarouselRef = useRef<HTMLDivElement | null>(null);
 
   const observers = {
     bannerObserver: useIntersectionObserver(bannerRef, { threshold: 0.5 }),
     historicalCarouselObserver: useIntersectionObserver(historicalCarouselRef, { threshold: 0.5 }),
-    productivityCarouselObserver: useIntersectionObserver(productivityCarouselRef, { threshold: 0.5 }),
+    GPTCategoriesCarouselObserver: useIntersectionObserver(GPTCategoriesCarouselRef, { threshold: 0.5 }),
     newGPTsCarouselObserver: useIntersectionObserver(newGPTsCarouselRef, { threshold: 0.5 }),
   };
 
   const showBanner = observers.bannerObserver?.isIntersecting;
   const showHistoricalCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showNewGPTsCarousel = observers.historicalCarouselObserver?.isIntersecting;
+  const showGPTCategoriesCarousel = observers.GPTCategoriesCarouselObserver?.isIntersecting;
 
   const schedulableWorkflows = workflowsByCategory?.flatMap(category =>
     category.templates.filter(workflow => workflow.is_schedulable),
   );
-
   const filteredUserWorkflows = userWorkflows?.data?.filter(
     workflow => workflow?.template_workflow?.is_schedulable && workflow?.periodic_task,
   );
-
   const isFiltering = filter.length > 0;
 
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
-
   const sortedWorkflows = allWorkflows
     ?.slice()
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -112,9 +114,11 @@ function GPTsPage() {
             </Fragment>
           ) : (
             <Fragment>
-              <ScheduledGPTsSection
-                filteredUserWorkflows={filteredUserWorkflows}
+              <GPTsSection
+                workflows={filteredUserWorkflows}
                 isLoading={isLoadingUserWorkflows}
+                header="Scheduled GPTs"
+                subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
               />
               <Stack
                 ref={bannerRef}
@@ -131,23 +135,32 @@ function GPTsPage() {
 
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
-                  <Suspense fallback={<WorkflowCardPlaceholder />}>
-                    <NewGPTsSection
-                      workflows={sortedWorkflows}
-                      isLoading={isLoadingAllWorkflows}
-                    />
-                  </Suspense>
+                  <GPTsSection
+                    header="New GPTs"
+                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                    workflows={sortedWorkflows}
+                    isLoading={isLoadingAllWorkflows}
+                  />
                 )}
               </Stack>
 
               <Stack ref={historicalCarouselRef}>
                 {showHistoricalCarousel && (
-                  <Suspense fallback={<WorkflowCardPlaceholder />}>
-                    <HistoricalGPTsSection
-                      schedulableWorkflows={schedulableWorkflows}
-                      isLoading={isLoadingWorkflowsByCategory}
-                    />
-                  </Suspense>
+                  <GPTsSection
+                    header="Historical GPTs"
+                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
+                    workflows={schedulableWorkflows}
+                    isLoading={isLoadingUserWorkflows}
+                  />
+                )}
+              </Stack>
+
+              <Stack ref={GPTCategoriesCarouselRef}>
+                {showGPTCategoriesCarousel && (
+                  <GPTsByCategorySection
+                    workflowCategories={workflowsByCategory}
+                    isLoading={isLoadingUserWorkflows}
+                  />
                 )}
               </Stack>
             </Fragment>
