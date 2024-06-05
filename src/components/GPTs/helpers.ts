@@ -8,7 +8,6 @@ import { addDays } from "date-fns/addDays";
 import { addWeeks } from "date-fns/addWeeks";
 import { setDate } from "date-fns/setDate";
 import { startOfMonth } from "date-fns/startOfMonth";
-
 import nodesData from "@/components/Automation/nodes.json";
 import type {
   INode,
@@ -22,6 +21,7 @@ import type {
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
 import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "../GPT/Constants";
+import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
   nextNode: string;
@@ -184,14 +184,18 @@ export function injectProviderNode(
     templateWorkflow,
     respondToWebhookNode.name,
   );
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+
   const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
 
   if (promptifyNode) {
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
+    if (node.type === PROMPTIFY_NODE_TYPE && N8N_RESPONSE_REGEX.test(responseBody)) {
+      promptifyNode.parameters.template_streaming = false;
+    }
   }
 
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
   const providerNode = {
     id: node.id,
     name: node.name,
