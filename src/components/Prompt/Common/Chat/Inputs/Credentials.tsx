@@ -68,6 +68,7 @@ function Credentials({ input, isScheduled }: Props) {
 
   const [openModal, setOpenModal] = useState(false);
   const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
 
@@ -181,9 +182,12 @@ function Credentials({ input, isScheduled }: Props) {
   };
 
   const handleOauthConnect = async () => {
+    setIsConnecting(true);
+
     const credentialId = await handleSubmit();
 
     if (!credentialId) {
+      setIsConnecting(false);
       return;
     }
 
@@ -194,6 +198,7 @@ function Credentials({ input, isScheduled }: Props) {
       }).unwrap();
 
       if (!authUri) {
+        setIsConnecting(false);
         return;
       }
 
@@ -226,6 +231,7 @@ function Credentials({ input, isScheduled }: Props) {
           setOpenModal(false);
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           setOAuthConnected(true);
+          setIsConnecting(false);
 
           const remainingCredentials = credentialsInput.filter(cred => cred.displayName !== input.displayName);
 
@@ -238,6 +244,7 @@ function Credentials({ input, isScheduled }: Props) {
           removeCredential(credentialId);
           clearPopupCheck();
           setOAuthConnected(false);
+          setIsConnecting(false);
         }
         if (oauthPopup) {
           oauthPopup.close();
@@ -259,6 +266,7 @@ function Credentials({ input, isScheduled }: Props) {
           );
           await deleteCredential(credentialId);
           removeCredential(credentialId);
+          setIsConnecting(false);
         } else {
           elapsedSeconds++;
           if (elapsedSeconds >= 120) {
@@ -270,6 +278,7 @@ function Credentials({ input, isScheduled }: Props) {
       console.error("Error during OAuth authorization:", error);
       await deleteCredential(credentialId);
       removeCredential(credentialId);
+      setIsConnecting(false);
     }
   };
 
@@ -278,7 +287,7 @@ function Credentials({ input, isScheduled }: Props) {
     <Stack py={"5px"}>
       {currentUser?.id ? (
         <>
-          {isCredentialInserted && _credential ? (
+          {isCredentialInserted && _credential && !isConnecting ? (
             <Stack
               direction={"row"}
               gap={1}
@@ -321,8 +330,9 @@ function Credentials({ input, isScheduled }: Props) {
                 onClick={handleOauthConnect}
                 variant="contained"
                 sx={BtnStyle}
+                disabled={isConnecting}
               >
-                Connect
+                {isConnecting ? "Connecting..." : "Connect"}
               </Button>
             </Stack>
           ) : (
