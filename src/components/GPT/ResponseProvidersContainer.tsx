@@ -11,7 +11,7 @@ import { useAppSelector } from "@/hooks/useStore";
 interface Props {
   message: string;
   workflow: IWorkflow;
-  prepareWorkflow(provider: ProviderType): void;
+  prepareWorkflow(provider: ProviderType, workflow: IWorkflowCreateResponse): void;
   removeProvider(): IWorkflowCreateResponse;
 }
 
@@ -48,7 +48,7 @@ function ResponseProvidersContainer({ message, workflow, prepareWorkflow, remove
               <ResponseProvider
                 providerType={providerType}
                 workflow={workflow}
-                onInject={() => prepareWorkflow(providerType)}
+                onInject={workflow => prepareWorkflow(providerType, workflow)}
                 onUnselect={removeProvider}
               />
             </Grid>

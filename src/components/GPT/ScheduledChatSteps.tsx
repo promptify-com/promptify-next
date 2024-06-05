@@ -120,7 +120,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 <ResponseProvidersContainer
                   message={message.text}
                   workflow={workflow}
-                  prepareWorkflow={provider => prepareWorkflow(provider)}
+                  prepareWorkflow={prepareWorkflow}
                   removeProvider={removeProvider}
                 />
               )}
