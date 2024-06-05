@@ -28,6 +28,7 @@ import BaseButton from "@/components/base/BaseButton";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import type { ICredentialInput, ICredentialProperty } from "@/components/Automation/types";
 import Check from "@mui/icons-material/Check";
+import { BtnStyle } from "@/components/GPT/Constants";
 
 interface Props {
   input: ICredentialInput;
@@ -316,24 +317,13 @@ function Credentials({ input, isScheduled }: Props) {
             </Stack>
           ) : isOauthCredential ? (
             <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-              <BaseButton
+              <Button
                 onClick={handleOauthConnect}
-                color="custom"
-                variant="text"
-                sx={{
-                  border: "1px solid",
-                  borderRadius: "8px",
-                  borderColor: "secondary.main",
-                  color: "secondary.main",
-                  p: "3px 12px",
-                  fontSize: { xs: 11, md: 14 },
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
+                variant="contained"
+                sx={BtnStyle}
               >
-                {"Connect"}
-              </BaseButton>
+                Connect
+              </Button>
             </Stack>
           ) : (
             <BaseButton
