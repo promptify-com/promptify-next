@@ -144,7 +144,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={{ ...iconTextStyle, bgcolor: workflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)" }}
+                sx={{ ...iconTextStyle, bgcolor: workflow?.is_liked ? "#FF4747" : "rgba(0, 0, 0, 0.8)" }}
                 className="icon-text-style"
               >
                 <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
