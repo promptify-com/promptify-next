@@ -40,7 +40,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   const [likeWorklow] = useLikeWorkflowMutation();
   const [dislikeWorkflow] = useDislikeWorkflowMutation();
 
-  const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow | null>(null);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
@@ -51,7 +51,12 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   const handleOpenModal = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    setSelectedWorkflow(workflow!!);
+    if (isModalOpen) {
+      setSelectedWorkflow(undefined);
+      setIsModalOpen(false);
+      return;
+    }
+    setSelectedWorkflow(workflow);
     setIsModalOpen(true);
   };
 
@@ -64,7 +69,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
 
     try {
       await deleteWorkflow(workflowId as string);
-      setSelectedWorkflow(null);
+      setSelectedWorkflow(undefined);
       setOpenDeleteDialog(false);
 
       dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));

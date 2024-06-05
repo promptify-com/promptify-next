@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 
 interface WorkflowActionsModalProps {
   open: boolean;
-  workflow: IWorkflow | null;
+  workflow?: IWorkflow;
   anchorEl: HTMLElement | null;
   onClose: () => void;
   onEdit: () => void;
