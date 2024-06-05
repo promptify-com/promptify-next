@@ -7,11 +7,11 @@ import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState, setSelectedWorkflow } from "@/core/store/chatSlice";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   onScrollToBottom?: () => void;
 }
 

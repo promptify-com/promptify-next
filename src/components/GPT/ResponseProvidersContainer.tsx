@@ -3,14 +3,14 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { PROMPTIFY_NODE_TYPE, PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
-import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { ProviderType } from "./Types";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   message: string;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   prepareWorkflow(provider: ProviderType, workflow: IWorkflowCreateResponse): void;
   removeProvider(): IWorkflowCreateResponse;
 }

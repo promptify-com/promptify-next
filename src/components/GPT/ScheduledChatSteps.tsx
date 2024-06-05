@@ -14,13 +14,13 @@ import { FREQUENCY_ITEMS } from "@/components/GPT/Constants";
 import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
-import type { FrequencyType, IWorkflow } from "@/components/Automation/types";
+import type { FrequencyType, ITemplateWorkflow } from "@/components/Automation/types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   allowActivateButton?: boolean;
 }
 

@@ -14,7 +14,7 @@ import MessageInputs from "./MessageInputs";
 import CredentialsContainer from "./CredentialsContainer";
 import RunButton from "@/components/GPT/RunButton";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
-import type { IWorkflow } from "../Automation/types";
+import type { ITemplateWorkflow } from "../Automation/types";
 import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
   showGenerate: boolean;
   isValidating: boolean;
   processData: (skipInitialMessages?: boolean) => Promise<void>;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }
 
 function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, workflow }: Props) {

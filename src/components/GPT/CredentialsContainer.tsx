@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, ITemplateWorkflow } from "@/components/Automation/types";
 import Credentials from "@/components/Prompt/Common/Chat/Inputs/Credentials";
 import { CardMedia, Typography } from "@mui/material";
 import Image from "@/components/design-system/Image";
@@ -9,7 +9,7 @@ import { cleanCredentialName } from "../GPTs/helpers";
 
 interface Props {
   message: string;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   isScheduled?: boolean;
 }
 

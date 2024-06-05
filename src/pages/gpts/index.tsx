@@ -80,8 +80,7 @@ function GPTsPage() {
                       ml={index === 0 ? "24px" : 0}
                     >
                       <WorkflowCard
-                        index={index}
-                        workflow={workflow}
+                        templateWorkflow={workflow}
                         periodic_task={workflow.periodic_task}
                       />
                     </Stack>
@@ -111,13 +110,12 @@ function GPTsPage() {
                     header="Scheduled GPTs"
                     subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                   >
-                    {filteredUserWorkflows?.map((workflow, index) => (
+                    {filteredUserWorkflows?.map(workflow => (
                       <Stack key={workflow.id}>
                         <WorkflowCard
-                          index={index}
-                          workflow={workflow?.template_workflow}
+                          templateWorkflow={workflow?.template_workflow}
                           periodic_task={workflow?.periodic_task}
-                          workflowId={workflow.id}
+                          userWorkflowId={workflow.id}
                         />
                       </Stack>
                     ))}
@@ -149,12 +147,9 @@ function GPTsPage() {
                         header="New GPTs"
                         subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                       >
-                        {sortedWorkflows.map((workflow, index) => (
+                        {sortedWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard
-                              index={index}
-                              workflow={workflow}
-                            />
+                            <WorkflowCard templateWorkflow={workflow} />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -174,12 +169,9 @@ function GPTsPage() {
                         header="Historical GPTs"
                         subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                       >
-                        {schedulableWorkflows.map((workflow, index) => (
+                        {schedulableWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard
-                              index={index}
-                              workflow={workflow}
-                            />
+                            <WorkflowCard templateWorkflow={workflow} />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -197,12 +189,9 @@ function GPTsPage() {
                       header={workflows.category || ""}
                       subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                     >
-                      {workflows.templates.map((workflow, index) => (
+                      {workflows.templates.map(workflow => (
                         <Stack key={workflow.id}>
-                          <WorkflowCard
-                            index={index}
-                            workflow={workflow}
-                          />
+                          <WorkflowCard templateWorkflow={workflow} />
                         </Stack>
                       ))}
                     </CarouselSection>

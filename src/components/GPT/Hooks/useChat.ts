@@ -12,7 +12,7 @@ import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type {
   FrequencyType,
-  IWorkflow,
+  ITemplateWorkflow,
   IWorkflowCreateResponse,
   IWorkflowSchedule,
 } from "@/components/Automation/types";
@@ -22,7 +22,7 @@ import { N8N_RESPONSE_REGEX, extractWebhookPath } from "@/components/Automation/
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }
 
 type WorkflowData = {

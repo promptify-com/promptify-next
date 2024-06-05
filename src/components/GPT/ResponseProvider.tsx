@@ -8,7 +8,12 @@ import {
   replaceProviderParamValue,
 } from "@/components/GPTs/helpers";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
-import type { ICredentialInput, INode, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type {
+  ICredentialInput,
+  INode,
+  ITemplateWorkflow,
+  IWorkflowCreateResponse,
+} from "@/components/Automation/types";
 import useCredentialsActions from "./Hooks/useCredentialsActions";
 import FormModal from "@/components/common/forms/FormModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -20,7 +25,7 @@ import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   providerType: ProviderType;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   onInject(workflow: IWorkflowCreateResponse): void;
   onUnselect(): IWorkflowCreateResponse;
 }

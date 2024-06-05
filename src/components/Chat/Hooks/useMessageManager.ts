@@ -28,7 +28,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
 import useChatsManager from "./useChatsManager";
 import { IChatSliceState } from "@/core/store/types";
@@ -255,7 +255,7 @@ const useMessageManager = () => {
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
             if (workflowIDs.length) {
-              const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+              const workflows = (await fetchData(workflowIDs, false)) as ITemplateWorkflow[];
               const suggestionsMessage = createMessage({
                 type: "workflows_suggestion",
                 data: workflows,

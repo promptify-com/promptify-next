@@ -18,7 +18,7 @@ import Workflow from "@/components/GPTs/FlowData";
 import useMessageManager from "@/components/GPT/Hooks/useMessageManager";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import { isValidUserFn } from "@/core/store/userSlice";
@@ -26,11 +26,11 @@ import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-export default function GPT({ workflow = {} as IWorkflow }: Props) {
+export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const isValidUser = useAppSelector(isValidUserFn);
@@ -208,7 +208,7 @@ export async function getServerSideProps({ params }: any) {
   const { slug } = params;
   try {
     const res = await authClient.get(`/api/n8n/workflows/by-slug/${slug}/`);
-    const workflow: IWorkflow = res.data;
+    const workflow: ITemplateWorkflow = res.data;
 
     return {
       props: {

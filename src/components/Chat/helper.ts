@@ -10,7 +10,7 @@ import { CHATS_LIST_PAGINATION_LIMIT } from "./Constants";
 import type { NextRouter } from "next/router";
 import type { IChat } from "@/core/api/dto/chats";
 import type { AppDispatcher } from "@/hooks/useStore";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import type { IToastSliceState } from "@/core/store/types";
 
 interface SendMessageResponse {
@@ -52,7 +52,7 @@ export function extractWorkflowIDs(message: string) {
   );
 }
 
-export function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {
+export function isTemplates(data: Templates[] | ITemplateWorkflow[]): data is Templates[] {
   if (!data.length) return false;
 
   return "favorites_count" in data[0];
@@ -71,7 +71,7 @@ export async function fetchData(ids: number[], isTemplate: boolean) {
         return _data.value;
       }
     })
-    .filter(_data => _data?.id) as IWorkflow[] | Templates[];
+    .filter(_data => _data?.id) as ITemplateWorkflow[] | Templates[];
 
   return filteredData;
 }

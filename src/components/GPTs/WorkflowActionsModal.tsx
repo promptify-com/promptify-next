@@ -4,12 +4,12 @@ import Fade from "@mui/material/Fade";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import { IWorkflow } from "../Automation/types";
+import { ITemplateWorkflow } from "../Automation/types";
 import Box from "@mui/material/Box";
 
 interface WorkflowActionsModalProps {
   open: boolean;
-  workflow: IWorkflow | null;
+  workflow?: ITemplateWorkflow;
   anchorEl: HTMLElement | null;
   onClose: () => void;
   onEdit: () => void;

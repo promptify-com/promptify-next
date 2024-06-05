@@ -13,7 +13,7 @@ import type {
   INode,
   INodeConnection,
   IProviderNode,
-  IWorkflow,
+  ITemplateWorkflow,
   IWorkflowCreateResponse,
   IWorkflowSchedule,
   NodesFileData,
@@ -61,7 +61,7 @@ function buildNextConnectedData({
   nodeName: string;
   connections: Record<string, INodeConnection>;
   relations: Map<string, IRelation>;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }) {
   if (!connections[nodeName]?.main[0].length) return;
 
@@ -85,7 +85,7 @@ function buildNextConnectedData({
   }
 }
 
-export function getWorkflowDataFlow(workflow: IWorkflow) {
+export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   const webhookNodeName = workflow.data.nodes.find(node => node.type === "n8n-nodes-base.webhook")?.name;
 
   if (!webhookNodeName) {
@@ -127,7 +127,7 @@ const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConne
 
 export const removeExistingProviderNode = (
   workflow: IWorkflowCreateResponse,
-  templateWorkflow: IWorkflow,
+  templateWorkflow: ITemplateWorkflow,
   respondToWebhookNodeName: string,
 ): IWorkflowCreateResponse => {
   const templateWorkflowConnectedNodeName = findConnectedNodeName(
@@ -169,7 +169,7 @@ export const removeExistingProviderNode = (
 
 export function injectProviderNode(
   workflow: IWorkflowCreateResponse,
-  templateWorkflow: IWorkflow,
+  templateWorkflow: ITemplateWorkflow,
   { nodeParametersCB, node }: IProviderNode,
 ) {
   const clonedWorkflow = structuredClone(workflow);
