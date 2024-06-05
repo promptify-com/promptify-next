@@ -29,10 +29,10 @@ interface Props {
     enabled: boolean;
     crontab: IWorkflowSchedule;
   };
-  templateWorkflowId?: number;
+  userWorkflowId?: string;
 }
 
-function WorkflowCard({ templateWorkflow, periodic_task, templateWorkflowId }: Props) {
+function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -66,10 +66,10 @@ function WorkflowCard({ templateWorkflow, periodic_task, templateWorkflowId }: P
   };
 
   const handleDelete = async () => {
-    if (!templateWorkflow?.id) {
+    if (!userWorkflowId) {
     }
     try {
-      await deleteWorkflow(String(templateWorkflow?.id));
+      await deleteWorkflow(String(userWorkflowId));
       setSelectedWorkflow(undefined);
       setOpenDeleteDialog(false);
 
@@ -98,17 +98,19 @@ function WorkflowCard({ templateWorkflow, periodic_task, templateWorkflowId }: P
   const handleLikeDislike = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!templateWorkflowId) {
+    if (!templateWorkflow?.id) {
       return;
     }
 
+    const _id = templateWorkflow.id;
+
     try {
       if (templateWorkflow?.is_liked) {
-        await dislikeWorkflow(templateWorkflowId);
+        await dislikeWorkflow(_id);
         dispatch(setToast({ message: `You unlike ${templateWorkflow.name}`, severity: "success" }));
         return;
       }
-      await likeWorklow(templateWorkflowId);
+      await likeWorklow(_id);
       dispatch(setToast({ message: `You liked ${templateWorkflow?.name}`, severity: "success" }));
     } catch (error) {
       dispatch(setToast({ message: "Something went wrong, please try again later!", severity: "error" }));

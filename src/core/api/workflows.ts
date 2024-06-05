@@ -130,7 +130,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${workflowId}/delete`,
           method: "delete",
         }),
-        invalidatesTags: ["TemplateWorkflows"],
+        invalidatesTags: ["UserWorkflows"],
       }),
       likeWorkflow: builder.mutation<void, number>({
         query: templateWorkflowId => ({

@@ -115,7 +115,7 @@ function GPTsPage() {
                         <WorkflowCard
                           templateWorkflow={workflow?.template_workflow}
                           periodic_task={workflow?.periodic_task}
-                          templateWorkflowId={workflow.template_workflow.id}
+                          userWorkflowId={workflow.id}
                         />
                       </Stack>
                     ))}
@@ -149,10 +149,7 @@ function GPTsPage() {
                       >
                         {sortedWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard
-                              templateWorkflow={workflow}
-                              templateWorkflowId={workflow.id}
-                            />
+                            <WorkflowCard templateWorkflow={workflow} />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -174,10 +171,7 @@ function GPTsPage() {
                       >
                         {schedulableWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard
-                              templateWorkflow={workflow}
-                              templateWorkflowId={workflow.id}
-                            />
+                            <WorkflowCard templateWorkflow={workflow} />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -197,10 +191,7 @@ function GPTsPage() {
                     >
                       {workflows.templates.map(workflow => (
                         <Stack key={workflow.id}>
-                          <WorkflowCard
-                            templateWorkflow={workflow}
-                            templateWorkflowId={workflow.id}
-                          />
+                          <WorkflowCard templateWorkflow={workflow} />
                         </Stack>
                       ))}
                     </CarouselSection>
