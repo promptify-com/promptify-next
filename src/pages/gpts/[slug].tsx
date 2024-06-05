@@ -152,7 +152,7 @@ export default function GPT({ workflow = {} as IWorkflow }: Props) {
       }
     }
   }, [generatedExecution]);
-  console.log("isWorkflowLoading:", isWorkflowLoading);
+
   return (
     <Layout>
       {isWorkflowLoading ? (

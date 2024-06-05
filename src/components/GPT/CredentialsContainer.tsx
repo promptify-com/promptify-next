@@ -63,12 +63,12 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
             <Stack
               direction={"row"}
               alignItems={"center"}
-              gap={3}
+              gap={2}
             >
               <CardMedia
                 sx={{
-                  width: 16,
-                  height: 16,
+                  width: 22,
+                  height: 22,
                   p: "9px",
                   borderRadius: "50%",
                   border: "1px solid",

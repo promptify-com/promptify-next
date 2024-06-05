@@ -1,10 +1,12 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { PROVIDERS } from "./Constants";
+import { PROMPTIFY_NODE_TYPE, PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
 import type { IWorkflow } from "@/components/Automation/types";
 import type { ProviderType } from "./Types";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   message: string;
@@ -13,6 +15,11 @@ interface Props {
 }
 
 function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Props) {
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
+  const isTest = clonedWorkflow?.schedule?.frequency === "Test GPT";
+
+  const providers = Object.keys(PROVIDERS).filter(p => isTest || p !== PROMPTIFY_NODE_TYPE);
+
   return (
     <Stack gap={4}>
       {message && (
@@ -28,7 +35,7 @@ function ResponseProvidersContainer({ message, workflow, prepareWorkflow }: Prop
         container
         spacing={2}
       >
-        {Object.keys(PROVIDERS).map(provider => {
+        {providers.map(provider => {
           const providerType = provider as ProviderType;
           return (
             <Grid
