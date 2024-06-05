@@ -116,10 +116,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
   };
 
   const handleUnSelect = () => {
-    const _cleanedWorkflow = onUnselect();
-
-    dispatch(setClonedWorkflow(_cleanedWorkflow));
-
+    onUnselect();
     dispatch(setToast({ message: `Provider ${providerNodeName} removed`, severity: "info" }));
   };
 
