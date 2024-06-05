@@ -17,6 +17,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
           keepUnusedDataFor: 21600,
+          providesTags: ["Workflows"],
         }),
       }),
 
@@ -47,7 +48,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "get",
           keepUnusedDataFor: 21600,
         }),
-        providesTags: ["Workflow"],
+        providesTags: ["UserWorkflows"],
       }),
       getWorkflowExecutions: builder.query<UserWorkflowExecutionsResponse, string>({
         query: workflowId => ({
@@ -116,6 +117,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           },
         }),
         keepUnusedDataFor: 3600,
+        providesTags: ["CategoryWorkflows"],
         transformResponse(items: IWorkflowCategory[] = []) {
           return items.map(item => ({
             ...item,
@@ -128,21 +130,21 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${workflowId}/delete`,
           method: "delete",
         }),
-        invalidatesTags: ["Workflow"],
+        invalidatesTags: ["Workflows"],
       }),
-      likeWorkflow: builder.mutation<void, string>({
+      likeWorkflow: builder.mutation<void, string | number>({
         query: workflowId => ({
           url: `/api/n8n/workflows/${workflowId}/like`,
           method: "post",
         }),
-        invalidatesTags: ["Workflow"],
+        invalidatesTags: ["Workflows", "UserWorkflows", "CategoryWorkflows"],
       }),
-      dislikeWorkflow: builder.mutation<void, string>({
+      dislikeWorkflow: builder.mutation<void, string | number>({
         query: workflowId => ({
           url: `/api/n8n/workflows/${workflowId}/unlike`,
           method: "delete",
         }),
-        invalidatesTags: ["Workflow"],
+        invalidatesTags: ["Workflows", "UserWorkflows", "CategoryWorkflows"],
       }),
     };
   },

@@ -28,7 +28,7 @@ interface Props {
     enabled: boolean;
     crontab: IWorkflowSchedule;
   };
-  workflowId?: string;
+  workflowId?: string | number;
 }
 
 function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
@@ -63,7 +63,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
     if (!workflowId) return;
 
     try {
-      await deleteWorkflow(workflowId);
+      await deleteWorkflow(workflowId as string);
       setSelectedWorkflow(null);
       setOpenDeleteDialog(false);
 

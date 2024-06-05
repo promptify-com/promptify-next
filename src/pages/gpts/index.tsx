@@ -110,7 +110,7 @@ function GPTsPage() {
                     header="Scheduled GPTs"
                     subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                   >
-                    {filteredUserWorkflows?.map((workflow, index) => (
+                    {filteredUserWorkflows?.map(workflow => (
                       <Stack key={workflow.id}>
                         <WorkflowCard
                           workflow={workflow?.template_workflow}
@@ -147,9 +147,12 @@ function GPTsPage() {
                         header="New GPTs"
                         subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                       >
-                        {sortedWorkflows.map((workflow, index) => (
+                        {sortedWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard workflow={workflow} />
+                            <WorkflowCard
+                              workflow={workflow}
+                              workflowId={workflow.id}
+                            />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -169,9 +172,12 @@ function GPTsPage() {
                         header="Historical GPTs"
                         subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                       >
-                        {schedulableWorkflows.map((workflow, index) => (
+                        {schedulableWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard workflow={workflow} />
+                            <WorkflowCard
+                              workflow={workflow}
+                              workflowId={workflow.id}
+                            />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -189,9 +195,12 @@ function GPTsPage() {
                       header={workflows.category || ""}
                       subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                     >
-                      {workflows.templates.map((workflow, index) => (
+                      {workflows.templates.map(workflow => (
                         <Stack key={workflow.id}>
-                          <WorkflowCard workflow={workflow} />
+                          <WorkflowCard
+                            workflow={workflow}
+                            workflowId={workflow.id}
+                          />
                         </Stack>
                       ))}
                     </CarouselSection>
