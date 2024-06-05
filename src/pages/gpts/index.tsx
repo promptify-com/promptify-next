@@ -115,7 +115,7 @@ function GPTsPage() {
                         <WorkflowCard
                           workflow={workflow?.template_workflow}
                           periodic_task={workflow?.periodic_task}
-                          workflowId={workflow.id}
+                          workflowId={workflow.template_workflow.id}
                         />
                       </Stack>
                     ))}

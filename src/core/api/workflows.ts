@@ -17,8 +17,8 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
           keepUnusedDataFor: 21600,
-          providesTags: ["Workflows"],
         }),
+        providesTags: ["Workflows"],
       }),
 
       getWorkflowBySlug: builder.query<IWorkflow, string>({
@@ -141,7 +141,7 @@ export const workflowsApi = baseApi.injectEndpoints({
       }),
       dislikeWorkflow: builder.mutation<void, number>({
         query: templateWorkflowId => ({
-          url: `/api/n8n/workflows/${templateWorkflowId}/unlike`,
+          url: `/api/n8n/workflows/${templateWorkflowId}/like`,
           method: "delete",
         }),
         invalidatesTags: ["Workflows", "UserWorkflows", "CategoryWorkflows"],
