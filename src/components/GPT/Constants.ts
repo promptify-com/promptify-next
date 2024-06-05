@@ -69,33 +69,40 @@ export const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
 
 export const FREQUENCY_ITEMS = ["daily", "weekly", "bi-weekly", "monthly"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const utcOffset = -(new Date().getTimezoneOffset() / 60);
-const utcOffsetString = utcOffset >= 0 ? `+${utcOffset}` : `${utcOffset}`;
+const datetimeOps = Intl.DateTimeFormat().resolvedOptions();
+const utcOffset = new Intl.DateTimeFormat(datetimeOps.locale, {
+  hour: "numeric",
+  timeZone: datetimeOps.timeZone,
+  timeZoneName: "short",
+})
+  .format(new Date())
+  .split(" ")
+  .pop();
 export const TIMES = [
-  `12:00 AM - GMT${utcOffsetString}`,
-  `1:00 AM - GMT${utcOffsetString}`,
-  `2:00 AM - GMT${utcOffsetString}`,
-  `3:00 AM - GMT${utcOffsetString}`,
-  `4:00 AM - GMT${utcOffsetString}`,
-  `5:00 AM - GMT${utcOffsetString}`,
-  `6:00 AM - GMT${utcOffsetString}`,
-  `7:00 AM - GMT${utcOffsetString}`,
-  `8:00 AM - GMT${utcOffsetString}`,
-  `9:00 AM - GMT${utcOffsetString}`,
-  `10:00 AM - GMT${utcOffsetString}`,
-  `11:00 AM - GMT${utcOffsetString}`,
-  `12:00 PM - GMT${utcOffsetString}`,
-  `1:00 PM - GMT${utcOffsetString}`,
-  `2:00 PM - GMT${utcOffsetString}`,
-  `3:00 PM - GMT${utcOffsetString}`,
-  `4:00 PM - GMT${utcOffsetString}`,
-  `5:00 PM - GMT${utcOffsetString}`,
-  `6:00 PM - GMT${utcOffsetString}`,
-  `7:00 PM - GMT${utcOffsetString}`,
-  `8:00 PM - GMT${utcOffsetString}`,
-  `9:00 PM - GMT${utcOffsetString}`,
-  `10:00 PM - GMT${utcOffsetString}`,
-  `11:00 PM - GMT${utcOffsetString}`,
+  `12:00 AM - ${utcOffset}`,
+  `1:00 AM - ${utcOffset}`,
+  `2:00 AM - ${utcOffset}`,
+  `3:00 AM - ${utcOffset}`,
+  `4:00 AM - ${utcOffset}`,
+  `5:00 AM - ${utcOffset}`,
+  `6:00 AM - ${utcOffset}`,
+  `7:00 AM - ${utcOffset}`,
+  `8:00 AM - ${utcOffset}`,
+  `9:00 AM - ${utcOffset}`,
+  `10:00 AM - ${utcOffset}`,
+  `11:00 AM - ${utcOffset}`,
+  `12:00 PM - ${utcOffset}`,
+  `1:00 PM - ${utcOffset}`,
+  `2:00 PM - ${utcOffset}`,
+  `3:00 PM - ${utcOffset}`,
+  `4:00 PM - ${utcOffset}`,
+  `5:00 PM - ${utcOffset}`,
+  `6:00 PM - ${utcOffset}`,
+  `7:00 PM - ${utcOffset}`,
+  `8:00 PM - ${utcOffset}`,
+  `9:00 PM - ${utcOffset}`,
+  `10:00 PM - ${utcOffset}`,
+  `11:00 PM - ${utcOffset}`,
 ];
 
 export const BtnStyle = {
