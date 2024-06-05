@@ -94,18 +94,24 @@ function WorkflowCard({ templateWorkflow, periodic_task, templateWorkflowId }: P
     handleCloseModal();
   };
 
-  const handleLikeDislike = (e: React.MouseEvent) => {
+  const handleLikeDislike = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     if (!templateWorkflowId) {
       return;
     }
 
-    if (templateWorkflow?.is_liked) {
-      dislikeWorkflow(templateWorkflowId);
-      return;
+    try {
+      if (templateWorkflow?.is_liked) {
+        await dislikeWorkflow(templateWorkflowId);
+        dispatch(setToast({ message: `You unlike ${templateWorkflow.name}`, severity: "success" }));
+        return;
+      }
+      await likeWorklow(templateWorkflowId);
+      dispatch(setToast({ message: `You liked ${templateWorkflow?.name}`, severity: "success" }));
+    } catch (error) {
+      console.error("something went wrong");
     }
-    likeWorklow(templateWorkflowId);
   };
 
   return (
