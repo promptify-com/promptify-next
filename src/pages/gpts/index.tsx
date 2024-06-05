@@ -80,7 +80,7 @@ function GPTsPage() {
                       ml={index === 0 ? "24px" : 0}
                     >
                       <WorkflowCard
-                        workflow={workflow}
+                        templateWorkflow={workflow}
                         periodic_task={workflow.periodic_task}
                       />
                     </Stack>
@@ -113,9 +113,9 @@ function GPTsPage() {
                     {filteredUserWorkflows?.map(workflow => (
                       <Stack key={workflow.id}>
                         <WorkflowCard
-                          workflow={workflow?.template_workflow}
+                          templateWorkflow={workflow?.template_workflow}
                           periodic_task={workflow?.periodic_task}
-                          workflowId={workflow.template_workflow.id}
+                          templateWorkflowId={workflow.template_workflow.id}
                         />
                       </Stack>
                     ))}
@@ -150,8 +150,8 @@ function GPTsPage() {
                         {sortedWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
                             <WorkflowCard
-                              workflow={workflow}
-                              workflowId={workflow.id}
+                              templateWorkflow={workflow}
+                              templateWorkflowId={workflow.id}
                             />
                           </Stack>
                         ))}
@@ -175,8 +175,8 @@ function GPTsPage() {
                         {schedulableWorkflows.map(workflow => (
                           <Stack key={workflow.id}>
                             <WorkflowCard
-                              workflow={workflow}
-                              workflowId={workflow.id}
+                              templateWorkflow={workflow}
+                              templateWorkflowId={workflow.id}
                             />
                           </Stack>
                         ))}
@@ -198,8 +198,8 @@ function GPTsPage() {
                       {workflows.templates.map(workflow => (
                         <Stack key={workflow.id}>
                           <WorkflowCard
-                            workflow={workflow}
-                            workflowId={workflow.id}
+                            templateWorkflow={workflow}
+                            templateWorkflowId={workflow.id}
                           />
                         </Stack>
                       ))}

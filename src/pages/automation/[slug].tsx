@@ -16,7 +16,7 @@ import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, INode, ITemplateWorkflow } from "@/components/Automation/types";
 import { oAuthTypeMapping, N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import executionsSlice, { clearExecutionsStates, setGeneratedExecution } from "@/core/store/executionsSlice";
@@ -25,11 +25,11 @@ import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import store from "@/core/store";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
+export default function SingleWorkflow({ workflow = {} as ITemplateWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -241,7 +241,7 @@ export async function getServerSideProps({ params }: any) {
   const { slug } = params;
   try {
     const res = await authClient.get(`/api/n8n/workflows/by-slug/${slug}/`);
-    const workflow: IWorkflow = res.data;
+    const workflow: ITemplateWorkflow = res.data;
 
     return {
       props: {

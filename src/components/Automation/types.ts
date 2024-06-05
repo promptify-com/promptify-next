@@ -62,7 +62,7 @@ interface IData {
   connections: Record<string, INodeConnection>;
 }
 
-export interface IWorkflow {
+export interface ITemplateWorkflow {
   slug: string;
   id: number;
   name: string;
@@ -154,7 +154,7 @@ export interface IWorkflowCreateResponse {
     crontab: IWorkflowSchedule;
     kwargs?: string;
   };
-  template_workflow: IWorkflow;
+  template_workflow: ITemplateWorkflow;
 }
 
 export interface IAuthenticateBase {
@@ -224,5 +224,5 @@ export interface IAvailableCredentials {
 
 export interface IWorkflowCategory {
   category: string;
-  templates: IWorkflow[];
+  templates: ITemplateWorkflow[];
 }

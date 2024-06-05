@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import WorkflowCard from "@/components/Automation/WorkflowCard";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 
 interface Props {
   message: IMessage;
@@ -56,7 +56,7 @@ function WorkflowSuggestions({ message, scrollToBottom }: Props) {
           {workflows?.slice(0, visibleCount).map(workflow => (
             <WorkflowCard
               key={workflow.id}
-              workflow={workflow as IWorkflow}
+              workflow={workflow as ITemplateWorkflow}
               onScrollToBottom={scrollToBottom}
             />
           ))}

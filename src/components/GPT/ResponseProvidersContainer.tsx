@@ -3,12 +3,12 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { PROVIDERS } from "./Constants";
 import ResponseProvider from "./ResponseProvider";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import type { ProviderType } from "./Types";
 
 interface Props {
   message: string;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   prepareWorkflow(provider: ProviderType): void;
 }
 

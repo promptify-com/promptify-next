@@ -7,7 +7,7 @@ import Image from "@/components/design-system/Image";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import Link from "next/link";
-import { IWorkflow, IWorkflowSchedule } from "../Automation/types";
+import { ITemplateWorkflow, IWorkflowSchedule } from "../Automation/types";
 import useTruncate from "@/hooks/useTruncate";
 import { capitalizeString } from "@/common/helpers";
 import { TIMES } from "../GPT/Constants";
@@ -21,17 +21,17 @@ import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 
 interface Props {
-  workflow?: IWorkflow;
+  templateWorkflow?: ITemplateWorkflow;
   periodic_task?: null | {
     task: string;
     name: string;
     enabled: boolean;
     crontab: IWorkflowSchedule;
   };
-  workflowId?: string | number;
+  templateWorkflowId?: number;
 }
 
-function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
+function WorkflowCard({ templateWorkflow, periodic_task, templateWorkflowId }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -40,7 +40,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   const [likeWorklow] = useLikeWorkflowMutation();
   const [dislikeWorkflow] = useDislikeWorkflowMutation();
 
-  const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow>();
+  const [selectedWorkflow, setSelectedWorkflow] = useState<ITemplateWorkflow>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
@@ -56,7 +56,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
       setIsModalOpen(false);
       return;
     }
-    setSelectedWorkflow(workflow);
+    setSelectedWorkflow(templateWorkflow);
     setIsModalOpen(true);
   };
 
@@ -65,10 +65,10 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   };
 
   const handleDelete = async () => {
-    if (!workflowId) return;
-
+    if (!templateWorkflow?.id) {
+    }
     try {
-      await deleteWorkflow(workflowId as string);
+      await deleteWorkflow(String(templateWorkflow?.id));
       setSelectedWorkflow(undefined);
       setOpenDeleteDialog(false);
 
@@ -80,7 +80,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   };
 
   const handleEdit = () => {
-    router.push(`/gpts/${workflow?.slug}`);
+    router.push(`/gpts/${templateWorkflow?.slug}`);
     handleCloseModal();
   };
 
@@ -97,21 +97,21 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   const handleLikeDislike = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!workflowId) {
+    if (!templateWorkflowId) {
       return;
     }
 
-    if (workflow?.is_liked) {
-      dislikeWorkflow(workflowId as number);
+    if (templateWorkflow?.is_liked) {
+      dislikeWorkflow(templateWorkflowId);
       return;
     }
-    likeWorklow(workflowId as number);
+    likeWorklow(templateWorkflowId);
   };
 
   return (
     <>
       <Link
-        href={`/gpts/${workflow?.slug}`}
+        href={`/gpts/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
       >
         <Stack
@@ -132,9 +132,9 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
             position={"relative"}
           >
             <Image
-              src={workflow?.image ?? ""}
+              src={templateWorkflow?.image ?? ""}
               fill
-              alt={workflow?.name ?? "workflow"}
+              alt={templateWorkflow?.name ?? "workflow"}
               style={{ objectFit: "cover" }}
             />
             <Stack
@@ -149,11 +149,11 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={{ ...iconTextStyle, bgcolor: workflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)" }}
+                sx={{ ...iconTextStyle, bgcolor: templateWorkflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)" }}
                 className="icon-text-style"
               >
                 <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
-                {workflow?.likes ?? 0}
+                {templateWorkflow?.likes ?? 0}
               </Stack>
               <Stack
                 direction={"row"}
@@ -166,11 +166,11 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
                   size="12"
                   color="#ffffff"
                 />
-                {workflow?.activities?.favorites_count ?? 0}
+                {templateWorkflow?.activities?.favorites_count ?? 0}
               </Stack>
             </Stack>
           </Box>
-          {periodic_task && workflow?.is_schedulable && (
+          {periodic_task && templateWorkflow?.is_schedulable && (
             <Stack
               position={"absolute"}
               top={{ xs: "24px", md: 7 }}
@@ -192,7 +192,7 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
                 color={"#000"}
                 lineHeight={"120%"}
               >
-                {workflow?.name ?? ""}
+                {templateWorkflow?.name ?? ""}
               </Typography>
               <Typography
                 fontSize={11}
@@ -200,10 +200,10 @@ function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
                 lineHeight={"150%"}
                 color={"#000"}
               >
-                {truncate(workflow?.description || "", { length: 70 })}
+                {truncate(templateWorkflow?.description || "", { length: 70 })}
               </Typography>
             </Stack>
-            {periodic_task && workflow?.is_schedulable ? (
+            {periodic_task && templateWorkflow?.is_schedulable ? (
               <Stack
                 direction={"row"}
                 justifyContent={"space-between"}

@@ -9,11 +9,11 @@ import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { FrequencyType, IWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
+import type { FrequencyType, ITemplateWorkflow, IWorkflowSchedule } from "@/components/Automation/types";
 import { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }
 
 type WorkflowData = {

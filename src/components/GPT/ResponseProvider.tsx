@@ -13,7 +13,7 @@ import {
   replaceProviderParamValue,
 } from "@/components/GPTs/helpers";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
-import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, INode, ITemplateWorkflow } from "@/components/Automation/types";
 import useCredentialsActions from "./Hooks/useCredentialsActions";
 import FormModal from "@/components/common/forms/FormModal";
 import Check from "@mui/icons-material/Check";
@@ -24,7 +24,7 @@ import type { ProviderType } from "./Types";
 
 interface Props {
   providerType: ProviderType;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   onInject(): void;
 }
 

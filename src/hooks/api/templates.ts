@@ -1,7 +1,7 @@
 import { authClient } from "@/common/axios";
-import { IEditTemplate } from "@/common/types/editTemplate";
-import { IWorkflow } from "@/components/Automation/types";
-import { Templates } from "@/core/api/dto/templates";
+import type { IEditTemplate } from "@/common/types/editTemplate";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
+import type { Templates } from "@/core/api/dto/templates";
 
 export const updateTemplate = async (id: number, data: IEditTemplate) => {
   return await authClient
@@ -49,7 +49,7 @@ export const getTemplateById = async (id: number): Promise<Templates> => {
   });
 };
 
-export const getWorkflowById = async (id: number): Promise<IWorkflow> => {
+export const getWorkflowById = async (id: number): Promise<ITemplateWorkflow> => {
   return await authClient.get(`/api/n8n/workflows/${id}/`).then(response => {
     return response.data;
   });

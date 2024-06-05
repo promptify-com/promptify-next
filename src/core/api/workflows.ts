@@ -2,7 +2,7 @@ import { baseApi } from "./api";
 import type {
   CreateCredentialPayload,
   ICredential,
-  IWorkflow,
+  ITemplateWorkflow,
   IWorkflowCreateResponse,
   UserWorkflowExecutionsResponse,
   UserWorkflowsResponse,
@@ -12,16 +12,16 @@ import type {
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getWorkflows: builder.query<IWorkflow[], boolean>({
+      getWorkflows: builder.query<ITemplateWorkflow[], boolean>({
         query: enable => ({
           url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
-        providesTags: ["Workflows"],
+        providesTags: ["TemplateWorkflows"],
       }),
 
-      getWorkflowBySlug: builder.query<IWorkflow, string>({
+      getWorkflowBySlug: builder.query<ITemplateWorkflow, string>({
         query: workflowSlug => ({
           url: `/api/n8n/workflows/by-slug/${workflowSlug}`,
           method: "get",
@@ -121,7 +121,7 @@ export const workflowsApi = baseApi.injectEndpoints({
         transformResponse(items: IWorkflowCategory[] = []) {
           return items.map(item => ({
             ...item,
-            templates: item.templates.filter((template: IWorkflow) => template.enabled),
+            templates: item.templates.filter((template: ITemplateWorkflow) => template.enabled),
           }));
         },
       }),
@@ -130,21 +130,21 @@ export const workflowsApi = baseApi.injectEndpoints({
           url: `/api/n8n/workflows/${workflowId}/delete`,
           method: "delete",
         }),
-        invalidatesTags: ["Workflows"],
+        invalidatesTags: ["TemplateWorkflows"],
       }),
       likeWorkflow: builder.mutation<void, number>({
         query: templateWorkflowId => ({
           url: `/api/n8n/workflows/${templateWorkflowId}/like`,
           method: "post",
         }),
-        invalidatesTags: ["Workflows", "UserWorkflows", "CategoryWorkflows"],
+        invalidatesTags: ["TemplateWorkflows", "UserWorkflows", "CategoryWorkflows"],
       }),
       dislikeWorkflow: builder.mutation<void, number>({
         query: templateWorkflowId => ({
           url: `/api/n8n/workflows/${templateWorkflowId}/like`,
           method: "delete",
         }),
-        invalidatesTags: ["Workflows", "UserWorkflows", "CategoryWorkflows"],
+        invalidatesTags: ["TemplateWorkflows", "UserWorkflows", "CategoryWorkflows"],
       }),
     };
   },
