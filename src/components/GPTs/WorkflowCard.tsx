@@ -21,7 +21,6 @@ import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 
 interface Props {
-  index: number;
   workflow?: IWorkflow;
   periodic_task?: null | {
     task: string;
@@ -32,7 +31,7 @@ interface Props {
   workflowId?: string;
 }
 
-function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
+function WorkflowCard({ workflow, periodic_task, workflowId }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -93,14 +92,15 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   const handleLikeDislike = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!workflow) {
+    if (!workflowId) {
       return;
     }
+
     if (workflow?.is_liked) {
-      dislikeWorkflow(workflow.id);
+      dislikeWorkflow(workflowId);
       return;
     }
-    likeWorklow(workflow.id);
+    likeWorklow(workflowId);
   };
 
   return (
@@ -144,7 +144,7 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={{ ...iconTextStyle, bgcolor: workflow?.is_liked ? "#FF4747" : "rgba(0, 0, 0, 0.8)" }}
+                sx={{ ...iconTextStyle, bgcolor: workflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)" }}
                 className="icon-text-style"
               >
                 <FavoriteBorderOutlined sx={{ fontSize: 12 }} />

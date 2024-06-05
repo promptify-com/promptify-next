@@ -80,7 +80,6 @@ function GPTsPage() {
                       ml={index === 0 ? "24px" : 0}
                     >
                       <WorkflowCard
-                        index={index}
                         workflow={workflow}
                         periodic_task={workflow.periodic_task}
                       />
@@ -114,7 +113,6 @@ function GPTsPage() {
                     {filteredUserWorkflows?.map((workflow, index) => (
                       <Stack key={workflow.id}>
                         <WorkflowCard
-                          index={index}
                           workflow={workflow?.template_workflow}
                           periodic_task={workflow?.periodic_task}
                           workflowId={workflow.id}
@@ -151,10 +149,7 @@ function GPTsPage() {
                       >
                         {sortedWorkflows.map((workflow, index) => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard
-                              index={index}
-                              workflow={workflow}
-                            />
+                            <WorkflowCard workflow={workflow} />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -176,10 +171,7 @@ function GPTsPage() {
                       >
                         {schedulableWorkflows.map((workflow, index) => (
                           <Stack key={workflow.id}>
-                            <WorkflowCard
-                              index={index}
-                              workflow={workflow}
-                            />
+                            <WorkflowCard workflow={workflow} />
                           </Stack>
                         ))}
                       </CarouselSection>
@@ -199,10 +191,7 @@ function GPTsPage() {
                     >
                       {workflows.templates.map((workflow, index) => (
                         <Stack key={workflow.id}>
-                          <WorkflowCard
-                            index={index}
-                            workflow={workflow}
-                          />
+                          <WorkflowCard workflow={workflow} />
                         </Stack>
                       ))}
                     </CarouselSection>

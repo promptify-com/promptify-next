@@ -72,6 +72,8 @@ export interface IWorkflow {
   data: IData;
   created_at: string;
   is_schedulable: boolean;
+  is_liked: boolean;
+  likes: number;
   activities?: {
     likes_count: number;
     favorites_count: number;
