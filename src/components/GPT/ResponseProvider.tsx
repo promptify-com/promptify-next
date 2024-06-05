@@ -21,7 +21,7 @@ import { setToast } from "@/core/store/toastSlice";
 interface Props {
   providerType: ProviderType;
   workflow: IWorkflow;
-  onInject(): void;
+  onInject(workflow: IWorkflowCreateResponse): void;
   onUnselect(): IWorkflowCreateResponse;
 }
 
@@ -111,14 +111,8 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
       node: nodeData,
     });
 
-    dispatch(
-      setClonedWorkflow({
-        ...clonedWorkflow!,
-        nodes: generatedWorkflow.nodes,
-        connections: generatedWorkflow.connections,
-      }),
-    );
-    onInject();
+    dispatch(setClonedWorkflow(generatedWorkflow));
+    onInject(generatedWorkflow);
   };
 
   const handleUnSelect = () => {
