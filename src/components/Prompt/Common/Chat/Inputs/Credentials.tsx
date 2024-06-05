@@ -296,6 +296,7 @@ function Credentials({ input, isScheduled }: Props) {
                   dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
                   removeCredential(_credential.id);
                   setOAuthConnected(false);
+                  handleOauthConnect();
                 }}
               >
                 <Refresh />
