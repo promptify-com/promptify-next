@@ -177,14 +177,14 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
           {periodic_task && workflow?.is_schedulable && (
             <Stack
               position={"absolute"}
-              top={{ xs: "24px", md: 7 }}
-              right={{ xs: "24px", md: 7 }}
+              top={{ xs: "24px", md: "16px" }}
+              right={{ xs: "24px", md: "16px" }}
             >
               <StatusChip status={!isPaused ? "active" : "paused"} />
             </Stack>
           )}
           <Stack
-            p={{ xs: "16px", md: "40px 24px 16px 24px" }}
+            p={{ xs: "16px", md: `${!periodic_task ? "16px 24px" : "40px 10px 16px 24px"}` }}
             flex={1}
             gap={"24px"}
             alignItems={"start"}
@@ -203,9 +203,20 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
                 fontWeight={400}
                 lineHeight={"150%"}
                 color={"#000"}
+                minHeight={"51px"}
+                maxWidth={"180px"}
               >
                 {truncate(workflow?.description || "", { length: 70 })}
               </Typography>
+              {!periodic_task && (
+                <Typography
+                  fontSize={11}
+                  fontWeight={400}
+                  lineHeight={"150%"}
+                  color={"#000"}
+                  minHeight={{ xs: 0, md: "17px" }}
+                ></Typography>
+              )}
             </Stack>
             {periodic_task && workflow?.is_schedulable ? (
               <Stack
