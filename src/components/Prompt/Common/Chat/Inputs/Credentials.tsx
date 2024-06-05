@@ -27,16 +27,18 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import BaseButton from "@/components/base/BaseButton";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import type { ICredentialInput, ICredentialProperty } from "@/components/Automation/types";
+import Check from "@mui/icons-material/Check";
 
 interface Props {
   input: ICredentialInput;
+  isScheduled?: boolean;
 }
 
 interface FormValues {
   [key: string]: string;
 }
 
-function Credentials({ input }: Props) {
+function Credentials({ input, isScheduled }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -276,24 +278,41 @@ function Credentials({ input }: Props) {
       {currentUser?.id ? (
         <>
           {isCredentialInserted && _credential ? (
-            <IconButton
-              sx={{
-                border: "none",
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
-              }}
-              onClick={async e => {
-                e.preventDefault();
-                await deleteCredential(_credential?.id);
-                await updateWorkflowAfterCredentialsDeletion(_credential.type, false);
-                dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
-                removeCredential(_credential.id);
-                setOAuthConnected(false);
-              }}
+            <Stack
+              direction={"row"}
+              gap={1}
             >
-              <Refresh />
-            </IconButton>
+              <IconButton
+                sx={{
+                  border: "none",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={async e => {
+                  e.preventDefault();
+                  await deleteCredential(_credential?.id);
+                  await updateWorkflowAfterCredentialsDeletion(_credential.type, false);
+                  dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
+                  removeCredential(_credential.id);
+                  setOAuthConnected(false);
+                }}
+              >
+                <Refresh />
+              </IconButton>
+              {isScheduled && checkCredentialInserted(input) && (
+                <Check
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    p: "7px",
+                    borderRadius: "50%",
+                    bgcolor: "#4EB972",
+                    color: "#FFF",
+                  }}
+                />
+              )}
+            </Stack>
           ) : isOauthCredential ? (
             <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
               <BaseButton
