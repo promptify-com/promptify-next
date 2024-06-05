@@ -12,7 +12,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { capitalizeString } from "@/common/helpers";
 import { TIMES } from "../GPT/Constants";
 import Chip from "@mui/material/Chip";
-import { useDeleteWorkflowMutation } from "@/core/api/workflows";
+import { useDeleteWorkflowMutation, useDislikeWorkflowMutation, useLikeWorkflowMutation } from "@/core/api/workflows";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
@@ -38,6 +38,9 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   const { truncate } = useTruncate();
 
   const [deleteWorkflow] = useDeleteWorkflowMutation();
+  const [likeWorklow] = useLikeWorkflowMutation();
+  const [dislikeWorkflow] = useDislikeWorkflowMutation();
+
   const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -87,6 +90,19 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
     handleCloseModal();
   };
 
+  const handleLikeDislike = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!workflow) {
+      return;
+    }
+    if (workflow?.is_liked) {
+      dislikeWorkflow(workflow.id);
+      return;
+    }
+    likeWorklow(workflow.id);
+  };
+
   return (
     <>
       <Link
@@ -124,20 +140,21 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
               right={10}
             >
               <Stack
+                onClick={handleLikeDislike}
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={iconTextStyle}
+                sx={{ ...iconTextStyle, bgcolor: workflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)" }}
                 className="icon-text-style"
               >
                 <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
-                {workflow?.activities?.likes_count ?? 0}
+                {workflow?.likes ?? 0}
               </Stack>
               <Stack
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={iconTextStyle}
+                sx={{ ...iconTextStyle, bgcolor: "rgba(0, 0, 0, 0.8)" }}
                 className="icon-text-style"
               >
                 <BoltOutlined
@@ -265,7 +282,6 @@ const iconTextStyle = {
   fontSize: 13,
   fontWeight: 400,
   color: "white",
-  bgcolor: "rgba(0, 0, 0, 0.8)",
   borderRadius: "100px",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   padding: "0px 12px",
