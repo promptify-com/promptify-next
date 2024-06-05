@@ -5,6 +5,8 @@ import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import { BtnStyle } from "./Constants";
 import Check from "@mui/icons-material/Check";
+import Close from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
 
 interface Props {
   iconUrl: string;
@@ -13,9 +15,10 @@ interface Props {
   isInjected: boolean;
   onConnect?(): void;
   onInject?(): void;
+  onUnselect?(): void;
 }
 
-function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInject }: Props) {
+function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInject, onUnselect }: Props) {
   return (
     <Stack
       direction={"row"}
@@ -29,6 +32,14 @@ function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInj
         border: "1px solid",
         borderColor: isInjected ? "#4EB972" : isConnected ? "#6E45E9" : "#E9E7EC",
         bgcolor: isInjected ? "#F2FFF7" : isConnected ? "#F7F5FC" : "#FFFFFF",
+        position: "relative",
+        transition: "all 0.3s ease",
+        "&:hover .unselect-button": {
+          display: "flex",
+        },
+        "&:hover .check-icon": {
+          display: "none",
+        },
       }}
     >
       <Stack
@@ -84,16 +95,46 @@ function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInj
         </Stack>
       </Stack>
       {isInjected ? (
-        <Check
-          sx={{
-            width: 18,
-            height: 18,
-            p: "7px",
-            borderRadius: "50%",
-            bgcolor: "#4EB972",
-            color: "#FFF",
-          }}
-        />
+        <>
+          <Check
+            className="check-icon"
+            sx={{
+              width: 18,
+              height: 18,
+              p: "7px",
+              borderRadius: "50%",
+              bgcolor: "#4EB972",
+              color: "#FFF",
+            }}
+          />
+          <Box
+            className="unselect-button"
+            onClick={onUnselect}
+            sx={{
+              display: "none",
+              borderRadius: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "18px",
+              height: "18px",
+              p: "7px",
+              bgcolor: "red",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                bgcolor: "#FF7875",
+              },
+            }}
+          >
+            <Close
+              sx={{
+                width: 18,
+                height: 18,
+                color: "#FFF",
+              }}
+            />
+          </Box>
+        </>
       ) : isConnected ? (
         <Button
           onClick={onInject}

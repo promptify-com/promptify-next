@@ -28,10 +28,17 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
-  const { messages, initialMessages, setScheduleFrequency, setScheduleTime, prepareWorkflow, activateWorkflow } =
-    useChat({
-      workflow,
-    });
+  const {
+    messages,
+    initialMessages,
+    setScheduleFrequency,
+    setScheduleTime,
+    prepareWorkflow,
+    activateWorkflow,
+    removeProvider,
+  } = useChat({
+    workflow,
+  });
 
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
@@ -114,6 +121,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   message={message.text}
                   workflow={workflow}
                   prepareWorkflow={provider => prepareWorkflow(provider)}
+                  removeProvider={removeProvider}
                 />
               )}
               {message.type === "form" && (
