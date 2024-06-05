@@ -14,7 +14,9 @@ interface WorkflowActionsModalProps {
   onClose: () => void;
   onEdit: () => void;
   onPause: () => void;
+  onResume: () => void;
   onRemove: () => void;
+  isPaused: boolean;
 }
 
 function WorkflowActionsModal({
@@ -24,7 +26,9 @@ function WorkflowActionsModal({
   onClose,
   onEdit,
   onPause,
+  onResume,
   onRemove,
+  isPaused,
 }: WorkflowActionsModalProps) {
   if (!workflow) return null;
 
@@ -94,9 +98,9 @@ function WorkflowActionsModal({
                 </MenuItem>
                 <MenuItem
                   sx={menuItemStyle}
-                  onClick={onPause}
+                  onClick={isPaused ? onResume : onPause}
                 >
-                  Pause GPT
+                  {isPaused ? "Resume GPT" : "Pause GPT"}
                 </MenuItem>
                 <MenuItem
                   sx={menuItemStyle}

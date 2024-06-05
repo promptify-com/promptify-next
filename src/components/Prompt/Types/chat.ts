@@ -27,6 +27,7 @@ export type MessageType =
   | "schedule_providers"
   | "schedule_activation"
   | "schedule_update"
+  | "schedule_activation_test"
   | "input"
   | InputType;
 

@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Check from "@mui/icons-material/Check";
 
 interface Props {
-  message: string;
+  message?: string;
   items: string[];
   onSelect(item: string): void;
   defaultValue?: string;

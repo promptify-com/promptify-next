@@ -27,16 +27,19 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import BaseButton from "@/components/base/BaseButton";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import type { ICredentialInput, ICredentialProperty } from "@/components/Automation/types";
+import Check from "@mui/icons-material/Check";
+import { BtnStyle } from "@/components/GPT/Constants";
 
 interface Props {
   input: ICredentialInput;
+  isScheduled?: boolean;
 }
 
 interface FormValues {
   [key: string]: string;
 }
 
-function Credentials({ input }: Props) {
+function Credentials({ input, isScheduled }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -65,6 +68,7 @@ function Credentials({ input }: Props) {
 
   const [openModal, setOpenModal] = useState(false);
   const [oAuthConnected, setOAuthConnected] = useState(isOauthCredential && isCredentialInserted ? true : false);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
 
@@ -178,9 +182,12 @@ function Credentials({ input }: Props) {
   };
 
   const handleOauthConnect = async () => {
+    setIsConnecting(true);
+
     const credentialId = await handleSubmit();
 
     if (!credentialId) {
+      setIsConnecting(false);
       return;
     }
 
@@ -191,6 +198,7 @@ function Credentials({ input }: Props) {
       }).unwrap();
 
       if (!authUri) {
+        setIsConnecting(false);
         return;
       }
 
@@ -223,6 +231,7 @@ function Credentials({ input }: Props) {
           setOpenModal(false);
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           setOAuthConnected(true);
+          setIsConnecting(false);
 
           const remainingCredentials = credentialsInput.filter(cred => cred.displayName !== input.displayName);
 
@@ -235,6 +244,7 @@ function Credentials({ input }: Props) {
           removeCredential(credentialId);
           clearPopupCheck();
           setOAuthConnected(false);
+          setIsConnecting(false);
         }
         if (oauthPopup) {
           oauthPopup.close();
@@ -256,6 +266,7 @@ function Credentials({ input }: Props) {
           );
           await deleteCredential(credentialId);
           removeCredential(credentialId);
+          setIsConnecting(false);
         } else {
           elapsedSeconds++;
           if (elapsedSeconds >= 120) {
@@ -267,6 +278,7 @@ function Credentials({ input }: Props) {
       console.error("Error during OAuth authorization:", error);
       await deleteCredential(credentialId);
       removeCredential(credentialId);
+      setIsConnecting(false);
     }
   };
 
@@ -275,45 +287,53 @@ function Credentials({ input }: Props) {
     <Stack py={"5px"}>
       {currentUser?.id ? (
         <>
-          {isCredentialInserted && _credential ? (
-            <IconButton
-              sx={{
-                border: "none",
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
-              }}
-              onClick={async e => {
-                e.preventDefault();
-                await deleteCredential(_credential?.id);
-                await updateWorkflowAfterCredentialsDeletion(_credential.type, false);
-                dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
-                removeCredential(_credential.id);
-                setOAuthConnected(false);
-              }}
+          {isCredentialInserted && _credential && !isConnecting ? (
+            <Stack
+              direction={"row"}
+              gap={1}
             >
-              <Refresh />
-            </IconButton>
-          ) : isOauthCredential ? (
-            <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-              <BaseButton
-                onClick={handleOauthConnect}
-                color="custom"
-                variant="text"
+              <IconButton
                 sx={{
-                  border: "1px solid",
-                  borderRadius: "8px",
-                  borderColor: "secondary.main",
-                  color: "secondary.main",
-                  p: "3px 12px",
-                  fontSize: { xs: 11, md: 14 },
+                  border: "none",
                   ":hover": {
                     bgcolor: "action.hover",
                   },
                 }}
+                onClick={async e => {
+                  e.preventDefault();
+                  await deleteCredential(_credential?.id);
+                  await updateWorkflowAfterCredentialsDeletion(_credential.type, false);
+                  dispatch(setToast({ message: "Credential was successfully deleted.", severity: "info" }));
+                  removeCredential(_credential.id);
+                  setOAuthConnected(false);
+                  handleOauthConnect();
+                }}
               >
-                {"Connect"}
-              </BaseButton>
+                <Refresh />
+              </IconButton>
+              {isScheduled && checkCredentialInserted(input) && (
+                <Check
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    p: "7px",
+                    borderRadius: "50%",
+                    bgcolor: "#4EB972",
+                    color: "#FFF",
+                  }}
+                />
+              )}
+            </Stack>
+          ) : isOauthCredential ? (
+            <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
+              <Button
+                onClick={handleOauthConnect}
+                variant="contained"
+                sx={BtnStyle}
+                disabled={isConnecting}
+              >
+                {isConnecting ? "Connecting..." : "Connect"}
+              </Button>
             </Stack>
           ) : (
             <BaseButton

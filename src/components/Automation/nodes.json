@@ -2310,7 +2310,7 @@
     "description": "Consume Wekan API"
   },
   "n8n-nodes-base.whatsApp": {
-    "name": "WhatsApp Business Cloud",
+    "name": "WhatsApp",
     "type": "n8n-nodes-base.whatsApp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/WhatsApp/whatsapp.svg",
     "description": "Access WhatsApp API"

@@ -8,7 +8,6 @@ import { addDays } from "date-fns/addDays";
 import { addWeeks } from "date-fns/addWeeks";
 import { setDate } from "date-fns/setDate";
 import { startOfMonth } from "date-fns/startOfMonth";
-
 import nodesData from "@/components/Automation/nodes.json";
 import type {
   INode,
@@ -21,6 +20,8 @@ import type {
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
+import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "../GPT/Constants";
+import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
   nextNode: string;
@@ -106,8 +107,6 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
 }
 
 const MAIN_CONNECTION_KEY = "main";
-const RESPOND_TO_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook";
-const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
 
 class NodeNotFoundError extends Error {
   constructor(message: string) {
@@ -125,7 +124,8 @@ const findConnectedNodeName = (connections: Record<string, INodeConnection>, nod
 const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
   return nodes.find(node => connections[node.name]?.[MAIN_CONNECTION_KEY][0][0].node === targetNodeName);
 };
-const removeExistingProviderNode = (
+
+export const removeExistingProviderNode = (
   workflow: IWorkflowCreateResponse,
   templateWorkflow: ITemplateWorkflow,
   respondToWebhookNodeName: string,
@@ -184,14 +184,18 @@ export function injectProviderNode(
     templateWorkflow,
     respondToWebhookNode.name,
   );
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+
   const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
 
   if (promptifyNode) {
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
+    if (node.type === PROMPTIFY_NODE_TYPE && N8N_RESPONSE_REGEX.test(responseBody)) {
+      promptifyNode.parameters.template_streaming = false;
+    }
   }
 
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
   const providerNode = {
     id: node.id,
     name: node.name,
@@ -284,6 +288,8 @@ export function getProviderParams(providerType: ProviderType) {
           required: true,
         },
       ];
+    case "n8n-nodes-promptify.promptify":
+      return [];
     default:
       throw new Error(`Provider "${providerType}" is not recognized!`);
   }
@@ -323,6 +329,8 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
         text: values.content,
         additionalFields: {},
       };
+    case "n8n-nodes-promptify.promptify":
+      return {};
     default:
       throw new Error(`Provider "${providerType}" is not recognized!`);
   }

@@ -12,9 +12,18 @@ interface Props {
   onActivate(): Promise<void>;
   allowActivateButton?: boolean;
   updateMode?: boolean;
+  title?: string;
+  buttonMessage?: string;
 }
 
-export default function ActivateWorkflowMessage({ message, onActivate, updateMode, allowActivateButton }: Props) {
+export default function ActivateWorkflowMessage({
+  message,
+  onActivate,
+  updateMode,
+  allowActivateButton,
+  title,
+  buttonMessage,
+}: Props) {
   const { fromUser, isHighlight } = message;
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -55,7 +64,7 @@ export default function ActivateWorkflowMessage({ message, onActivate, updateMod
           fontWeight={500}
           color={"common.black"}
         >
-          Ready to {updateMode ? "update" : "turn on"} this GPT?
+          {title ?? `Ready to ${updateMode ? "update" : "turn on"} this GPT`}
         </Typography>
         <Button
           onClick={handleActivate}
@@ -72,7 +81,7 @@ export default function ActivateWorkflowMessage({ message, onActivate, updateMod
               }}
             />
           )}
-          {updateMode ? "Update Activation" : "Activate"}
+          {buttonMessage || (updateMode ? "Update Activation" : "Activate")}
         </Button>
       </Stack>
     </MessageContainer>
