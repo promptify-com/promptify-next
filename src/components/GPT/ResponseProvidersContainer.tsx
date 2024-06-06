@@ -12,7 +12,7 @@ interface Props {
   message: string;
   workflow: ITemplateWorkflow;
   prepareWorkflow(provider: ProviderType, workflow: IWorkflowCreateResponse): void;
-  removeProvider(): IWorkflowCreateResponse;
+  removeProvider(provider: ProviderType): IWorkflowCreateResponse;
 }
 
 function ResponseProvidersContainer({ message, workflow, prepareWorkflow, removeProvider }: Props) {

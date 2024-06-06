@@ -20,7 +20,7 @@ import type {
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
-import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "../GPT/Constants";
+import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
@@ -115,54 +115,88 @@ class NodeNotFoundError extends Error {
   }
 }
 
-const findConnectedNodeName = (connections: Record<string, INodeConnection>, nodeName: string) => {
-  return Object.keys(connections).find(name => {
-    return connections[name][MAIN_CONNECTION_KEY][0][0].node === nodeName;
-  });
-};
-
-const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
-  return nodes.find(node => connections[node.name]?.[MAIN_CONNECTION_KEY][0][0].node === targetNodeName);
-};
-
-export const removeExistingProviderNode = (
+const findProviderNodes = (
   workflow: IWorkflowCreateResponse,
   templateWorkflow: ITemplateWorkflow,
   respondToWebhookNodeName: string,
-): IWorkflowCreateResponse => {
-  const templateWorkflowConnectedNodeName = findConnectedNodeName(
+) => {
+  const templateWorkflowConnectedNodeNames = findConnectedNodeNames(
     templateWorkflow.data.connections,
     respondToWebhookNodeName,
   );
-  const workflowConnectedNodeName = findConnectedNodeName(workflow.connections, respondToWebhookNodeName);
+  const workflowConnectedNodeNames = findConnectedNodeNames(workflow.connections, respondToWebhookNodeName);
 
-  if (!workflowConnectedNodeName || !templateWorkflowConnectedNodeName) {
-    throw new NodeNotFoundError("Could not find connected nodes!");
-  }
+  return workflowConnectedNodeNames
+    .filter(nodeName => !templateWorkflowConnectedNodeNames.includes(nodeName))
+    .map(nodeName => workflow.nodes.find(node => node.name === nodeName)!);
+};
 
-  if (templateWorkflowConnectedNodeName === workflowConnectedNodeName) {
+const findConnectedNodeNames = (connections: Record<string, INodeConnection>, nodeName: string) => {
+  return Object.entries(connections)
+    .filter(([, { main }]) => main[0].find(nodeConn => nodeConn.node === nodeName))
+    .map(([nodeName]) => nodeName);
+};
+
+const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
+  return nodes.find(
+    node => connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
+  );
+};
+
+export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeId: string) => {
+  const nodeData = workflow.nodes.find(_node => _node.id === nodeId);
+  if (!nodeData) return false;
+
+  const isProvider = !!PROVIDERS[nodeData.type as ProviderType];
+  if (!isProvider) return false;
+
+  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+  const nodeConnection = workflow.connections[nodeData.name];
+  const isResponseConnected =
+    nodeConnection && nodeConnection[MAIN_CONNECTION_KEY][0].find(conn => conn.node === respondToWebhookNode?.name);
+  return isResponseConnected;
+};
+
+export const removeProviderNode = (
+  workflow: IWorkflowCreateResponse,
+  providerName: string,
+): IWorkflowCreateResponse => {
+  const provider = workflow.nodes.find(node => node.name === providerName);
+
+  if (!provider) {
     return workflow;
   }
 
-  const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, workflowConnectedNodeName);
+  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+
+  if (!respondToWebhookNode) {
+    throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
+  }
+
+  const removedProviderName = provider.name;
+  const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
 
   if (!adjacentNode) {
     throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
   }
 
-  workflow.nodes = workflow.nodes.filter(node => node.name !== workflowConnectedNodeName);
+  const cleanConnections = workflow.connections[adjacentNode.name][MAIN_CONNECTION_KEY][0].filter(
+    connection => connection.node !== removedProviderName,
+  );
+
+  if (!cleanConnections.length) {
+    cleanConnections.push({
+      node: respondToWebhookNode.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    });
+  }
+
+  workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
   workflow.connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      [
-        {
-          node: respondToWebhookNodeName,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
-      ],
-    ],
+    [MAIN_CONNECTION_KEY]: [cleanConnections],
   };
-  delete workflow.connections[workflowConnectedNodeName];
+  delete workflow.connections[removedProviderName];
 
   return workflow;
 };
@@ -179,22 +213,18 @@ export function injectProviderNode(
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
-  const { nodes, connections } = removeExistingProviderNode(
-    clonedWorkflow,
-    templateWorkflow,
-    respondToWebhookNode.name,
-  );
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+  const { nodes, connections } = clonedWorkflow;
 
-  const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+  const currentProviders = findProviderNodes(workflow, templateWorkflow, respondToWebhookNode.name);
 
-  if (promptifyNode) {
-    promptifyNode.parameters.save_output = true;
-    promptifyNode.parameters.template_streaming = true;
-    if (node.type === PROMPTIFY_NODE_TYPE && N8N_RESPONSE_REGEX.test(responseBody)) {
-      promptifyNode.parameters.template_streaming = false;
-    }
+  const adjacentConnector = currentProviders[0] ? currentProviders[0].name : respondToWebhookNode.name;
+  const adjacentNode = findAdjacentNode(nodes, connections, adjacentConnector);
+
+  if (!adjacentNode) {
+    throw new NodeNotFoundError(`Could not find the adjacent node to "${adjacentConnector}" node`);
   }
+
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
 
   const providerNode = {
     id: node.id,
@@ -208,20 +238,34 @@ export function injectProviderNode(
 
   nodes.push(providerNode);
 
-  const adjacentNode = findAdjacentNode(nodes, connections, respondToWebhookNode.name);
+  currentProviders.push(providerNode);
 
-  if (!adjacentNode) {
-    throw new NodeNotFoundError(`Could not find the adjacent node to "${respondToWebhookNode.name}" node`);
+  const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+
+  if (promptifyNode) {
+    promptifyNode.parameters.save_output = true;
+    promptifyNode.parameters.template_streaming = true;
+
+    // Allow streaming Promptify results for promptify provider & response pattern expect streaming
+    const promptifyProvider = [...nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
+    const allowStream =
+      promptifyProvider &&
+      isNodeProvider(clonedWorkflow, promptifyProvider.id) &&
+      N8N_RESPONSE_REGEX.test(responseBody);
+
+    if (allowStream) {
+      promptifyNode.parameters.template_streaming = false;
+    }
   }
 
   connections[adjacentNode.name] = {
     [MAIN_CONNECTION_KEY]: [
       [
-        {
-          node: providerNode.name,
+        ...currentProviders.map(provider => ({
+          node: provider.name,
           type: MAIN_CONNECTION_KEY,
           index: 0,
-        },
+        })),
       ],
     ],
   };

@@ -5,9 +5,9 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
-import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE, TIMES } from "@/components/GPT/Constants";
+import { PROMPTIFY_NODE_TYPE, PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
-import { cleanCredentialName, removeExistingProviderNode } from "@/components/GPTs/helpers";
+import { cleanCredentialName, isNodeProvider, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type {
@@ -297,6 +297,16 @@ const useChat = ({ workflow }: Props) => {
         text: "",
         noHeader: true,
       });
+
+      if (inputs.length > 0) {
+        const inputsMessage = createMessage({
+          type: "form",
+          text: "Please fill out the following details:",
+          noHeader: true,
+        });
+        preparedMessages.push(inputsMessage);
+      }
+
       preparedMessages.push(testWorkflowMessage);
     } else {
       const provider = PROVIDERS[providerType];
@@ -331,7 +341,9 @@ const useChat = ({ workflow }: Props) => {
 
     setMessages(prevMessages =>
       prevMessages
-        .filter(msg => !["schedule_activation", "schedule_update", "schedule_activation_test"].includes(msg.type))
+        .filter(
+          msg => !["schedule_activation", "schedule_update", "schedule_activation_test", "form"].includes(msg.type),
+        )
         .concat(preparedMessages),
     );
   };
@@ -370,10 +382,9 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const removeProvider = (shouldUpdate = true) => {
+  const removeProvider = (providerName: string, shouldUpdate = true) => {
     let _clonedWorkflow = structuredClone(clonedWorkflow)!;
-    const respondToWebhookNode = _clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-    _clonedWorkflow = removeExistingProviderNode(_clonedWorkflow, workflow, respondToWebhookNode?.name!);
+    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerName);
     if (shouldUpdate) {
       dispatch(setClonedWorkflow(_clonedWorkflow));
     }
@@ -393,7 +404,18 @@ const useChat = ({ workflow }: Props) => {
     if (schedulingData.frequency === "Test GPT") {
       let cleanWorkflow = structuredClone(clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        cleanWorkflow = removeProvider(false);
+        // Find the last Promptify node and verify if it is a provider node to be removed.
+        const promptifyNode = [...cleanWorkflow.nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
+        if (!promptifyNode) {
+          throw new Error("Promptify provider node not found");
+        }
+
+        const isProvider = isNodeProvider(cleanWorkflow, promptifyNode.id);
+        if (!isProvider) {
+          throw new Error("Promptify provider node not found");
+        }
+
+        cleanWorkflow = removeProvider(promptifyNode.name, false);
       }
       await handleUpdateWorkflow(cleanWorkflow);
       await executeWorkflow();
