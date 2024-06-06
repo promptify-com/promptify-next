@@ -82,7 +82,7 @@ const useChat = ({ workflow }: Props) => {
     }
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
     setMessages(initMessages);
-
+    console.log({ areAllCredentialsStored });
     if (areAllCredentialsStored) {
       insertFrequencyMessage();
     }
@@ -90,6 +90,7 @@ const useChat = ({ workflow }: Props) => {
     updateScheduleMode.current = !!clonedWorkflow?.periodic_task;
 
     if (updateScheduleMode.current) {
+      insertFrequencyMessage();
       showAllSteps();
     }
   };
