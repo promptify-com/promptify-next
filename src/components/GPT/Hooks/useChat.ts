@@ -341,7 +341,9 @@ const useChat = ({ workflow }: Props) => {
 
     setMessages(prevMessages =>
       prevMessages
-        .filter(msg => !["schedule_activation", "schedule_update", "schedule_activation_test"].includes(msg.type))
+        .filter(
+          msg => !["schedule_activation", "schedule_update", "schedule_activation_test", "form"].includes(msg.type),
+        )
         .concat(preparedMessages),
     );
   };
