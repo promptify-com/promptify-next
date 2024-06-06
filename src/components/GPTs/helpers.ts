@@ -151,9 +151,9 @@ export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeId: string
   if (!isProvider) return false;
 
   const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-  const isResponseConnected = workflow.connections[nodeData.name][MAIN_CONNECTION_KEY][0].find(
-    conn => conn.node === respondToWebhookNode?.name,
-  );
+  const nodeConnection = workflow.connections[nodeData.name];
+  const isResponseConnected =
+    nodeConnection && nodeConnection[MAIN_CONNECTION_KEY][0].find(conn => conn.node === respondToWebhookNode?.name);
   return isResponseConnected;
 };
 
@@ -245,7 +245,15 @@ export function injectProviderNode(
   if (promptifyNode) {
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
-    if (node.type === PROMPTIFY_NODE_TYPE && N8N_RESPONSE_REGEX.test(responseBody)) {
+
+    // Allow streaming Promptify results for promptify provider & response pattern expect streaming
+    const promptifyProvider = [...nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
+    const allowStream =
+      promptifyProvider &&
+      isNodeProvider(clonedWorkflow, promptifyProvider.id) &&
+      N8N_RESPONSE_REGEX.test(responseBody);
+
+    if (allowStream) {
       promptifyNode.parameters.template_streaming = false;
     }
   }
