@@ -402,7 +402,8 @@ const useChat = ({ workflow }: Props) => {
     if (schedulingData.frequency === "Test GPT") {
       let cleanWorkflow = structuredClone(clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        const promptifyNode = cleanWorkflow.nodes.reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
+        // Find the last Promptify node and verify if it is a provider node to be removed.
+        const promptifyNode = [...cleanWorkflow.nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
         if (!promptifyNode) {
           throw new Error("Promptify provider node not found");
         }
