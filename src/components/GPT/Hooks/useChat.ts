@@ -82,7 +82,7 @@ const useChat = ({ workflow }: Props) => {
     }
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
     setMessages(initMessages);
-    console.log({ areAllCredentialsStored });
+
     if (areAllCredentialsStored) {
       insertFrequencyMessage();
     }
