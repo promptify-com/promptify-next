@@ -123,6 +123,7 @@ function GPTsPage() {
                 header="Scheduled GPTs"
                 subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
               />
+
               <Stack
                 ref={bannerRef}
                 px={{ xs: "24px", md: "80px" }}
