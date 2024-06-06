@@ -297,6 +297,16 @@ const useChat = ({ workflow }: Props) => {
         text: "",
         noHeader: true,
       });
+
+      if (inputs.length > 0) {
+        const inputsMessage = createMessage({
+          type: "form",
+          text: "Please fill out the following details:",
+          noHeader: true,
+        });
+        preparedMessages.push(inputsMessage);
+      }
+
       preparedMessages.push(testWorkflowMessage);
     } else {
       const provider = PROVIDERS[providerType];

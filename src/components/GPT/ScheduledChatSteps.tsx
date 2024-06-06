@@ -146,7 +146,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   message={message}
                   onActivate={activateWorkflow}
                   allowActivateButton={allowActivateButton}
-                  title="Ready to run this GPT"
+                  title="Ready to test this GPT"
                   buttonMessage="Run"
                 />
               )}
