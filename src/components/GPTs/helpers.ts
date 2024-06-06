@@ -184,6 +184,14 @@ export const removeProviderNode = (
     connection => connection.node !== removedProviderName,
   );
 
+  if (!cleanConnections.length) {
+    cleanConnections.push({
+      node: respondToWebhookNode.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    });
+  }
+
   workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
   workflow.connections[adjacentNode.name] = {
     [MAIN_CONNECTION_KEY]: [cleanConnections],
@@ -213,7 +221,7 @@ export function injectProviderNode(
   const adjacentNode = findAdjacentNode(nodes, connections, adjacentConnector);
 
   if (!adjacentNode) {
-    throw new NodeNotFoundError(`Could not find the adjacent node to "${respondToWebhookNode.name}" node`);
+    throw new NodeNotFoundError(`Could not find the adjacent node to "${adjacentConnector}" node`);
   }
 
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
