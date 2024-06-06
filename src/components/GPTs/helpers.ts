@@ -20,7 +20,7 @@ import type {
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
-import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "../GPT/Constants";
+import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
@@ -143,11 +143,20 @@ const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConne
   );
 };
 
+export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeName: string) => {
+  const nodeData = workflow.nodes.find(_node => _node.name === nodeName);
+  if (!nodeData) return false;
+
+  const isProvider = PROVIDERS[nodeData.type as ProviderType];
+  const connectedNode = findAdjacentNode(workflow.nodes, workflow.connections, nodeData.name);
+  return isProvider && connectedNode?.type === RESPOND_TO_WEBHOOK_NODE_TYPE;
+};
+
 export const removeProviderNode = (
   workflow: IWorkflowCreateResponse,
-  providerType: ProviderType,
+  providerName: string,
 ): IWorkflowCreateResponse => {
-  const provider = workflow.nodes.find(node => node.type === providerType);
+  const provider = workflow.nodes.find(node => node.name === providerName);
 
   if (!provider) {
     return workflow;
@@ -161,7 +170,6 @@ export const removeProviderNode = (
 
   const removedProviderName = provider.name;
   const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
-  console.log({ removedProviderName, adjacentNode });
 
   if (!adjacentNode) {
     throw new Error('Could not find the adjacent node to "Respond to Webhook" node');

@@ -5,9 +5,9 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
-import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE, TIMES } from "@/components/GPT/Constants";
+import { PROMPTIFY_NODE_TYPE, PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
-import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
+import { cleanCredentialName, isNodeProvider, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type {
@@ -370,9 +370,9 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const removeProvider = (providerType: ProviderType, shouldUpdate = true) => {
+  const removeProvider = (providerName: string, shouldUpdate = true) => {
     let _clonedWorkflow = structuredClone(clonedWorkflow)!;
-    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerType);
+    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerName);
     if (shouldUpdate) {
       dispatch(setClonedWorkflow(_clonedWorkflow));
     }
@@ -392,7 +392,17 @@ const useChat = ({ workflow }: Props) => {
     if (schedulingData.frequency === "Test GPT") {
       let cleanWorkflow = structuredClone(clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        cleanWorkflow = removeProvider(PROMPTIFY_NODE_TYPE, false);
+        const promptifyNode = cleanWorkflow.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+        if (!promptifyNode) {
+          throw new Error("Promptify provider node not found");
+        }
+
+        const isProvider = isNodeProvider(cleanWorkflow, promptifyNode.name);
+        if (!isProvider) {
+          throw new Error("Promptify provider node not found");
+        }
+
+        cleanWorkflow = removeProvider(promptifyNode.name, false);
       }
       await handleUpdateWorkflow(cleanWorkflow);
       await executeWorkflow();

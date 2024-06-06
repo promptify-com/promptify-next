@@ -49,7 +49,7 @@ function ResponseProvidersContainer({ message, workflow, prepareWorkflow, remove
                 providerType={providerType}
                 workflow={workflow}
                 onInject={workflow => prepareWorkflow(providerType, workflow)}
-                onUnselect={() => removeProvider(providerType)}
+                onUnselect={removeProvider}
               />
             </Grid>
           );

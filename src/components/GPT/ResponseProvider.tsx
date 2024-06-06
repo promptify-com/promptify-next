@@ -27,7 +27,7 @@ interface Props {
   providerType: ProviderType;
   workflow: ITemplateWorkflow;
   onInject(workflow: IWorkflowCreateResponse): void;
-  onUnselect(): IWorkflowCreateResponse;
+  onUnselect(providerName: string): IWorkflowCreateResponse;
 }
 
 function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Props) {
@@ -121,7 +121,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
   };
 
   const handleUnSelect = () => {
-    onUnselect();
+    onUnselect(providerNodeName);
     dispatch(setToast({ message: `Provider ${providerNodeName} removed`, severity: "info" }));
   };
 
