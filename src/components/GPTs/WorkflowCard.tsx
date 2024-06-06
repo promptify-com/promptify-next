@@ -190,7 +190,14 @@ function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId }: Props
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={{ ...iconTextStyle, bgcolor: templateWorkflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)" }}
+                sx={{
+                  ...iconTextStyle,
+                  bgcolor: templateWorkflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)",
+                  transition: "background-color 0.3s ease",
+                  "&:hover": {
+                    bgcolor: templateWorkflow?.is_liked ? "rgba(0, 0, 0, 0.8)" : "red",
+                  },
+                }}
                 className="icon-text-style"
               >
                 <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
