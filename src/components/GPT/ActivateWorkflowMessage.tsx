@@ -11,7 +11,6 @@ interface Props {
   message: IMessage;
   onActivate(): Promise<void>;
   allowActivateButton?: boolean;
-  updateMode?: boolean;
   title?: string;
   buttonMessage?: string;
 }
@@ -19,7 +18,6 @@ interface Props {
 export default function ActivateWorkflowMessage({
   message,
   onActivate,
-  updateMode,
   allowActivateButton,
   title,
   buttonMessage,
@@ -35,7 +33,7 @@ export default function ActivateWorkflowMessage({
 
   return (
     <MessageContainer message={message}>
-      {!updateMode && message.text && (
+      {message.text && (
         <Typography
           fontSize={14}
           fontWeight={500}
@@ -64,7 +62,7 @@ export default function ActivateWorkflowMessage({
           fontWeight={500}
           color={"common.black"}
         >
-          {title ?? `Ready to ${updateMode ? "update" : "turn on"} this GPT`}
+          {title ?? `Ready to turn on this GPT`}
         </Typography>
         <Button
           onClick={handleActivate}
@@ -81,7 +79,7 @@ export default function ActivateWorkflowMessage({
               }}
             />
           )}
-          {buttonMessage || (updateMode ? "Update Activation" : "Activate")}
+          {buttonMessage || "Activate"}
         </Button>
       </Stack>
     </MessageContainer>
