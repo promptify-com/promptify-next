@@ -5,7 +5,7 @@ import { alpha } from "@mui/material";
 import { theme } from "@/theme";
 import Image from "@/components/design-system/Image";
 import { ElectricBoltIcon } from "@/assets/icons/ElectricBoltIcon";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import lazy from "next/dynamic";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState } from "@/core/store/chatSlice";
@@ -16,7 +16,7 @@ import StatusChip from "@/components/GPTs/StatusChip";
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 }
 
 export default function Header({ workflow }: Props) {

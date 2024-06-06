@@ -4,17 +4,19 @@ import Fade from "@mui/material/Fade";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import { IWorkflow } from "../Automation/types";
+import { ITemplateWorkflow } from "../Automation/types";
 import Box from "@mui/material/Box";
 
 interface WorkflowActionsModalProps {
   open: boolean;
-  workflow: IWorkflow | null;
+  workflow?: ITemplateWorkflow;
   anchorEl: HTMLElement | null;
   onClose: () => void;
   onEdit: () => void;
   onPause: () => void;
+  onResume: () => void;
   onRemove: () => void;
+  isPaused: boolean;
 }
 
 function WorkflowActionsModal({
@@ -24,7 +26,9 @@ function WorkflowActionsModal({
   onClose,
   onEdit,
   onPause,
+  onResume,
   onRemove,
+  isPaused,
 }: WorkflowActionsModalProps) {
   if (!workflow) return null;
 
@@ -94,9 +98,9 @@ function WorkflowActionsModal({
                 </MenuItem>
                 <MenuItem
                   sx={menuItemStyle}
-                  onClick={onPause}
+                  onClick={isPaused ? onResume : onPause}
                 >
-                  Pause GPT
+                  {isPaused ? "Resume GPT" : "Pause GPT"}
                 </MenuItem>
                 <MenuItem
                   sx={menuItemStyle}

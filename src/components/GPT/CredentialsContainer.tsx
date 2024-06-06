@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, ITemplateWorkflow } from "@/components/Automation/types";
 import Credentials from "@/components/Prompt/Common/Chat/Inputs/Credentials";
 import { CardMedia, Typography } from "@mui/material";
 import Image from "@/components/design-system/Image";
-import { useAppSelector } from "@/hooks/useStore";
-import { initialState as initialChatState } from "@/core/store/chatSlice";
-import Check from "@mui/icons-material/Check";
 import { cleanCredentialName } from "../GPTs/helpers";
 
 interface Props {
   message: string;
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   isScheduled?: boolean;
 }
 
@@ -63,12 +60,12 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
             <Stack
               direction={"row"}
               alignItems={"center"}
-              gap={3}
+              gap={2}
             >
               <CardMedia
                 sx={{
-                  width: 16,
-                  height: 16,
+                  width: 22,
+                  height: 22,
                   p: "9px",
                   borderRadius: "50%",
                   border: "1px solid",
@@ -96,20 +93,11 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
                 {cleanCredentialName(input.displayName)}
               </Typography>
             </Stack>
-            {isScheduled && checkCredentialInserted(input) ? (
-              <Check
-                sx={{
-                  width: 18,
-                  height: 18,
-                  p: "7px",
-                  borderRadius: "50%",
-                  bgcolor: "#4EB972",
-                  color: "#FFF",
-                }}
-              />
-            ) : (
-              <Credentials input={input} />
-            )}
+
+            <Credentials
+              input={input}
+              isScheduled={isScheduled}
+            />
           </Stack>
         ))}
       </Stack>

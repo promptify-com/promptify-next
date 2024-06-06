@@ -35,10 +35,11 @@ const StyledChip = styled(Chip, {
   backgroundColor: statusStyles[status].backgroundColor,
   color: statusStyles[status].color,
   borderRadius: "16px",
-  padding: "5px 8px",
+  padding: "5px 5px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  maxHeight: "22px",
   "& .MuiChip-icon": {
     color: statusStyles[status].iconColor,
     width: "10px",
@@ -62,8 +63,8 @@ function StatusChip({ status }: StatusChipProps) {
       icon={
         <span
           style={{
-            width: "10px",
-            height: "10px",
+            width: "8px",
+            height: "8px",
             borderRadius: "50%",
             backgroundColor: statusStyles[status].iconColor,
             display: "inline-block",

@@ -75,7 +75,7 @@ function App({ Component, pageProps }: AppProps) {
           navigationLoadingSpinnerOverlay.appendChild(navigationLoadingSpinner);
           document.body.appendChild(navigationLoadingSpinnerOverlay);
         } else {
-          _navigationLoadingSpinnerOverlay.classList.remove("hidden");
+          _navigationLoadingSpinnerOverlay.remove();
         }
       }
     };
@@ -83,7 +83,7 @@ function App({ Component, pageProps }: AppProps) {
       const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
 
       if (_navigationLoadingSpinnerOverlay) {
-        _navigationLoadingSpinnerOverlay.classList.add("hidden");
+        _navigationLoadingSpinnerOverlay.remove();
       }
     };
 

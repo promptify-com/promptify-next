@@ -3,10 +3,10 @@ import Stack from "@mui/material/Stack";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCardPlaceholder";
-import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 
 interface Props {
-  workflows?: (IWorkflow | IWorkflowCreateResponse)[];
+  workflows?: (ITemplateWorkflow | IWorkflowCreateResponse)[];
   isLoading: boolean;
   header: string;
   subheader?: string;
@@ -22,13 +22,14 @@ const GPTsSection = ({ workflows, isLoading, header, subheader }: Props) => {
       header={header}
       subheader={subheader}
     >
-      {workflows?.map((workflow, index) => (
+      {workflows?.map(workflow => (
         <Stack key={workflow.id}>
           <WorkflowCard
-            index={index}
-            workflow={("template_workflow" in workflow ? workflow.template_workflow : workflow) as IWorkflow}
+            templateWorkflow={
+              ("template_workflow" in workflow ? workflow.template_workflow : workflow) as ITemplateWorkflow
+            }
             periodic_task={workflow?.periodic_task}
-            workflowId={"template_workflow" in workflow ? workflow.id : ""}
+            userWorkflowId={"template_workflow" in workflow ? workflow.id : ""}
           />
         </Stack>
       ))}

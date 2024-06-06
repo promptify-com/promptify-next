@@ -1,46 +1,58 @@
 import { useRef, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
+import Chip from "@mui/material/Chip";
+
+import { setToast } from "@/core/store/toastSlice";
+import { useAppDispatch } from "@/hooks/useStore";
+import {
+  useDeleteWorkflowMutation,
+  useDislikeWorkflowMutation,
+  useLikeWorkflowMutation,
+  usePauseWorkflowMutation,
+  useResumeWorkflowMutation,
+} from "@/core/api/workflows";
+import { TIMES } from "@/components/GPT/Constants";
+import { GearIcon } from "@/assets/icons/GearIcon";
+import useTruncate from "@/hooks/useTruncate";
 import Image from "@/components/design-system/Image";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
-import Link from "next/link";
-import { IWorkflow, IWorkflowSchedule } from "../Automation/types";
-import useTruncate from "@/hooks/useTruncate";
 import { capitalizeString } from "@/common/helpers";
-import { TIMES } from "../GPT/Constants";
-import Chip from "@mui/material/Chip";
-import { useDeleteWorkflowMutation } from "@/core/api/workflows";
 import { DeleteDialog } from "../dialog/DeleteDialog";
-import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
-import { useRouter } from "next/router";
-import { setToast } from "@/core/store/toastSlice";
-import { useAppDispatch } from "@/hooks/useStore";
+import type { ITemplateWorkflow, IWorkflowSchedule } from "../Automation/types";
 
 interface Props {
-  index: number;
-  workflow?: IWorkflow;
+  templateWorkflow?: ITemplateWorkflow;
   periodic_task?: null | {
     task: string;
     name: string;
     enabled: boolean;
     crontab: IWorkflowSchedule;
   };
-  workflowId?: string;
+  userWorkflowId?: string;
 }
 
-function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
+function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { truncate } = useTruncate();
 
   const [deleteWorkflow] = useDeleteWorkflowMutation();
-  const [selectedWorkflow, setSelectedWorkflow] = useState<IWorkflow | null>(null);
+  const [likeWorklow] = useLikeWorkflowMutation();
+  const [dislikeWorkflow] = useDislikeWorkflowMutation();
+
+  const [pauseWorkflow] = usePauseWorkflowMutation();
+  const [resumeWorkflow] = useResumeWorkflowMutation();
+  const [selectedWorkflow, setSelectedWorkflow] = useState<ITemplateWorkflow>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
   const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
@@ -49,7 +61,12 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   const handleOpenModal = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    setSelectedWorkflow(workflow!!);
+    if (isModalOpen) {
+      setSelectedWorkflow(undefined);
+      setIsModalOpen(false);
+      return;
+    }
+    setSelectedWorkflow(templateWorkflow);
     setIsModalOpen(true);
   };
 
@@ -58,11 +75,11 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   };
 
   const handleDelete = async () => {
-    if (!workflowId) return;
-
+    if (!userWorkflowId) {
+    }
     try {
-      await deleteWorkflow(workflowId);
-      setSelectedWorkflow(null);
+      await deleteWorkflow(String(userWorkflowId));
+      setSelectedWorkflow(undefined);
       setOpenDeleteDialog(false);
 
       dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
@@ -73,12 +90,35 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
   };
 
   const handleEdit = () => {
-    router.push(`/gpts/${workflow?.slug}`);
+    router.push(`/gpts/${templateWorkflow?.slug}`);
     handleCloseModal();
   };
 
-  const handlePause = () => {
-    // Handle the pause action
+  const handlePause = async () => {
+    if (!userWorkflowId) return;
+
+    try {
+      await pauseWorkflow(userWorkflowId);
+      setIsPaused(true);
+      dispatch(setToast({ message: "Workflow paused successfully", severity: "success" }));
+    } catch (err) {
+      console.error("Failed to pause workflow", err);
+      dispatch(setToast({ message: "Failed to pause workflow. Please try again.", severity: "error" }));
+    }
+    handleCloseModal();
+  };
+
+  const handleResume = async () => {
+    if (!userWorkflowId) return;
+
+    try {
+      await resumeWorkflow(userWorkflowId);
+      setIsPaused(false);
+      dispatch(setToast({ message: "Workflow resumed successfully", severity: "success" }));
+    } catch (err) {
+      console.error("Failed to resume workflow", err);
+      dispatch(setToast({ message: "Failed to resume workflow. Please try again.", severity: "error" }));
+    }
     handleCloseModal();
   };
 
@@ -87,10 +127,32 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
     handleCloseModal();
   };
 
+  const handleLikeDislike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!templateWorkflow?.id) {
+      return;
+    }
+
+    const _id = templateWorkflow.id;
+
+    try {
+      if (templateWorkflow?.is_liked) {
+        await dislikeWorkflow(_id);
+        dispatch(setToast({ message: `You unlike ${templateWorkflow.name}`, severity: "success" }));
+        return;
+      }
+      await likeWorklow(_id);
+      dispatch(setToast({ message: `You liked ${templateWorkflow?.name}`, severity: "success" }));
+    } catch (error) {
+      dispatch(setToast({ message: "Something went wrong, please try again later!", severity: "error" }));
+    }
+  };
+
   return (
     <>
       <Link
-        href={`/gpts/${workflow?.slug}`}
+        href={`/gpts/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
       >
         <Stack
@@ -111,9 +173,9 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
             position={"relative"}
           >
             <Image
-              src={workflow?.image ?? ""}
+              src={templateWorkflow?.image ?? ""}
               fill
-              alt={workflow?.name ?? "workflow"}
+              alt={templateWorkflow?.name ?? "workflow"}
               style={{ objectFit: "cover" }}
             />
             <Stack
@@ -124,41 +186,49 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
               right={10}
             >
               <Stack
+                onClick={handleLikeDislike}
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={iconTextStyle}
+                sx={{
+                  ...iconTextStyle,
+                  bgcolor: templateWorkflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)",
+                  transition: "background-color 0.3s ease",
+                  "&:hover": {
+                    bgcolor: templateWorkflow?.is_liked ? "rgba(0, 0, 0, 0.8)" : "red",
+                  },
+                }}
                 className="icon-text-style"
               >
                 <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
-                {workflow?.activities?.likes_count ?? 0}
+                {templateWorkflow?.likes ?? 0}
               </Stack>
               <Stack
                 direction={"row"}
                 alignItems={"center"}
                 gap={0.5}
-                sx={iconTextStyle}
+                sx={{ ...iconTextStyle, bgcolor: "rgba(0, 0, 0, 0.8)" }}
                 className="icon-text-style"
               >
                 <BoltOutlined
                   size="12"
                   color="#ffffff"
                 />
-                {workflow?.activities?.favorites_count ?? 0}
+                {templateWorkflow?.activities?.favorites_count ?? 0}
               </Stack>
             </Stack>
           </Box>
-          {periodic_task && workflow?.is_schedulable && (
+          {periodic_task && templateWorkflow?.is_schedulable && (
             <Stack
               position={"absolute"}
-              top={{ xs: "24px", md: 7 }}
-              right={{ xs: "24px", md: 7 }}
+              top={{ xs: "24px", md: "16px" }}
+              right={{ xs: "24px", md: "16px" }}
             >
-              <StatusChip status={periodic_task?.enabled ? "active" : "paused"} />
+              <StatusChip status={!isPaused ? "active" : "paused"} />
             </Stack>
           )}
           <Stack
-            p={{ xs: "16px", md: "40px 24px 16px 24px" }}
+            p={{ xs: "16px", md: `${!periodic_task ? "16px 24px" : "40px 10px 16px 24px"}` }}
             flex={1}
             gap={"24px"}
             alignItems={"start"}
@@ -170,18 +240,29 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
                 color={"#000"}
                 lineHeight={"120%"}
               >
-                {workflow?.name ?? ""}
+                {templateWorkflow?.name ?? ""}
               </Typography>
               <Typography
                 fontSize={11}
                 fontWeight={400}
                 lineHeight={"150%"}
                 color={"#000"}
+                minHeight={"51px"}
+                maxWidth={"180px"}
               >
-                {truncate(workflow?.description || "", { length: 70 })}
+                {truncate(templateWorkflow?.description || "", { length: 70 })}
               </Typography>
+              {!periodic_task && (
+                <Typography
+                  fontSize={11}
+                  fontWeight={400}
+                  lineHeight={"150%"}
+                  color={"#000"}
+                  minHeight={{ xs: 0, md: "17px" }}
+                ></Typography>
+              )}
             </Stack>
-            {periodic_task && workflow?.is_schedulable ? (
+            {periodic_task && templateWorkflow?.is_schedulable ? (
               <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
@@ -245,8 +326,10 @@ function WorkflowCard({ index, workflow, periodic_task, workflowId }: Props) {
           onClose={handleCloseModal}
           onEdit={handleEdit}
           onPause={handlePause}
+          onResume={handleResume}
           onRemove={handleRemove}
           anchorEl={actionsAnchorRef.current}
+          isPaused={isPaused}
         />
       )}
       {openDeleteDialog && (
@@ -265,7 +348,6 @@ const iconTextStyle = {
   fontSize: 13,
   fontWeight: 400,
   color: "white",
-  bgcolor: "rgba(0, 0, 0, 0.8)",
   borderRadius: "100px",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   padding: "0px 12px",

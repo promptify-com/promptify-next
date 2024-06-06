@@ -5,12 +5,12 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CheckIcon from "@mui/icons-material/Check";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import { getWorkflowDataFlow } from "./helpers";
 import Image from "@/components/design-system/Image";
 import Stack from "@mui/material/Stack";
 
-function Workflow({ workflow }: { workflow: IWorkflow }) {
+function Workflow({ workflow }: { workflow: ITemplateWorkflow }) {
   const steps = getWorkflowDataFlow(workflow);
 
   return (

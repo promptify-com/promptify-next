@@ -23,12 +23,9 @@ function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
             header={workflows.category || ""}
             subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
           >
-            {workflows.templates.map((workflow, index) => (
+            {workflows.templates.map(workflow => (
               <Stack key={workflow.id}>
-                <WorkflowCard
-                  index={index}
-                  workflow={workflow}
-                />
+                <WorkflowCard templateWorkflow={workflow} />
               </Stack>
             ))}
           </CarouselSection>

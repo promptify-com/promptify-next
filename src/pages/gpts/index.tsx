@@ -26,7 +26,6 @@ function GPTsPage() {
 
   const currentUser = useAppSelector(state => state.user.currentUser ?? null);
 
-  const { data: workflowsByCategory, isLoading: isLoadingWorkflowsByCategory } = useGetWorkflowByCategoryQuery();
   const { data: userWorkflows, isLoading: isLoadingUserWorkflows } = useGetUserWorkflowsQuery(undefined, {
     skip: !currentUser?.id,
   });
@@ -52,6 +51,11 @@ function GPTsPage() {
   const showHistoricalCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showNewGPTsCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showGPTCategoriesCarousel = observers.GPTCategoriesCarouselObserver?.isIntersecting;
+
+  const { data: workflowsByCategory, isLoading: isLoadingWorkflowsByCategory } = useGetWorkflowByCategoryQuery(
+    undefined,
+    { skip: !showGPTCategoriesCarousel },
+  );
 
   const schedulableWorkflows = workflowsByCategory?.flatMap(category =>
     category.templates.filter(workflow => workflow.is_schedulable),
@@ -92,8 +96,7 @@ function GPTsPage() {
                       ml={index === 0 ? "24px" : 0}
                     >
                       <WorkflowCard
-                        index={index}
-                        workflow={workflow}
+                        templateWorkflow={workflow}
                         periodic_task={workflow.periodic_task}
                       />
                     </Stack>
@@ -159,7 +162,7 @@ function GPTsPage() {
                 {showGPTCategoriesCarousel && (
                   <GPTsByCategorySection
                     workflowCategories={workflowsByCategory}
-                    isLoading={isLoadingUserWorkflows}
+                    isLoading={isLoadingWorkflowsByCategory}
                   />
                 )}
               </Stack>

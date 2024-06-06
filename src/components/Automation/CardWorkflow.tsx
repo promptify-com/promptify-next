@@ -11,11 +11,11 @@ import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { getNodeNames } from "@/components/Automation/helpers";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import { useEffect, useState } from "react";
 
 type CardWorkflowProps = {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
 };
 
 function CardWorkflow({ workflow }: CardWorkflowProps) {
