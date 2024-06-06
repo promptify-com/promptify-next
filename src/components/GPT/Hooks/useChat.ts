@@ -392,12 +392,12 @@ const useChat = ({ workflow }: Props) => {
     if (schedulingData.frequency === "Test GPT") {
       let cleanWorkflow = structuredClone(clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        const promptifyNode = cleanWorkflow.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+        const promptifyNode = cleanWorkflow.nodes.reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
         if (!promptifyNode) {
           throw new Error("Promptify provider node not found");
         }
 
-        const isProvider = isNodeProvider(cleanWorkflow, promptifyNode.name);
+        const isProvider = isNodeProvider(cleanWorkflow, promptifyNode.id);
         if (!isProvider) {
           throw new Error("Promptify provider node not found");
         }

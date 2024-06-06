@@ -143,13 +143,18 @@ const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConne
   );
 };
 
-export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeName: string) => {
-  const nodeData = workflow.nodes.find(_node => _node.name === nodeName);
+export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeId: string) => {
+  const nodeData = workflow.nodes.find(_node => _node.id === nodeId);
   if (!nodeData) return false;
 
-  const isProvider = PROVIDERS[nodeData.type as ProviderType];
-  const connectedNode = findAdjacentNode(workflow.nodes, workflow.connections, nodeData.name);
-  return isProvider && connectedNode?.type === RESPOND_TO_WEBHOOK_NODE_TYPE;
+  const isProvider = !!PROVIDERS[nodeData.type as ProviderType];
+  if (!isProvider) return false;
+
+  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+  const isResponseConnected = workflow.connections[nodeData.name][MAIN_CONNECTION_KEY][0].find(
+    conn => conn.node === respondToWebhookNode?.name,
+  );
+  return isResponseConnected;
 };
 
 export const removeProviderNode = (
