@@ -90,6 +90,7 @@ const useChat = ({ workflow }: Props) => {
     updateScheduleMode.current = !!clonedWorkflow?.periodic_task;
 
     if (updateScheduleMode.current) {
+      insertFrequencyMessage();
       showAllSteps();
     }
   };
