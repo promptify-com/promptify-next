@@ -7,7 +7,7 @@ import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
 import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
-import { cleanCredentialName, removeExistingProviderNode } from "@/components/GPTs/helpers";
+import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type {
@@ -370,10 +370,9 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const removeProvider = (shouldUpdate = true) => {
+  const removeProvider = (providerType: ProviderType, shouldUpdate = true) => {
     let _clonedWorkflow = structuredClone(clonedWorkflow)!;
-    const respondToWebhookNode = _clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-    _clonedWorkflow = removeExistingProviderNode(_clonedWorkflow, workflow, respondToWebhookNode?.name!);
+    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerType);
     if (shouldUpdate) {
       dispatch(setClonedWorkflow(_clonedWorkflow));
     }
@@ -393,7 +392,7 @@ const useChat = ({ workflow }: Props) => {
     if (schedulingData.frequency === "Test GPT") {
       let cleanWorkflow = structuredClone(clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        cleanWorkflow = removeProvider(false);
+        cleanWorkflow = removeProvider(PROMPTIFY_NODE_TYPE, false);
       }
       await handleUpdateWorkflow(cleanWorkflow);
       await executeWorkflow();
