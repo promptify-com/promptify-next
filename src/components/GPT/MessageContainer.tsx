@@ -7,13 +7,13 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { ReactNode } from "react";
 
 interface Props {
-  message: IMessage;
+  message?: IMessage;
   children: ReactNode;
 }
 
 export default function MessageContainer({ message, children }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { fromUser, noHeader } = message;
+  const { fromUser, noHeader } = message ?? {};
 
   return (
     <Stack

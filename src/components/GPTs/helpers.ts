@@ -115,6 +115,12 @@ class NodeNotFoundError extends Error {
   }
 }
 
+export const nameProvider = (name: string) => `_send__provider__$${name}$__message_`;
+export const isNodeProvider = (node: INode): boolean => {
+  const providerPattern = /^_send__provider__\$.*\$__message_$/;
+  return providerPattern.test(node.name);
+};
+
 const findProviderNodes = (
   workflow: IWorkflowCreateResponse,
   templateWorkflow: ITemplateWorkflow,
@@ -143,27 +149,13 @@ const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConne
   );
 };
 
-export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeId: string) => {
-  const nodeData = workflow.nodes.find(_node => _node.id === nodeId);
-  if (!nodeData) return false;
-
-  const isProvider = !!PROVIDERS[nodeData.type as ProviderType];
-  if (!isProvider) return false;
-
-  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-  const nodeConnection = workflow.connections[nodeData.name];
-  const isResponseConnected =
-    nodeConnection && nodeConnection[MAIN_CONNECTION_KEY][0].find(conn => conn.node === respondToWebhookNode?.name);
-  return isResponseConnected;
-};
-
 export const removeProviderNode = (
   workflow: IWorkflowCreateResponse,
   providerName: string,
 ): IWorkflowCreateResponse => {
-  const provider = workflow.nodes.find(node => node.name === providerName);
+  const providerNode = workflow.nodes.find(node => node.name === providerName);
 
-  if (!provider) {
+  if (!providerNode) {
     return workflow;
   }
 
@@ -173,30 +165,37 @@ export const removeProviderNode = (
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
-  const removedProviderName = provider.name;
-  const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
+  const isPromptifyProvider = providerNode.type === PROMPTIFY_NODE_TYPE && isNodeProvider(providerNode);
+  const removedProviderName = providerNode.name;
 
-  if (!adjacentNode) {
-    throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
-  }
+  if (!isPromptifyProvider) {
+    const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
 
-  const cleanConnections = workflow.connections[adjacentNode.name][MAIN_CONNECTION_KEY][0].filter(
-    connection => connection.node !== removedProviderName,
-  );
+    if (!adjacentNode) {
+      throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
+    }
 
-  if (!cleanConnections.length) {
-    cleanConnections.push({
-      node: respondToWebhookNode.name,
-      type: MAIN_CONNECTION_KEY,
-      index: 0,
-    });
+    if (!isPromptifyProvider) {
+      const cleanConnections = workflow.connections[adjacentNode.name][MAIN_CONNECTION_KEY][0].filter(
+        connection => connection.node !== removedProviderName,
+      );
+
+      if (!cleanConnections.length) {
+        cleanConnections.push({
+          node: respondToWebhookNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        });
+      }
+
+      workflow.connections[adjacentNode.name] = {
+        [MAIN_CONNECTION_KEY]: [cleanConnections],
+      };
+      delete workflow.connections[removedProviderName];
+    }
   }
 
   workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
-  workflow.connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [cleanConnections],
-  };
-  delete workflow.connections[removedProviderName];
 
   return workflow;
 };
@@ -235,6 +234,7 @@ export function injectProviderNode(
     parameters: nodeParametersCB(responseBody),
     position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
   };
+  const isPromptifyProvider = providerNode.type === PROMPTIFY_NODE_TYPE && isNodeProvider(providerNode);
 
   nodes.push(providerNode);
 
@@ -242,44 +242,55 @@ export function injectProviderNode(
 
   const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
 
+  const promptifyProviderExists = !!currentProviders.find(
+    prov => prov.type === PROMPTIFY_NODE_TYPE && isNodeProvider(prov),
+  );
+
   if (promptifyNode) {
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
 
     // Allow streaming Promptify results for promptify provider & response pattern expect streaming
-    const promptifyProvider = [...nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
-    const allowStream =
-      promptifyProvider &&
-      isNodeProvider(clonedWorkflow, promptifyProvider.id) &&
-      N8N_RESPONSE_REGEX.test(responseBody);
+    const allowStream = promptifyProviderExists && N8N_RESPONSE_REGEX.test(responseBody);
 
     if (allowStream) {
       promptifyNode.parameters.template_streaming = false;
     }
   }
 
+  const adjacentConnections = currentProviders
+    .filter(prov => prov.type !== PROMPTIFY_NODE_TYPE)
+    .map(provider => ({
+      node: provider.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    }));
+
+  if (isPromptifyProvider) {
+    adjacentConnections.push({
+      node: respondToWebhookNode.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    });
+  }
+
   connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      [
-        ...currentProviders.map(provider => ({
-          node: provider.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        })),
-      ],
-    ],
+    [MAIN_CONNECTION_KEY]: [[...adjacentConnections]],
   };
-  connections[providerNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      [
-        {
-          node: respondToWebhookNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
+
+  if (!isPromptifyProvider) {
+    connections[providerNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        [
+          {
+            node: respondToWebhookNode.name,
+            type: MAIN_CONNECTION_KEY,
+            index: 0,
+          },
+        ],
       ],
-    ],
-  };
+    };
+  }
 
   return {
     ...clonedWorkflow,

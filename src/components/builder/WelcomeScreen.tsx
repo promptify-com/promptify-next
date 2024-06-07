@@ -13,7 +13,7 @@ import { useLazyGetMyTemplatesQuery } from "@/core/api/templates";
 const createPageLinks = [
   {
     label: "New chained prompt",
-    href: "/prompt-builder/create?editor",
+    href: "/prompt-builder/create?editor=2",
     type: "NEW",
   },
   {

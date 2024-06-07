@@ -65,7 +65,7 @@ export const Builder = () => {
   const { data: templateData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Number(router.query.editor) === 1);
   const [deletePrompt] = useDeletePromptMutation();
   const [publishTemplate] = usePublishTemplateMutation();
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");

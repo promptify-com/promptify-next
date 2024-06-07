@@ -1,6 +1,14 @@
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
 
+function wrapImages(content: string) {
+  const imgRegex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|bmp|svg))/g;
+
+  return content.replace(imgRegex, match => {
+    return `<img src="${match}" alt="image" width="100%" />`;
+  });
+}
+
 export const ExecutionContent = ({ content }: { content: string }) => {
   useEffect(() => {
     const handleClick = async (event: MouseEvent) => {
@@ -84,7 +92,7 @@ export const ExecutionContent = ({ content }: { content: string }) => {
         },
       }}
       dangerouslySetInnerHTML={{
-        __html: content,
+        __html: wrapImages(content),
       }}
     />
   );

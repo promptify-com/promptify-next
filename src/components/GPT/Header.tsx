@@ -101,7 +101,7 @@ export default function Header({ workflow }: Props) {
           >
             {workflow.description}
           </Typography>
-          {periodicTask?.name && (
+          {workflow.is_schedulable && periodicTask?.name && (
             <>
               <Stack
                 direction={"row"}
