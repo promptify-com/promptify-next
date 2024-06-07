@@ -21,12 +21,12 @@ interface Props {
   messages: IMessage[];
   onGenerate: () => void;
   showGenerate: boolean;
-  isValidating: boolean;
+  isExecuting: boolean;
   processData: (skipInitialMessages?: boolean) => Promise<void>;
   workflow: ITemplateWorkflow;
 }
 
-function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, workflow }: Props) {
+function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, workflow }: Props) {
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
@@ -39,7 +39,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
 
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun =
-    !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isValidating;
+    !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isExecuting;
 
   function showForm(messageType: MessageType): boolean {
     return Boolean((messageType === "credentials" && !areCredentialsStored) || (messageType === "form" && hasInputs));
@@ -93,6 +93,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isValidating, w
                     allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
                     onGenerate={onGenerate}
                     message={msg}
+                    isExecuting={isExecuting}
                   />
                 )}
 

@@ -5,14 +5,16 @@ import React from "react";
 interface Props {
   onClick: () => void;
   text?: string;
+  loading?: boolean;
 }
 
-function RunButton({ onClick, text = "Run GPT" }: Props) {
+function RunButton({ onClick, text = "Run GPT", loading = false }: Props) {
   return (
     <Button
       variant="contained"
       onClick={onClick}
       endIcon={<SyncRounded />}
+      disabled={loading}
       sx={{
         fontSize: 13,
         lineHeight: "120%",
