@@ -36,10 +36,17 @@ interface Props {
     crontab: IWorkflowSchedule;
   };
   userWorkflowId?: string;
-  lastExecuted: Date | null;
+  lastExecuted: string | null;
+  isGPTScheduled?: boolean;
 }
 
-function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId, lastExecuted }: Props) {
+function WorkflowCard({
+  templateWorkflow,
+  periodic_task,
+  userWorkflowId,
+  lastExecuted,
+  isGPTScheduled = false,
+}: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -219,7 +226,7 @@ function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId, lastExe
               </Stack>
             </Stack>
           </Box>
-          {periodic_task && templateWorkflow?.is_schedulable && (
+          {isGPTScheduled && (
             <Stack
               position={"absolute"}
               top={{ xs: "24px", md: "16px" }}
@@ -249,12 +256,11 @@ function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId, lastExe
                 fontWeight={400}
                 lineHeight={"150%"}
                 color={"#000"}
-                minHeight={"51px"}
                 maxWidth={"180px"}
               >
                 {truncate(templateWorkflow?.description || "", { length: 70 })}
               </Typography>
-              {!periodic_task && lastExecuted && (
+              {!isGPTScheduled && lastExecuted && (
                 <Typography
                   fontSize={11}
                   fontWeight={500}
@@ -266,7 +272,7 @@ function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId, lastExe
                 </Typography>
               )}
             </Stack>
-            {periodic_task && templateWorkflow?.is_schedulable ? (
+            {isGPTScheduled ? (
               <Stack
                 direction={"row"}
                 justifyContent={"space-between"}

@@ -57,22 +57,24 @@ function GPTsPage() {
     { skip: !showGPTCategoriesCarousel },
   );
 
+  const isFiltering = filter.length > 0;
+
   const userFavoriteeWorkflows = workflowsByCategory?.flatMap(category =>
     category.templates.filter(workflow => workflow.is_liked),
   );
-  const filteredUserWorkflows = userWorkflows?.data?.filter(
+  const scheduleGPTs = userWorkflows?.data?.filter(
     workflow => workflow?.template_workflow?.is_schedulable && workflow?.periodic_task,
   );
-  const isFiltering = filter.length > 0;
 
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
+
   const latestCreatedWorkflows = allWorkflows
     ?.slice()
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const recentlyUsedWorkflows = userWorkflows?.data
+  const recentlyUserdWorkflows = userWorkflows?.data
     ?.filter(workflow => workflow.last_executed)
     .sort((a, b) => {
       const dateA = a.last_executed ? new Date(a.last_executed).getTime() : 0;
@@ -130,8 +132,9 @@ function GPTsPage() {
                 header="Scheduled GPTs"
                 subheader="Easily view, pause, or tweak your scheduled Promptify GPTs. 
                 Stay on top of your tasks and keep your workflow smooth and flexible."
-                workflows={filteredUserWorkflows}
+                workflows={scheduleGPTs}
                 isLoading={isLoadingUserWorkflows}
+                isGPTScheduled
               />
 
               <Stack
@@ -152,8 +155,8 @@ function GPTsPage() {
                   <GPTsSection
                     header="Recently Used GPTs"
                     subheader="Quickly access and reuse the Promptify GPTs you've recently employed to ensure continuity and efficiency in your ongoing tasks."
-                    workflows={recentlyUsedWorkflows}
-                    isLoading={isLoadingAllWorkflows}
+                    workflows={recentlyUserdWorkflows}
+                    isLoading={isLoadingUserWorkflows}
                   />
                 )}
               </Stack>

@@ -82,16 +82,8 @@ export function numberToWord(num: number): string {
 }
 
 // Output: 05.10.2024
-export function formatDate(
-  date: Date | string,
-  locales?: string | string[],
-  options?: Intl.DateTimeFormatOptions,
-): string {
-  const _date = typeof date === "string" ? new Date(date) : date;
-
-  if (isNaN(_date.getTime())) {
-    throw new Error("Invalid date");
-  }
+export function formatDate(date: string, locales?: string | string[], options?: Intl.DateTimeFormatOptions): string {
+  const _date = new Date(date);
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
     day: "2-digit",
