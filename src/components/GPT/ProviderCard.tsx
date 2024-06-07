@@ -7,6 +7,8 @@ import { BtnStyle } from "./Constants";
 import Check from "@mui/icons-material/Check";
 import Close from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Refresh from "@mui/icons-material/Refresh";
 
 interface Props {
   iconUrl: string;
@@ -16,9 +18,10 @@ interface Props {
   onConnect?(): void;
   onInject?(): void;
   onUnselect?(): void;
+  onReconnect?(): void;
 }
 
-function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInject, onUnselect }: Props) {
+function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInject, onUnselect, onReconnect }: Props) {
   return (
     <Stack
       direction={"row"}
@@ -95,7 +98,24 @@ function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInj
         </Stack>
       </Stack>
       {isInjected ? (
-        <>
+        <Stack
+          direction={"row"}
+          gap={1}
+        >
+          <IconButton
+            sx={{
+              border: "none",
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            onClick={async e => {
+              e.preventDefault();
+              onReconnect?.();
+            }}
+          >
+            <Refresh />
+          </IconButton>
           <Check
             className="check-icon"
             sx={{
@@ -134,7 +154,7 @@ function ProviderCard({ iconUrl, name, isConnected, isInjected, onConnect, onInj
               }}
             />
           </Box>
-        </>
+        </Stack>
       ) : isConnected ? (
         <Button
           onClick={onInject}
