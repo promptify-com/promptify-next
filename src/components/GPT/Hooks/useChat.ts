@@ -42,7 +42,7 @@ const useChat = ({ workflow }: Props) => {
   const [schedulingData, setSchedulingData] = useState<IWorkflowSchedule>({
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     workflow_data: {} as WorkflowData,
-    frequency: "daily",
+    frequency: "" as FrequencyType,
     hour: 0,
     minute: 0,
     day_of_week: 0,
@@ -211,7 +211,13 @@ const useChat = ({ workflow }: Props) => {
         workflowId: cleanWorkflow.id,
         data: cleanWorkflow,
       }).unwrap();
-      dispatch(setClonedWorkflow(updatedWorkflow));
+
+      dispatch(
+        setClonedWorkflow({
+          ...updatedWorkflow,
+          schedule: schedulingData,
+        }),
+      );
     } catch (error) {
       console.error("Updating workflow failed", error);
     }
