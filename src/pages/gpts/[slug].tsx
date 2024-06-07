@@ -187,7 +187,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
                 messages={messages}
                 showGenerate={showGenerate}
                 onGenerate={executeWorkflow}
-                isValidating={isValidatingAnswer}
+                isExecuting={isValidatingAnswer}
                 processData={processData}
               />
             )}
