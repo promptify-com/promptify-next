@@ -34,7 +34,6 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const isValidUser = useAppSelector(isValidUserFn);
-  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const generatedExecution = useAppSelector(store => store.executions?.generatedExecution ?? undefined);
   const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(workflow);
   const { extractCredentialsInputFromNodes } = useCredentials();
@@ -92,10 +91,6 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   }, [isValidUser]);
 
   useEffect(() => {
-    if (!clonedWorkflow && isValidUser) {
-      createWorkflowIfNeeded(workflow.id);
-    }
-
     if (!store) {
       return;
     }
@@ -192,7 +187,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
                 messages={messages}
                 showGenerate={showGenerate}
                 onGenerate={executeWorkflow}
-                isValidating={isValidatingAnswer}
+                isExecuting={isValidatingAnswer}
                 processData={processData}
               />
             )}

@@ -11,9 +11,10 @@ interface Props {
   message?: IMessage;
   allowGenerate?: boolean;
   onGenerate?: () => void;
+  isExecuting?: boolean;
 }
 
-function MessageInputs({ message, onGenerate, allowGenerate }: Props) {
+function MessageInputs({ message, onGenerate, allowGenerate, isExecuting }: Props) {
   const inputs = useAppSelector(state => state.chat?.inputs ?? initialState.inputs);
 
   return (
@@ -69,7 +70,12 @@ function MessageInputs({ message, onGenerate, allowGenerate }: Props) {
             />
           ))}
         </Stack>
-        {allowGenerate && <RunButton onClick={() => onGenerate?.()} />}
+        {allowGenerate && (
+          <RunButton
+            loading={isExecuting}
+            onClick={() => onGenerate?.()}
+          />
+        )}
       </Stack>
     </MessageContainer>
   );

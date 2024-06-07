@@ -84,11 +84,7 @@ function useMessageManager({ initialMessageTitle }: Props) {
   const messageAnswersForm = (message: string, type: MessageType = "text") => {
     const botMessage = createMessage({ type, noHeader: true });
     botMessage.text = message;
-    setMessages(prevMessages =>
-      prevMessages
-        .filter(msg => msg.type !== "form")
-        .concat([botMessage, createMessage({ type: "form", noHeader: true })]),
-    );
+    setMessages(prevMessages => prevMessages.concat(botMessage));
   };
 
   function allRequiredInputsAnswered(): boolean {
