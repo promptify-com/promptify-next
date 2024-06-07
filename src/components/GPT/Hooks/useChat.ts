@@ -31,9 +31,7 @@ type WorkflowData = {
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { inputs, answers, areCredentialsStored, clonedWorkflow } = useAppSelector(
-    state => state.chat ?? initialChatState,
-  );
+  const { answers, areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -285,7 +283,7 @@ const useChat = ({ workflow }: Props) => {
             const responseMessage = createMessage({
               type: "html",
               text: isPromptifyProvider ? response : "Workflow executed successfully",
-              isHighlight: !!isPromptifyProvider,
+              isHighlight: !isPromptifyProvider,
             });
             setMessages(prev => prev.concat(responseMessage));
           } else if (!match[2] || match[2] === "undefined") {
