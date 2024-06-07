@@ -110,12 +110,14 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.concat(availableSteps));
   };
 
+  // Handle the case of catching the oauth credential successfully connected
   useEffect(() => {
     if (areCredentialsStored && updateScheduleMode.current === false) {
       insertFrequencyMessage();
     }
   }, [areCredentialsStored]);
 
+  // ClonedWorkflow always in sync with schedulingData
   useEffect(() => {
     if (clonedWorkflow) {
       dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
@@ -130,6 +132,7 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [schedulingData]);
 
+  // Pass run workflow generated execution as a new message after all prompts completed
   useEffect(() => {
     if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
       const title = generatedExecution.temp_title;
@@ -143,6 +146,7 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [generatedExecution]);
 
+  // Keep track of workflow data changes coming from answers state
   useEffect(() => {
     const workflowData: WorkflowData = { ...schedulingData.workflow_data };
 
