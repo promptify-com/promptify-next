@@ -25,8 +25,6 @@ export type MessageType =
   | "schedule_frequency"
   | "schedule_time"
   | "schedule_providers"
-  | "schedule_activation"
-  | "schedule_activation_test"
   | "input"
   | InputType;
 

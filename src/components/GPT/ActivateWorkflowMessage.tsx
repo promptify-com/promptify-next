@@ -1,28 +1,21 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import MessageContainer from "@/components/GPT/MessageContainer";
 import { BtnStyle } from "@/components/GPT/Constants";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import { useState } from "react";
 import { CircularProgress } from "@mui/material";
+import MessageContainer from "./MessageContainer";
+import { createMessage } from "../Chat/helper";
 
 interface Props {
-  message: IMessage;
   onActivate(): Promise<void>;
   allowActivateButton?: boolean;
   title?: string;
   buttonMessage?: string;
 }
 
-export default function ActivateWorkflowMessage({
-  message,
-  onActivate,
-  allowActivateButton,
-  title,
-  buttonMessage,
-}: Props) {
-  const { fromUser, isHighlight } = message;
+export default function ActivateWorkflowMessage({ onActivate, allowActivateButton, title, buttonMessage }: Props) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleActivate = async () => {
@@ -32,21 +25,13 @@ export default function ActivateWorkflowMessage({
   };
 
   return (
-    <MessageContainer message={message}>
-      {message.text && (
-        <Typography
-          fontSize={14}
-          fontWeight={500}
-          color={"onSurface"}
-          sx={{
-            p: "16px 20px",
-            borderRadius: fromUser ? "100px 100px 100px 0px" : "0px 100px 100px 100px",
-            bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
-          }}
-        >
-          {message.text}
-        </Typography>
-      )}
+    <MessageContainer
+      message={createMessage({
+        text: "",
+        type: "text",
+        noHeader: true,
+      })}
+    >
       <Stack
         justifyContent={"center"}
         alignItems={"center"}

@@ -18,6 +18,8 @@ import type { FrequencyType, ITemplateWorkflow } from "@/components/Automation/t
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
+import { isNodeProvider } from "@/components/GPTs/helpers";
+import { createMessage } from "@/components/Chat/helper";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -40,8 +42,11 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     workflow,
   });
 
-  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
+  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+
+  const hasProvider = !!clonedWorkflow && clonedWorkflow.nodes.some(node => isNodeProvider(clonedWorkflow, node.id));
+  const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
 
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
@@ -105,7 +110,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               {message.type === "schedule_frequency" && (
                 <Choices
                   message={message.text}
-                  items={FREQUENCY_ITEMS.concat("Test GPT")}
+                  items={FREQUENCY_ITEMS}
                   onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
                   defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
                 />
@@ -124,33 +129,26 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   removeProvider={removeProvider}
                 />
               )}
-              {message.type === "form" && (
-                <MessageInputs
-                  allowGenerate={false}
-                  onGenerate={() => {}}
-                  message={message}
-                />
-              )}
-
-              {message.type === "schedule_activation" && (
-                <ActivateWorkflowMessage
-                  message={message}
-                  onActivate={activateWorkflow}
-                  allowActivateButton={allowActivateButton}
-                />
-              )}
-
-              {message.type === "schedule_activation_test" && (
-                <ActivateWorkflowMessage
-                  message={message}
-                  onActivate={activateWorkflow}
-                  allowActivateButton={allowActivateButton}
-                  title="Ready to test this GPT"
-                  buttonMessage="Run"
-                />
-              )}
             </Box>
           ))}
+
+          {workflowScheduled && !!inputs.length && (
+            <MessageInputs
+              message={createMessage({
+                type: "form",
+                text: "Please fill out the following details:",
+              })}
+            />
+          )}
+
+          {workflowScheduled && hasProvider && (
+            <ActivateWorkflowMessage
+              onActivate={activateWorkflow}
+              allowActivateButton={allowActivateButton}
+              title="Ready to test this GPT"
+              buttonMessage="Run"
+            />
+          )}
 
           {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
         </>

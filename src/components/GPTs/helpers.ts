@@ -152,8 +152,9 @@ export const isNodeProvider = (workflow: IWorkflowCreateResponse, nodeId: string
 
   const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
   const nodeConnection = workflow.connections[nodeData.name];
-  const isResponseConnected =
-    nodeConnection && nodeConnection[MAIN_CONNECTION_KEY][0].find(conn => conn.node === respondToWebhookNode?.name);
+  const isResponseConnected = Boolean(
+    nodeConnection && nodeConnection[MAIN_CONNECTION_KEY][0].find(conn => conn.node === respondToWebhookNode?.name),
+  );
   return isResponseConnected;
 };
 

@@ -9,14 +9,13 @@ import { PROMPTIFY_NODE_TYPE, PROVIDERS, TIMES } from "@/components/GPT/Constant
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName, isNodeProvider, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
-import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 import type {
   FrequencyType,
   ITemplateWorkflow,
   IWorkflowCreateResponse,
   IWorkflowSchedule,
 } from "@/components/Automation/types";
-import { IPromptInput } from "@/common/types/prompt";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { N8N_RESPONSE_REGEX, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
@@ -49,13 +48,10 @@ const useChat = ({ workflow }: Props) => {
     day_of_week: 0,
     day_of_month: 0,
   });
-  const messagesMemo = useRef<IMessage[]>([]);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
   const { streamExecutionHandler } = useGenerateExecution({});
-
-  const autoSaveAllowed = updateScheduleMode.current && schedulingData.frequency !== "Test GPT";
 
   const [updateWorkflow] = useUpdateWorkflowMutation();
 
@@ -111,24 +107,6 @@ const useChat = ({ workflow }: Props) => {
 
     availableSteps.push(schedulesMessage, providersMessage);
 
-    const inputs: IPromptInput[] = workflow.data.nodes
-      .filter(node => node.type === "n8n-nodes-base.set")
-      .flatMap(node => node.parameters.fields?.values ?? node.parameters.assignments?.assignments ?? [])
-      .map(value => ({
-        name: value.name,
-        fullName: value.name,
-        type: "text",
-        required: true,
-      }));
-
-    if (inputs.length > 0) {
-      const inputsMessage = createMessage({
-        type: "form",
-        text: "Please fill out the following details:",
-      });
-      availableSteps.push(inputsMessage);
-    }
-
     setMessages(prev => prev.concat(availableSteps));
   };
 
@@ -142,8 +120,8 @@ const useChat = ({ workflow }: Props) => {
     if (clonedWorkflow) {
       dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
 
-      // Workflow update mode auto updates
-      if (autoSaveAllowed) {
+      // Workflow updates auto save
+      if (updateScheduleMode.current) {
         handleUpdateWorkflow({
           ...clonedWorkflow,
           schedule: schedulingData,
@@ -160,53 +138,24 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   };
 
-  const cleanMessagesAfterType = (messages: IMessage[], type: MessageType) =>
-    messages.slice(0, messages.findIndex(msg => msg.type === type) + 1);
-
-  useEffect(() => {
-    if (schedulingData.frequency !== "Test GPT") {
-      messagesMemo.current = messages;
-    }
-  }, [messages]);
-
-  const testGPT = () => {
-    setMessages(cleanMessagesAfterType(messages, "schedule_frequency"));
-
-    insertProvidersMessages(
-      "Great, let's test this GPT for you, do you want to receive them in your favorite platforms?",
-    );
-
-    if (selectedProviderType.current) {
-      const testWorkflowMessage = createMessage({
-        type: "schedule_activation_test",
-        text: "",
-        noHeader: true,
-      });
-      setMessages(prev => prev.concat(testWorkflowMessage));
-    }
-  };
-
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
 
     setSchedulingData({ ...schedulingData, frequency });
 
-    if (frequency === "Test GPT") {
-      testGPT();
-    } else {
-      const _messages = messagesMemo.current;
-      if (!_messages.find(msg => msg.type === "schedule_time")) {
-        const timeMessage = createMessage({
-          type: "schedule_time",
-          text: "At what time?",
-        });
-        _messages.push(timeMessage);
-      }
-      setMessages(_messages);
+    if (!messages.find(msg => msg.type === "schedule_time")) {
+      const timeMessage = createMessage({
+        type: "schedule_time",
+        text: "At what time?",
+      });
+      messages.push(timeMessage);
     }
+    setMessages(messages);
   };
 
   const setScheduleTime = (frequencyTime: { day?: number; time: number }) => {
+    updateScheduleMode.current = true;
+
     const isWeekly = schedulingData?.frequency === "weekly";
     const day = frequencyTime.day ?? 0;
     const frequencyDay = isWeekly ? { day_of_week: day } : { day_of_month: day };
@@ -291,59 +240,17 @@ const useChat = ({ workflow }: Props) => {
     let preparedMessages: IMessage[] = [];
     selectedProviderType.current = providerType;
 
-    if (schedulingData.frequency === "Test GPT") {
-      const testWorkflowMessage = createMessage({
-        type: "schedule_activation_test",
-        text: "",
-        noHeader: true,
-      });
+    const provider = PROVIDERS[providerType];
+    const providerConnectionMessage = createMessage({
+      type: "text",
+      text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
+      isHighlight: true,
+    });
+    preparedMessages.push(providerConnectionMessage);
 
-      if (inputs.length > 0) {
-        const inputsMessage = createMessage({
-          type: "form",
-          text: "Please fill out the following details:",
-          noHeader: true,
-        });
-        preparedMessages.push(inputsMessage);
-      }
+    handleUpdateWorkflow(generatedWorkflow);
 
-      preparedMessages.push(testWorkflowMessage);
-    } else {
-      const provider = PROVIDERS[providerType];
-      const providerConnectionMessage = createMessage({
-        type: "text",
-        text: `${provider.name} has been connected successfully, we’ll be sending your results to your ${provider.name}`,
-        isHighlight: true,
-      });
-      preparedMessages.push(providerConnectionMessage);
-
-      if (autoSaveAllowed) {
-        handleUpdateWorkflow(generatedWorkflow);
-      } else {
-        const activationMessage = createMessage({
-          type: "schedule_activation",
-          text: "",
-          noHeader: true,
-        });
-
-        if (inputs.length > 0) {
-          const inputsMessage = createMessage({
-            type: "form",
-            text: "Please fill out the following details:",
-            noHeader: true,
-          });
-          preparedMessages.push(inputsMessage);
-        }
-
-        preparedMessages.push(activationMessage);
-      }
-    }
-
-    setMessages(prevMessages =>
-      prevMessages
-        .filter(msg => !["schedule_activation", "schedule_activation_test", "form"].includes(msg.type))
-        .concat(preparedMessages),
-    );
+    setMessages(prevMessages => prevMessages.concat(preparedMessages));
   };
 
   useEffect(() => {
@@ -367,40 +274,7 @@ const useChat = ({ workflow }: Props) => {
     }
 
     try {
-      await updateWorkflow({
-        workflowId: workflow?.id ?? clonedWorkflow.id,
-        data: workflow ?? clonedWorkflow,
-      });
-    } catch (error) {
-      const errorMessage = createMessage({
-        type: "text",
-        text: "Activating your GPT failed, please try again.",
-      });
-      setMessages(prev => prev.concat(errorMessage));
-    }
-  };
-
-  const removeProvider = (providerName: string, shouldUpdate = true) => {
-    let _clonedWorkflow = structuredClone(clonedWorkflow)!;
-    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerName);
-    if (shouldUpdate) {
-      dispatch(setClonedWorkflow(_clonedWorkflow));
-    }
-
-    if (autoSaveAllowed) {
-      handleUpdateWorkflow(_clonedWorkflow);
-    }
-
-    return _clonedWorkflow;
-  };
-
-  const activateWorkflow = async () => {
-    if (!clonedWorkflow) {
-      throw new Error("Cloned workflow not found");
-    }
-
-    if (schedulingData.frequency === "Test GPT") {
-      let cleanWorkflow = structuredClone(clonedWorkflow);
+      let cleanWorkflow = structuredClone(workflow ?? clonedWorkflow);
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
         // Find the last Promptify node and verify if it is a provider node to be removed.
         const promptifyNode = [...cleanWorkflow.nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
@@ -415,20 +289,48 @@ const useChat = ({ workflow }: Props) => {
 
         cleanWorkflow = removeProvider(promptifyNode.name, false);
       }
-      await handleUpdateWorkflow(cleanWorkflow);
-      await executeWorkflow();
-    } else {
-      await handleUpdateWorkflow();
-
-      const finishMessage = createMessage({
-        type: "text",
-        text: "GPT scheduled successfully.",
-        isHighlight: true,
-      });
-      setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
-
-      window.location.reload();
+      const updatedWorkflow = await updateWorkflow({
+        workflowId: cleanWorkflow.id,
+        data: cleanWorkflow,
+      }).unwrap();
+      dispatch(setClonedWorkflow(updatedWorkflow));
+    } catch (error) {
+      console.error("Updating workflow failed", error);
     }
+  };
+
+  const removeProvider = (providerName: string, shouldUpdate = true) => {
+    let _clonedWorkflow = structuredClone(clonedWorkflow)!;
+    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerName);
+    if (shouldUpdate) {
+      dispatch(setClonedWorkflow(_clonedWorkflow));
+    }
+
+    handleUpdateWorkflow(_clonedWorkflow);
+
+    return _clonedWorkflow;
+  };
+
+  const activateWorkflow = async () => {
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
+
+    // if (schedulingData.frequency === "Test GPT") {
+    //   let cleanWorkflow = structuredClone(clonedWorkflow);
+    //   await executeWorkflow();
+    // } else {
+    //   await handleUpdateWorkflow();
+
+    //   const finishMessage = createMessage({
+    //     type: "text",
+    //     text: "GPT scheduled successfully.",
+    //     isHighlight: true,
+    //   });
+    //   setMessages(prev => prev.filter(msg => msg.type !== "schedule_activation").concat(finishMessage));
+
+    //   window.location.reload();
+    // }
   };
 
   return {
