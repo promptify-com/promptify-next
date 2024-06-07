@@ -194,22 +194,6 @@ const useChat = ({ workflow }: Props) => {
     const _workflow = workflow ?? clonedWorkflow;
 
     try {
-      let cleanWorkflow = structuredClone(workflow ?? clonedWorkflow);
-
-      if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
-        // Find the last Promptify node and verify if it is a provider node to be removed.
-        const promptifyNode = [...cleanWorkflow.nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
-        if (!promptifyNode) {
-          throw new Error("Promptify provider node not found");
-        }
-
-        const isProvider = isNodeProvider(promptifyNode);
-        if (!isProvider) {
-          throw new Error("Promptify provider node not found");
-        }
-
-        cleanWorkflow = removeProvider(promptifyNode.name, false);
-      }
       const updatedWorkflow = await updateWorkflow({
         workflowId: _workflow.id,
         data: _workflow,
@@ -279,7 +263,12 @@ const useChat = ({ workflow }: Props) => {
 
   const runWorkflow = async () => {
     try {
-      const webhook = extractWebhookPath(clonedWorkflow?.nodes ?? []);
+      if (!clonedWorkflow) {
+        throw new Error("Cloned workflow not found");
+      }
+
+      const webhook = extractWebhookPath(clonedWorkflow.nodes);
+
       const response = await sendMessageAPI(webhook);
       if (response && typeof response === "string") {
         if (response.toLowerCase().includes("[error")) {
@@ -288,9 +277,15 @@ const useChat = ({ workflow }: Props) => {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
 
           if (!match) {
+            // Selecting Promptify provider means showing execution response as is
+            const isPromptifyProvider = clonedWorkflow.nodes.find(
+              node => node.type === PROMPTIFY_NODE_TYPE && isNodeProvider(node),
+            );
+
             const responseMessage = createMessage({
               type: "html",
-              text: response,
+              text: isPromptifyProvider ? response : "Workflow executed successfully",
+              isHighlight: !!isPromptifyProvider,
             });
             setMessages(prev => prev.concat(responseMessage));
           } else if (!match[2] || match[2] === "undefined") {

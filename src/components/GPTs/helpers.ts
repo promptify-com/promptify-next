@@ -242,17 +242,16 @@ export function injectProviderNode(
 
   const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
 
-  const promptifyProviderExists = !![...nodes]
-    .reverse()
-    .find(node => node.type === PROMPTIFY_NODE_TYPE && isNodeProvider(node));
+  const promptifyProviderExists = !!currentProviders.find(
+    prov => prov.type === PROMPTIFY_NODE_TYPE && isNodeProvider(prov),
+  );
 
   if (promptifyNode) {
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
 
     // Allow streaming Promptify results for promptify provider & response pattern expect streaming
-    const allowStream =
-      promptifyProviderExists && isNodeProvider(promptifyNode) && N8N_RESPONSE_REGEX.test(responseBody);
+    const allowStream = promptifyProviderExists && N8N_RESPONSE_REGEX.test(responseBody);
 
     if (allowStream) {
       promptifyNode.parameters.template_streaming = false;
