@@ -16,6 +16,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.NODE_ENV === 'production')
             'ResizeObserver loop completed with undelivered notifications',
             'jigsaw is not defined',
             /undefined is not an object \(evaluating '\e.startTime\'/i,
+            /Fetch is aborted/i,
         ],
         denyUrls: [
             // Chrome extensions
