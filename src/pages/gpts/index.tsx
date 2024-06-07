@@ -57,8 +57,8 @@ function GPTsPage() {
     { skip: !showGPTCategoriesCarousel },
   );
 
-  const schedulableWorkflows = workflowsByCategory?.flatMap(category =>
-    category.templates.filter(workflow => workflow.is_schedulable),
+  const userFavoriteeWorkflows = workflowsByCategory?.flatMap(category =>
+    category.templates.filter(workflow => workflow.is_liked),
   );
   const filteredUserWorkflows = userWorkflows?.data?.filter(
     workflow => workflow?.template_workflow?.is_schedulable && workflow?.periodic_task,
@@ -68,9 +68,17 @@ function GPTsPage() {
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
-  const sortedWorkflows = allWorkflows
+  const latestCreatedWorkflows = allWorkflows
     ?.slice()
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  const recentlyUsedWorkflows = userWorkflows?.data
+    ?.filter(workflow => workflow.last_executed)
+    .sort((a, b) => {
+      const dateA = a.last_executed ? new Date(a.last_executed).getTime() : 0;
+      const dateB = b.last_executed ? new Date(b.last_executed).getTime() : 0;
+      return dateB - dateA;
+    });
 
   return (
     <Layout>
@@ -98,6 +106,7 @@ function GPTsPage() {
                       <WorkflowCard
                         templateWorkflow={workflow}
                         periodic_task={workflow.periodic_task}
+                        lastExecuted={null}
                       />
                     </Stack>
                   ))}
@@ -118,10 +127,11 @@ function GPTsPage() {
           ) : (
             <Fragment>
               <GPTsSection
+                header="Scheduled GPTs"
+                subheader="Easily view, pause, or tweak your scheduled Promptify GPTs. 
+                Stay on top of your tasks and keep your workflow smooth and flexible."
                 workflows={filteredUserWorkflows}
                 isLoading={isLoadingUserWorkflows}
-                header="Scheduled GPTs"
-                subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
               />
 
               <Stack
@@ -140,9 +150,21 @@ function GPTsPage() {
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
                   <GPTsSection
-                    header="New GPTs"
-                    subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                    workflows={sortedWorkflows}
+                    header="Recently Used GPTs"
+                    subheader="Quickly access and reuse the Promptify GPTs you've recently employed to ensure continuity and efficiency in your ongoing tasks."
+                    workflows={recentlyUsedWorkflows}
+                    isLoading={isLoadingAllWorkflows}
+                  />
+                )}
+              </Stack>
+
+              <Stack ref={newGPTsCarouselRef}>
+                {showNewGPTsCarousel && (
+                  <GPTsSection
+                    header="Latest GPTs"
+                    subheader="Discover the latest Promptify GPTs to amplify your productivity. Stay ahead, keep things fresh,
+                     and make daily tasks a breeze with cutting-edge Generative AI."
+                    workflows={latestCreatedWorkflows}
                     isLoading={isLoadingAllWorkflows}
                   />
                 )}
@@ -151,9 +173,9 @@ function GPTsPage() {
               <Stack ref={historicalCarouselRef}>
                 {showHistoricalCarousel && (
                   <GPTsSection
-                    header="Historical GPTs"
+                    header="User Favorites"
                     subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-                    workflows={schedulableWorkflows}
+                    workflows={userFavoriteeWorkflows}
                     isLoading={isLoadingUserWorkflows}
                   />
                 )}

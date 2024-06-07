@@ -80,3 +80,25 @@ export function numberToWord(num: number): string {
   const numWords = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
   return numWords[num - 1];
 }
+
+// Output: 05.10.2024
+export function formatDate(
+  date: Date | string,
+  locales?: string | string[],
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  const _date = typeof date === "string" ? new Date(date) : date;
+
+  if (isNaN(_date.getTime())) {
+    throw new Error("Invalid date");
+  }
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  };
+
+  const formatter = new Intl.DateTimeFormat(locales, options || defaultOptions);
+  return formatter.format(_date).replace(/\//g, ".");
+}

@@ -30,6 +30,7 @@ const GPTsSection = ({ workflows, isLoading, header, subheader }: Props) => {
             }
             periodic_task={workflow?.periodic_task}
             userWorkflowId={"template_workflow" in workflow ? workflow.id : ""}
+            lastExecuted={"template_workflow" in workflow ? workflow.last_executed : null}
           />
         </Stack>
       ))}

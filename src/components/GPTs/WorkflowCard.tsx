@@ -22,7 +22,7 @@ import useTruncate from "@/hooks/useTruncate";
 import Image from "@/components/design-system/Image";
 import StatusChip from "@/components/GPTs/StatusChip";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
-import { capitalizeString } from "@/common/helpers";
+import { capitalizeString, formatDate } from "@/common/helpers";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import WorkflowActionsModal from "./WorkflowActionsModal";
 import type { ITemplateWorkflow, IWorkflowSchedule } from "../Automation/types";
@@ -36,9 +36,10 @@ interface Props {
     crontab: IWorkflowSchedule;
   };
   userWorkflowId?: string;
+  lastExecuted: Date | null;
 }
 
-function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId }: Props) {
+function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId, lastExecuted }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -232,6 +233,7 @@ function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId }: Props
             flex={1}
             gap={"24px"}
             alignItems={"start"}
+            justifyContent={"space-between"}
           >
             <Stack gap={"8px"}>
               <Typography
@@ -252,14 +254,16 @@ function WorkflowCard({ templateWorkflow, periodic_task, userWorkflowId }: Props
               >
                 {truncate(templateWorkflow?.description || "", { length: 70 })}
               </Typography>
-              {!periodic_task && (
+              {!periodic_task && lastExecuted && (
                 <Typography
                   fontSize={11}
-                  fontWeight={400}
+                  fontWeight={500}
                   lineHeight={"150%"}
                   color={"#000"}
                   minHeight={{ xs: 0, md: "17px" }}
-                ></Typography>
+                >
+                  last used: <span>{formatDate(lastExecuted)}</span>
+                </Typography>
               )}
             </Stack>
             {periodic_task && templateWorkflow?.is_schedulable ? (
