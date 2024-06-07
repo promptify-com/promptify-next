@@ -9,7 +9,7 @@ import CredentialsContainer from "@/components/GPT/CredentialsContainer";
 import Choices from "@/components/GPT/Choices";
 import ResponseProvidersContainer from "@/components/GPT/ResponseProvidersContainer";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import ActivateWorkflowMessage from "@/components/GPT/ActivateWorkflowMessage";
+import RunWorkflowMessage from "@/components/GPT/RunWorkflowMessage";
 import { FREQUENCY_ITEMS } from "@/components/GPT/Constants";
 import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
@@ -35,8 +35,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     initialMessages,
     setScheduleFrequency,
     setScheduleTime,
-    prepareWorkflow,
-    activateWorkflow,
+    injectProvider,
+    runWorkflow,
     removeProvider,
   } = useChat({
     workflow,
@@ -122,33 +122,33 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 />
               )}
               {message.type === "schedule_providers" && (
-                <ResponseProvidersContainer
-                  message={message.text}
-                  workflow={workflow}
-                  prepareWorkflow={prepareWorkflow}
-                  removeProvider={removeProvider}
-                />
+                <Stack gap={8}>
+                  <ResponseProvidersContainer
+                    message={message.text}
+                    workflow={workflow}
+                    injectProvider={injectProvider}
+                    removeProvider={removeProvider}
+                  />
+
+                  {workflowScheduled && !!inputs.length && (
+                    <MessageInputs
+                      message={createMessage({
+                        type: "form",
+                        text: "Please fill out the following details:",
+                      })}
+                    />
+                  )}
+
+                  {workflowScheduled && hasProvider && (
+                    <RunWorkflowMessage
+                      onRun={runWorkflow}
+                      allowActivateButton={allowActivateButton}
+                    />
+                  )}
+                </Stack>
               )}
             </Box>
           ))}
-
-          {workflowScheduled && !!inputs.length && (
-            <MessageInputs
-              message={createMessage({
-                type: "form",
-                text: "Please fill out the following details:",
-              })}
-            />
-          )}
-
-          {workflowScheduled && hasProvider && (
-            <ActivateWorkflowMessage
-              onActivate={activateWorkflow}
-              allowActivateButton={allowActivateButton}
-              title="Ready to test this GPT"
-              buttonMessage="Run"
-            />
-          )}
 
           {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
         </>

@@ -9,18 +9,16 @@ import MessageContainer from "./MessageContainer";
 import { createMessage } from "../Chat/helper";
 
 interface Props {
-  onActivate(): Promise<void>;
+  onRun(): Promise<void>;
   allowActivateButton?: boolean;
-  title?: string;
-  buttonMessage?: string;
 }
 
-export default function ActivateWorkflowMessage({ onActivate, allowActivateButton, title, buttonMessage }: Props) {
+export default function runWorkflowMessage({ onRun, allowActivateButton }: Props) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleActivate = async () => {
     setIsProcessing(true);
-    await onActivate();
+    await onRun();
     setIsProcessing(false);
   };
 
@@ -47,7 +45,7 @@ export default function ActivateWorkflowMessage({ onActivate, allowActivateButto
           fontWeight={500}
           color={"common.black"}
         >
-          {title ?? `Ready to turn on this GPT`}
+          Ready to test this GPT
         </Typography>
         <Button
           onClick={handleActivate}
@@ -64,7 +62,7 @@ export default function ActivateWorkflowMessage({ onActivate, allowActivateButto
               }}
             />
           )}
-          {buttonMessage || "Activate"}
+          Run
         </Button>
       </Stack>
     </MessageContainer>

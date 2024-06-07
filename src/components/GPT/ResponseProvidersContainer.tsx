@@ -9,11 +9,11 @@ import type { ProviderType } from "./Types";
 interface Props {
   message: string;
   workflow: ITemplateWorkflow;
-  prepareWorkflow(provider: ProviderType, workflow: IWorkflowCreateResponse): void;
+  injectProvider(provider: ProviderType, workflow: IWorkflowCreateResponse): void;
   removeProvider(provider: ProviderType): IWorkflowCreateResponse;
 }
 
-function ResponseProvidersContainer({ message, workflow, prepareWorkflow, removeProvider }: Props) {
+function ResponseProvidersContainer({ message, workflow, injectProvider, removeProvider }: Props) {
   return (
     <Stack gap={4}>
       {message && (
@@ -41,7 +41,7 @@ function ResponseProvidersContainer({ message, workflow, prepareWorkflow, remove
               <ResponseProvider
                 providerType={providerType}
                 workflow={workflow}
-                onInject={workflow => prepareWorkflow(providerType, workflow)}
+                onInject={workflow => injectProvider(providerType, workflow)}
                 onUnselect={removeProvider}
               />
             </Grid>
