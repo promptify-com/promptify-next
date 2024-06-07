@@ -22,6 +22,8 @@ import { initialState as initialChatState } from "@/core/store/chatSlice";
 import type { ProviderType } from "./Types";
 import ProviderCard from "./ProviderCard";
 import { setToast } from "@/core/store/toastSlice";
+import { useDeleteCredentialMutation } from "@/core/api/workflows";
+import useCredentials from "../Automation/Hooks/useCredentials";
 
 interface Props {
   providerType: ProviderType;
@@ -47,6 +49,9 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
   } = useCredentialsActions({
     credentialInput,
   });
+
+  const { removeCredential, updateWorkflowAfterCredentialsDeletion } = useCredentials();
+  const [deleteCredential] = useDeleteCredentialMutation();
 
   useEffect(() => {
     prepareCredentials();
@@ -125,6 +130,15 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
     dispatch(setToast({ message: `Provider ${providerNodeName} removed`, severity: "info" }));
   };
 
+  const handleReconnect = async () => {
+    await deleteCredential(credential?.id as string);
+    await updateWorkflowAfterCredentialsDeletion(credential?.type as string, false);
+    onUnselect(providerNodeName);
+    dispatch(setToast({ message: "Credential and provider was successfully deleted.", severity: "info" }));
+    removeCredential(credential?.id as string);
+    handleConnect();
+  };
+
   const parametersInputs = getProviderParams(providerType);
   const isInjected = !!clonedWorkflow?.nodes.find(node => node.name === providerNodeName);
   const isConnected = providerType === PROMPTIFY_NODE_TYPE || credentialInserted;
@@ -145,6 +159,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
           }
         }}
         onUnselect={handleUnSelect}
+        onReconnect={handleReconnect}
       />
       {credentialInput && oauthModalOpened && (
         <FormModal
