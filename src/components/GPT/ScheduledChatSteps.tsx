@@ -45,7 +45,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
-  const hasProvider = !!clonedWorkflow && clonedWorkflow.nodes.some(node => isNodeProvider(clonedWorkflow, node.id));
+  const hasProvider = !!clonedWorkflow && clonedWorkflow.nodes.some(node => isNodeProvider(node));
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
 
   useEffect(() => {

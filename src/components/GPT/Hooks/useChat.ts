@@ -191,8 +191,11 @@ const useChat = ({ workflow }: Props) => {
       throw new Error("Cloned workflow not found");
     }
 
+    const _workflow = workflow ?? clonedWorkflow;
+
     try {
       let cleanWorkflow = structuredClone(workflow ?? clonedWorkflow);
+
       if (selectedProviderType.current === PROMPTIFY_NODE_TYPE) {
         // Find the last Promptify node and verify if it is a provider node to be removed.
         const promptifyNode = [...cleanWorkflow.nodes].reverse().find(node => node.type === PROMPTIFY_NODE_TYPE);
@@ -200,7 +203,7 @@ const useChat = ({ workflow }: Props) => {
           throw new Error("Promptify provider node not found");
         }
 
-        const isProvider = isNodeProvider(cleanWorkflow, promptifyNode.id);
+        const isProvider = isNodeProvider(promptifyNode);
         if (!isProvider) {
           throw new Error("Promptify provider node not found");
         }
@@ -208,8 +211,8 @@ const useChat = ({ workflow }: Props) => {
         cleanWorkflow = removeProvider(promptifyNode.name, false);
       }
       const updatedWorkflow = await updateWorkflow({
-        workflowId: cleanWorkflow.id,
-        data: cleanWorkflow,
+        workflowId: _workflow.id,
+        data: _workflow,
       }).unwrap();
 
       dispatch(

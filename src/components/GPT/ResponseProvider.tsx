@@ -5,6 +5,7 @@ import {
   getNodeInfoByType,
   getProviderParams,
   injectProviderNode,
+  nameProvider,
   replaceProviderParamValue,
 } from "@/components/GPTs/helpers";
 import { extractCredentialsInput } from "@/components/Automation/helpers";
@@ -21,7 +22,6 @@ import { setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import type { ProviderType } from "./Types";
 import ProviderCard from "./ProviderCard";
-import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   providerType: ProviderType;
@@ -58,7 +58,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
   };
 
   const displayName = cleanCredentialName(credentialInput?.displayName ?? "");
-  const providerNodeName = `Send ${displayName} Message`;
+  const providerNodeName = nameProvider(displayName);
 
   const providerData = useMemo(() => {
     const node = getNodeInfoByType(providerType);
@@ -122,7 +122,6 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
 
   const handleUnSelect = () => {
     onUnselect(providerNodeName);
-    dispatch(setToast({ message: `Provider ${providerNodeName} removed`, severity: "info" }));
   };
 
   const parametersInputs = getProviderParams(providerType);
