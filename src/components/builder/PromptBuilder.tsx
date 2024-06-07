@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -39,7 +39,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const theme = useTheme();
   const [publishTemplate] = usePublishTemplateMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
-
+  const removedEditorQS = useRef(false);
   const { isMobile } = useBrowser();
 
   const slug = router.query.slug as string;
@@ -92,20 +92,21 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
 
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
 
-  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Number(router.query.editor) === 1);
 
   const createMode = isNewTemplate ? "create" : "edit";
 
   useEffect(() => {
     if (!token) {
       router.push("/signin");
-    } else if (router.query.editor) {
+    } else if (router.query.editor && !removedEditorQS.current) {
       const { editor, ...restQueryParams } = router.query;
+      removedEditorQS.current = true;
 
       router.replace(
         {
           pathname: router.pathname,
-          query: restQueryParams,
+          query: Object.keys(restQueryParams).length ? restQueryParams : null,
         },
         undefined,
         { scroll: false, shallow: true },

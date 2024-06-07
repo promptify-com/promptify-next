@@ -67,7 +67,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
         async onQueryStarted(id, { dispatch, queryFulfilled }) {
           const patchResult = dispatch(
             deploymentsApi.util.updateQueryData("getDeployments", undefined, deploymentsDraft => {
-              return deploymentsDraft.filter(deployment => deployment.id !== id);
+              return (deploymentsDraft ?? []).filter(deployment => deployment.id !== id);
             }),
           );
 
