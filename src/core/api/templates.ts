@@ -173,7 +173,7 @@ export const templatesApi = baseApi.injectEndpoints({
         async onQueryStarted(feedback, { dispatch, queryFulfilled }) {
           const patchResult = dispatch(
             templatesApi.util.updateQueryData("getFeedbacks", feedback.template, feedbacks => {
-              return feedbacks.concat({
+              return (feedbacks ?? []).concat({
                 user: feedback.user,
                 template: feedback.template,
                 id: randomId(),
