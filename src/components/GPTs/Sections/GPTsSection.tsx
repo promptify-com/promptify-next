@@ -10,11 +10,16 @@ interface Props {
   isLoading: boolean;
   header: string;
   subheader?: string;
+  isGPTScheduled?: boolean;
 }
 
-const GPTsSection = ({ workflows, isLoading, header, subheader }: Props) => {
+const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled }: Props) => {
   if (isLoading) {
     return <WorkflowCardPlaceholder />;
+  }
+
+  if (!workflows?.length) {
+    return null;
   }
 
   return (
@@ -23,13 +28,21 @@ const GPTsSection = ({ workflows, isLoading, header, subheader }: Props) => {
       subheader={subheader}
     >
       {workflows?.map(workflow => (
-        <Stack key={workflow.id}>
+        <Stack
+          key={workflow.id}
+          mr={{
+            xs: workflows[workflows.length - 1] === workflow ? "16px" : 0,
+            md: workflows[workflows.length - 1] === workflow ? "24px" : 0,
+          }}
+        >
           <WorkflowCard
             templateWorkflow={
               ("template_workflow" in workflow ? workflow.template_workflow : workflow) as ITemplateWorkflow
             }
             periodic_task={workflow?.periodic_task}
             userWorkflowId={"template_workflow" in workflow ? workflow.id : ""}
+            lastExecuted={"template_workflow" in workflow ? workflow.last_executed : null}
+            isGPTScheduled={isGPTScheduled}
           />
         </Stack>
       ))}

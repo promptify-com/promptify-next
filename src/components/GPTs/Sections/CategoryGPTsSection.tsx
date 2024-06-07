@@ -1,9 +1,5 @@
-import { Fragment } from "react";
-import Stack from "@mui/material/Stack";
-
-import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
-import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCardPlaceholder";
+import GPTsSection from "@/components/GPTs/Sections/GPTsSection";
 import type { IWorkflowCategory } from "@/components/Automation/types";
 
 interface Props {
@@ -18,18 +14,13 @@ function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
   return (
     <>
       {workflowCategories?.map((workflows, index) => (
-        <Fragment key={`${workflows.category}-${index}`}>
-          <CarouselSection
-            header={workflows.category || ""}
-            subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
-          >
-            {workflows.templates.map(workflow => (
-              <Stack key={workflow.id}>
-                <WorkflowCard templateWorkflow={workflow} />
-              </Stack>
-            ))}
-          </CarouselSection>
-        </Fragment>
+        <GPTsSection
+          key={`${workflows.category}-${index}`}
+          workflows={workflows.templates}
+          isLoading={isLoading}
+          header={workflows.category || ""}
+          subheader="Enhance your daily routines and professional output with AI-driven solutions. "
+        />
       ))}
     </>
   );

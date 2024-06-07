@@ -155,6 +155,7 @@ export interface IWorkflowCreateResponse {
     kwargs?: string;
   };
   template_workflow: ITemplateWorkflow;
+  last_executed: string | null;
 }
 
 export interface IAuthenticateBase {
