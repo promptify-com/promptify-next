@@ -16,6 +16,7 @@ const FavoriteButton: React.FC<Props> = ({ style = { sx: {} } }) => {
     <Button
       onClick={() => saveFavorite()}
       startIcon={templateData.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+      disabled={Object.keys(templateData).length === 0}
       sx={{
         border: "1px solid",
         borderColor: "surfaceContainerHigh",
