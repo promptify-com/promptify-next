@@ -17,7 +17,7 @@ import type {
   IWorkflowSchedule,
 } from "@/components/Automation/types";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
-import { N8N_RESPONSE_REGEX, extractWebhookPath } from "@/components/Automation/helpers";
+import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 
 interface Props {
@@ -193,15 +193,19 @@ const useChat = ({ workflow }: Props) => {
 
     const _workflow = workflow ?? clonedWorkflow;
 
+    const updatedWorkflow = structuredClone(_workflow);
+
+    updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
+
     try {
-      const updatedWorkflow = await updateWorkflow({
-        workflowId: _workflow.id,
-        data: _workflow,
+      const response = await updateWorkflow({
+        workflowId: updatedWorkflow.id,
+        data: updatedWorkflow,
       }).unwrap();
 
       dispatch(
         setClonedWorkflow({
-          ...updatedWorkflow,
+          ...response,
           schedule: schedulingData,
         }),
       );
