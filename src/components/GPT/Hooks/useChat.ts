@@ -19,6 +19,7 @@ import type {
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import useDebounce from "@/hooks/useDebounce";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -46,6 +47,7 @@ const useChat = ({ workflow }: Props) => {
     day_of_week: 0,
     day_of_month: 0,
   });
+  const debouncedSchedulingData = useDebounce(schedulingData, 500);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
@@ -129,7 +131,7 @@ const useChat = ({ workflow }: Props) => {
         });
       }
     }
-  }, [schedulingData]);
+  }, [debouncedSchedulingData]);
 
   // Pass run workflow generated execution as a new message after all prompts completed
   useEffect(() => {
