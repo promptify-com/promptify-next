@@ -47,7 +47,7 @@ const useChat = ({ workflow }: Props) => {
     day_of_week: 0,
     day_of_month: 0,
   });
-  const debouncedSchedulingData = useDebounce(schedulingData, 500);
+  const debouncedSchedulingData = useDebounce(schedulingData, 1000);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
@@ -196,14 +196,14 @@ const useChat = ({ workflow }: Props) => {
     _workflow.nodes.forEach(node => attachCredentialsToNode(node));
 
     try {
-      const updatedProvider = await updateWorkflow({
+      const updatedWorkflow = await updateWorkflow({
         workflowId: _workflow.id,
         data: _workflow,
       }).unwrap();
 
       dispatch(
         setClonedWorkflow({
-          ...updatedProvider,
+          ...updatedWorkflow,
           schedule: schedulingData,
         }),
       );
