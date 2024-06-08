@@ -277,13 +277,11 @@ export function injectProviderNode(
     index: 0,
   }));
 
-  if (!currentProviders.length) {
-    adjacentConnections.push({
-      node: respondToWebhookNode.name,
-      type: MAIN_CONNECTION_KEY,
-      index: 0,
-    });
-  }
+  adjacentConnections.push({
+    node: respondToWebhookNode.name,
+    type: MAIN_CONNECTION_KEY,
+    index: 0,
+  });
 
   connections[adjacentNode.name] = {
     [MAIN_CONNECTION_KEY]: [[...adjacentConnections]],
