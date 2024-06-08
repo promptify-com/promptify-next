@@ -20,7 +20,7 @@ import type {
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
-import { PROMPTIFY_NODE_TYPE, PROVIDERS, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
+import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
@@ -121,6 +121,36 @@ export const isNodeProvider = (node: INode): boolean => {
   return providerPattern.test(node.name);
 };
 
+// Enable streaming Promptify results in Promptify node
+export const enableWorkflowPromptifyStream = (
+  workflow: IWorkflowCreateResponse,
+  templateWorkflow: ITemplateWorkflow,
+) => {
+  const _workflow = structuredClone(workflow);
+  const promptifyNode = _workflow.nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+  const respondToWebhookNode = _workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+
+  if (!promptifyNode || !respondToWebhookNode) {
+    return _workflow;
+  }
+
+  const currentProviders = findProviderNodes(workflow, templateWorkflow, respondToWebhookNode.name);
+  const hasProviders = currentProviders.length > 0;
+
+  if (hasProviders) {
+    return _workflow;
+  }
+
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+  const allowStream = N8N_RESPONSE_REGEX.test(responseBody);
+
+  if (allowStream) {
+    promptifyNode.parameters.template_streaming = false;
+  }
+
+  return _workflow;
+};
+
 const findProviderNodes = (
   workflow: IWorkflowCreateResponse,
   templateWorkflow: ITemplateWorkflow,
@@ -165,35 +195,30 @@ export const removeProviderNode = (
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
-  const isPromptifyProvider = providerNode.type === PROMPTIFY_NODE_TYPE && isNodeProvider(providerNode);
   const removedProviderName = providerNode.name;
 
-  if (!isPromptifyProvider) {
-    const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
+  const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
 
-    if (!adjacentNode) {
-      throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
-    }
-
-    if (!isPromptifyProvider) {
-      const cleanConnections = workflow.connections[adjacentNode.name][MAIN_CONNECTION_KEY][0].filter(
-        connection => connection.node !== removedProviderName,
-      );
-
-      if (!cleanConnections.length) {
-        cleanConnections.push({
-          node: respondToWebhookNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        });
-      }
-
-      workflow.connections[adjacentNode.name] = {
-        [MAIN_CONNECTION_KEY]: [cleanConnections],
-      };
-      delete workflow.connections[removedProviderName];
-    }
+  if (!adjacentNode) {
+    throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
   }
+
+  const cleanConnections = workflow.connections[adjacentNode.name][MAIN_CONNECTION_KEY][0].filter(
+    connection => connection.node !== removedProviderName,
+  );
+
+  if (!cleanConnections.length) {
+    cleanConnections.push({
+      node: respondToWebhookNode.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    });
+  }
+
+  workflow.connections[adjacentNode.name] = {
+    [MAIN_CONNECTION_KEY]: [cleanConnections],
+  };
+  delete workflow.connections[removedProviderName];
 
   workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
 
@@ -234,7 +259,6 @@ export function injectProviderNode(
     parameters: nodeParametersCB(responseBody),
     position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
   };
-  const isPromptifyProvider = providerNode.type === PROMPTIFY_NODE_TYPE && isNodeProvider(providerNode);
 
   nodes.push(providerNode);
 
@@ -242,55 +266,38 @@ export function injectProviderNode(
 
   const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
 
-  const promptifyProviderExists = !!currentProviders.find(
-    prov => prov.type === PROMPTIFY_NODE_TYPE && isNodeProvider(prov),
-  );
-
   if (promptifyNode) {
     promptifyNode.parameters.save_output = true;
     promptifyNode.parameters.template_streaming = true;
-
-    // Allow streaming Promptify results for promptify provider & response pattern expect streaming
-    const allowStream = promptifyProviderExists && N8N_RESPONSE_REGEX.test(responseBody);
-
-    if (allowStream) {
-      promptifyNode.parameters.template_streaming = false;
-    }
   }
 
-  const adjacentConnections = currentProviders
-    .filter(prov => prov.type !== PROMPTIFY_NODE_TYPE)
-    .map(provider => ({
-      node: provider.name,
-      type: MAIN_CONNECTION_KEY,
-      index: 0,
-    }));
+  const adjacentConnections = currentProviders.map(provider => ({
+    node: provider.name,
+    type: MAIN_CONNECTION_KEY,
+    index: 0,
+  }));
 
-  if (isPromptifyProvider) {
-    adjacentConnections.push({
-      node: respondToWebhookNode.name,
-      type: MAIN_CONNECTION_KEY,
-      index: 0,
-    });
-  }
+  adjacentConnections.push({
+    node: respondToWebhookNode.name,
+    type: MAIN_CONNECTION_KEY,
+    index: 0,
+  });
 
   connections[adjacentNode.name] = {
     [MAIN_CONNECTION_KEY]: [[...adjacentConnections]],
   };
 
-  if (!isPromptifyProvider) {
-    connections[providerNode.name] = {
-      [MAIN_CONNECTION_KEY]: [
-        [
-          {
-            node: respondToWebhookNode.name,
-            type: MAIN_CONNECTION_KEY,
-            index: 0,
-          },
-        ],
+  connections[providerNode.name] = {
+    [MAIN_CONNECTION_KEY]: [
+      [
+        {
+          node: respondToWebhookNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        },
       ],
-    };
-  }
+    ],
+  };
 
   return {
     ...clonedWorkflow,
@@ -343,8 +350,6 @@ export function getProviderParams(providerType: ProviderType) {
           required: true,
         },
       ];
-    case "n8n-nodes-promptify.promptify":
-      return [];
     default:
       throw new Error(`Provider "${providerType}" is not recognized!`);
   }
@@ -384,8 +389,6 @@ export function replaceProviderParamValue(providerType: ProviderType, values: Re
         text: values.content,
         additionalFields: {},
       };
-    case "n8n-nodes-promptify.promptify":
-      return {};
     default:
       throw new Error(`Provider "${providerType}" is not recognized!`);
   }

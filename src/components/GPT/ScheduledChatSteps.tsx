@@ -18,7 +18,6 @@ import type { FrequencyType, ITemplateWorkflow } from "@/components/Automation/t
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
-import { isNodeProvider } from "@/components/GPTs/helpers";
 import { createMessage } from "@/components/Chat/helper";
 
 interface Props {
@@ -45,7 +44,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
-  const hasProvider = !!clonedWorkflow && clonedWorkflow.nodes.some(node => isNodeProvider(node));
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
 
   useEffect(() => {
@@ -129,28 +127,29 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     injectProvider={injectProvider}
                     removeProvider={removeProvider}
                   />
-
-                  {workflowScheduled && !!inputs.length && (
-                    <MessageInputs
-                      message={createMessage({
-                        type: "form",
-                        text: "Please fill out the following details:",
-                      })}
-                    />
-                  )}
-
-                  {workflowScheduled && hasProvider && (
-                    <RunWorkflowMessage
-                      onRun={runWorkflow}
-                      allowActivateButton={allowActivateButton}
-                    />
-                  )}
                 </Stack>
               )}
             </Box>
           ))}
 
           {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
+
+          {workflowScheduled && (
+            <>
+              {!!inputs.length && (
+                <MessageInputs
+                  message={createMessage({
+                    type: "form",
+                    text: "Please fill out the following details:",
+                  })}
+                />
+              )}
+              <RunWorkflowMessage
+                onRun={runWorkflow}
+                allowActivateButton={allowActivateButton}
+              />
+            </>
+          )}
         </>
       ) : (
         <ChatCredentialsPlaceholder />
