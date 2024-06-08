@@ -5,9 +5,9 @@ import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
-import { PROMPTIFY_NODE_TYPE, PROVIDERS, TIMES } from "@/components/GPT/Constants";
+import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
-import { cleanCredentialName, isNodeProvider, removeProviderNode } from "@/components/GPTs/helpers";
+import { cleanCredentialName, enableWorkflowPromptifyStream, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type {
@@ -184,26 +184,24 @@ const useChat = ({ workflow }: Props) => {
     );
   };
 
-  const handleUpdateWorkflow = async (workflow?: IWorkflowCreateResponse) => {
+  const handleUpdateWorkflow = async (workflowData?: IWorkflowCreateResponse) => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
 
-    const _workflow = workflow ?? clonedWorkflow;
+    let _workflow = structuredClone(workflowData ?? clonedWorkflow);
 
-    const updatedWorkflow = structuredClone(_workflow);
-
-    updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
+    _workflow.nodes.forEach(node => attachCredentialsToNode(node));
 
     try {
-      const response = await updateWorkflow({
-        workflowId: updatedWorkflow.id,
-        data: updatedWorkflow,
+      const updatedProvider = await updateWorkflow({
+        workflowId: _workflow.id,
+        data: _workflow,
       }).unwrap();
 
       dispatch(
         setClonedWorkflow({
-          ...response,
+          ...updatedProvider,
           schedule: schedulingData,
         }),
       );
@@ -258,7 +256,7 @@ const useChat = ({ workflow }: Props) => {
     });
     preparedMessages.push(providerConnectionMessage);
 
-    handleUpdateWorkflow(generatedWorkflow);
+    await handleUpdateWorkflow(generatedWorkflow);
 
     setMessages(prevMessages => prevMessages.concat(preparedMessages));
   };
@@ -269,7 +267,12 @@ const useChat = ({ workflow }: Props) => {
         throw new Error("Cloned workflow not found");
       }
 
-      const webhook = extractWebhookPath(clonedWorkflow.nodes);
+      let _workflow = structuredClone(clonedWorkflow);
+      _workflow = enableWorkflowPromptifyStream(_workflow, workflow);
+
+      await handleUpdateWorkflow(_workflow);
+
+      const webhook = extractWebhookPath(_workflow.nodes);
 
       const response = await sendMessageAPI(webhook);
       if (response && typeof response === "string") {
@@ -279,15 +282,9 @@ const useChat = ({ workflow }: Props) => {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
 
           if (!match) {
-            // Selecting Promptify provider means showing execution response as is
-            const isPromptifyProvider = clonedWorkflow.nodes.find(
-              node => node.type === PROMPTIFY_NODE_TYPE && isNodeProvider(node),
-            );
-
             const responseMessage = createMessage({
               type: "html",
-              text: isPromptifyProvider ? response : "Workflow executed successfully",
-              isHighlight: !isPromptifyProvider,
+              text: response,
             });
             setMessages(prev => prev.concat(responseMessage));
           } else if (!match[2] || match[2] === "undefined") {

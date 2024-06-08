@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { PROMPTIFY_NODE_TYPE, PROVIDERS } from "./Constants";
+import { PROVIDERS } from "./Constants";
 import {
   cleanCredentialName,
   getNodeInfoByType,
@@ -41,15 +41,10 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
 
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
 
-  const {
-    credential,
-    isOauthCredential,
-    isConnected: credentialInserted,
-    handleOauthConnect,
-    handleAuthFormSubmit,
-  } = useCredentialsActions({
-    credentialInput,
-  });
+  const { credential, isOauthCredential, isConnected, handleOauthConnect, handleAuthFormSubmit } =
+    useCredentialsActions({
+      credentialInput,
+    });
 
   const { removeCredential, updateWorkflowAfterCredentialsDeletion } = useCredentials();
   const [deleteCredential] = useDeleteCredentialMutation();
@@ -87,9 +82,10 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
   };
 
   const handleAddingProvider = (values: Record<string, string> = {}) => {
-    if (!credential && providerType !== PROMPTIFY_NODE_TYPE) {
+    if (!credential) {
       throw new Error(`Credential ${credentialInput?.displayName} not connected`);
     }
+
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
@@ -141,7 +137,6 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
 
   const parametersInputs = getProviderParams(providerType);
   const isInjected = !!clonedWorkflow?.nodes.find(node => node.name === providerNodeName);
-  const isConnected = providerType === PROMPTIFY_NODE_TYPE || credentialInserted;
 
   return (
     <>
