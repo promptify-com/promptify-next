@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import FinishCard from "./FinishCard";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
