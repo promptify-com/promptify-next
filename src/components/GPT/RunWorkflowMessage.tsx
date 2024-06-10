@@ -1,9 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import { BtnStyle } from "@/components/GPT/Constants";
 import { useState } from "react";
-import { CircularProgress } from "@mui/material";
+import RunButton from "./RunButton";
 
 interface Props {
   onRun(): Promise<void>;
@@ -37,23 +35,12 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
       >
         Ready to test this GPT
       </Typography>
-      <Button
+      <RunButton
         onClick={handleActivate}
-        variant="contained"
         disabled={!allowActivateButton || isProcessing}
-        sx={BtnStyle}
-      >
-        {isProcessing && (
-          <CircularProgress
-            size={"16px"}
-            sx={{
-              color: "common.black",
-              mr: "10px",
-            }}
-          />
-        )}
-        Run
-      </Button>
+        text="Run"
+        noIcon
+      />
     </Stack>
   );
 }

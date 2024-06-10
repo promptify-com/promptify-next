@@ -1,42 +1,36 @@
 import SyncRounded from "@mui/icons-material/SyncRounded";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
-import Stack from "@mui/material/Stack";
 import React from "react";
+import { BtnStyle } from "./Constants";
 
 interface Props {
   onClick: () => void;
   text?: string;
+  disabled?: boolean;
   loading?: boolean;
+  noIcon?: boolean;
 }
 
-function RunButton({ onClick, text = "Run GPT", loading = false }: Props) {
+function RunButton({ onClick, text = "Run GPT", disabled, loading = false, noIcon }: Props) {
   return (
     <Button
       variant="contained"
       onClick={onClick}
-      endIcon={
-        loading ? (
+      disabled={disabled || loading}
+      {...(!noIcon && {
+        endIcon: loading ? (
           <CircularProgress
             size={12}
             sx={{ color: "#6E45E9" }}
           />
         ) : (
           <SyncRounded />
-        )
-      }
-      disabled={loading}
+        ),
+      })}
       sx={{
-        fontSize: 13,
-        lineHeight: "120%",
+        ...BtnStyle,
         p: "13px 24px",
-        bgcolor: "#6E45E9",
-        borderRadius: "100px",
-        ":hover": {
-          border: "1px solid #6E45E9",
-          bgcolor: "white",
-          color: "#6E45E9",
-        },
       }}
     >
       {loading ? "Generating..." : text}
