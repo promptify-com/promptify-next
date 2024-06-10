@@ -121,36 +121,6 @@ export const isNodeProvider = (node: INode): boolean => {
   return providerPattern.test(node.name);
 };
 
-// Enable streaming Promptify results in Promptify node
-export const enableWorkflowPromptifyStream = (
-  workflow: IWorkflowCreateResponse,
-  templateWorkflow: ITemplateWorkflow,
-) => {
-  const _workflow = structuredClone(workflow);
-  const promptifyNode = _workflow.nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
-  const respondToWebhookNode = _workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-
-  if (!promptifyNode || !respondToWebhookNode) {
-    return _workflow;
-  }
-
-  const currentProviders = findProviderNodes(workflow, templateWorkflow, respondToWebhookNode.name);
-  const hasProviders = currentProviders.length > 0;
-
-  if (hasProviders) {
-    return _workflow;
-  }
-
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
-  const allowStream = N8N_RESPONSE_REGEX.test(responseBody);
-
-  if (allowStream) {
-    promptifyNode.parameters.template_streaming = false;
-  }
-
-  return _workflow;
-};
-
 const findProviderNodes = (
   workflow: IWorkflowCreateResponse,
   templateWorkflow: ITemplateWorkflow,
@@ -179,8 +149,35 @@ const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConne
   );
 };
 
+// Enable streaming Promptify results in Promptify node
+const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse, templateWorkflow: ITemplateWorkflow) => {
+  const _workflow = structuredClone(workflow);
+  const promptifyNode = _workflow.nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+  const respondToWebhookNode = _workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+
+  if (!promptifyNode || !respondToWebhookNode) {
+    return _workflow;
+  }
+
+  const currentProviders = findProviderNodes(workflow, templateWorkflow, respondToWebhookNode.name);
+  const hasProviders = currentProviders.length > 0;
+
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+  const responseBodyStreamMatched = new RegExp(N8N_RESPONSE_REGEX).exec(responseBody);
+  const allowStream = !hasProviders && responseBodyStreamMatched;
+
+  promptifyNode.parameters.save_output = true;
+  promptifyNode.parameters.template_streaming = true;
+  if (allowStream) {
+    promptifyNode.parameters.template_streaming = false;
+  }
+
+  return _workflow;
+};
+
 export const removeProviderNode = (
   workflow: IWorkflowCreateResponse,
+  templateWorkflow: ITemplateWorkflow,
   providerName: string,
 ): IWorkflowCreateResponse => {
   const providerNode = workflow.nodes.find(node => node.name === providerName);
@@ -222,6 +219,8 @@ export const removeProviderNode = (
 
   workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
 
+  workflow = enableWorkflowPromptifyStream(workflow, templateWorkflow);
+
   return workflow;
 };
 
@@ -230,7 +229,7 @@ export function injectProviderNode(
   templateWorkflow: ITemplateWorkflow,
   { nodeParametersCB, node }: IProviderNode,
 ) {
-  const clonedWorkflow = structuredClone(workflow);
+  let clonedWorkflow = structuredClone(workflow);
   const respondToWebhookNode = clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
 
   if (!respondToWebhookNode) {
@@ -264,13 +263,6 @@ export function injectProviderNode(
 
   currentProviders.push(providerNode);
 
-  const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
-
-  if (promptifyNode) {
-    promptifyNode.parameters.save_output = true;
-    promptifyNode.parameters.template_streaming = true;
-  }
-
   const adjacentConnections = currentProviders.map(provider => ({
     node: provider.name,
     type: MAIN_CONNECTION_KEY,
@@ -299,11 +291,9 @@ export function injectProviderNode(
     ],
   };
 
-  return {
-    ...clonedWorkflow,
-    nodes,
-    connections,
-  };
+  clonedWorkflow = enableWorkflowPromptifyStream(clonedWorkflow, templateWorkflow);
+
+  return clonedWorkflow;
 }
 
 export function getProviderParams(providerType: ProviderType) {
