@@ -8,25 +8,20 @@ export const markdownToHTML = async (markdown: string) => {
     .process(markdown.replace(/^(\s+){5,}(?![ ])/gm, "\n"));
 
   // remark set language name as <code class="language-js"></code>. extract language name and put in a separated div
-  const htmlContent = processedContent.toString().replace(/<code class="language-([^"]+)"/g, (match, language) => {
-    return `
-      <div class="code-wrapper-header">
-        <span class="language-label">${language}</span>
-        <button class="copy-button" label="Copy">Copy code</button>
-      </div>
-      <code class="language-${language}"
-    `;
-  });
-
-  const formattedHtmlContent = htmlContent.replace(
-    /<code class="language-([^"]+)"[^>]*>([\s\S]*?)<\/code>/g,
-    (match, language, codeContent) => {
+  const htmlContent = processedContent
+    .toString()
+    .replace(/<code class="language-([^"]+)"[^>]*>([\s\S]*?)<\/code>/g, (match, language, codeContent) => {
       const formattedCodeContent = codeContent.replace(/\n/g, "<br>");
-      return `<code class="language-${language}">${formattedCodeContent}</code>`;
-    },
-  );
+      return `
+        <div class="code-wrapper-header">
+          <span class="language-label">${language}</span>
+          <button class="copy-button" label="Copy">Copy code</button>
+        </div>
+        <pre><code class="language-${language}">${formattedCodeContent}</code></pre>
+      `;
+    });
 
-  return formattedHtmlContent;
+  return htmlContent;
 };
 
 DOMPurify.addHook("afterSanitizeAttributes", function (node) {
