@@ -7,7 +7,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import Typography from "@mui/material/Typography";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";

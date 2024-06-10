@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosRequestConfig, type ResponseType } from "axios";
-import { BaseQueryFn } from "@reduxjs/toolkit/dist/query";
+import { BaseQueryFn } from "@reduxjs/toolkit/query";
 
 import useToken from "@/hooks/useToken";
 import RetryRequestError from "./errors/RetryRequestError";
