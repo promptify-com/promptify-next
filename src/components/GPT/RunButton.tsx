@@ -13,21 +13,21 @@ interface Props {
 }
 
 function RunButton({ onClick, text = "Run GPT", disabled, loading = false, noIcon }: Props) {
+  const icon = loading ? (
+    <CircularProgress
+      size={12}
+      sx={{ color: "#6E45E9" }}
+    />
+  ) : !noIcon ? (
+    <SyncRounded />
+  ) : null;
+
   return (
     <Button
       variant="contained"
       onClick={onClick}
       disabled={disabled || loading}
-      {...(!noIcon && {
-        endIcon: loading ? (
-          <CircularProgress
-            size={12}
-            sx={{ color: "#6E45E9" }}
-          />
-        ) : (
-          <SyncRounded />
-        ),
-      })}
+      endIcon={icon}
       sx={{
         ...BtnStyle,
         p: "13px 24px",
