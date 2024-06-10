@@ -111,7 +111,10 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
               alignItems={"start"}
               justifyContent={"start"}
             >
-              <RunButton onClick={onGenerate} />
+              <RunButton
+                onClick={onGenerate}
+                showIcon
+              />
             </Stack>
           )}
           {generatedExecution && <ExecutionMessage execution={generatedExecution} />}

@@ -9,16 +9,16 @@ interface Props {
   text?: string;
   disabled?: boolean;
   loading?: boolean;
-  noIcon?: boolean;
+  showIcon?: boolean;
 }
 
-function RunButton({ onClick, text = "Run GPT", disabled, loading = false, noIcon }: Props) {
+function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon }: Props) {
   const icon = loading ? (
     <CircularProgress
       size={12}
       sx={{ color: "#6E45E9" }}
     />
-  ) : !noIcon ? (
+  ) : showIcon ? (
     <SyncRounded />
   ) : null;
 

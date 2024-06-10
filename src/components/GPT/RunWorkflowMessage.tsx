@@ -40,7 +40,6 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
         disabled={!allowActivateButton || isProcessing}
         loading={isProcessing}
         text="Run"
-        noIcon
       />
     </Stack>
   );

@@ -74,6 +74,7 @@ function MessageInputs({ message, onGenerate, allowGenerate, isExecuting }: Prop
           <RunButton
             loading={isExecuting}
             onClick={() => onGenerate?.()}
+            showIcon
           />
         )}
       </Stack>
