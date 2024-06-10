@@ -40,7 +40,7 @@
     "formik": "^2.4.2",
     "httpsnippet": "2.0.0",
     "isomorphic-dompurify": "^2.11.0",
-    "material-dynamic-colors": "^1.1.0",
+    "material-dynamic-colors": "^1.1.1",
     "next": "14.2.3",
     "polished": "^4.2.2",
     "react": "18.3.1",
@@ -88,5 +88,6 @@
     "listr2": "6.6.0",
     "cli-table3": "0.6.1",
     "string-width": "4.2.3"
-  }
+  },
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }
