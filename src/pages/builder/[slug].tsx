@@ -16,7 +16,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Stack from "@mui/material/Stack";
 import Zoom from "@mui/material/Zoom";
 import { ClassicPreset } from "rete";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useRete } from "rete-react-render-plugin";
 import { createEditor, Node } from "@/components/builder/Editor";
 import Header from "@/components/builder/Header";
