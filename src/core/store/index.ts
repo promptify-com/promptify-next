@@ -15,6 +15,7 @@ import type {
   IToastSliceState,
   IUserSliceState,
 } from "./types";
+import RetryRequestError from "../api/errors/RetryRequestError";
 
 export type RootState = {
   builder?: IBuilderSliceState;
@@ -58,7 +59,8 @@ const apiResponseMiddleware: Middleware =
   ({ dispatch }) =>
   next =>
   action => {
-    const errorPayload = action.payload;
+    const errorPayload = (action as { payload: { data: { retryRequestError: RetryRequestError; message: string } } })
+      .payload;
     if (errorPayload?.data?.retryRequestError) {
       dispatch(
         setToast({
