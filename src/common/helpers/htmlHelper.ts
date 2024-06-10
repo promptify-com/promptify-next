@@ -17,7 +17,7 @@ export const markdownToHTML = async (markdown: string) => {
           <span class="language-label">${language}</span>
           <button class="copy-button" label="Copy">Copy code</button>
         </div>
-        <pre><code class="language-${language}">${formattedCodeContent}</code></pre>
+        <code class="language-${language}">${formattedCodeContent}</code>
       `;
     });
 
