@@ -84,12 +84,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
             <Box
               key={message.id}
               sx={{
-                ...(!message.fromUser && {
-                  mr: { xs: "0px", md: "48px" },
-                }),
-                ...(message.fromUser && {
-                  ml: { md: "48px" },
-                }),
                 ...(message.noHeader && {
                   mt: "-34px",
                 }),
