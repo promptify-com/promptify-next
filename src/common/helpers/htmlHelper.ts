@@ -18,7 +18,15 @@ export const markdownToHTML = async (markdown: string) => {
     `;
   });
 
-  return htmlContent;
+  const formattedHtmlContent = htmlContent.replace(
+    /<code class="language-([^"]+)"[^>]*>([\s\S]*?)<\/code>/g,
+    (match, language, codeContent) => {
+      const formattedCodeContent = codeContent.replace(/\n/g, "<br>");
+      return `<code class="language-${language}">${formattedCodeContent}</code>`;
+    },
+  );
+
+  return formattedHtmlContent;
 };
 
 DOMPurify.addHook("afterSanitizeAttributes", function (node) {
