@@ -29,12 +29,12 @@ function Profile() {
           >
             <Stack
               gap={3}
-              pt={{ xs: 0, md: "48px" }}
+              pt={{ xs: 0, sm: 8, md: "48px" }}
               pb="48px"
               width={{ xs: "100%", md: "85%" }}
             >
               <Stack
-                alignItems={{ xs: "flex-start", md: "center" }}
+                alignItems={{ xs: "flex-start", sm: "center" }}
                 gap={2}
                 p={{ xs: "16px", md: 0 }}
               >

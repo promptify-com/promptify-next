@@ -100,8 +100,10 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
             justifyContent={isHomePage ? "flex-start" : "center"}
             sx={{
               ...(profilePage && {
-                [theme.breakpoints.down("md")]: {
+                [theme.breakpoints.down("lg")]: {
                   flexWrap: "wrap",
+                  flexDirection: "column",
+                  alignItems: "center",
                 },
               }),
             }}
@@ -109,9 +111,9 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
             <Grid
               item
               xs={12}
-              md={4}
+              lg={4}
               sx={{
-                maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
               }}
             >
               <SuggestionCard
@@ -130,14 +132,14 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               <Grid
                 item
                 xs={12}
-                md={4}
+                lg={4}
                 sx={{
-                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
                   ...(profilePage && {
                     [theme.breakpoints.down("md")]: {
                       mr: 0,
                     },
-                    maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                    maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
                   }),
                 }}
               >
@@ -163,7 +165,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 xs={12}
                 md={4}
                 sx={{
-                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
                 }}
               >
                 <SuggestionCard
@@ -187,7 +189,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 xs={12}
                 md={4}
                 sx={{
-                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
                 }}
               >
                 <SuggestionCard
@@ -209,14 +211,14 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               item
               mr={2}
               xs={12}
-              md={4}
+              lg={4}
               sx={{
                 maxWidth: { xs: "290px", md: "330px", xl: "100%" },
                 ...(profilePage && {
-                  [theme.breakpoints.down("md")]: {
+                  [theme.breakpoints.down("lg")]: {
                     mr: 0,
                   },
-                  maxWidth: { xs: "290px", md: "330px", xl: "100%" },
+                  maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
                 }),
               }}
             >
