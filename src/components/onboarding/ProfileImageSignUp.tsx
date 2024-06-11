@@ -142,6 +142,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
           position: "fixed",
           justifyContent: "center",
           alignSelf: "center",
+          overflow: "hidden",
         }}
       >
         <Box

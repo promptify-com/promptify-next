@@ -55,6 +55,7 @@ export const ProfileImageButton = () => {
           position: "fixed",
           justifyContent: "center",
           alignSelf: "center",
+          overflow: "hidden",
         }}
       >
         <Box
