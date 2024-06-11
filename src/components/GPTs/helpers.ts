@@ -174,8 +174,8 @@ const findConnectedNodeNames = (connections: Record<string, INodeConnection>, no
 };
 
 const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
-  return nodes.find(
-    node => connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
+  return nodes.find(node =>
+    connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
   );
 };
 
@@ -197,6 +197,12 @@ export const removeProviderNode = (
 
   const removedProviderName = providerNode.name;
 
+  const markdownNode = workflow.nodes.find(
+    node =>
+      node.type === "n8n-nodes-base.markdown" &&
+      workflow.connections[node.name]?.main[0].some(conn => conn.node === removedProviderName),
+  );
+
   const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
 
   if (!adjacentNode) {
@@ -207,20 +213,36 @@ export const removeProviderNode = (
     connection => connection.node !== removedProviderName,
   );
 
-  if (!cleanConnections.length) {
-    cleanConnections.push({
-      node: respondToWebhookNode.name,
-      type: MAIN_CONNECTION_KEY,
-      index: 0,
-    });
-  }
-
   workflow.connections[adjacentNode.name] = {
     [MAIN_CONNECTION_KEY]: [cleanConnections],
   };
-  delete workflow.connections[removedProviderName];
 
+  delete workflow.connections[removedProviderName];
   workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
+
+  const remainingProviders = workflow.nodes.filter(
+    node =>
+      node.type === "n8n-nodes-base.slack" ||
+      node.type === "n8n-nodes-base.whatsApp" ||
+      node.type === "n8n-nodes-base.telegram",
+  );
+
+  if (remainingProviders.length === 0 && markdownNode) {
+    delete workflow.connections[markdownNode.name];
+    workflow.nodes = workflow.nodes.filter(node => node.name !== markdownNode.name);
+
+    workflow.connections[adjacentNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        [
+          {
+            node: respondToWebhookNode.name,
+            type: MAIN_CONNECTION_KEY,
+            index: 0,
+          },
+        ],
+      ],
+    };
+  }
 
   return workflow;
 };
@@ -250,6 +272,7 @@ export function injectProviderNode(
 
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
 
+  // Create and add the provider node
   const providerNode = {
     id: node.id,
     name: node.name,
@@ -261,15 +284,29 @@ export function injectProviderNode(
   };
 
   nodes.push(providerNode);
-
   currentProviders.push(providerNode);
 
-  const promptifyNode = nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+  let markdownNode = nodes.find(n => n.type === "n8n-nodes-base.markdown");
 
-  if (promptifyNode) {
-    promptifyNode.parameters.save_output = true;
-    promptifyNode.parameters.template_streaming = true;
+  // Create and add the markdown node if it doesn't exist
+  if (!markdownNode) {
+    markdownNode = {
+      parameters: {
+        mode: "markdownToHtml",
+        markdown: "={{ $json.content }}",
+        options: {},
+      },
+      id: "29d027a9-e0c2-4a60-b23a-a723b8f1f1d2",
+      name: "Markdown",
+      type: "n8n-nodes-base.markdown",
+      typeVersion: 1,
+      position: [620, -60],
+    };
+
+    nodes.push(markdownNode);
   }
+
+  providerNode.parameters.message = "={{ $json.data }}";
 
   const adjacentConnections = currentProviders.map(provider => ({
     node: provider.name,
@@ -284,9 +321,27 @@ export function injectProviderNode(
   });
 
   connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [[...adjacentConnections]],
+    [MAIN_CONNECTION_KEY]: [
+      [
+        {
+          node: markdownNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        },
+      ],
+    ],
   };
-
+  connections[markdownNode.name] = {
+    [MAIN_CONNECTION_KEY]: [
+      [
+        {
+          node: providerNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        },
+      ],
+    ],
+  };
   connections[providerNode.name] = {
     [MAIN_CONNECTION_KEY]: [
       [
