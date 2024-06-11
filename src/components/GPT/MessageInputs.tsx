@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { useAppSelector } from "@/hooks/useStore";
-import { initialState } from "@/core/store/chatSlice";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 import FormInput from "@/components/GPT/FormInput";
 import MessageContainer from "@/components/GPT/MessageContainer";
 import type { IMessage } from "@/components/Prompt/Types/chat";
@@ -15,7 +15,7 @@ interface Props {
 }
 
 function MessageInputs({ message, onGenerate, allowGenerate, isExecuting }: Props) {
-  const inputs = useAppSelector(state => state.chat?.inputs ?? initialState.inputs);
+  const inputs = useAppSelector(state => state.chat?.inputs ?? initialChatState.inputs);
 
   return (
     <MessageContainer message={message}>
