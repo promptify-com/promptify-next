@@ -21,7 +21,7 @@
     "@mui/material": "5.15.19",
     "@netlify/plugin-nextjs": "4.40.1",
     "@react-oauth/google": "^0.11.0",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^2.2.5",
     "@sentry/nextjs": "8.8.0",
     "@types/node": "20.14.2",
     "@types/react": "18.3.3",
@@ -29,7 +29,7 @@
     "@types/react-syntax-highlighter": "^15.5.7",
     "@types/yup": "^0.32.0",
     "axios": "^1.7.2",
-    "cypress": "^13.10.0",
+    "cypress": "13.10.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "draft-js": "^0.11.7",
@@ -40,7 +40,7 @@
     "formik": "^2.4.2",
     "httpsnippet": "2.0.0",
     "isomorphic-dompurify": "^2.11.0",
-    "material-dynamic-colors": "^1.1.0",
+    "material-dynamic-colors": "^1.1.1",
     "next": "14.2.3",
     "polished": "^4.2.2",
     "react": "18.3.1",
@@ -49,9 +49,9 @@
     "react-dom": "18.3.1",
     "react-github-login": "^1.0.3",
     "react-highlight-within-textarea": "^3.2.1",
-    "react-image-crop": "^10.1.5",
+    "react-image-crop": "^11.0.5",
     "react-linkedin-login-oauth2": "^2.0.1",
-    "react-redux": "^8.1.1",
+    "react-redux": "^9.1.2",
     "react-syntax-highlighter": "^15.5.0",
     "remark": "^14.0.3",
     "remark-html": "^15.0.2",
@@ -88,5 +88,6 @@
     "listr2": "6.6.0",
     "cli-table3": "0.6.1",
     "string-width": "4.2.3"
-  }
+  },
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }

@@ -105,6 +105,7 @@ export const BtnStyle = {
   fontSize: 13,
   fontWeight: 500,
   p: "6px 24px",
+  borderRadius: "99px",
   ":hover": {
     bgcolor: "#5632c2",
     color: "common.white",

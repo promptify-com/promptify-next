@@ -20,6 +20,7 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
 
   const prepareCredential = async () => {
     const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
+
     setLocalInputs(credentialsInput);
   };
 
@@ -94,10 +95,7 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
               </Typography>
             </Stack>
 
-            <Credentials
-              input={input}
-              isScheduled={isScheduled}
-            />
+            <Credentials input={input} />
           </Stack>
         ))}
       </Stack>

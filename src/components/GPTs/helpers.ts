@@ -149,13 +149,12 @@ export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse)
   const currentProviders = findProviderNodes(workflow, respondToWebhookNode.name);
   const hasProviders = currentProviders.length > 0;
 
-  if (hasProviders) {
-    return _workflow;
-  }
-
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
-  const allowStream = N8N_RESPONSE_REGEX.test(responseBody);
+  const responseBodyStreamMatched = new RegExp(N8N_RESPONSE_REGEX).exec(responseBody);
+  const allowStream = !hasProviders && responseBodyStreamMatched;
 
+  promptifyNode.parameters.save_output = true;
+  promptifyNode.parameters.template_streaming = true;
   if (allowStream) {
     promptifyNode.parameters.template_streaming = false;
   }

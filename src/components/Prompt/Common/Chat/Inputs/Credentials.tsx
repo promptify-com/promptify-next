@@ -32,14 +32,13 @@ import { BtnStyle } from "@/components/GPT/Constants";
 
 interface Props {
   input: ICredentialInput;
-  isScheduled?: boolean;
 }
 
 interface FormValues {
   [key: string]: string;
 }
 
-function Credentials({ input, isScheduled }: Props) {
+function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -311,18 +310,16 @@ function Credentials({ input, isScheduled }: Props) {
               >
                 <Refresh />
               </IconButton>
-              {isScheduled && checkCredentialInserted(input) && (
-                <Check
-                  sx={{
-                    width: 18,
-                    height: 18,
-                    p: "7px",
-                    borderRadius: "50%",
-                    bgcolor: "#4EB972",
-                    color: "#FFF",
-                  }}
-                />
-              )}
+              <Check
+                sx={{
+                  width: 18,
+                  height: 18,
+                  p: "7px",
+                  borderRadius: "50%",
+                  bgcolor: "#4EB972",
+                  color: "#FFF",
+                }}
+              />
             </Stack>
           ) : isOauthCredential ? (
             <Stack sx={{ flexDirection: "row", alignItems: "center" }}>

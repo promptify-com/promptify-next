@@ -65,9 +65,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
           direction={"column"}
           width={"100%"}
         >
-          {generatedExecution ? (
-            <ExecutionMessage execution={generatedExecution} />
-          ) : !!messages.length ? (
+          {!!messages.length ? (
             messages.map(msg => (
               <Box
                 key={msg.id}
@@ -93,7 +91,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
                     allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
                     onGenerate={onGenerate}
                     message={msg}
-                    isExecuting={isExecuting}
+                    isExecuting={isExecuting || isGenerating}
                   />
                 )}
 
@@ -113,9 +111,14 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
               alignItems={"start"}
               justifyContent={"start"}
             >
-              <RunButton onClick={onGenerate} />
+              <RunButton
+                onClick={onGenerate}
+                showIcon
+                loading={isExecuting || isGenerating}
+              />
             </Stack>
           )}
+          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
         </Stack>
       </Stack>
     </Stack>
