@@ -7,7 +7,7 @@ import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
-import { cleanCredentialName, enableWorkflowPromptifyStream, removeProviderNode } from "@/components/GPTs/helpers";
+import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type {
@@ -270,9 +270,6 @@ const useChat = ({ workflow }: Props) => {
       }
 
       let _workflow = structuredClone(clonedWorkflow);
-      _workflow = enableWorkflowPromptifyStream(_workflow, workflow);
-
-      await handleUpdateWorkflow(_workflow);
 
       const webhook = extractWebhookPath(_workflow.nodes);
 
@@ -311,7 +308,7 @@ const useChat = ({ workflow }: Props) => {
 
   const removeProvider = (providerName: string, shouldUpdate = true) => {
     let _clonedWorkflow = structuredClone(clonedWorkflow)!;
-    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerName);
+    _clonedWorkflow = removeProviderNode(_clonedWorkflow, workflow, providerName);
     if (shouldUpdate) {
       dispatch(setClonedWorkflow(_clonedWorkflow));
     }

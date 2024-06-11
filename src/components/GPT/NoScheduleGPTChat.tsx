@@ -91,7 +91,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
                     allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
                     onGenerate={onGenerate}
                     message={msg}
-                    isExecuting={isExecuting}
+                    isExecuting={isExecuting || isGenerating}
                   />
                 )}
 
@@ -111,7 +111,11 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
               alignItems={"start"}
               justifyContent={"start"}
             >
-              <RunButton onClick={onGenerate} />
+              <RunButton
+                onClick={onGenerate}
+                showIcon
+                loading={isExecuting || isGenerating}
+              />
             </Stack>
           )}
           {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
