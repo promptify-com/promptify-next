@@ -132,8 +132,10 @@ const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: 
   let markdownNode = workflow.nodes.find(node => node.type === MARKDOWN_NODE_TYPE);
   if (!markdownNode) return [];
 
+  const markdownNodeConnections = workflow.connections[markdownNodeName]?.[MAIN_CONNECTION_KEY][0];
+
   const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-  const markdownNodeConnections = workflow.connections[markdownNodeName].main[0];
+
   const providersNames = markdownNodeConnections.filter(connection => connection.node !== respondToWebhookNode?.name);
   const providersNodes = providersNames
     .map(provider => workflow.nodes.find(node => node.name === provider.node)!)
@@ -158,25 +160,13 @@ export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse)
     return _workflow;
   }
 
-  promptifyNode.parameters.save_output = true;
-  promptifyNode.parameters.template_streaming = true;
-
   const markdownNode = _workflow.nodes.find(
     node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN,
   );
 
+  promptifyNode.parameters.save_output = true;
+  promptifyNode.parameters.template_streaming = true;
   if (!markdownNode) {
-    return _workflow;
-  }
-
-  const currentProviders = findProviderNodes(workflow, markdownNode.name);
-  const hasProviders = currentProviders.length > 0;
-
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
-  const responseBodyStreamMatched = new RegExp(N8N_RESPONSE_REGEX).exec(responseBody);
-  const allowStream = !hasProviders && responseBodyStreamMatched;
-
-  if (allowStream) {
     promptifyNode.parameters.template_streaming = false;
   }
 
@@ -184,7 +174,7 @@ export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse)
 };
 
 export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
-  const clonedWorkflow = structuredClone(workflow);
+  let clonedWorkflow = structuredClone(workflow);
   const { nodes, connections } = clonedWorkflow;
 
   const respondToWebhookNode = nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
@@ -266,11 +256,13 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     ],
   };
 
-  return {
+  clonedWorkflow = enableWorkflowPromptifyStream({
     ...clonedWorkflow,
     nodes,
     connections,
-  };
+  });
+
+  return clonedWorkflow;
 }
 
 export const removeProviderNode = (
@@ -332,7 +324,9 @@ export const removeProviderNode = (
     };
   }
 
-  return { ...workflow, nodes, connections };
+  workflow = enableWorkflowPromptifyStream({ ...workflow, nodes, connections });
+
+  return workflow;
 };
 
 export function getProviderParams(providerType: ProviderType) {
