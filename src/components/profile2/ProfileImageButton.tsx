@@ -1,90 +1,29 @@
-import React, { useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
-import ReactCrop, { PixelCrop, type Crop } from "react-image-crop";
-import { Buffer } from "buffer";
+import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import { useUpdateUserProfileMutation } from "@/core/api/user";
-import { updateUser } from "@/core/store/userSlice";
-import { useAppDispatch } from "@/hooks/useStore";
+
+import { useImageCrop } from "@/hooks/useImageCrop";
 import useToken from "@/hooks/useToken";
 
 export const ProfileImageButton = () => {
   const token = useToken();
-  const dispatch = useAppDispatch();
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [showCropModal, setShowCropModal] = useState(false);
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
-  const [crop, setCrop] = useState<Crop>({
-    unit: "px",
-    x: 0,
-    y: 0,
-    width: 150,
-    height: 150,
-  });
-  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
-  const onSave = async () => {
-    const avatar = getCroppedImage();
-
-    if (avatar && token) {
-      const payload = await updateUserProfile({ token, data: { avatar } }).unwrap();
-      dispatch(updateUser(payload));
-      setShowCropModal(false);
-    }
-  };
-
-  const imgRef = useRef<HTMLImageElement>(null);
-  const aspect = 1;
-
-  function getCroppedImage() {
-    if (completedCrop) {
-      // create a canvas element to draw the cropped image
-      const canvas = document.createElement("canvas");
-
-      // get the image element
-      const image = imgRef.current;
-
-      // draw the image on the canvas
-      if (image) {
-        const crop = completedCrop;
-        const scaleX = image.naturalWidth / image.width;
-        const scaleY = image.naturalHeight / image.height;
-        const ctx = canvas.getContext("2d");
-        const pixelRatio = window.devicePixelRatio;
-        canvas.width = crop.width * pixelRatio * scaleX;
-        canvas.height = crop.height * pixelRatio * scaleY;
-
-        if (ctx) {
-          ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-          ctx.imageSmoothingQuality = "high";
-
-          ctx.drawImage(
-            image,
-            crop.x * scaleX,
-            crop.y * scaleY,
-            crop.width * scaleX,
-            crop.height * scaleY,
-            0,
-            0,
-            crop.width * scaleX,
-            crop.height * scaleY,
-          );
-        }
-
-        const base64Image = canvas.toDataURL("image/png"); // can be changed to jpeg/jpg etc
-
-        if (base64Image) {
-          const fileType = base64Image.split(";")[0].split(":")[1];
-
-          const buffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ""), "base64");
-          return new File([buffer], "fileName", { type: fileType });
-        }
-      }
-    }
-  }
+  const {
+    imgSrc,
+    setCompletedCrop,
+    showCropModal,
+    setShowCropModal,
+    crop,
+    setCrop,
+    imgRef,
+    onSave,
+    onSelectFile,
+    onImageLoad,
+    isLoading,
+  } = useImageCrop(token);
 
   return (
     <>
@@ -103,10 +42,7 @@ export const ProfileImageButton = () => {
           hidden
           accept="image/*"
           type="file"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setSelectedImage(event?.target?.files?.[0] || null);
-            setShowCropModal(true);
-          }}
+          onChange={onSelectFile}
         />
         Select Image
       </Button>
@@ -157,14 +93,17 @@ export const ProfileImageButton = () => {
               crop={crop}
               onChange={c => setCrop(c)}
               onComplete={c => setCompletedCrop(c)}
-              aspect={aspect}
+              aspect={1}
             >
-              <img
-                src={selectedImage ? URL.createObjectURL(selectedImage) : "no-image"}
-                ref={imgRef}
-                alt={"profile image"}
-                style={{ maxHeight: "70vh" }}
-              />
+              {imgSrc && (
+                <img
+                  src={imgSrc}
+                  ref={imgRef}
+                  alt="profile image"
+                  style={{ maxHeight: "70vh" }}
+                  onLoad={onImageLoad}
+                />
+              )}
             </ReactCrop>
           </Box>
 
@@ -214,7 +153,7 @@ export const ProfileImageButton = () => {
                   color: "#424242",
                 },
               }}
-              onClick={() => onSave()}
+              onClick={onSave}
             >
               {isLoading ? (
                 <CircularProgress
