@@ -270,7 +270,7 @@ const useChat = ({ workflow }: Props) => {
       }
 
       let _workflow = structuredClone(clonedWorkflow);
-      _workflow = enableWorkflowPromptifyStream(_workflow, workflow);
+      _workflow = enableWorkflowPromptifyStream(_workflow);
 
       await handleUpdateWorkflow(_workflow);
 

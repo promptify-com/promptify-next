@@ -113,7 +113,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
       };
     }
 
-    const generatedWorkflow = injectProviderNode(clonedWorkflow, workflow, {
+    const generatedWorkflow = injectProviderNode(clonedWorkflow, {
       nodeParametersCB: prepareParameters,
       node: nodeData,
     });

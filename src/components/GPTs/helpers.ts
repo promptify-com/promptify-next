@@ -20,7 +20,7 @@ import type {
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
-import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
+import { MARKDOWN_NODE_TYPE, PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
@@ -115,17 +115,30 @@ class NodeNotFoundError extends Error {
   }
 }
 
+export const PROVIDERS_MARKDOWN = "_markdown__$providers$__message_";
 export const nameProvider = (name: string) => `_send__provider__$${name}$__message_`;
 export const isNodeProvider = (node: INode): boolean => {
-  const providerPattern = /^_send__provider__\$.*\$__message_$/;
-  return providerPattern.test(node.name);
+  const providerPattern = new RegExp(/^_send__provider__\$.*\$__message_$/);
+  return !!providerPattern.exec(node.name);
+};
+
+const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: string) => {
+  let markdownNode = workflow.nodes.find(node => node.type === MARKDOWN_NODE_TYPE);
+  if (!markdownNode) return [];
+
+  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+  const markdownNodeConnections = workflow.connections[markdownNodeName].main[0];
+  console.log({ markdownNodeConnections });
+  const providersNames = markdownNodeConnections.filter(connection => connection.node !== respondToWebhookNode?.name);
+  const providersNodes = providersNames
+    .map(provider => workflow.nodes.find(node => node.name === provider.node)!)
+    .filter(providerNode => isNodeProvider(providerNode));
+
+  return providersNodes;
 };
 
 // Enable streaming Promptify results in Promptify node
-export const enableWorkflowPromptifyStream = (
-  workflow: IWorkflowCreateResponse,
-  templateWorkflow: ITemplateWorkflow,
-) => {
+export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse) => {
   const _workflow = structuredClone(workflow);
   const promptifyNode = _workflow.nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
   const respondToWebhookNode = _workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
@@ -134,7 +147,7 @@ export const enableWorkflowPromptifyStream = (
     return _workflow;
   }
 
-  const currentProviders = findProviderNodes(workflow, templateWorkflow, respondToWebhookNode.name);
+  const currentProviders = findProviderNodes(workflow, respondToWebhookNode.name);
   const hasProviders = currentProviders.length > 0;
 
   if (hasProviders) {
@@ -151,33 +164,100 @@ export const enableWorkflowPromptifyStream = (
   return _workflow;
 };
 
-const findProviderNodes = (
-  workflow: IWorkflowCreateResponse,
-  templateWorkflow: ITemplateWorkflow,
-  respondToWebhookNodeName: string,
-) => {
-  const templateWorkflowConnectedNodeNames = findConnectedNodeNames(
-    templateWorkflow.data.connections,
-    respondToWebhookNodeName,
-  );
-  const workflowConnectedNodeNames = findConnectedNodeNames(workflow.connections, respondToWebhookNodeName);
-
-  return workflowConnectedNodeNames
-    .filter(nodeName => !templateWorkflowConnectedNodeNames.includes(nodeName))
-    .map(nodeName => workflow.nodes.find(node => node.name === nodeName)!);
-};
-
-const findConnectedNodeNames = (connections: Record<string, INodeConnection>, nodeName: string) => {
-  return Object.entries(connections)
-    .filter(([, { main }]) => main[0].find(nodeConn => nodeConn.node === nodeName))
-    .map(([nodeName]) => nodeName);
-};
-
 const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
   return nodes.find(node =>
     connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
   );
 };
+
+export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
+  const clonedWorkflow = structuredClone(workflow);
+  const { nodes, connections } = clonedWorkflow;
+
+  const respondToWebhookNode = nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+
+  if (!respondToWebhookNode) {
+    throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
+  }
+
+  let markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN);
+
+  const currentProviders = markdownNode ? findProviderNodes(workflow, markdownNode.name) : [];
+
+  const adjacentConnector = markdownNode?.name ?? respondToWebhookNode.name;
+  const adjacentNode = findAdjacentNode(nodes, connections, adjacentConnector);
+
+  if (!adjacentNode) {
+    throw new NodeNotFoundError(`Could not find the adjacent node to "${adjacentConnector}" node`);
+  }
+
+  if (!markdownNode) {
+    markdownNode = {
+      id: "29d027a9-e0c2-4a60-b23a-a723b8f1f1d2",
+      name: PROVIDERS_MARKDOWN,
+      type: "n8n-nodes-base.markdown",
+      typeVersion: 1,
+      position: [620, -60],
+      parameters: {
+        mode: "markdownToHtml",
+        markdown: "={{ $json.content }}",
+        options: {},
+      },
+    };
+
+    nodes.push(markdownNode);
+  }
+
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+
+  const providerNode = {
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    typeVersion: node.typeVersion,
+    credentials: node.credentials,
+    parameters: nodeParametersCB(responseBody),
+    position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
+  };
+  providerNode.parameters.message = "={{ $json.data }}";
+  providerNode.parameters.text = "={{ $json.data }}";
+  providerNode.parameters.textBody = "={{ $json.data }}";
+
+  nodes.push(providerNode);
+  currentProviders.push(providerNode);
+
+  connections[adjacentNode.name] = {
+    [MAIN_CONNECTION_KEY]: [
+      [
+        {
+          node: markdownNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        },
+        {
+          node: respondToWebhookNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        },
+      ],
+    ],
+  };
+
+  const providersConnections = currentProviders.map(provider => ({
+    node: provider.name,
+    type: MAIN_CONNECTION_KEY,
+    index: 0,
+  }));
+  connections[markdownNode.name] = {
+    [MAIN_CONNECTION_KEY]: [[...providersConnections]],
+  };
+
+  return {
+    ...clonedWorkflow,
+    nodes,
+    connections,
+  };
+}
 
 export const removeProviderNode = (
   workflow: IWorkflowCreateResponse,
@@ -199,7 +279,7 @@ export const removeProviderNode = (
 
   const markdownNode = workflow.nodes.find(
     node =>
-      node.type === "n8n-nodes-base.markdown" &&
+      node.type === MARKDOWN_NODE_TYPE &&
       workflow.connections[node.name]?.main[0].some(conn => conn.node === removedProviderName),
   );
 
@@ -246,120 +326,6 @@ export const removeProviderNode = (
 
   return workflow;
 };
-
-export function injectProviderNode(
-  workflow: IWorkflowCreateResponse,
-  templateWorkflow: ITemplateWorkflow,
-  { nodeParametersCB, node }: IProviderNode,
-) {
-  const clonedWorkflow = structuredClone(workflow);
-  const respondToWebhookNode = clonedWorkflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-
-  if (!respondToWebhookNode) {
-    throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
-  }
-
-  const { nodes, connections } = clonedWorkflow;
-
-  const currentProviders = findProviderNodes(workflow, templateWorkflow, respondToWebhookNode.name);
-
-  const adjacentConnector = currentProviders[0] ? currentProviders[0].name : respondToWebhookNode.name;
-  const adjacentNode = findAdjacentNode(nodes, connections, adjacentConnector);
-
-  if (!adjacentNode) {
-    throw new NodeNotFoundError(`Could not find the adjacent node to "${adjacentConnector}" node`);
-  }
-
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
-
-  // Create and add the provider node
-  const providerNode = {
-    id: node.id,
-    name: node.name,
-    type: node.type,
-    typeVersion: node.typeVersion,
-    credentials: node.credentials,
-    parameters: nodeParametersCB(responseBody),
-    position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
-  };
-
-  nodes.push(providerNode);
-  currentProviders.push(providerNode);
-
-  let markdownNode = nodes.find(n => n.type === "n8n-nodes-base.markdown");
-
-  // Create and add the markdown node if it doesn't exist
-  if (!markdownNode) {
-    markdownNode = {
-      parameters: {
-        mode: "markdownToHtml",
-        markdown: "={{ $json.content }}",
-        options: {},
-      },
-      id: "29d027a9-e0c2-4a60-b23a-a723b8f1f1d2",
-      name: "Markdown",
-      type: "n8n-nodes-base.markdown",
-      typeVersion: 1,
-      position: [620, -60],
-    };
-
-    nodes.push(markdownNode);
-  }
-
-  providerNode.parameters.message = "={{ $json.data }}";
-
-  const adjacentConnections = currentProviders.map(provider => ({
-    node: provider.name,
-    type: MAIN_CONNECTION_KEY,
-    index: 0,
-  }));
-
-  adjacentConnections.push({
-    node: respondToWebhookNode.name,
-    type: MAIN_CONNECTION_KEY,
-    index: 0,
-  });
-
-  connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      [
-        {
-          node: markdownNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
-      ],
-    ],
-  };
-  connections[markdownNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      [
-        {
-          node: providerNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
-      ],
-    ],
-  };
-  connections[providerNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      [
-        {
-          node: respondToWebhookNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
-      ],
-    ],
-  };
-
-  return {
-    ...clonedWorkflow,
-    nodes,
-    connections,
-  };
-}
 
 export function getProviderParams(providerType: ProviderType) {
   switch (providerType) {
