@@ -128,7 +128,6 @@ const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: 
 
   const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
   const markdownNodeConnections = workflow.connections[markdownNodeName].main[0];
-  console.log({ markdownNodeConnections });
   const providersNames = markdownNodeConnections.filter(connection => connection.node !== respondToWebhookNode?.name);
   const providersNodes = providersNames
     .map(provider => workflow.nodes.find(node => node.name === provider.node)!)
@@ -243,13 +242,14 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     ],
   };
 
-  const providersConnections = currentProviders.map(provider => ({
-    node: provider.name,
-    type: MAIN_CONNECTION_KEY,
-    index: 0,
-  }));
   connections[markdownNode.name] = {
-    [MAIN_CONNECTION_KEY]: [[...providersConnections]],
+    [MAIN_CONNECTION_KEY]: [
+      currentProviders.map(provider => ({
+        node: provider.name,
+        type: MAIN_CONNECTION_KEY,
+        index: 0,
+      })),
+    ],
   };
 
   return {
@@ -263,53 +263,47 @@ export const removeProviderNode = (
   workflow: IWorkflowCreateResponse,
   providerName: string,
 ): IWorkflowCreateResponse => {
-  const providerNode = workflow.nodes.find(node => node.name === providerName);
+  let { nodes, connections } = workflow;
 
-  if (!providerNode) {
+  const providerNode = nodes.find(node => node.name === providerName);
+  const markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN);
+
+  if (!providerNode || !markdownNode) {
     return workflow;
   }
 
-  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
+  const adjacentNode = findAdjacentNode(nodes, connections, markdownNode.name);
+
+  if (!adjacentNode) {
+    return workflow;
+  }
+
+  const respondToWebhookNode = nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
 
   if (!respondToWebhookNode) {
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
+  const currentProviders = findProviderNodes(workflow, markdownNode.name);
   const removedProviderName = providerNode.name;
 
-  const markdownNode = workflow.nodes.find(
-    node =>
-      node.type === MARKDOWN_NODE_TYPE &&
-      workflow.connections[node.name]?.main[0].some(conn => conn.node === removedProviderName),
-  );
+  nodes = nodes.filter(node => node.name !== removedProviderName);
 
-  const adjacentNode = findAdjacentNode(workflow.nodes, workflow.connections, removedProviderName);
+  const remainingProviders = currentProviders.filter(provider => provider.name !== removedProviderName);
 
-  if (!adjacentNode) {
-    throw new Error('Could not find the adjacent node to "Respond to Webhook" node');
-  }
-
-  const cleanConnections = workflow.connections[adjacentNode.name][MAIN_CONNECTION_KEY][0].filter(
-    connection => connection.node !== removedProviderName,
-  );
-
-  workflow.connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [cleanConnections],
-  };
-
-  delete workflow.connections[removedProviderName];
-  workflow.nodes = workflow.nodes.filter(node => node.name !== removedProviderName);
-
-  const remainingProviders = workflow.nodes.filter(
-    node =>
-      node.type === "n8n-nodes-base.slack" ||
-      node.type === "n8n-nodes-base.whatsApp" ||
-      node.type === "n8n-nodes-base.telegram",
-  );
-
-  if (remainingProviders.length === 0 && markdownNode) {
-    delete workflow.connections[markdownNode.name];
-    workflow.nodes = workflow.nodes.filter(node => node.name !== markdownNode.name);
+  if (remainingProviders.length) {
+    connections[markdownNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        remainingProviders.map(provider => ({
+          node: provider.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        })),
+      ],
+    };
+  } else {
+    delete connections[markdownNode.name];
+    nodes = nodes.filter(node => node.name !== markdownNode.name);
 
     workflow.connections[adjacentNode.name] = {
       [MAIN_CONNECTION_KEY]: [
@@ -324,7 +318,7 @@ export const removeProviderNode = (
     };
   }
 
-  return workflow;
+  return { ...workflow, nodes, connections };
 };
 
 export function getProviderParams(providerType: ProviderType) {
