@@ -122,6 +122,12 @@ export const isNodeProvider = (node: INode): boolean => {
   return !!providerPattern.exec(node.name);
 };
 
+const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
+  return nodes.find(node =>
+    connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
+  );
+};
+
 const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: string) => {
   let markdownNode = workflow.nodes.find(node => node.type === MARKDOWN_NODE_TYPE);
   if (!markdownNode) return [];
@@ -139,33 +145,42 @@ const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: 
 // Enable streaming Promptify results in Promptify node
 export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse) => {
   const _workflow = structuredClone(workflow);
-  const promptifyNode = _workflow.nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+
   const respondToWebhookNode = _workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
 
-  if (!promptifyNode || !respondToWebhookNode) {
+  if (!respondToWebhookNode) {
+    throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
+  }
+
+  const promptifyNode = _workflow.nodes.filter(node => node.type === PROMPTIFY_NODE_TYPE).pop();
+
+  if (!promptifyNode) {
     return _workflow;
   }
 
-  const currentProviders = findProviderNodes(workflow, respondToWebhookNode.name);
+  promptifyNode.parameters.save_output = true;
+  promptifyNode.parameters.template_streaming = true;
+
+  const markdownNode = _workflow.nodes.find(
+    node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN,
+  );
+
+  if (!markdownNode) {
+    return _workflow;
+  }
+
+  const currentProviders = findProviderNodes(workflow, markdownNode.name);
   const hasProviders = currentProviders.length > 0;
 
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
   const responseBodyStreamMatched = new RegExp(N8N_RESPONSE_REGEX).exec(responseBody);
   const allowStream = !hasProviders && responseBodyStreamMatched;
 
-  promptifyNode.parameters.save_output = true;
-  promptifyNode.parameters.template_streaming = true;
   if (allowStream) {
     promptifyNode.parameters.template_streaming = false;
   }
 
   return _workflow;
-};
-
-const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
-  return nodes.find(node =>
-    connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
-  );
 };
 
 export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
