@@ -121,6 +121,10 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
               color={"text.secondary"}
               sx={{
                 opacity: 0.8,
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: "1",
+                overflow: "hidden",
               }}
             >
               {title}
@@ -134,7 +138,7 @@ const SuggestionCard = ({ title, description, avatar, actionLabel, href }: Props
               minHeight={"66px"}
               pt={"8px"}
             >
-              {truncate(description, { length: isMobile ? 50 : 70 })}
+              {truncate(description, { length: isMobile ? 50 : 59 })}
             </Typography>
           </Stack>
 
