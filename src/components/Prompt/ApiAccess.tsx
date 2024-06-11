@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
@@ -55,12 +55,14 @@ const LanguageSelectorAndCopy = ({
   status,
   onClick,
   noSelect,
+  isActive,
 }: {
   language: string;
   handleChange: (event: SelectChangeEvent) => void;
   status: string;
   onClick: () => void;
   noSelect?: boolean;
+  isActive: boolean;
 }) => (
   <Stack
     direction={"row"}
@@ -108,9 +110,9 @@ const LanguageSelectorAndCopy = ({
         },
       }}
       onClick={onClick}
-      disabled={status === "success"}
+      disabled={status === "success" && isActive}
     >
-      {status === "success" ? "Copied" : "Copy"}
+      {status === "success" && isActive ? "Copied" : "Copy"}
     </Button>
   </Stack>
 );
@@ -123,8 +125,19 @@ export default function ApiAccess({ template }: Props) {
   const token = useToken();
   const { prepareExecutionData } = useApiAccess(template);
 
+  const integrateAPIRef = useRef(false);
+  const responseFormatRef = useRef(false);
+  const getExecutionRef = useRef(false);
+
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value);
+  };
+
+  const handleCopy = (section: string, text: string) => {
+    copy(text);
+    integrateAPIRef.current = section === "integrateAPI";
+    responseFormatRef.current = section === "responseFormat";
+    getExecutionRef.current = section === "getExecution";
   };
 
   useEffect(() => {
@@ -210,11 +223,8 @@ export default function ApiAccess({ template }: Props) {
             language={language}
             handleChange={handleChange}
             status={result?.state ?? ""}
-            onClick={() => {
-              copy(
-                `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\`\n\nGET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\`\``,
-              );
-            }}
+            onClick={() => handleCopy("integrateAPI", `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\``)}
+            isActive={integrateAPIRef.current}
           />
         </Stack>
         <Stack
@@ -244,11 +254,13 @@ export default function ApiAccess({ template }: Props) {
             language={language}
             handleChange={handleChange}
             status={result?.state ?? ""}
-            onClick={() => {
-              copy(
-                `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\`\n\nGET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\`\``,
-              );
-            }}
+            onClick={() =>
+              handleCopy(
+                "responseFormat",
+                `Execution response:\n\`\`\`sh\n{\n   "template_execution_id": number,   \n}\n\`\`\``,
+              )
+            }
+            isActive={responseFormatRef.current}
             noSelect
           />
         </Stack>
@@ -282,11 +294,8 @@ export default function ApiAccess({ template }: Props) {
             language={language}
             handleChange={handleChange}
             status={result?.state ?? ""}
-            onClick={() => {
-              copy(
-                `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\`\n\nGET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\`\``,
-              );
-            }}
+            onClick={() => handleCopy("getExecution", `GET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\``)}
+            isActive={getExecutionRef.current}
           />
         </Stack>
         <Stack
