@@ -235,7 +235,7 @@ const PromptCardAccordion = ({
               label="Prompt"
               initialValue={promptData.title}
               onSave={val => {
-                updatePrompt({ ...promptData, title: val });
+                updatePrompt({ ...promptData, title: val.trim() });
                 setRenameAllow(false);
               }}
               onCancel={() => setRenameAllow(false)}
