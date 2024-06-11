@@ -43,16 +43,14 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
         },
       }}
     >
-      {items.map((item, idx) => {
-        return (
-          <MenuItem
-            key={item}
-            value={type === "month_date" ? idx + 1 : idx}
-          >
-            {item}
-          </MenuItem>
-        );
-      })}
+      {items.map((item, idx) => (
+        <MenuItem
+          key={item}
+          value={type === "month_date" ? idx + 1 : idx}
+        >
+          {item}
+        </MenuItem>
+      ))}
     </Select>
   );
 }

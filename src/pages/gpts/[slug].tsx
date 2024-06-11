@@ -5,7 +5,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
-import chatSlice, { initialState, setClonedWorkflow, setInputs } from "@/core/store/chatSlice";
+import chatSlice, { setClonedWorkflow, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
@@ -24,6 +24,7 @@ import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import { isValidUserFn } from "@/core/store/userSlice";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
+import templatesSlice from "@/core/store/templatesSlice";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -97,6 +98,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
 
     store.injectReducers([{ key: "chat", asyncReducer: chatSlice }]);
     store.injectReducers([{ key: "executions", asyncReducer: executionsSlice }]);
+    store.injectReducers([{ key: "templates", asyncReducer: templatesSlice }]);
   }, [store]);
 
   const executeWorkflow = async () => {
