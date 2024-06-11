@@ -52,7 +52,7 @@ export const ProfileImageButton = () => {
         disableScrollLock
         sx={{
           display: "flex",
-          position: "absolute",
+          position: "fixed",
           justifyContent: "center",
           alignSelf: "center",
         }}
