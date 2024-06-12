@@ -308,7 +308,7 @@ const useChat = ({ workflow }: Props) => {
 
   const removeProvider = (providerName: string, shouldUpdate = true) => {
     let _clonedWorkflow = structuredClone(clonedWorkflow)!;
-    _clonedWorkflow = removeProviderNode(_clonedWorkflow, workflow, providerName);
+    _clonedWorkflow = removeProviderNode(_clonedWorkflow, providerName);
     if (shouldUpdate) {
       dispatch(setClonedWorkflow(_clonedWorkflow));
     }

@@ -6,7 +6,8 @@ interface IParameters {
   options?: any;
   authentication?: string;
   nodeCredentialType?: string;
-
+  mode?: string;
+  markdown?: string;
   fields?: {
     values: {
       name: string;

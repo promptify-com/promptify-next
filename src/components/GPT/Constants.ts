@@ -7,7 +7,7 @@ export const PROVIDERS = {
         value: "",
         mode: "name",
       },
-      text: "={{ $json.content }}",
+      text: "={{ $json.data }}",
       otherOptions: {},
     },
     id: "8bdc522a-39d3-4eed-8d75-282e49ec7498",
@@ -20,7 +20,7 @@ export const PROVIDERS = {
     parameters: {
       sendTo: "",
       subject: "",
-      message: "={{ $json.content }}",
+      message: "={{ $json.data }}",
       options: {},
     },
     id: "a6671b2a-0447-4c27-ad18-a31c146695e9",
@@ -34,7 +34,7 @@ export const PROVIDERS = {
       operation: "send",
       phoneNumberId: "",
       recipientPhoneNumber: "",
-      textBody: "={{ $json.content }}",
+      textBody: "={{ $json.data }}",
       additionalFields: {},
     },
     id: "c2c7ccac-1745-4430-b6cc-811e31d5b616",
@@ -46,7 +46,7 @@ export const PROVIDERS = {
   "n8n-nodes-base.telegram": {
     parameters: {
       chatId: "",
-      text: "={{ $json.content }}",
+      text: "={{ $json.data }}",
       additionalFields: {},
     },
     id: "9bc467d2-7227-41f6-aa0b-917fd5a7aa1d",
@@ -59,6 +59,7 @@ export const PROVIDERS = {
 
 export const RESPOND_TO_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook";
 export const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
+export const MARKDOWN_NODE_TYPE = "n8n-nodes-base.markdown";
 
 export const FREQUENCY_ITEMS = ["daily", "weekly", "bi-weekly", "monthly"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
