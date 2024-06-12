@@ -233,7 +233,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                           fontWeight: 500,
                           lineHeight: "16px",
                           textAlign: "left",
-                          padding: "7px 12px 7px 12px",
+                          padding: "7px 5px 7px 5px",
                           borderRadius: "100px",
                           border: "1px solid rgba(0, 0, 0, 0.08)",
                           bgcolor: "white",
@@ -245,8 +245,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                     ) : (
                       <Stack
                         gap="8px"
-                        direction={{ xs: "column", md: "row" }}
+                        direction={{ xs: "column", sm: "row" }}
                         alignItems={{ xs: "start", md: "center" }}
+                        flexWrap={"wrap"}
                       >
                         <Chip
                           onClick={e => {
@@ -260,7 +261,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                             fontWeight: 500,
                             lineHeight: "16px",
                             textAlign: "left",
-                            padding: "7px 12px 7px 12px",
+                            padding: "7px 5px 7px 5px",
                             borderRadius: "100px",
                             border: "1px solid rgba(0, 0, 0, 0.08)",
                             bgcolor: "white",

@@ -26,6 +26,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import useLogout from "@/hooks/useLogout";
+import Link from "next/link";
 
 function ProfilePrompts() {
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -230,8 +231,11 @@ function ProfilePrompts() {
               >
                 Nickname will be used as link to your profile:{" "}
                 <Box
-                  component={"span"}
+                  component={Link}
                   color={"primary.main"}
+                  href={`/users/${currentUser?.username}`}
+                  target="_blank"
+                  sx={{ textDecoration: "none" }}
                 >
                   {typeof window !== "undefined" ? window.location.origin : ""}/users/{currentUser?.username}
                 </Box>

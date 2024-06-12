@@ -136,11 +136,13 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
       <Modal
         open={showCropModal}
         onClose={() => setShowCropModal(false)}
+        disableScrollLock
         sx={{
           display: "flex",
-          position: "absolute",
+          position: "fixed",
           justifyContent: "center",
           alignSelf: "center",
+          overflow: "hidden",
         }}
       >
         <Box
