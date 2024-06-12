@@ -66,7 +66,7 @@ function DocumentPage({ document }: Props) {
               sx={{
                 position: "absolute",
                 zIndex: 999,
-                top: "150px",
+                top: "170px",
                 left: "22px",
                 border: "none",
                 p: "16px",

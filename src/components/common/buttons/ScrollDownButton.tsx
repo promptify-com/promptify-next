@@ -13,7 +13,7 @@ export const ScrollDownButton = ({ sticky = false, onClick }: { sticky?: boolean
         width: "30px",
         position: sticky ? "sticky" : "fixed",
         left: isChatHistorySticky ? "60%" : "50%",
-        bottom: "125px",
+        bottom: "150px",
         zIndex: 999,
         bgcolor: "surface.3",
         color: "onSurface",

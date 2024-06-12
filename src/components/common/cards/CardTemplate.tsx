@@ -54,6 +54,7 @@ function CardTemplate({ template }: CardTemplateProps) {
           display: "flex",
           flexDirection: "column",
           bgcolor: "#F9F9F9",
+          height: "100%",
           transition: "all 0.3s ease",
           "&:hover": {
             ".likes-favorites": {
@@ -164,6 +165,12 @@ function CardTemplate({ template }: CardTemplateProps) {
               <Typography
                 fontSize={14}
                 fontWeight={500}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
               >
                 {template.title}
               </Typography>
@@ -176,7 +183,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                     textAlign: "left",
                   }}
                 >
-                  {truncate(stripTags(template.description), { length: 70 })}
+                  {truncate(stripTags(template.description), { length: 67 })}
                 </Typography>
               )}
             </Stack>
