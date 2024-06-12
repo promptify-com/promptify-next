@@ -115,7 +115,7 @@ class NodeNotFoundError extends Error {
   }
 }
 
-export const PROVIDERS_MARKDOWN = "_markdown__$providers$__message_";
+export const MARKDOWN_NODE_NAME = "_markdown__$providers$__message_";
 export const nameProvider = (name: string) => `_send__provider__$${name}$__message_`;
 export const isNodeProvider = (node: INode): boolean => {
   const providerPattern = new RegExp(/^_send__provider__\$.*\$__message_$/);
@@ -132,11 +132,8 @@ const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: 
   let markdownNode = workflow.nodes.find(node => node.type === MARKDOWN_NODE_TYPE);
   if (!markdownNode) return [];
 
-  const markdownNodeConnections = workflow.connections[markdownNodeName]?.[MAIN_CONNECTION_KEY][0];
+  const providersNames = workflow.connections[markdownNodeName]?.[MAIN_CONNECTION_KEY][0];
 
-  const respondToWebhookNode = workflow.nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
-
-  const providersNames = markdownNodeConnections.filter(connection => connection.node !== respondToWebhookNode?.name);
   const providersNodes = providersNames
     .map(provider => workflow.nodes.find(node => node.name === provider.node)!)
     .filter(providerNode => isNodeProvider(providerNode));
@@ -161,7 +158,7 @@ export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse)
   }
 
   const markdownNode = _workflow.nodes.find(
-    node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN,
+    node => node.type === MARKDOWN_NODE_TYPE && node.name === MARKDOWN_NODE_NAME,
   );
 
   promptifyNode.parameters.save_output = true;
@@ -183,7 +180,7 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
-  let markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN);
+  let markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === MARKDOWN_NODE_NAME);
 
   const currentProviders = markdownNode ? findProviderNodes(workflow, markdownNode.name) : [];
 
@@ -194,16 +191,18 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     throw new NodeNotFoundError(`Could not find the adjacent node to "${adjacentConnector}" node`);
   }
 
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+
   if (!markdownNode) {
     markdownNode = {
       id: "29d027a9-e0c2-4a60-b23a-a723b8f1f1d2",
-      name: PROVIDERS_MARKDOWN,
+      name: MARKDOWN_NODE_NAME,
       type: "n8n-nodes-base.markdown",
       typeVersion: 1,
       position: [620, -60],
       parameters: {
         mode: "markdownToHtml",
-        markdown: "={{ $json.content }}",
+        markdown: responseBody,
         options: {},
       },
     };
@@ -211,20 +210,15 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     nodes.push(markdownNode);
   }
 
-  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
-
   const providerNode = {
     id: node.id,
     name: node.name,
     type: node.type,
     typeVersion: node.typeVersion,
     credentials: node.credentials,
-    parameters: nodeParametersCB(responseBody),
+    parameters: nodeParametersCB("={{ $json.data }}"),
     position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
   };
-  providerNode.parameters.message = "={{ $json.data }}";
-  providerNode.parameters.text = "={{ $json.data }}";
-  providerNode.parameters.textBody = "={{ $json.data }}";
 
   nodes.push(providerNode);
   currentProviders.push(providerNode);
@@ -272,7 +266,7 @@ export const removeProviderNode = (
   let { nodes, connections } = workflow;
 
   const providerNode = nodes.find(node => node.name === providerName);
-  const markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === PROVIDERS_MARKDOWN);
+  const markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === MARKDOWN_NODE_NAME);
 
   if (!providerNode || !markdownNode) {
     return workflow;
