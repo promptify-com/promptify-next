@@ -13,7 +13,6 @@ import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
 import useBrowser from "@/hooks/useBrowser";
 import lazy from "next/dynamic";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const ApiAccess = lazy(() => import("./ApiAccess"), { ssr: false });
 const Feedback = lazy(() => import("./Feedback"), { ssr: false });
@@ -50,19 +49,23 @@ interface Props {
 export default function ContentContainer({ template, tabsFixed }: Props) {
   const { isMobile } = useBrowser();
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const apiAccessContainerRef = useRef<HTMLDivElement | null>(null);
   const feedbackContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const observers = {
-    apiAccessObserver: useIntersectionObserver(apiAccessContainerRef, { threshold: 0.5 }),
-    feedbackObserver: useIntersectionObserver(feedbackContainerRef, { threshold: 0.5 }),
-  };
+  const activeSectionRef = useRef<string | null>(null);
 
   const handleTabChange = (tab: Link) => {
+    setIsScrolling(true);
     setSelectedTab(tab);
+    activeSectionRef.current = tab.name;
     const section = document.getElementById(tab.name);
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => {
+      setIsScrolling(false);
+      activeSectionRef.current = null;
+    }, 600);
   };
 
   useEffect(() => {
@@ -70,6 +73,8 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
 
     const observer = new IntersectionObserver(
       entries => {
+        if (isScrolling) return;
+
         entries.forEach(entry => {
           sectionRatios.set(entry.target.id, entry.intersectionRatio);
 
@@ -83,7 +88,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
             }
           });
 
-          if (currentSectionId) {
+          if (currentSectionId && currentSectionId !== activeSectionRef.current) {
             const newSelectedTab = ScrollTabs.find(tab => tab.name === currentSectionId);
             if (newSelectedTab) setSelectedTab(newSelectedTab);
           }
@@ -101,7 +106,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [isScrolling]);
 
   return (
     <Box>
@@ -137,7 +142,6 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                   flex: 1,
                   minWidth: "fit-content",
                   fontSize: 12,
-
                   p: "8px 16px",
                   color: selected ? "onSecondary" : "onSurface",
                   bgcolor: selected ? "secondary.main" : "transparent",
@@ -171,7 +175,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           },
         }}
       >
-        {observers.apiAccessObserver?.isIntersecting && <ApiAccess template={template} />}
+        <ApiAccess template={template} />
       </Box>
       <Box
         id="feedback"
@@ -182,7 +186,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           },
         }}
       >
-        {observers.feedbackObserver?.isIntersecting && <Feedback />}
+        <Feedback />
       </Box>
       {isMobile && <Footer />}
     </Box>
