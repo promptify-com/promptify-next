@@ -8,6 +8,7 @@ import { useTheme, type SxProps } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import ClearRounded from "@mui/icons-material/ClearRounded";
 import { KeyboardTab } from "@mui/icons-material";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const drawerWidth = 255;
 
@@ -33,14 +34,24 @@ export default function DrawerContainer({
   const theme = useTheme();
   const { isMobile } = useBrowser();
 
+  const handleClickAway = () => {
+    if (isMobile && expanded) {
+      onClose && onClose();
+      toggleExpand();
+    }
+  };
+
   return (
     <SwipeableDrawer
       anchor="left"
       variant={isMobile ? "temporary" : "permanent"}
       {...(isMobile && { disablePortal: true })}
       open={expanded}
-      onClose={() => {}}
-      onOpen={() => {}}
+      onClose={() => {
+        onClose && onClose();
+        toggleExpand();
+      }}
+      onOpen={toggleExpand}
       sx={{
         zIndex: 1,
         alignItems: "center",
@@ -66,45 +77,49 @@ export default function DrawerContainer({
         ...style,
       }}
     >
-      <Stack
-        flexDirection={"row"}
-        alignItems={"center"}
-        height={"40px"}
-        p={"15px 8px"}
-        justifyContent={"space-between"}
-      >
-        <Typography
-          sx={{
-            color: "onSurface",
-            fontFeatureSettings: "'clig' off, 'liga' off",
-            fontSize: "18px",
-            fontStyle: "normal",
-            fontWeight: 500,
-            lineHeight: "100%",
-          }}
-        >
-          {title}
-        </Typography>
-        <IconButton
-          onClick={isMobile ? onClose : toggleExpand}
-          sx={{
-            opacity: 1,
-            border: "none",
-            justifyContent: "flex-end",
-            svg: {
-              color: "onSurface",
-              transform: sticky ? "rotateY(180deg)" : "none",
-            },
-            "&:hover": {
-              backgroundColor: "surface.2",
-            },
-          }}
-        >
-          {isMobile ? <ClearRounded /> : <KeyboardTab />}
-        </IconButton>
-      </Stack>
-      <Divider />
-      {children}
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <>
+          <Stack
+            flexDirection={"row"}
+            alignItems={"center"}
+            height={"40px"}
+            p={"15px 8px"}
+            justifyContent={"space-between"}
+          >
+            <Typography
+              sx={{
+                color: "onSurface",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontSize: "18px",
+                fontStyle: "normal",
+                fontWeight: 500,
+                lineHeight: "100%",
+              }}
+            >
+              {title}
+            </Typography>
+            <IconButton
+              onClick={isMobile ? onClose : toggleExpand}
+              sx={{
+                opacity: 1,
+                border: "none",
+                justifyContent: "flex-end",
+                svg: {
+                  color: "onSurface",
+                  transform: sticky ? "rotateY(180deg)" : "none",
+                },
+                "&:hover": {
+                  backgroundColor: "surface.2",
+                },
+              }}
+            >
+              {isMobile ? <ClearRounded /> : <KeyboardTab />}
+            </IconButton>
+          </Stack>
+          <Divider />
+          {children}
+        </>
+      </ClickAwayListener>
     </SwipeableDrawer>
   );
 }
