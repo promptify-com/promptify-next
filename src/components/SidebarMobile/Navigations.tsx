@@ -179,7 +179,12 @@ function Navigations({ onCloseDrawer }: Props) {
                 await navigateTo(link.href, link.external);
                 onCloseDrawer();
               }}
-              sx={{ m: 0, p: 0 }}
+              sx={{
+                m: 0,
+                p: 0,
+                opacity: link.label === "Chrome Extension" ? 0.5 : 1,
+                pointerEvents: link.label === "Chrome Extension" ? "none" : "auto",
+              }}
             >
               <ListItemButton>
                 <ListItemIcon sx={{ color: "secondary.light", ml: isInternalIcons(link) ? -0.5 : 0 }}>
