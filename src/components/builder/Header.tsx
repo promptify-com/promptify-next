@@ -7,6 +7,8 @@ import CloudOutlined from "@mui/icons-material/CloudOutlined";
 import ModeEdit from "@mui/icons-material/ModeEdit";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
+import AccountTree from "@mui/icons-material/AccountTree";
+import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
@@ -30,6 +32,7 @@ interface IHeader {
 function Header({ templateLoading, onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) {
   const pathname = usePathname();
   const theme = useTheme();
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
   const [isSaving, setIsSaving] = useState(false);
@@ -128,15 +131,39 @@ function Header({ templateLoading, onSave, onPublish, title, status, templateSlu
           gap={1}
         >
           {templateSlug && (
-            <BaseButton
-              variant="text"
-              color="custom"
-              sx={btnStyle}
-              startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
-              onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
-            >
-              Preview
-            </BaseButton>
+            <>
+              {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
+                <BaseButton
+                  variant="text"
+                  color="custom"
+                  sx={btnStyle}
+                  startIcon={<AccountTree sx={{ fontSize: 20 }} />}
+                  onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
+                >
+                  Tree of Thoughts Builder
+                </BaseButton>
+              )}
+              {type === BUILDER_TYPE.ADMIN && (
+                <BaseButton
+                  variant="text"
+                  color="custom"
+                  sx={btnStyle}
+                  startIcon={<FormatListBulleted sx={{ fontSize: 20 }} />}
+                  onClick={() => window.open(`/prompt-builder/${templateSlug}`, "_blank")}
+                >
+                  Chain of Thoughts Builder
+                </BaseButton>
+              )}
+              <BaseButton
+                variant="text"
+                color="custom"
+                sx={btnStyle}
+                startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+                onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+              >
+                Preview
+              </BaseButton>
+            </>
           )}
           <BaseButton
             variant="text"
