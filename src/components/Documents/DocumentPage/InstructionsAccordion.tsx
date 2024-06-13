@@ -15,6 +15,7 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { useRouter } from "next/router";
 import { repeatExecution } from "@/components/Prompt/Utils";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { setDocumentTitle } from "@/core/store/documentsSlice";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -34,6 +35,7 @@ function InstructionsAccordion({ document }: Props) {
         data: null,
       }),
     );
+    dispatch(setDocumentTitle(""));
   };
 
   return (

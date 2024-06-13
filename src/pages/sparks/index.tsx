@@ -44,6 +44,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const filter = useAppSelector(state => state.documents?.filter ?? initialDocumentsState.filter);
+  const documentTitle = useAppSelector(state => state.documents?.title);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
 
@@ -80,7 +81,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
 
   useEffect(() => {
     setOffset(0);
-  }, [filter.contentTypes, filter.engine?.id, filter.template, filter.status]);
+  }, [filter.contentTypes, filter.engine?.id, filter.template, filter.status, documentTitle]);
 
   useEffect(() => {
     if (fetchExecutions?.results) {
@@ -120,13 +121,9 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
       return !filter.status || isDraft || isSaved;
     });
   }, [templatesExecutions, filter.status]);
-
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-
-  const hasNext = Boolean(fetchExecutions?.next && filteredExecutions.length);
-
+  const hasNext = Boolean(fetchExecutions?.next && filteredExecutions.length >= PAGINATION_LIMIT);
   const activeTemplate = templates?.find(template => template.id === filter.template);
-
   const templateBreadcrumbs = [
     <Link
       key={"0"}

@@ -24,6 +24,7 @@ import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 import Header from "@/components/Prompt/Common/Header";
 import type { Templates } from "@/core/api/dto/templates";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
+import { setDocumentTitle } from "@/core/store/documentsSlice";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -80,6 +81,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) =>
         data: null,
       }),
     );
+    dispatch(setDocumentTitle(""));
   };
 
   return (

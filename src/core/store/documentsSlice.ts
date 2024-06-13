@@ -11,6 +11,7 @@ export const initialState: IDocumentSliceState = {
   },
   title: "",
   showPreviews: false,
+  favorites: {},
 };
 
 const documentsSlice = createSlice({
@@ -35,6 +36,10 @@ const documentsSlice = createSlice({
     toggleShowPreviews: state => {
       state.showPreviews = !state.showPreviews;
     },
+    setFavorites: (state, action: PayloadAction<Record<number, boolean>>) => {
+      const executionId = Number(Object.keys(action.payload)[0]);
+      state.favorites[executionId] = action.payload[executionId];
+    },
   },
 });
 
@@ -57,6 +62,7 @@ export const {
   setDocumentsTemplate,
   setDocumentTitle,
   toggleShowPreviews,
+  setFavorites,
 } = documentsSlice.actions;
 
 export default documentsSlice.reducer;
