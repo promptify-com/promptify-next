@@ -42,7 +42,7 @@ export const SparkSaveDeletePopup = ({
     if (activeExecution) {
       updateExecution({ id: activeExecution.id, data: { title: executionTitle } });
       if (!isError) {
-        if (onUpdate) onUpdate({ ...activeExecution, title: executionTitle });
+        if (typeof onUpdate === "function") onUpdate({ ...activeExecution, title: executionTitle });
         onClose();
       }
     }
