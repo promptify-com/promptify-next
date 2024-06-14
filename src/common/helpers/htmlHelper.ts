@@ -11,7 +11,7 @@ export const markdownToHTML = async (markdown: string) => {
   const htmlContent = processedContent
     .toString()
     .replace(/<code class="language-([^"]+)"[^>]*>([\s\S]*?)<\/code>/g, (match, language, codeContent) => {
-      const formattedCodeContent = codeContent.replace(/\n/g, "<br>").replace(/\t/g, "&nbsp;&nbsp;");
+      const formattedCodeContent = codeContent.replace(/\n/g, "<br>").replace(/\s/g, "&nbsp;");
 
       return `
         <div class="code-wrapper-header">
