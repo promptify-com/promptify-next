@@ -51,7 +51,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
 
       {message.type === "html" && <HtmlMessage message={message} />}
 
-      {message.type === "templates_suggestion" && !!message.data?.length && (
+      {message.type === "templates_suggestion" && !!message.data && (
         <Fade
           in={true}
           unmountOnExit
@@ -67,7 +67,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         </Fade>
       )}
 
-      {message.type === "workflows_suggestion" && !!message.data?.length && (
+      {message.type === "workflows_suggestion" && !!message.data && (
         <Fade
           in={true}
           unmountOnExit

@@ -15,7 +15,7 @@ interface Props {
 
 function WorkflowSuggestions({ message, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-  const workflows = message.data || [];
+  const workflows = (message.data as ITemplateWorkflow[]) || [];
 
   if (!workflows.length) {
     return null;
