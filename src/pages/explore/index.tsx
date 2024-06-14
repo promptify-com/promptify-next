@@ -221,7 +221,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                   <Grid
                     container
                     spacing={1}
-                    alignItems={"flex-start"}
                     sx={{
                       overflow: { xs: "auto", md: "initial" },
                       WebkitOverflowScrolling: { xs: "touch", md: "initial" },

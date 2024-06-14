@@ -1,6 +1,5 @@
 import React, { FC, ReactNode } from "react";
 import { Button, Grid } from "@mui/material";
-import ArrowLeft from "@mui/icons-material/ArrowLeft";
 
 interface PaginatedListProps {
   children: ReactNode;
@@ -12,6 +11,7 @@ interface PaginatedListProps {
   canBeShown?: boolean;
   buttonText?: string;
   endIcon?: React.ReactNode;
+  startIcon?: React.ReactNode;
   variant?: "text" | "contained" | "outlined";
 }
 
@@ -25,6 +25,7 @@ const PaginatedList: FC<PaginatedListProps> = ({
   canBeShown = true,
   buttonText = "Next",
   endIcon,
+  startIcon,
   variant = "text",
 }) => {
   return (
@@ -39,15 +40,16 @@ const PaginatedList: FC<PaginatedListProps> = ({
         display={canBeShown ? "flex" : "none"}
         justifyContent={"center"}
         alignItems={"center"}
+        gap={variant === "outlined" ? 1 : 0}
       >
         {hasPrev && (
           <Button
-            variant="text"
+            variant={variant}
             disabled={loading}
             color="primary"
             onClick={onPrevPage}
+            startIcon={startIcon}
           >
-            <ArrowLeft />
             Prev
           </Button>
         )}
