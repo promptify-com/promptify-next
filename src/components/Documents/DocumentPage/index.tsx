@@ -11,6 +11,7 @@ import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setDocumentTitle, toggleShowPreviews } from "@/core/store/documentsSlice";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -20,11 +21,15 @@ function DocumentPage({ document }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const showPreviews = useAppSelector(state => state.documents?.showPreviews ?? false);
-
   const template = document.template;
 
   useEffect(() => {
     dispatch(setDocumentTitle(document.title));
+    dispatch(
+      updatePopupTemplate({
+        data: document,
+      }),
+    );
   }, [document.title]);
 
   return (

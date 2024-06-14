@@ -21,7 +21,6 @@ import type {
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
 import { MARKDOWN_NODE_TYPE, PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
-import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
   nextNode: string;
@@ -128,15 +127,8 @@ const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConne
   );
 };
 
-const findProviderNodes = (workflow: IWorkflowCreateResponse, markdownNodeName: string) => {
-  let markdownNode = workflow.nodes.find(node => node.type === MARKDOWN_NODE_TYPE);
-  if (!markdownNode) return [];
-
-  const providersNames = workflow.connections[markdownNodeName]?.[MAIN_CONNECTION_KEY][0];
-
-  const providersNodes = providersNames
-    .map(provider => workflow.nodes.find(node => node.name === provider.node)!)
-    .filter(providerNode => isNodeProvider(providerNode));
+const findProviderNodes = (workflow: IWorkflowCreateResponse) => {
+  const providersNodes = workflow.nodes.filter(node => isNodeProvider(node));
 
   return providersNodes;
 };
@@ -171,35 +163,49 @@ export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse)
 };
 
 export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodeParametersCB, node }: IProviderNode) {
-  let clonedWorkflow = structuredClone(workflow);
+  const clonedWorkflow = structuredClone(workflow);
   const { nodes, connections } = clonedWorkflow;
-
   const respondToWebhookNode = nodes.find(node => node.type === RESPOND_TO_WEBHOOK_NODE_TYPE);
 
   if (!respondToWebhookNode) {
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
-  let markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === MARKDOWN_NODE_NAME);
-
-  const currentProviders = markdownNode ? findProviderNodes(workflow, markdownNode.name) : [];
-
-  const adjacentConnector = markdownNode?.name ?? respondToWebhookNode.name;
-  const adjacentNode = findAdjacentNode(nodes, connections, adjacentConnector);
+  const currentProviderNodes = findProviderNodes(clonedWorkflow);
+  const connectionProviders = currentProviderNodes
+    .filter(provider => !provider.name.toLowerCase().includes("gmail"))
+    .map(provider => ({
+      node: provider.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    }));
+  const adjacentNode = findAdjacentNode(nodes, connections, respondToWebhookNode.name);
 
   if (!adjacentNode) {
-    throw new NodeNotFoundError(`Could not find the adjacent node to "${adjacentConnector}" node`);
+    throw new NodeNotFoundError(`Could not find the adjacent node`);
   }
 
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+  const isGmailProvider = node.name.toLowerCase().includes("gmail");
+  const providerNode = {
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    typeVersion: node.typeVersion,
+    ...(node.credentials && { credentials: node.credentials }),
+    parameters: isGmailProvider ? nodeParametersCB("={{ $json.data }}") : nodeParametersCB(responseBody),
+    position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
+  };
 
-  if (!markdownNode) {
-    markdownNode = {
+  nodes.push(providerNode);
+
+  if (isGmailProvider) {
+    const markdownNode = {
       id: "29d027a9-e0c2-4a60-b23a-a723b8f1f1d2",
       name: MARKDOWN_NODE_NAME,
       type: "n8n-nodes-base.markdown",
       typeVersion: 1,
-      position: [620, -60],
+      position: [620, -60] as [number, number],
       parameters: {
         mode: "markdownToHtml",
         markdown: responseBody,
@@ -208,55 +214,57 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     };
 
     nodes.push(markdownNode);
+
+    connections[markdownNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        [
+          {
+            node: providerNode.name,
+            type: MAIN_CONNECTION_KEY,
+            index: 0,
+          },
+        ],
+      ],
+    };
+
+    connectionProviders.push({
+      node: markdownNode.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    });
+  } else {
+    const hasGmailProvider = currentProviderNodes.some(provider => provider.name.toLowerCase().includes("gmail"));
+
+    if (hasGmailProvider) {
+      connectionProviders.push({
+        node: MARKDOWN_NODE_NAME,
+        type: MAIN_CONNECTION_KEY,
+        index: 0,
+      });
+    }
+
+    connectionProviders.push({
+      node: providerNode.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    });
   }
-
-  const providerNode = {
-    id: node.id,
-    name: node.name,
-    type: node.type,
-    typeVersion: node.typeVersion,
-    credentials: node.credentials,
-    parameters: nodeParametersCB("={{ $json.data }}"),
-    position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
-  };
-
-  nodes.push(providerNode);
-  currentProviders.push(providerNode);
 
   connections[adjacentNode.name] = {
     [MAIN_CONNECTION_KEY]: [
-      [
-        {
-          node: markdownNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
-        {
-          node: respondToWebhookNode.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        },
-      ],
-    ],
-  };
-
-  connections[markdownNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      currentProviders.map(provider => ({
-        node: provider.name,
+      connectionProviders.concat({
+        node: respondToWebhookNode.name,
         type: MAIN_CONNECTION_KEY,
         index: 0,
-      })),
+      }),
     ],
   };
 
-  clonedWorkflow = enableWorkflowPromptifyStream({
+  return enableWorkflowPromptifyStream({
     ...clonedWorkflow,
     nodes,
     connections,
   });
-
-  return clonedWorkflow;
 }
 
 export const removeProviderNode = (
@@ -266,13 +274,16 @@ export const removeProviderNode = (
   let { nodes, connections } = workflow;
 
   const providerNode = nodes.find(node => node.name === providerName);
-  const markdownNode = nodes.find(node => node.type === MARKDOWN_NODE_TYPE && node.name === MARKDOWN_NODE_NAME);
 
-  if (!providerNode || !markdownNode) {
+  if (!providerNode) {
     return workflow;
   }
 
-  const adjacentNode = findAdjacentNode(nodes, connections, markdownNode.name);
+  const adjacentNode = findAdjacentNode(
+    nodes,
+    connections,
+    providerName.toLowerCase().includes("gmail") ? MARKDOWN_NODE_NAME : providerName,
+  );
 
   if (!adjacentNode) {
     return workflow;
@@ -284,43 +295,44 @@ export const removeProviderNode = (
     throw new NodeNotFoundError(`Could not find the "${RESPOND_TO_WEBHOOK_NODE_TYPE}" node`);
   }
 
-  const currentProviders = findProviderNodes(workflow, markdownNode.name);
+  const currentProviders = findProviderNodes(workflow);
   const removedProviderName = providerNode.name;
-
+  const remainingProviders = currentProviders.filter(provider => provider.name !== removedProviderName);
+  const connectionProviders = remainingProviders
+    .filter(provider => !provider.name.toLowerCase().includes("gmail"))
+    .map(provider => ({
+      node: provider.name,
+      type: MAIN_CONNECTION_KEY,
+      index: 0,
+    }));
   nodes = nodes.filter(node => node.name !== removedProviderName);
 
-  const remainingProviders = currentProviders.filter(provider => provider.name !== removedProviderName);
-
-  if (remainingProviders.length) {
-    connections[markdownNode.name] = {
-      [MAIN_CONNECTION_KEY]: [
-        remainingProviders.map(provider => ({
-          node: provider.name,
-          type: MAIN_CONNECTION_KEY,
-          index: 0,
-        })),
-      ],
-    };
+  if (removedProviderName.toLowerCase().includes("gmail")) {
+    nodes = nodes.filter(node => node.name !== MARKDOWN_NODE_NAME);
+    delete connections[MARKDOWN_NODE_NAME];
   } else {
-    delete connections[markdownNode.name];
-    nodes = nodes.filter(node => node.name !== markdownNode.name);
+    const hasGmailProvider = remainingProviders.some(provider => provider.name.toLowerCase().includes("gmail"));
 
-    workflow.connections[adjacentNode.name] = {
-      [MAIN_CONNECTION_KEY]: [
-        [
-          {
-            node: respondToWebhookNode.name,
-            type: MAIN_CONNECTION_KEY,
-            index: 0,
-          },
-        ],
-      ],
-    };
+    if (hasGmailProvider) {
+      connectionProviders.push({
+        node: MARKDOWN_NODE_NAME,
+        type: MAIN_CONNECTION_KEY,
+        index: 0,
+      });
+    }
   }
 
-  workflow = enableWorkflowPromptifyStream({ ...workflow, nodes, connections });
+  connections[adjacentNode.name] = {
+    [MAIN_CONNECTION_KEY]: [
+      connectionProviders.concat({
+        node: respondToWebhookNode.name,
+        type: MAIN_CONNECTION_KEY,
+        index: 0,
+      }),
+    ],
+  };
 
-  return workflow;
+  return enableWorkflowPromptifyStream({ ...workflow, nodes, connections });
 };
 
 export function getProviderParams(providerType: ProviderType) {

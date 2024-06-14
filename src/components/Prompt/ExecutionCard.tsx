@@ -29,7 +29,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
-
+  const documentTitle = useAppSelector(state => state.documents?.title);
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
   const promptOutputMap: { [key: string]: string } = {};
@@ -113,7 +113,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
             wordBreak: "break-word",
           }}
         >
-          {execution.title}
+          {documentTitle ?? execution.title}
         </Typography>
       )}
       {execution && (

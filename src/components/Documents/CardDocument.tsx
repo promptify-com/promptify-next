@@ -21,6 +21,8 @@ import { formatDate, timeLeft } from "@/common/helpers/timeManipulation";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 import { calculateDocumentDeleteDeadline } from "./Helper";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { initialState as initialStateDocuments, setFavorites } from "@/core/store/documentsSlice";
 
 interface Props {
   execution: ExecutionWithTemplate;
@@ -34,6 +36,14 @@ export default function CardDocument({ execution, onClick }: Props) {
   const [isFavorite, setIsFavorite] = useState(execution.is_favorite);
   const firstPromptOutput = execution.prompt_executions?.[0]?.output ?? "";
   const [content, setContent] = useState(firstPromptOutput ?? "");
+  const dispatch = useAppDispatch();
+  const documentFavorites = useAppSelector(state => state.documents?.favorites ?? initialStateDocuments.favorites);
+
+  useEffect(() => {
+    if (typeof documentFavorites[execution.id] === "boolean") {
+      setIsFavorite(documentFavorites[execution.id]);
+    }
+  }, [documentFavorites]);
 
   useEffect(() => {
     if (firstPromptOutput) {
@@ -49,12 +59,15 @@ export default function CardDocument({ execution, onClick }: Props) {
   const saveExecution = async () => {
     const status = isFavorite;
     setIsFavorite(!isFavorite);
+
     try {
       if (status) {
         await deleteExecutionFavorite(execution.id);
       } else {
         await favoriteExecution(execution.id);
       }
+
+      dispatch(setFavorites({ [execution.id]: !status }));
     } catch (error) {
       console.error(error);
     }

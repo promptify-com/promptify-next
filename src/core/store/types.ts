@@ -57,6 +57,7 @@ export interface IDocumentSliceState {
   };
   title: string;
   showPreviews: boolean;
+  favorites: Record<number, boolean>;
 }
 
 export interface IExecutionsSliceState {

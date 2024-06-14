@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { initialState as initialTemplatesState, updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
 import DocumentPage from "@/components/Documents/DocumentPage";
+import { setDocumentTitle } from "@/core/store/documentsSlice";
 
 interface NavigationBoxProps {
   template: Templates | null;
@@ -81,6 +82,7 @@ function TemplateDocumentModal() {
         data: null,
       }),
     );
+    dispatch(setDocumentTitle(""));
   };
 
   if (!data) return;

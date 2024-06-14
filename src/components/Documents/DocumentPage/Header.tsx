@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setDocumentTitle } from "@/core/store/documentsSlice";
 import { theme } from "@/theme";
 import { calculateDocumentDeleteDeadline } from "@/components/Documents/Helper";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -23,7 +24,6 @@ function Header({ document }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
-  const title = useAppSelector(state => state.documents?.title ?? "");
   const [isFavorite, setIsFavorite] = useState(document.is_favorite);
 
   const daysLeft = calculateDocumentDeleteDeadline(document.created_at);
@@ -60,7 +60,7 @@ function Header({ document }: Props) {
               overflow: "hidden",
             }}
           >
-            {title}
+            {document.title}
           </Typography>
           {!isMobile && (
             <IconButton
@@ -108,7 +108,14 @@ function Header({ document }: Props) {
           type={popup}
           activeExecution={document}
           onClose={() => setPopup(null)}
-          onUpdate={updateDocument => dispatch(setDocumentTitle(updateDocument.title))}
+          onUpdate={updateDocument => {
+            dispatch(setDocumentTitle(updateDocument.title));
+            dispatch(
+              updatePopupTemplate({
+                data: updateDocument,
+              }),
+            );
+          }}
         />
       )}
     </Stack>
