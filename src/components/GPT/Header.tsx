@@ -110,6 +110,7 @@ export default function Header({ workflow }: Props) {
           <Typography
             fontSize={{ xs: 14, md: 16 }}
             fontWeight={400}
+            lineHeight={"19.2px"}
             color={"onSurface"}
           >
             {workflow.description}
