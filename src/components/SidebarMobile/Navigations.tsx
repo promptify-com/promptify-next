@@ -25,6 +25,7 @@ import CardTemplateResult from "@/components/common/cards/CardTemplateResult";
 import type { Link } from "@/components/SidebarMobile/Types";
 import Book3 from "@/assets/icons/Book3";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
+import ElectricBolt from "@mui/icons-material/ElectricBolt";
 
 interface Props {
   onCloseDrawer: () => void;
@@ -86,14 +87,13 @@ function Navigations({ onCloseDrawer }: Props) {
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,
     },
-    // {
-    //   label: "GPTs",
-    //   icon: <ElectricBolt />,
-    //   href: "/automation",
-    //   active: pathname === "/automation",
-    //   external: false,
-    // },
-
+    {
+      label: "GPTs",
+      icon: <ElectricBolt />,
+      href: "/gpts",
+      active: pathname === "/gpts",
+      external: false,
+    },
     {
       label: "Chrome Extension",
       href: "#",
@@ -179,7 +179,12 @@ function Navigations({ onCloseDrawer }: Props) {
                 await navigateTo(link.href, link.external);
                 onCloseDrawer();
               }}
-              sx={{ m: 0, p: 0 }}
+              sx={{
+                m: 0,
+                p: 0,
+                opacity: link.label === "Chrome Extension" ? 0.5 : 1,
+                pointerEvents: link.label === "Chrome Extension" ? "none" : "auto",
+              }}
             >
               <ListItemButton>
                 <ListItemIcon sx={{ color: "secondary.light", ml: isInternalIcons(link) ? -0.5 : 0 }}>

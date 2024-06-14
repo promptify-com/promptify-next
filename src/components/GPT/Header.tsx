@@ -49,23 +49,36 @@ export default function Header({ workflow }: Props) {
         gap={6}
         width={{ md: "50%" }}
       >
-        <CardMedia
-          sx={{
-            width: { xs: 32, sm: 48 },
-            height: { xs: 32, sm: 48 },
-            p: "32px",
-            borderRadius: "24px",
-            border: "1px solid",
-            borderColor: "surfaceContainerHigh",
-          }}
+        <Stack
+          height={{ xs: "120px", sm: "140px" }}
+          width={{ xs: "120px", sm: "140px" }}
+          borderRadius={"24px"}
+          bgcolor={"white"}
+          border={"1px solid"}
+          borderColor={"surfaceContainerHigh"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
-          <Image
-            src={workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
-            alt={workflow.name}
-            style={{ borderRadius: "16%", objectFit: "contain", width: "100%", height: "100%" }}
-            priority={true}
-          />
-        </CardMedia>
+          <CardMedia
+            sx={{
+              width: { xs: 100, sm: 120 },
+              height: { xs: 100, sm: 120 },
+              borderRadius: "16px",
+            }}
+          >
+            <Image
+              src={workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={workflow.name}
+              style={{
+                borderRadius: "16px",
+                objectFit: "contain",
+                width: "100%",
+                height: "100%",
+              }}
+              priority={true}
+            />
+          </CardMedia>
+        </Stack>
         <Stack gap={3}>
           <Stack
             direction={"row"}
@@ -75,7 +88,7 @@ export default function Header({ workflow }: Props) {
               width: "fit-content",
               bgcolor: "common.black",
               borderRadius: "99px",
-              p: "4px 10px",
+              p: "6px 16px 6px 8px",
               fontSize: 12,
               fontWeight: 500,
               color: "common.white",
@@ -97,6 +110,7 @@ export default function Header({ workflow }: Props) {
           <Typography
             fontSize={{ xs: 14, md: 16 }}
             fontWeight={400}
+            lineHeight={"19.2px"}
             color={"onSurface"}
           >
             {workflow.description}

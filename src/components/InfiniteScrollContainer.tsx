@@ -1,6 +1,7 @@
 import { FC, ReactNode, useRef, useCallback } from "react";
 import Grid from "@mui/material/Grid";
 import ArrowRight from "@mui/icons-material/ArrowRight";
+import ArrowLeft from "@mui/icons-material/ArrowLeft";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import PaginatedList from "./PaginatedList";
 import useBrowser from "@/hooks/useBrowser";
@@ -73,6 +74,7 @@ const InfiniteScrollContainer: FC<InfiniteScrollContainerProps> = ({
           onPrevPage={onLoadLess}
           loading={loading}
           endIcon={<ArrowRight />}
+          startIcon={<ArrowLeft />}
         >
           {loading ? PlaceholderElement : <>{children}</>}
         </PaginatedList>

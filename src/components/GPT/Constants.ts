@@ -63,7 +63,6 @@ export const PROVIDERS = {
 
 export const RESPOND_TO_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook";
 export const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
-export const MARKDOWN_NODE_TYPE = "n8n-nodes-base.markdown";
 
 export const FREQUENCY_ITEMS = ["daily", "weekly", "bi-weekly", "monthly"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];

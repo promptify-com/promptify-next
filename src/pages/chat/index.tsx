@@ -267,7 +267,13 @@ function Chat() {
           }}
         >
           {isMobile && (
-            <Box bgcolor={"surfaceContainerLow"}>
+            <Box
+              bgcolor={"surfaceContainerLow"}
+              sx={{
+                position: "relative",
+                zIndex: 1000,
+              }}
+            >
               <Button
                 onClick={() => {
                   setDisplayChatHistoryOnMobile(true);

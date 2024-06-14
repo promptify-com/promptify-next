@@ -20,7 +20,8 @@ import type {
 } from "@/components/Automation/types";
 import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
-import { MARKDOWN_NODE_TYPE, PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
+import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
+import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface IRelation {
   nextNode: string;
@@ -149,13 +150,13 @@ export const enableWorkflowPromptifyStream = (workflow: IWorkflowCreateResponse)
     return _workflow;
   }
 
-  const markdownNode = _workflow.nodes.find(
-    node => node.type === MARKDOWN_NODE_TYPE && node.name === MARKDOWN_NODE_NAME,
-  );
-
   promptifyNode.parameters.save_output = true;
   promptifyNode.parameters.template_streaming = true;
-  if (!markdownNode) {
+
+  const hasProviders = findProviderNodes(_workflow).length > 0;
+  const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
+  const responseBodyStreamMatched = new RegExp(N8N_RESPONSE_REGEX).exec(responseBody);
+  if (!hasProviders && responseBodyStreamMatched) {
     promptifyNode.parameters.template_streaming = false;
   }
 
