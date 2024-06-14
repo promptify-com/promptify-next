@@ -192,6 +192,7 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
     name: node.name,
     type: node.type,
     typeVersion: node.typeVersion,
+    onError: "continueRegularOutput",
     ...(node.credentials && { credentials: node.credentials }),
     parameters: isGmailProvider ? nodeParametersCB("={{ $json.data }}") : nodeParametersCB(responseBody),
     position: [respondToWebhookNode.position[0] - 200, respondToWebhookNode.position[1] - 300] as [number, number],
