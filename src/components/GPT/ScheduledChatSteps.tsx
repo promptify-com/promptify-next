@@ -14,7 +14,7 @@ import { FREQUENCY_ITEMS } from "@/components/GPT/Constants";
 import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
-import type { FrequencyType, ITemplateWorkflow } from "@/components/Automation/types";
+import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
@@ -36,8 +36,9 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     setScheduleFrequency,
     setScheduleTime,
     injectProvider,
-    runWorkflow,
     removeProvider,
+    runWorkflow,
+    retryRunWorkflow,
   } = useChat({
     workflow,
   });
@@ -108,7 +109,12 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               }}
             >
               {message.type === "text" && <Message message={message} />}
-              {message.type === "workflowExecution" && <Message message={message} />}
+              {message.type === "workflowExecution" && (
+                <Message
+                  message={message}
+                  retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
+                />
+              )}
 
               {message.type === "credentials" && (
                 <CredentialsContainer
