@@ -1,7 +1,7 @@
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { PromptInputType } from ".";
 import type { IParameters } from "@/common/types";
-import type { ITemplateWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { InputType } from "@/common/types/prompt";
 
 export interface VaryValidatorResponse {
@@ -28,6 +28,8 @@ export type MessageType =
   | "input"
   | InputType;
 
+type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse;
+
 export interface IMessage {
   id: number;
   text: string;
@@ -46,7 +48,7 @@ export interface IMessage {
   questionIndex?: number;
   questionInputName?: string;
   executionId?: number;
-  data?: Templates[] | ITemplateWorkflow[];
+  data?: MessageDataType;
   choices?: string[];
 }
 
@@ -88,6 +90,6 @@ export interface CreateMessageProps {
   executionId?: number;
   template?: Templates;
   isLatestExecution?: boolean;
-  data?: Templates[] | ITemplateWorkflow[];
+  data?: MessageDataType;
   choices?: string[];
 }

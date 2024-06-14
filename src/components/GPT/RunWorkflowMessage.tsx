@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { useState } from "react";
 import RunButton from "./RunButton";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   onRun(): Promise<void>;
@@ -9,13 +9,7 @@ interface Props {
 }
 
 export default function runWorkflowMessage({ onRun, allowActivateButton }: Props) {
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleActivate = async () => {
-    setIsProcessing(true);
-    await onRun();
-    setIsProcessing(false);
-  };
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   return (
     <Stack
@@ -36,9 +30,9 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
         Ready to test this GPT
       </Typography>
       <RunButton
-        onClick={handleActivate}
-        disabled={!allowActivateButton || isProcessing}
-        loading={isProcessing}
+        onClick={onRun}
+        disabled={!allowActivateButton || isGenerating}
+        loading={isGenerating}
         text="Run"
       />
     </Stack>

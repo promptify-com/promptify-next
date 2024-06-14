@@ -20,6 +20,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useDebounce from "@/hooks/useDebounce";
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -53,7 +54,18 @@ const useChat = ({ workflow }: Props) => {
   const { sendMessageAPI } = useWorkflow(workflow);
   const { streamExecutionHandler } = useGenerateExecution({});
 
-  const [updateWorkflow] = useUpdateWorkflowMutation();
+  const [updateWorkflowHandler] = useUpdateWorkflowMutation();
+
+  const updateWorkflow = async (workflowData: IWorkflowCreateResponse) => {
+    try {
+      return await updateWorkflowHandler({
+        workflowId: workflowData.id,
+        data: workflowData,
+      }).unwrap();
+    } catch (error) {
+      console.error("Updating workflow failed", error);
+    }
+  };
 
   const initialMessages = async () => {
     loadWorkflowScheduleData();
@@ -140,8 +152,9 @@ const useChat = ({ workflow }: Props) => {
       const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
       const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
       const executionMessage = createMessage({
-        type: "html",
+        type: "workflowExecution",
         text: output,
+        data: clonedWorkflow,
       });
       setMessages(prev => prev.concat(executionMessage));
     }
@@ -195,20 +208,15 @@ const useChat = ({ workflow }: Props) => {
 
     _workflow.nodes.forEach(node => attachCredentialsToNode(node));
 
-    try {
-      const updatedWorkflow = await updateWorkflow({
-        workflowId: _workflow.id,
-        data: _workflow,
-      }).unwrap();
+    const updatedWorkflow = await updateWorkflow(_workflow);
 
+    if (updatedWorkflow) {
       dispatch(
         setClonedWorkflow({
           ...updatedWorkflow,
           schedule: schedulingData,
         }),
       );
-    } catch (error) {
-      console.error("Updating workflow failed", error);
     }
   };
 
@@ -269,6 +277,8 @@ const useChat = ({ workflow }: Props) => {
         throw new Error("Cloned workflow not found");
       }
 
+      dispatch(setGeneratingStatus(true));
+
       let _workflow = structuredClone(clonedWorkflow);
 
       const webhook = extractWebhookPath(_workflow.nodes);
@@ -281,11 +291,12 @@ const useChat = ({ workflow }: Props) => {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
 
           if (!match) {
-            const responseMessage = createMessage({
-              type: "html",
+            const executionMessage = createMessage({
+              type: "workflowExecution",
               text: response,
+              data: _workflow,
             });
-            setMessages(prev => prev.concat(responseMessage));
+            setMessages(prev => prev.concat(executionMessage));
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
@@ -295,6 +306,27 @@ const useChat = ({ workflow }: Props) => {
       }
     } catch (error) {
       failedExecutionHandler();
+    } finally {
+      dispatch(setGeneratingStatus(false));
+    }
+  };
+
+  const retryRunWorkflow = async (executionWorkflow: IWorkflowCreateResponse) => {
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
+
+    const { periodic_task: currentPeriodicTask } = clonedWorkflow;
+    const { periodic_task: executionPeriodicTask } = executionWorkflow;
+    const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
+
+    const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
+
+    if (updatedWorkflow) {
+      runWorkflow();
+      if (!noInputsChange) {
+        updateWorkflow(structuredClone(clonedWorkflow));
+      }
     }
   };
 
@@ -324,8 +356,9 @@ const useChat = ({ workflow }: Props) => {
     setScheduleFrequency,
     setScheduleTime,
     injectProvider,
-    runWorkflow,
     removeProvider,
+    runWorkflow,
+    retryRunWorkflow,
   };
 };
 

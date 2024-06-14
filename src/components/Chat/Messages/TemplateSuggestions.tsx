@@ -14,7 +14,7 @@ interface Props {
 
 function TemplateSuggestions({ message, scrollToBottom }: Props) {
   const [visibleCount, setVisibleCount] = useState(3);
-  const templates = message.data || [];
+  const templates = (message.data as Templates[]) || [];
 
   if (!templates.length) {
     return null;
