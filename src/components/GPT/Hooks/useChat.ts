@@ -316,12 +316,17 @@ const useChat = ({ workflow }: Props) => {
       throw new Error("Cloned workflow not found");
     }
 
-    const currentWorkflow = structuredClone(clonedWorkflow);
-    const updatedWorkflow = await updateWorkflow(executionWorkflow);
+    const { periodic_task: currentPeriodicTask } = clonedWorkflow;
+    const { periodic_task: executionPeriodicTask } = executionWorkflow;
+    const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
+
+    const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
 
     if (updatedWorkflow) {
       runWorkflow();
-      updateWorkflow(currentWorkflow);
+      if (!noInputsChange) {
+        updateWorkflow(structuredClone(clonedWorkflow));
+      }
     }
   };
 
