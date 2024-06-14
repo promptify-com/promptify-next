@@ -36,7 +36,7 @@ export default function DrawerContainer({
 
   const handleClickAway = () => {
     if (isMobile && expanded) {
-      onClose && onClose();
+      typeof onClose === "function" && onClose();
       toggleExpand();
     }
   };
@@ -48,7 +48,7 @@ export default function DrawerContainer({
       {...(isMobile && { disablePortal: true })}
       open={expanded}
       onClose={() => {
-        onClose && onClose();
+        typeof onClose === "function" && onClose();
         toggleExpand();
       }}
       onOpen={toggleExpand}
