@@ -140,7 +140,7 @@ const useChat = ({ workflow }: Props) => {
       const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
       const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
       const executionMessage = createMessage({
-        type: "html",
+        type: "workflowExecution",
         text: output,
       });
       setMessages(prev => prev.concat(executionMessage));
@@ -281,11 +281,11 @@ const useChat = ({ workflow }: Props) => {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
 
           if (!match) {
-            const responseMessage = createMessage({
-              type: "html",
+            const executionMessage = createMessage({
+              type: "workflowExecution",
               text: response,
             });
-            setMessages(prev => prev.concat(responseMessage));
+            setMessages(prev => prev.concat(executionMessage));
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {

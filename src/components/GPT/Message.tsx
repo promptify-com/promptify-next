@@ -7,7 +7,10 @@ import { ExecutionContent } from "../common/ExecutionContent";
 import { useAppDispatch } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
+import useCopyToClipboard from "../../hooks/useCopyToClipboard";
+import Done from "@mui/icons-material/Done";
+import ContentCopy from "@mui/icons-material/ContentCopy";
 
 interface Props {
   message: IMessage;
@@ -59,6 +62,7 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
 
 export default function Message({ message, isInitialMessage = false }: Props) {
   const { fromUser, isHighlight, type, text } = message;
+  const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   return (
     <MessageContainer message={message}>
@@ -71,12 +75,12 @@ export default function Message({ message, isInitialMessage = false }: Props) {
           borderRadius: fromUser
             ? "100px 100px 100px 0px"
             : isInitialMessage
-            ? "0px 100px 100px 100px"
-            : "0px 16px 16px 16px",
+              ? "0px 100px 100px 100px"
+              : "0px 16px 16px 16px",
           bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
         }}
       >
-        {type === "html" ? (
+        {["workflowExecution", "html"].includes(type) ? (
           <Stack
             width={"100%"}
             minHeight={"40px"}
@@ -90,6 +94,34 @@ export default function Message({ message, isInitialMessage = false }: Props) {
           />
         )}
       </Typography>
+      {type === "workflowExecution" && (
+        <Stack
+          direction={"row"}
+          gap={2}
+        >
+          <Button
+            onClick={() => copyToClipboard(message.text)}
+            startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
+            variant="text"
+            sx={btnStyle}
+          >
+            Copy
+          </Button>
+        </Stack>
+      )}
     </MessageContainer>
   );
 }
+
+const btnStyle = {
+  fontSize: 13,
+  fontWeight: 500,
+  color: "onSurface",
+  p: "6px 24px",
+  svg: {
+    fontSize: 12,
+  },
+  "&:hover": {
+    bgcolor: "action.hover",
+  },
+};

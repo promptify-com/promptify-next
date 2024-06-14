@@ -19,6 +19,7 @@ import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
+import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -44,7 +45,17 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
-  const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
+  const scrollTo = useScrollToElement("smooth");
+
+  const scrollToBottom = () => {
+    scrollTo("#scroll_ref");
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  }, [messages, generatedExecution]);
 
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
@@ -70,6 +81,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     }
   }, [clonedWorkflow, dispatch]);
 
+  const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
+
   return (
     <Stack
       flex={1}
@@ -77,12 +90,17 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       sx={{
         p: { xs: "16px", md: "48px" },
       }}
+      position={"relative"}
     >
       {!!messages.length ? (
         <>
-          {messages.map(message => (
+          {messages.map((message, idx) => (
             <Box
               key={message.id}
+              {...(!generatedExecution &&
+                idx === messages.length - 1 && {
+                  id: "scroll_ref",
+                })}
               sx={{
                 ...(message.noHeader && {
                   mt: "-34px",
@@ -90,7 +108,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               }}
             >
               {message.type === "text" && <Message message={message} />}
-              {message.type === "html" && <Message message={message} />}
+              {message.type === "workflowExecution" && <Message message={message} />}
 
               {message.type === "credentials" && (
                 <CredentialsContainer
@@ -126,7 +144,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
             </Box>
           ))}
 
-          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
+          {generatedExecution && (
+            <>
+              <ExecutionMessage execution={generatedExecution} />
+              <div
+                id="scroll_ref"
+                style={{ marginTop: "-64px" }}
+              ></div>
+            </>
+          )}
 
           {workflowScheduled && (
             <>
