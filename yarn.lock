@@ -5636,10 +5636,10 @@ map-stream@~0.1.0:
   resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
   integrity sha512-CkYQrPYZfWnu/DAmVCpTSX/xHpKZ80eKh2lAkyA6AJTef6bW+6JpbQZN5rofum7da+SyN1bi5ctTm+lTfcCW3g==
 
-material-dynamic-colors@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/material-dynamic-colors/-/material-dynamic-colors-1.1.1.tgz#94d6eec7101e93b50347ff421c716d9f38331666"
-  integrity sha512-8yMloscx3/GgJkv7gcZ5o9p5+KN0DRZJ6tX+mpJcOoYSucE5njoHSwjatipD0WIUlRO7U9O6IS+XTgzM4gQ87A==
+material-dynamic-colors@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/material-dynamic-colors/-/material-dynamic-colors-1.1.2.tgz#1634e7524e513e274cf93761487c4ca4ab833863"
+  integrity sha512-8KD0jrPTFs2x06UJWbvkg6E0HyzFjrvS5oOc2DsXzIEOqZTbb3ruLMUhNuPSl8WeHA/O/RTAlTLcxqYXJzYwPA==
   dependencies:
     "@material/material-color-utilities" "^0.2.7"
 
