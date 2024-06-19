@@ -11,7 +11,7 @@ import ExportExecutionButton from "@/components/Chat/Messages/ExecutionMessageBo
 import SaveExecutionButton from "@/components/Chat/Messages/ExecutionMessageBox/SaveExecutionButton";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
-import { IChatSliceState } from "@/core/store/types";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface Props {
   onExpand?: () => void;
@@ -39,7 +39,7 @@ function MessageBoxHeader({
     answers = [],
     inputs = [],
     params = [],
-  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const currentUser = useAppSelector(state => state.user.currentUser);

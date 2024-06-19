@@ -5,7 +5,12 @@ import Menu from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
-import chatSlice, { setChatMode, setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import chatSlice, {
+  initialState as initialChatState,
+  setChatMode,
+  setInitialChat,
+  setSelectedChat,
+} from "@/core/store/chatSlice";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
@@ -29,7 +34,6 @@ import Button from "@mui/material/Button";
 import { theme } from "@/theme";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 import lazy from "next/dynamic";
-import type { IChatSliceState } from "@/core/store/types";
 import store from "@/core/store";
 import templatesSlice, { initialState as initialTemplatesState } from "@/core/store/templatesSlice";
 
@@ -58,7 +62,7 @@ function Chat() {
     selectedChat,
     chatMode = "automation",
     initialChat = true,
-  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const { createChat, updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
   const { processQueuedMessages, mapApiMessageToIMessage } = useSaveChatInteractions();

@@ -4,7 +4,6 @@ import { baseApi } from "@/core/api/api";
 import userSlice from "./userSlice";
 import sidebarSlice from "./sidebarSlice";
 import toastSlice, { setToast } from "./toastSlice";
-import chatSlice from "./chatSlice";
 
 import type {
   IBuilderSliceState,
@@ -40,7 +39,6 @@ type StaticReducers = {
   user: Reducer<IUserSliceState>;
   toast: Reducer<IToastSliceState>;
   sidebar: Reducer<ISidebarSliceState>;
-  chat: Reducer<IChatSliceState>;
   [baseApi.reducerPath]: Reducer;
 };
 
@@ -48,7 +46,6 @@ const staticReducers: StaticReducers = {
   user: userSlice,
   sidebar: sidebarSlice,
   toast: toastSlice,
-  chat: chatSlice,
   [baseApi.reducerPath]: baseApi.reducer,
 };
 

@@ -20,6 +20,7 @@ import {
   clearParameterSelection,
   setSelectedTemplate,
   setChoiceSelected,
+  initialState as initialChatState,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
@@ -31,7 +32,6 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
 import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
 import useChatsManager from "./useChatsManager";
-import { IChatSliceState } from "@/core/store/types";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -53,7 +53,7 @@ const useMessageManager = () => {
     currentExecutionDetails = { id: null, isFavorite: false },
     selectedChatOption = null,
     choiceSelected,
-  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const repeatedExecution = useAppSelector(state => state.executions?.repeatedExecution ?? null);
 
@@ -318,8 +318,8 @@ const useMessageManager = () => {
           nextQuestion.type === "param"
             ? "questionParam"
             : nextQuestion.type === "number" || nextQuestion.type === "text"
-            ? "questionInput"
-            : nextQuestion.type,
+              ? "questionInput"
+              : nextQuestion.type,
         text: nextQuestion.question,
         isRequired: nextQuestion.required,
         questionIndex: currentIndex + 2,
