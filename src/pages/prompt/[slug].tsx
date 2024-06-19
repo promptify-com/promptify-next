@@ -11,6 +11,7 @@ import { useAppDispatch } from "@/hooks/useStore";
 import templatesSlice, { updatePopupTemplate } from "@/core/store/templatesSlice";
 import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
 import store from "@/core/store";
+import chatSlice from "@/core/store/chatSlice";
 
 interface TemplateProps {
   fetchedTemplate: Templates;
@@ -35,7 +36,10 @@ function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
       return;
     }
 
-    store.injectReducers([{ key: "templates", asyncReducer: templatesSlice }]);
+    store.injectReducers([
+      { key: "templates", asyncReducer: templatesSlice },
+      { key: "chat", asyncReducer: chatSlice },
+    ]);
   }, [store]);
 
   return (

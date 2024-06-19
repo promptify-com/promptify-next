@@ -10,13 +10,12 @@ import { useStopExecutionMutation } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
-import { setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import { createExecuteErrorToast } from "@/components/Chat/helper";
-import { IChatSliceState } from "@/core/store/types";
 
 interface IStreamExecution {
   id: number;
@@ -40,7 +39,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     inputs = [],
     paramsValues = [],
     selectedTemplate,
-  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);

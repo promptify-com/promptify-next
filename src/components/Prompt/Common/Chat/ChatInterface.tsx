@@ -16,7 +16,6 @@ import { Message } from "@/components/Prompt/Common/Chat/Message";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptLiveResponse } from "@/common/types/prompt";
-import { IExecutionsSliceState } from "@/core/store/types";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -31,9 +30,8 @@ interface Props {
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
-  const { generatedExecution = null, selectedExecution = null } = useAppSelector(
-    state => state.executions ?? {},
-  ) as IExecutionsSliceState;
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat?.inputs ?? []);

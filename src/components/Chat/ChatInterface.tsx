@@ -10,7 +10,7 @@ import RenderMessage from "@/components/Chat/RenderMessage";
 import RunButton from "@/components/Chat/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import { IChatSliceState } from "@/core/store/types";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface Props {
   messages: IMessage[];
@@ -38,7 +38,7 @@ const ChatInterface = ({
     selectedTemplate,
     selectedChatOption = null,
     selectedChat,
-  } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user.currentUser);

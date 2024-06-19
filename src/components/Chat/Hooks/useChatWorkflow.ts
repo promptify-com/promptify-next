@@ -1,7 +1,7 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { N8N_RESPONSE_REGEX, oAuthTypeMapping } from "@/components/Automation/helpers";
-import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { createMessage } from "@/components/Chat/helper";
@@ -14,7 +14,6 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useSaveChatInteractions from "./useSaveChatInteractions";
 import { useDeleteExecutionMutation } from "@/core/api/executions";
-import { IChatSliceState, IExecutionsSliceState } from "@/core/store/types";
 
 interface Props {
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
@@ -27,7 +26,7 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat ?? {}) as IChatSliceState;
+  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const [deleteExecution] = useDeleteExecutionMutation();
