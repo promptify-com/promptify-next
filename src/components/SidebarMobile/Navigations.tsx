@@ -1,4 +1,4 @@
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import InputBase from "@mui/material/InputBase";
 import List from "@mui/material/List";
@@ -38,8 +38,6 @@ function Navigations({ onCloseDrawer }: Props) {
   const pathname = router.pathname;
 
   const { filters, handleSelectKeyword } = usePromptsFilter();
-  const title = filters.title ?? "";
-
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
@@ -110,6 +108,12 @@ function Navigations({ onCloseDrawer }: Props) {
     },
   ];
 
+  useEffect(() => {
+    return () => {
+      setTextInput("");
+    };
+  }, [onCloseDrawer]);
+
   const onSearchClicked = () => {
     if (isExplorePage) {
       handleSelectKeyword(textInput);
@@ -159,7 +163,7 @@ function Navigations({ onCloseDrawer }: Props) {
           onChange={e => {
             setTextInput(e.target.value);
           }}
-          value={textInput ?? title}
+          value={textInput}
         />
       </Stack>
       {!showTemplatesResult ? (
