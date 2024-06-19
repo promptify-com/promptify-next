@@ -24,14 +24,8 @@ function Landing() {
       setSocialAnchor(null);
     };
     if (socialOpened) {
-      window.addEventListener("scroll", handleScroll);
-    } else {
-      window.removeEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScroll, { once: true });
     }
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
   }, [socialOpened]);
 
   return (
