@@ -16,7 +16,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Stack from "@mui/material/Stack";
 import Zoom from "@mui/material/Zoom";
 import { ClassicPreset } from "rete";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useRete } from "rete-react-render-plugin";
 import { createEditor, Node } from "@/components/builder/Editor";
 import Header from "@/components/builder/Header";
@@ -65,7 +65,7 @@ export const Builder = () => {
   const { data: templateData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Number(router.query.editor) === 1);
   const [deletePrompt] = useDeletePromptMutation();
   const [publishTemplate] = usePublishTemplateMutation();
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");

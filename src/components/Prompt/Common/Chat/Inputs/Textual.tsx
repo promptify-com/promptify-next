@@ -16,8 +16,8 @@ function Textual({ input, value, onChange }: Props) {
   const type = input.type;
   const { isAutomationPage } = useVariant();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const areAllCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const areAllCredentialsStored = useAppSelector(state => state.chat?.areCredentialsStored ?? false);
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
 
@@ -51,11 +51,11 @@ const textFieldStyle = {
   ".MuiInputBase-input": {
     p: 0,
     color: "onSurface",
-    fontSize: { xs: 12, md: 14 },
+    fontSize: { xs: 12, md: 12 },
     fontWeight: 400,
     "&::placeholder": {
       color: "text.secondary",
-      opacity: 0.65,
+      opacity: 0.5,
     },
     "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
       WebkitAppearance: "none",

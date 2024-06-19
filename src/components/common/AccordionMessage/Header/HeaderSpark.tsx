@@ -23,8 +23,8 @@ interface Props {
 function HeaderSpark({ template, isExpanded, onCancel, messages = [] }: Props) {
   const { truncate } = useTruncate();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const [openExecutionPopup, setOpenExecutionPopup] = useState<ExecutionTemplatePopupType>(null);

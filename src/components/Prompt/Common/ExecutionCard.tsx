@@ -28,8 +28,8 @@ interface Props {
 export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const isStreaming = execution && "data" in execution;
   const executionPrompts = isStreaming ? execution.data : execution?.prompt_executions;
-  const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
-  const showPreview = useAppSelector(state => state.template.showPromptsView);
+  const sparkHashQueryParam = useAppSelector(state => state.executions?.sparkHashQueryParam ?? null);
+  const showPreview = useAppSelector(state => state.templates?.showPromptsView ?? false);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
   const {
     containerRef: carouselRef,

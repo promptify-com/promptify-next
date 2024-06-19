@@ -46,6 +46,7 @@ export default function TermsOfUsePage() {
             <a
               href="https://promptify.com"
               target="_blank"
+              style={{ color: "blue" }}
             >
               Promptify.com
             </a>
@@ -93,7 +94,7 @@ export default function TermsOfUsePage() {
             fontWeight={400}
             color={"onSurface"}
           >
-            2. Content
+            3. Content
           </Typography>
           <Box component={"p"}>
             (a) Your Content. You own all input you provide to the Services. We assign all output generated to you,

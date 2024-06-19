@@ -8,10 +8,13 @@ import Tooltip from "@mui/material/Tooltip";
 import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import {
+  initialState as initialExecutionsState,
+  setGeneratedExecution,
+  setSelectedExecution,
+} from "@/core/store/executionsSlice";
 import { setAnswers } from "@/core/store/chatSlice";
-import useVariant from "../../Hooks/useVariant";
-
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
@@ -24,8 +27,10 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGe
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
 
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const { generatedExecution = null, selectedExecution = null } = useAppSelector(
+    state => state.executions ?? initialExecutionsState,
+  );
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 

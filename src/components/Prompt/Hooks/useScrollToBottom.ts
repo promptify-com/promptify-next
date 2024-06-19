@@ -12,8 +12,8 @@ const useScrollToBottom = ({
   content?: IMessage[] | string;
   skipScroll?: boolean;
 }) => {
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const lastScrollHeight = useRef(0);
   const [showScrollDown, setShowScrollDown] = useState<boolean>(false);
   const userHasScrolledUp = useRef<boolean>(false);

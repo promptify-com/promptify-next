@@ -1,20 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { Engine, EngineType } from "@/core/api/dto/templates";
+import { IDocumentSliceState, DocumentFilterStatusType } from "./types";
 
-type StatusType = "draft" | "saved" | null;
-
-interface IState {
-  filter: {
-    status: StatusType;
-    contentTypes: EngineType[];
-    engine: Engine | null;
-    template: number | null;
-  };
-  title: string;
-  showPreviews: boolean;
-}
-
-const initialState: IState = {
+export const initialState: IDocumentSliceState = {
   filter: {
     status: null,
     contentTypes: [],
@@ -23,13 +11,14 @@ const initialState: IState = {
   },
   title: "",
   showPreviews: false,
+  favorites: {},
 };
 
 const documentsSlice = createSlice({
   name: "documents",
   initialState,
   reducers: {
-    setDocumentsStatus: (state, action: PayloadAction<StatusType | null>) => {
+    setDocumentsStatus: (state, action: PayloadAction<DocumentFilterStatusType | null>) => {
       state.filter.status = action.payload;
     },
     setDocumentsContentTypes: (state, action: PayloadAction<EngineType[]>) => {
@@ -47,10 +36,14 @@ const documentsSlice = createSlice({
     toggleShowPreviews: state => {
       state.showPreviews = !state.showPreviews;
     },
+    setFavorites: (state, action: PayloadAction<Record<number, boolean>>) => {
+      const executionId = Number(Object.keys(action.payload)[0]);
+      state.favorites[executionId] = action.payload[executionId];
+    },
   },
 });
 
-export const countSelectedFilters = (state: IState["filter"]): number => {
+export const countSelectedFilters = (state: IDocumentSliceState["filter"]): number => {
   let count = 0;
 
   if (state.engine) count += 1;
@@ -69,6 +62,7 @@ export const {
   setDocumentsTemplate,
   setDocumentTitle,
   toggleShowPreviews,
+  setFavorites,
 } = documentsSlice.actions;
 
 export default documentsSlice.reducer;

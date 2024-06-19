@@ -14,7 +14,7 @@ const maxLength = 2500;
 const Feedback = () => {
   const token = useToken();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const templateId = useAppSelector(state => state.template.id);
+  const templateId = useAppSelector(state => state.templates?.id ?? 0);
   const { data: feedbacks, isFetching } = useGetFeedbacksQuery(templateId);
   const [saveFeedback, { isLoading }] = useSaveFeedbackMutation();
 

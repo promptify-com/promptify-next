@@ -2,24 +2,28 @@ import { baseApi } from "./api";
 import type {
   CreateCredentialPayload,
   ICredential,
-  IWorkflow,
+  ITemplateWorkflow,
   IWorkflowCreateResponse,
+  UserWorkflowExecutionsResponse,
+  UserWorkflowsResponse,
+  IWorkflowCategory,
 } from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getWorkflows: builder.query<IWorkflow[], boolean>({
+      getWorkflows: builder.query<ITemplateWorkflow[], boolean>({
         query: enable => ({
           url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
+        providesTags: ["TemplateWorkflows"],
       }),
 
-      getWorkflowByslug: builder.query<IWorkflow, string>({
+      getWorkflowBySlug: builder.query<ITemplateWorkflow, string>({
         query: workflowSlug => ({
-          url: `/api/n8n/workflow_by_slug/${workflowSlug}`,
+          url: `/api/n8n/workflows/by-slug/${workflowSlug}`,
           method: "get",
           keepUnusedDataFor: 21600,
         }),
@@ -38,7 +42,39 @@ export const workflowsApi = baseApi.injectEndpoints({
           keepUnusedDataFor: 21600,
         }),
       }),
+      getUserWorkflows: builder.query<UserWorkflowsResponse, void>({
+        query: () => ({
+          url: `/api/n8n/workflows/get_user_workflows`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+        providesTags: ["UserWorkflows"],
+      }),
+      getWorkflowExecutions: builder.query<UserWorkflowExecutionsResponse, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/executions?includeData=true`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+        transformResponse(executions: UserWorkflowExecutionsResponse) {
+          if (!executions?.data?.length) {
+            return {
+              data: [],
+              nextCursor: null,
+            };
+          }
 
+          return {
+            data: executions.data.map(execution => ({
+              id: execution.id,
+              status: execution.status,
+              startedAt: execution.startedAt,
+              error: execution.data?.resultData?.error?.message ?? "",
+            })),
+            nextCursor: executions.nextCursor,
+          };
+        },
+      }),
       getCredentials: builder.query<ICredential[], void>({
         query: () => ({
           url: `/api/n8n/workflows/credentials/`,
@@ -59,7 +95,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "delete",
         }),
       }),
-      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: number; data: IWorkflowCreateResponse }>({
+      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: string; data: IWorkflowCreateResponse }>({
         query: ({ workflowId, data }) => ({
           url: `/api/n8n/workflows/${workflowId}/update`,
           method: "put",
@@ -70,6 +106,58 @@ export const workflowsApi = baseApi.injectEndpoints({
         query: ({ id, redirectUri }) => ({
           url: `/api/oauth2/auth?id=${id}&redirectUri=${redirectUri}`,
           method: "get",
+        }),
+      }),
+      getWorkflowByCategory: builder.query<IWorkflowCategory[], void>({
+        query: () => ({
+          url: `/api/n8n/workflows/by_category`,
+          method: "get",
+          params: {
+            enabled: true,
+          },
+        }),
+        keepUnusedDataFor: 3600,
+        providesTags: ["CategoryWorkflows"],
+        transformResponse(items: IWorkflowCategory[] = []) {
+          return items.map(item => ({
+            ...item,
+            templates: item.templates.filter((template: ITemplateWorkflow) => template.enabled),
+          }));
+        },
+      }),
+      deleteWorkflow: builder.mutation<void, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/delete`,
+          method: "delete",
+        }),
+        invalidatesTags: ["UserWorkflows"],
+      }),
+      likeWorkflow: builder.mutation<void, number>({
+        query: templateWorkflowId => ({
+          url: `/api/n8n/workflows/${templateWorkflowId}/like`,
+          method: "post",
+        }),
+        invalidatesTags: ["TemplateWorkflows", "UserWorkflows", "CategoryWorkflows"],
+      }),
+      dislikeWorkflow: builder.mutation<void, number>({
+        query: templateWorkflowId => ({
+          url: `/api/n8n/workflows/${templateWorkflowId}/like`,
+          method: "delete",
+        }),
+        invalidatesTags: ["TemplateWorkflows", "UserWorkflows", "CategoryWorkflows"],
+      }),
+      pauseWorkflow: builder.mutation<void, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/pause`,
+          method: "put",
+          invalidatesTags: ["Workflow"],
+        }),
+      }),
+      resumeWorkflow: builder.mutation<void, string>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/resume`,
+          method: "put",
+          invalidatesTags: ["Workflow"],
         }),
       }),
     };
@@ -85,5 +173,13 @@ export const {
   useUpdateWorkflowMutation,
   useGetAuthUrlQuery,
   useGetWorkflowQuery,
-  useGetWorkflowByslugQuery,
+  useGetWorkflowBySlugQuery,
+  useGetWorkflowExecutionsQuery,
+  useGetWorkflowByCategoryQuery,
+  useGetUserWorkflowsQuery,
+  useDeleteWorkflowMutation,
+  useLikeWorkflowMutation,
+  useDislikeWorkflowMutation,
+  usePauseWorkflowMutation,
+  useResumeWorkflowMutation,
 } = workflowsApi;

@@ -45,8 +45,8 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   const paramsValues = useRef<IExecuteParam[]>([]);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const template = useAppSelector(state => state.builder.template);
-  const engines = useAppSelector(state => state.builder.engines);
+  const template = useAppSelector(state => state.builder?.template ?? null);
+  const engines = useAppSelector(state => state.builder?.engines ?? []);
   const engine = engines.find(engine => engine.id === prompt.engine);
 
   const [copyToClipboard, copyResult] = useCopyToClipboard();
@@ -334,6 +334,9 @@ const buttonStyle = {
   fontSize: 14,
   fontWeight: 500,
   color: "secondary.main",
+  ":hover": {
+    bgcolor: "surfaceContainer",
+  },
 };
 
 export default PromptTestDialog;

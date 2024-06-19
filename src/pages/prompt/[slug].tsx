@@ -8,8 +8,10 @@ import TemplatePage from "@/components/Prompt";
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/hooks/useStore";
-import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import templatesSlice, { updatePopupTemplate } from "@/core/store/templatesSlice";
 import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
+import store from "@/core/store";
+import chatSlice from "@/core/store/chatSlice";
 
 interface TemplateProps {
   fetchedTemplate: Templates;
@@ -28,6 +30,17 @@ function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
       );
     }
   }, []);
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    store.injectReducers([
+      { key: "templates", asyncReducer: templatesSlice },
+      { key: "chat", asyncReducer: chatSlice },
+    ]);
+  }, [store]);
 
   return (
     <Layout>

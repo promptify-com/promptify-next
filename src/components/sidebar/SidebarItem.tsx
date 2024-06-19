@@ -73,6 +73,9 @@ function SidebarItem({ navItem }: Props) {
               backgroundColor: "transparent",
               borderRadius: "8px",
               color: "onSurface",
+              path: {
+                fill: theme.palette.primary.main,
+              },
             },
           }}
           disabled={navItem.href === "#"}

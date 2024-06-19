@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useViewTemplateMutation } from "@/core/api/templates";
 import { redirectToPath } from "@/common/helpers";
 import { useDynamicColors } from "@/hooks/useDynamicColors";
+import { setDocumentTitle } from "@/core/store/documentsSlice";
 
 interface Props {
   template: Templates;
@@ -35,7 +36,7 @@ function TemplatePage({ template, popup }: Props) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
-  const savedTemplateId = useAppSelector(state => state.template.id);
+  const savedTemplateId = useAppSelector(state => state.templates?.id ?? 0);
   const [updateViewTemplate] = useViewTemplateMutation();
 
   const [tabsFixed, setTabsFixed] = useState(false);
@@ -87,6 +88,7 @@ function TemplatePage({ template, popup }: Props) {
         data: null,
       }),
     );
+    dispatch(setDocumentTitle(""));
   };
 
   return (

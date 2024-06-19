@@ -15,6 +15,7 @@ const LikeButton: React.FC<Props> = ({ style = { sx: {} } }) => {
     <Button
       onClick={() => saveFavorite(true)}
       startIcon={templateData.is_liked ? <Favorite /> : <FavoriteBorder />}
+      disabled={Object.keys(templateData).length === 0}
       sx={{
         border: "1px solid",
         borderColor: "surfaceContainerHigh",

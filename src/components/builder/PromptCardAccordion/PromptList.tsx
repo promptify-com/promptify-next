@@ -23,7 +23,7 @@ interface Props {
 function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
-  const engines = useAppSelector(state => state.builder.engines);
+  const engines = useAppSelector(state => state.builder?.engines ?? []);
 
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
@@ -152,6 +152,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
           <BuilderPromptPlaceholder count={2} />
         </Stack>
       ) : (
+        // @ts-expect-error
         <Stack
           ref={drop}
           alignItems={"center"}

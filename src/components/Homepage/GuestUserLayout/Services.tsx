@@ -1,8 +1,7 @@
 import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import ElectricBoltOutlined from "@mui/icons-material/ElectricBoltOutlined";
-import Inventory2Outlined from "@mui/icons-material/Inventory2Outlined";
+import Button from "@mui/material/Button";
 import Link from "next/link";
 import { StickyNote2Icon } from "@/assets/icons/StickyNote2Icon";
 import { DeployedCodeIcon } from "@/assets/icons/DeployedCodeIcon";
@@ -109,20 +108,30 @@ function Services() {
             >
               {service.description}
             </Typography>
-            <Link
+            <Button
+              LinkComponent={Link}
               href={service.link.path}
-              style={{
-                padding: "10px 24px",
+              sx={{
+                padding: "8px 24px",
                 borderRadius: "99px",
                 fontSize: 14,
                 fontWeight: 500,
                 backgroundColor: "#1F1F1F",
                 color: "#FFF",
                 textDecoration: "none",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  transition: "all 0.3s ease",
+                  borderRadius: "99px",
+                  color: "#FFF",
+                  border: 0,
+                  background:
+                    "linear-gradient(0deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.20) 100%), var(--inverseSurface, #303034)",
+                },
               }}
             >
               {service.link.title}
-            </Link>
+            </Button>
           </Stack>
         </Stack>
       ))}

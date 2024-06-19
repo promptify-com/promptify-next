@@ -3,19 +3,16 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { useRouter } from "next/router";
-import { RootState } from "@/core/store";
 import SearchByKeywords from "./SearchByKeywords";
 import { useDeferredValue, useEffect, useState } from "react";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
-import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import SearchField from "@/components/common/forms/SearchField";
 import CardTemplateResult from "../common/cards/CardTemplateResult";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface SearchDialogProps {
   open: boolean;
@@ -24,20 +21,18 @@ interface SearchDialogProps {
 
 export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-
-  const isExplorePage = router.pathname === "/explore";
-
   const [IsSm, setIsSm] = useState(false);
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
+  const isExplorePage = router.pathname === "/explore";
+  const { filters, handleSelectKeyword } = usePromptsFilter();
+  const title = filters.title;
+
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
     skip: !textInput.length,
   });
-
-  const title = useSelector((state: RootState) => state.filters.title);
 
   const handleClose = (e: any) => {
     e.stopPropagation();
@@ -121,9 +116,10 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
               value={title ?? textInput}
               onChange={val => setTextInput(val)}
               onPressEnter={() => {
-                dispatch(setSelectedKeyword(textInput));
-                if (!isExplorePage) {
-                  router.push({ pathname: "/explore" });
+                if (isExplorePage) {
+                  handleSelectKeyword(textInput);
+                } else {
+                  router.push(`/explore?key=${textInput}`);
                 }
               }}
               sx={{ bgcolor: "transparent" }}
@@ -133,7 +129,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
       </DialogTitle>
       <DialogContent>
         {textInput === "" ? (
-          <SearchByKeywords title={title} />
+          <SearchByKeywords title={title ?? ""} />
         ) : (
           <Grid>
             {isFetching ? (

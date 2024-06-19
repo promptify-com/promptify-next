@@ -1,48 +1,35 @@
 import React, { useState } from "react";
 import { Avatar, Button, Chip, Stack, Typography, alpha } from "@mui/material";
 import { Engine, Tag } from "@/core/api/dto/templates";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteSelectedTag, setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
-import { RootState } from "@/core/store";
 import { theme } from "@/theme";
 import { useRouter } from "next/router";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 const minShown = 5;
 
 export const TemplatesFilter = () => {
+  const router = useRouter();
+  const { filters, handleClickTag } = usePromptsFilter();
+  const { engine: filterEngine, tag: filterTags } = filters;
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
   const [enginesToShow, setEnginesToShow] = useState<number>(minShown);
-  const filters = useSelector((state: RootState) => state.filters);
-  const dispatch = useDispatch();
-  const router = useRouter();
 
   const handleEngineSelect = (engine: Engine) => {
-    dispatch(setSelectedEngine(engine));
-    router.push("/explore");
+    router.push(`/explore?engine=${engine.id}`);
   };
 
-  const handleTagSelect = (tag: Tag) => {
-    if (storedTags.includes(tag)) {
-      dispatch(deleteSelectedTag(tag.id));
-    } else {
-      dispatch(setSelectedTag(tag));
-    }
-    router.push("/explore");
-  };
-
-  const showmore = () => {
+  const showMore = () => {
     if (engines?.length) {
       setEnginesToShow(engines.length);
     }
   };
-  const showless = () => {
+  const showLess = () => {
     setEnginesToShow(minShown);
   };
 
-  const { engine: storedEngine, tag: storedTags } = filters;
   const enginesExpanded = enginesToShow > minShown;
 
   return (
@@ -75,7 +62,7 @@ export const TemplatesFilter = () => {
               sx={{
                 borderRadius: "8px",
                 px: "16px",
-                bgcolor: storedEngine === engine ? "secondaryContainer" : "surface.2",
+                bgcolor: filterEngine === engine ? "secondaryContainer" : "surface.2",
                 ":hover": {
                   bgcolor: "action.hover",
                 },
@@ -107,7 +94,7 @@ export const TemplatesFilter = () => {
                 mx: 2,
               }}
               variant="text"
-              onClick={enginesExpanded ? showless : showmore}
+              onClick={enginesExpanded ? showLess : showMore}
             >
               {enginesExpanded ? "Show less" : "See all"}
             </Button>
@@ -136,12 +123,12 @@ export const TemplatesFilter = () => {
             <Chip
               key={tag.id}
               label={tag.name}
-              onClick={() => handleTagSelect(tag)}
+              onClick={() => handleClickTag(tag)}
               sx={{
                 fontSize: 13,
                 fontWeight: 500,
                 color: "onSurface",
-                bgcolor: storedTags.includes(tag) ? "secondaryContainer" : "surface.4",
+                bgcolor: filterTags.includes(tag) ? "secondaryContainer" : "surface.4",
                 ":hover": {
                   bgcolor: "action.hover",
                 },

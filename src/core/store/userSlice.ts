@@ -1,12 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/core/api/dto/user";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
+import { IUserSliceState } from "./types";
 
-interface IState {
-  currentUser: User | null;
-}
-
-const initialState: IState = {
+const initialState: IUserSliceState = {
   currentUser: null,
 };
 
@@ -16,15 +13,17 @@ const userSlice = createSlice({
   reducers: {
     updateUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload ? Object.freeze(action.payload) : null;
-      Storage.set("currentUser", JSON.stringify(action.payload || {}));
+
+      LocalStorage.set("currentUser", JSON.stringify(action.payload || {}));
     },
   },
 });
 
-export const isValidUserFn = ({ user }: { user: IState }) =>
+export const isValidUserFn = ({ user }: { user: IUserSliceState }) =>
   Boolean(user.currentUser?.id && user.currentUser?.username);
 
-export const isAdminFn = ({ user }: { user: IState }) => Boolean(user.currentUser && user.currentUser?.is_admin);
+export const isAdminFn = ({ user }: { user: IUserSliceState }) =>
+  Boolean(user.currentUser && user.currentUser?.is_admin);
 
 export const { updateUser } = userSlice.actions;
 

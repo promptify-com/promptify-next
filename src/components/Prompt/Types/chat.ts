@@ -1,7 +1,8 @@
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { PromptInputType } from ".";
-import { IParameters } from "@/common/types";
-import { IWorkflow } from "@/components/Automation/types";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { PromptInputType } from ".";
+import type { IParameters } from "@/common/types";
+import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { InputType } from "@/common/types/prompt";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
@@ -20,7 +21,14 @@ export type MessageType =
   | "questionInput"
   | "questionParam"
   | "readyMessage"
-  | "workflowExecution";
+  | "workflowExecution"
+  | "schedule_frequency"
+  | "schedule_time"
+  | "schedule_providers"
+  | "input"
+  | InputType;
+
+type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse;
 
 export interface IMessage {
   id: number;
@@ -31,16 +39,17 @@ export interface IMessage {
   spark?: TemplatesExecutions;
   template?: Templates;
   isLatestExecution?: boolean;
-  choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
   noHeader?: boolean;
+  isHighlight?: boolean;
   isRequired?: boolean;
   isEditable?: boolean;
   questionIndex?: number;
   questionInputName?: string;
   executionId?: number;
-  data?: Templates[] | IWorkflow[];
+  data?: MessageDataType;
+  choices?: string[];
 }
 
 export interface IAnswer {
@@ -60,7 +69,7 @@ export interface IQuestion {
   prompt?: number;
   question: string;
   required: boolean;
-  type: "input" | "param";
+  type: InputType | "input" | "param";
   defaultValue?: string | number | null;
   choices?: string[];
   fileExtensions?: string[];
@@ -72,6 +81,7 @@ export interface CreateMessageProps {
   text: string;
   fromUser?: boolean;
   noHeader?: boolean;
+  isHighlight?: boolean;
   timestamp?: string;
   isEditable?: boolean;
   isRequired?: boolean;
@@ -80,5 +90,6 @@ export interface CreateMessageProps {
   executionId?: number;
   template?: Templates;
   isLatestExecution?: boolean;
-  data?: Templates[] | IWorkflow[];
+  data?: MessageDataType;
+  choices?: string[];
 }

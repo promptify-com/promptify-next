@@ -29,11 +29,12 @@ interface Props {
 }
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
-  const inputs = useAppSelector(state => state.chat.inputs);
+  const inputs = useAppSelector(state => state.chat?.inputs ?? []);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 

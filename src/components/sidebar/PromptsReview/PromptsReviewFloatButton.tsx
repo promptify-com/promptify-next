@@ -3,23 +3,21 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { alpha, useTheme } from "@mui/material/styles";
-
-import { countSelectedFilters, resetFilters } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyPromptsReviewFilters } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import FilterIcon from "@/components/sidebar/PromptsFilter/Icons/Filter";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsReviewFloatButton({ expanded = false }) {
   const dispatch = useAppDispatch();
   const theme = useTheme();
 
   const isPromptsReviewFiltersSticky = useAppSelector(state => state.sidebar.isPromptsReviewFiltersSticky);
-  const filters = useAppSelector(state => state.filters);
+  const { resetFilters, filtersCount } = usePromptsFilter();
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCrossHovered, setIsCrossHovered] = useState(false);
-  const filterCount = countSelectedFilters(filters);
 
   return (
     <Box
@@ -43,7 +41,7 @@ function PromptsReviewFloatButton({ expanded = false }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <>
-        {filterCount !== 0 && (
+        {filtersCount !== 0 && (
           <Box
             position={"absolute"}
             top={0}
@@ -66,10 +64,10 @@ function PromptsReviewFloatButton({ expanded = false }) {
                 style={{ color: "white", fontSize: 16 }}
                 onClick={event => {
                   event.stopPropagation();
-                  dispatch(resetFilters());
+                  resetFilters();
                   setIsHovered(false);
                   dispatch(setStickyPromptsReviewFilters(false));
-                  Storage.set("isPromptsReviewFiltersSticky", JSON.stringify(false));
+                  LocalStorage.set("isPromptsReviewFiltersSticky", JSON.stringify(false));
                 }}
               />
             ) : (
@@ -77,7 +75,7 @@ function PromptsReviewFloatButton({ expanded = false }) {
                 fontSize={"12px"}
                 color={"onPrimary"}
               >
-                {filterCount}
+                {filtersCount}
               </Typography>
             )}
           </Box>

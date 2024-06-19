@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useEffect, useState } from "react";
-import { TemplatesProps, updateCurrentFavorite } from "@/core/store/templatesSlice";
+import { initialState as initialTemplatesState, updateCurrentFavorite } from "@/core/store/templatesSlice";
 import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import { useAppSelector } from "./useStore";
 import {
@@ -11,6 +11,7 @@ import {
   useRemoveTemplateLikeMutation,
 } from "@/core/api/templates";
 import { Templates } from "@/core/api/dto/templates";
+import { ITemplateSliceState } from "@/core/store/types";
 
 const useSaveFavoriteTemplate = (template?: Templates) => {
   const router = useRouter();
@@ -18,12 +19,13 @@ const useSaveFavoriteTemplate = (template?: Templates) => {
   const [isFetching, setIsFetching] = useState(false);
   const isValidUser = useAppSelector(isValidUserFn);
   const favoriteCollectionId = useAppSelector(state => state.user.currentUser?.favorite_collection_id);
-  const selectedTemplate = useAppSelector(state => state.template);
+  const selectedTemplate = useAppSelector(state => state.templates ?? initialTemplatesState);
 
   const { data: fetchedTemplate } = useGetTemplateByIdQuery(selectedTemplate.id, {
     skip: Boolean(template || !selectedTemplate.id),
+    refetchOnMountOrArgChange: true,
   });
-  const [templateData, setTemplateData] = useState<Templates | TemplatesProps>(selectedTemplate);
+  const [templateData, setTemplateData] = useState<Templates | ITemplateSliceState>(selectedTemplate);
 
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();

@@ -10,7 +10,7 @@ import { useStopExecutionMutation } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
-import { setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
@@ -34,8 +34,13 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { uploadedFiles, uploadPromptAnswersFiles } = useUploadPromptFiles();
   const [stopExecution] = useStopExecutionMutation();
 
-  const { answers, inputs, paramsValues, selectedTemplate } = useAppSelector(state => state.chat);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const {
+    answers = [],
+    inputs = [],
+    paramsValues = [],
+    selectedTemplate,
+  } = useAppSelector(state => state.chat ?? initialChatState);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [disableChatInput, setDisableChatInput] = useState(false);

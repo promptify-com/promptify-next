@@ -1,26 +1,22 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import {
-  deleteSelectedTag,
-  deleteSelectedEngineType,
-  setMyFavoritesChecked,
-  setSelectedEngine,
-  setSelectedKeyword,
-} from "@/core/store/filtersSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Tag } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 interface FiltersSelectedProps {
   show: boolean;
 }
 
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
-  const dispatch = useAppDispatch();
-  const filters = useAppSelector(state => state.filters);
-  const { engine, tag, title, engineType, isFavourite } = filters;
-  const handleDeleteTag = (tagId: number) => {
-    dispatch(deleteSelectedTag(tagId));
-  };
+  const {
+    filters,
+    handleSelectKeyword,
+    handleCheckIsFavorite,
+    handleSelectEngine,
+    handleSelectEngineType,
+    handleSelectTag,
+  } = usePromptsFilter();
+  const { title, engine, engineType, tag, isFavorite } = filters;
 
   return (
     <>
@@ -40,7 +36,7 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
             <Chip
               label={engine.name}
               sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setSelectedEngine(null))}
+              onDelete={() => handleSelectEngine(null)}
             />
           )}
           {tag.length > 0 && (
@@ -56,7 +52,7 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
                     key={item.id}
                     label={item.name}
                     sx={{ fontSize: 13, fontWeight: 500 }}
-                    onDelete={() => handleDeleteTag(item.id)}
+                    onDelete={() => handleSelectTag(item)}
                   />
                 ))}
             </Box>
@@ -72,7 +68,7 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
                   key={item.id}
                   label={item.label}
                   sx={{ fontSize: 13, fontWeight: 500 }}
-                  onDelete={() => dispatch(deleteSelectedEngineType(item))}
+                  onDelete={() => handleSelectEngineType(item)}
                 />
               ))}
             </Box>
@@ -81,15 +77,15 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
             <Chip
               label={title}
               sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setSelectedKeyword(null))}
+              onDelete={() => handleSelectKeyword(null)}
             />
           )}
 
-          {isFavourite && (
+          {isFavorite && (
             <Chip
               label={"My Favorites"}
               sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setMyFavoritesChecked(false))}
+              onDelete={() => handleCheckIsFavorite(false)}
             />
           )}
         </Box>

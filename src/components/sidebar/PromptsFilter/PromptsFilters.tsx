@@ -1,71 +1,30 @@
-import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
-
-import {
-  setSelectedEngine,
-  setSelectedTag,
-  deleteSelectedTag,
-  setSelectedEngineType,
-  deleteSelectedEngineType,
-} from "@/core/store/filtersSlice";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import Storage from "@/common/storage";
 import { contentTypeItems } from "@/components/sidebar/Constants";
 import EnginesSelect from "@/components/sidebar/EnginesSelect";
 import Collapsible from "@/components/sidebar/Collapsible";
 import StaticFilterItems from "@/components/sidebar/PromptsFilter/StaticFilterItems";
 import type { Item } from "@/components/sidebar/Collapsible";
 import type { Engine, EngineType, Tag } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 function PromptsFilters() {
-  const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
-  const { tag, engine, engineType } = useAppSelector(state => state.filters);
-
-  useEffect(() => {
-    const storedEngine = Storage.get("engineFilter") as unknown as Engine;
-    const storedTags = (Storage.get("tagFilter") as unknown as Tag[]) || [];
-    const storedEngineType = (Storage.get("engineTypeFilter") as unknown as EngineType[]) || [];
-
-    if (storedEngine) {
-      dispatch(setSelectedEngine(storedEngine));
-    }
-
-    if (storedTags.length > 0) {
-      storedTags.forEach((tag: Tag) => {
-        dispatch(setSelectedTag(tag));
-      });
-    }
-
-    if (storedEngineType) {
-      dispatch(setSelectedEngineType(storedEngineType));
-    }
-  }, []);
+  const { filters, handleSelectEngine, handleSelectEngineType, handleSelectTag } = usePromptsFilter();
+  const { engine, engineType, tag } = filters;
 
   const handleEngineSelect = (selectedEngine: Engine | null) => {
-    dispatch(setSelectedEngine(selectedEngine));
+    handleSelectEngine(selectedEngine);
   };
 
   const handleTagSelect = (selectedTag: Tag) => {
-    const tagExists = tag.some(tagItem => tagItem.id === selectedTag.id);
-
-    if (tagExists) {
-      dispatch(deleteSelectedTag(selectedTag.id));
-    } else {
-      dispatch(setSelectedTag(selectedTag));
-    }
+    handleSelectTag(selectedTag);
   };
 
   const handleEngineTypeSelect = (type: EngineType) => {
-    const isEngineTypeExisted = engineType?.some(engine => engine.id === type.id);
-    if (isEngineTypeExisted) {
-      dispatch(deleteSelectedEngineType(type));
-    } else {
-      dispatch(setSelectedEngineType(type));
-    }
+    handleSelectEngineType(type);
   };
 
   const isSelected = (item: Item) => {

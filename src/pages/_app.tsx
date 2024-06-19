@@ -6,12 +6,12 @@ import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material/styles";
 import Script from "next/script";
 import { Provider } from "react-redux";
-import { wrapper } from "@/core/store";
+import store from "@/core/store";
 import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
@@ -24,9 +24,7 @@ const poppins = Poppins({
   weight: ["400", "500"],
 });
 
-function App({ Component, ...rest }: AppProps) {
-  const { store, props } = wrapper.useWrappedStore(rest);
-  const { pageProps } = props;
+function App({ Component, pageProps }: AppProps) {
   const isValidUser = isValidUserFn(store.getState());
   const storedToken = useToken();
   const router = useRouter();
@@ -43,7 +41,7 @@ function App({ Component, ...rest }: AppProps) {
     };
 
     if (!isValidUser && storedToken) {
-      const _currentUser = Storage.get("currentUser") as unknown as User;
+      const _currentUser = LocalStorage.get("currentUser") as unknown as User;
 
       if (_currentUser && Object.values(_currentUser).length) {
         store.dispatch(updateUser(_currentUser));
@@ -77,7 +75,7 @@ function App({ Component, ...rest }: AppProps) {
           navigationLoadingSpinnerOverlay.appendChild(navigationLoadingSpinner);
           document.body.appendChild(navigationLoadingSpinnerOverlay);
         } else {
-          _navigationLoadingSpinnerOverlay.classList.remove("hidden");
+          _navigationLoadingSpinnerOverlay.remove();
         }
       }
     };
@@ -85,7 +83,7 @@ function App({ Component, ...rest }: AppProps) {
       const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
 
       if (_navigationLoadingSpinnerOverlay) {
-        _navigationLoadingSpinnerOverlay.classList.add("hidden");
+        _navigationLoadingSpinnerOverlay.remove();
       }
     };
 

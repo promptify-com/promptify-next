@@ -6,14 +6,14 @@ import Typography from "@mui/material/Typography";
 import { Layout } from "@/layout";
 import CardWorkflow from "@/components/Automation/CardWorkflow";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
-import { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import { authClient } from "@/common/axios";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
 import { useSearchParams } from "next/navigation";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 interface Props {
-  workflows: IWorkflow[];
+  workflows: ITemplateWorkflow[];
   query: { enable: string };
 }
 
@@ -91,7 +91,7 @@ export async function getServerSideProps({ query }: Props) {
   try {
     const enable = query.enable === "true";
     const res = await authClient.get(`/api/n8n/workflows/${enable ? "?enabled=true" : ""}`);
-    const workflows: IWorkflow[] = res.data;
+    const workflows: ITemplateWorkflow[] = res.data;
 
     return {
       props: {

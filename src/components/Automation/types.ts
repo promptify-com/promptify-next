@@ -1,3 +1,4 @@
+import { ITemplate } from "@/common/types/template";
 import type { User, UserPartial } from "@/core/api/dto/user";
 
 interface IParameters {
@@ -5,7 +6,8 @@ interface IParameters {
   options?: any;
   authentication?: string;
   nodeCredentialType?: string;
-
+  mode?: string;
+  markdown?: string;
   fields?: {
     values: {
       name: string;
@@ -21,14 +23,19 @@ interface IParameters {
       value: string;
     }[];
   };
+
+  save_output?: boolean;
+  template_streaming?: boolean;
+  responseBody?: string;
 }
 
 export interface INode {
   id: string;
   name: string;
+  iconUrl?: string;
   type: string;
+  description?: string;
   position: [number, number];
-  webhookId: string;
   parameters: IParameters;
   typeVersion: number;
   credentials?: INodeCredentials;
@@ -44,18 +51,19 @@ export interface INode {
   responseMode?: string;
 }
 
-export type NodesFileData = Record<string, Pick<INode, "name" | "type">>;
-
-interface IConnections {
-  [key: string]: [{ node: string; type: string; index: number }][];
+export interface IProviderNode {
+  nodeParametersCB: (content: string) => Record<string, string | number | INodeCredentials>;
+  node: INode;
 }
+
+export type NodesFileData = Record<string, { iconUrl: string; name: string; type: string; description: string }>;
 
 interface IData {
   nodes: INode[];
-  connections: Record<string, IConnections>;
+  connections: Record<string, INodeConnection>;
 }
 
-export interface IWorkflow {
+export interface ITemplateWorkflow {
   slug: string;
   id: number;
   name: string;
@@ -64,10 +72,61 @@ export interface IWorkflow {
   created_by: User;
   data: IData;
   created_at: string;
+  is_schedulable: boolean;
+  is_liked: boolean;
+  likes: number;
+  activities?: {
+    likes_count: number;
+    favorites_count: number;
+  };
+  periodic_task?: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+  };
+  enabled: boolean;
 }
 
+export interface UserWorkflowsResponse {
+  data: IWorkflowCreateResponse[];
+  cursor: string | null;
+}
+
+export interface WorkflowExecution {
+  id: string;
+  status: string;
+  startedAt: string;
+  error?: string;
+  data?: { resultData?: { error?: { message: string } } };
+}
+export interface UserWorkflowExecutionsResponse {
+  data: WorkflowExecution[];
+  nextCursor: null | string;
+}
+
+export type FrequencyType = "daily" | "weekly" | "bi-weekly" | "monthly";
+
+export interface IWorkflowSchedule {
+  frequency: FrequencyType;
+  hour: number;
+  minute: number;
+  day_of_week: number;
+  day_of_month: number;
+  timezone: string;
+  // month: number,
+  workflow_data: {};
+}
+
+export interface INodeConnection {
+  main: {
+    node: string;
+    type: string;
+    index: number;
+  }[][];
+}
 export interface IWorkflowCreateResponse {
-  id?: string;
+  id: string;
   name: string;
   description?: string;
   image?: string;
@@ -85,7 +144,19 @@ export interface IWorkflowCreateResponse {
   staticData?: any;
   settings: any;
   active: boolean;
-  connections: any;
+  connections: {
+    [key: string]: INodeConnection;
+  };
+  schedule?: IWorkflowSchedule;
+  periodic_task: null | {
+    task: string;
+    name: string;
+    enabled: boolean;
+    crontab: IWorkflowSchedule;
+    kwargs?: string;
+  };
+  template_workflow: ITemplateWorkflow;
+  last_executed: string | null;
 }
 
 export interface IAuthenticateBase {
@@ -115,6 +186,7 @@ export interface ICredentialInput {
   name: string;
   displayName: string;
   properties: ICredentialProperty[];
+  iconUrl?: string;
 }
 
 export interface INodeCredentials {
@@ -150,4 +222,9 @@ export interface IAvailableCredentials {
   id: string;
   name: string;
   type: string;
+}
+
+export interface IWorkflowCategory {
+  category: string;
+  templates: ITemplateWorkflow[];
 }

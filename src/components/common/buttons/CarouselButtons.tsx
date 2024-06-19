@@ -1,9 +1,8 @@
-import React from "react";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
-import { SxProps } from "@mui/material";
+import { type SxProps } from "@mui/material";
 
 interface Props {
   scrollPrev(): void;
@@ -26,9 +25,10 @@ export const CarouselButtons: React.FC<Props> = ({
 }) => {
   const btnStyle = {
     zIndex: 999,
-    height: "100%",
+    height: "40px",
+    width: "40px",
     border: "none",
-    borderRadius: 0,
+    borderRadius: "40px",
     color: "#1C1B1F80",
     p: "8px 16px",
     "&.Mui-disabled": {
@@ -41,6 +41,7 @@ export const CarouselButtons: React.FC<Props> = ({
     <Stack
       direction={"row"}
       sx={containerStyle}
+      gap={"8px"}
     >
       <IconButton
         aria-label="previous"

@@ -16,7 +16,7 @@ interface Props {
 
 function File({ input, value, onChange }: Props) {
   const { truncate } = useTruncate();
-  const answers = useAppSelector(state => state.chat.answers);
+  const answers = useAppSelector(state => state.chat?.answers ?? []);
   const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
   const hasError = answers.find(answer => answer.inputName === input.name && answer.error);
 

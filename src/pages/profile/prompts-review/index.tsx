@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import TemplateCard from "@/components/common/TemplateCard";
 import ArrowRight from "@mui/icons-material/ArrowRight";
+import ArrowLeft from "@mui/icons-material/ArrowLeft";
 import PaginatedList from "@/components/PaginatedList";
 import PromptsSort from "@/components/profile2/MyPrompts/PromptsSort";
 import PromptsContainer from "@/components/profile2/MyPrompts/PromptsContainer";
@@ -62,6 +63,7 @@ function ProfilePromptsReview() {
             hasPrev={hasPrev}
             onPrevPage={handlePrevPage}
             endIcon={<ArrowRight />}
+            startIcon={<ArrowLeft />}
           >
             <Stack
               alignItems={"flex-start"}

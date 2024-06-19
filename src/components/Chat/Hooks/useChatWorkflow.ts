@@ -1,11 +1,11 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { N8N_RESPONSE_REGEX, oAuthTypeMapping } from "@/components/Automation/helpers";
-import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { createMessage } from "@/components/Chat/helper";
-import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, INode, ITemplateWorkflow } from "@/components/Automation/types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setToast } from "@/core/store/toastSlice";
@@ -26,12 +26,12 @@ const useChatWorkflow = ({ setMessages, setIsValidatingAnswer, queueSavedMessage
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat);
-  const { generatedExecution } = useAppSelector(state => state.executions);
+  const { selectedWorkflow, selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   const [deleteExecution] = useDeleteExecutionMutation();
 
-  const { createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(selectedWorkflow ?? ({} as IWorkflow));
+  const { createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(selectedWorkflow ?? ({} as ITemplateWorkflow));
   const { processQueuedMessages } = useSaveChatInteractions();
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();

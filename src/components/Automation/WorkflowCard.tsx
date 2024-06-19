@@ -6,12 +6,12 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setSelectedWorkflow } from "@/core/store/chatSlice";
-import type { IWorkflow } from "@/components/Automation/types";
+import { initialState as initialChatState, setSelectedWorkflow } from "@/core/store/chatSlice";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
-  workflow: IWorkflow;
+  workflow: ITemplateWorkflow;
   onScrollToBottom?: () => void;
 }
 
@@ -20,7 +20,7 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
 
   const { updateChat } = useChatsManager();
 
-  const { selectedChat } = useAppSelector(state => state.chat);
+  const selectedChat = useAppSelector(state => state.chat?.selectedChat ?? initialChatState.selectedChat);
 
   const { image, name, description } = workflow;
 

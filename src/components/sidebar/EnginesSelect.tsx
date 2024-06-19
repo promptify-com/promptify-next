@@ -9,6 +9,7 @@ import Search from "@mui/icons-material/Search";
 import Image from "@/components/design-system/Image";
 import { useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
+import Typography from "@mui/material/Typography";
 
 interface SearchInputProps {
   onSearch(val: string): void;
@@ -84,7 +85,6 @@ function EnginesSelect({ value, onSelect }: Props) {
           p: "16px",
           display: "flex",
           gap: 2,
-          mr: "32px",
         },
         input: {
           p: 0,
@@ -106,7 +106,11 @@ function EnginesSelect({ value, onSelect }: Props) {
             overflow: "auto",
             overscrollBehavior: "contain",
             "&::-webkit-scrollbar": {
-              width: 0,
+              width: "5px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "surfaceContainerHigh",
+              borderRadius: "8px",
             },
           },
           ".MuiMenuItem-root": {
@@ -139,7 +143,20 @@ function EnginesSelect({ value, onSelect }: Props) {
                 borderRadius: "50%",
               }}
             />
-            {engine.name}
+            <Typography
+              sx={{
+                flex: 1,
+                textAlign: "left",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                fontWeight: 400,
+                fontSize: "1rem",
+                lineHeight: "1.4375em",
+              }}
+            >
+              {engine.name}
+            </Typography>
           </MenuItem>
         ))
       ) : (

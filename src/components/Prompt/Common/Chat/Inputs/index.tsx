@@ -15,8 +15,8 @@ interface Props {
 }
 
 function RenderInputType({ input, value: initialValue, onChange }: Props) {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const isSimulationStreaming = useAppSelector(state => state.chat?.isSimulationStreaming ?? false);
 
   const [localValue, setLocalValue] = useState(initialValue);
 
@@ -60,7 +60,15 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
         />
       );
     case "credentials":
-      return <Credentials input={input} />;
+      return (
+        <Credentials
+          input={{
+            name: input.name,
+            displayName: input.fullName,
+            properties: [],
+          }}
+        />
+      );
     default:
       return (
         <Textual

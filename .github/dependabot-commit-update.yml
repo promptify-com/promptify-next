@@ -1,0 +1,27 @@
+name: Customize Dependabot Commit Message
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  customize-commit-message:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Modify Commit Message
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s)
+
+          if [[ "$COMMIT_MESSAGE" != *"[skip-cd]"* ]]; then
+            NEW_COMMIT_MESSAGE="${COMMIT_MESSAGE} [skip-cd]"
+            git config --global user.email "dependabot-bot@github.com"
+            git config --global user.name "dependabot[bot]"
+            git commit --amend -m --no-edit "$NEW_COMMIT_MESSAGE"
+            git push --force origin HEAD
+          fi

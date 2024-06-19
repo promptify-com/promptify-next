@@ -8,6 +8,7 @@ import { ConnectDragSource } from "react-dnd";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import Image from "@/components/design-system/Image";
+import { initialState as initialBuilderState } from "@/core/store/builderSlice";
 
 interface Props {
   prompt: IEditPrompts;
@@ -24,7 +25,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
-  const engines = useAppSelector(state => state.builder.engines);
+  const engines = useAppSelector(state => state.builder?.engines ?? initialBuilderState.engines);
 
   const closeEnginesModal = () => {
     setEnginesAnchor(null);
@@ -48,6 +49,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
       >
         {builderType === BUILDER_TYPE.USER ? (
           <>
+            {/* @ts-expect-error */}
             <Button
               ref={dragPreview}
               sx={{

@@ -17,20 +17,10 @@ export interface FilterParams {
   offset?: number;
   status?: LowercaseTemplateStatus;
   engine_type?: EngineType[];
-  isFavourite?: boolean;
+  isFavorite?: boolean;
   isInternal?: boolean;
   template?: number;
   include?: string;
-}
-
-export interface SelectedFilters {
-  engine: Engine | null;
-  tag: Tag[];
-  title: string | null;
-  category: Category | null;
-  subCategory: Category | null;
-  engineType: EngineType[];
-  isFavourite?: boolean;
 }
 
 export type EngineType = { id: number; label: string };

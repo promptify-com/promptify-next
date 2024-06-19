@@ -5,30 +5,35 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Favorite from "@mui/icons-material/Favorite";
 import Bolt from "@mui/icons-material/Bolt";
+import Tooltip from "@mui/material/Tooltip";
 import { theme } from "@/theme";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
 import Image from "@/components/design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
+import { useRouter } from "next/router";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 type CardTemplateProps = {
   template: Templates;
 };
 
 function CardTemplate({ template }: CardTemplateProps) {
+  const router = useRouter();
   const { truncate } = useTruncate();
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
+  const { handleClickTag } = usePromptsFilter();
 
   const { tags } = template;
-
   const imgPriority = observer?.isIntersecting;
   const displayedTags = tags.slice(0, 2);
+  const remainingTags = tags.slice(2);
   const remainingTagsCount = tags.length - displayedTags.length;
 
   return (
@@ -49,6 +54,7 @@ function CardTemplate({ template }: CardTemplateProps) {
           display: "flex",
           flexDirection: "column",
           bgcolor: "#F9F9F9",
+          height: "100%",
           transition: "all 0.3s ease",
           "&:hover": {
             ".likes-favorites": {
@@ -129,7 +135,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                 className="icon-text-style"
               >
                 <Favorite />
-                {template.favorites_count || 0}
+                {template.likes || 0}
               </Stack>
               {!isMobile && (
                 <Stack
@@ -140,7 +146,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                   className="icon-text-style"
                 >
                   <Bolt />
-                  {template.likes || template.executions_count || 0}
+                  {template.executions_count || 0}
                 </Stack>
               )}
             </Box>
@@ -154,10 +160,17 @@ function CardTemplate({ template }: CardTemplateProps) {
             <Stack
               flex={1}
               gap={"8px"}
+              maxHeight={"91.5px"}
             >
               <Typography
                 fontSize={14}
                 fontWeight={500}
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
               >
                 {template.title}
               </Typography>
@@ -170,7 +183,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                     textAlign: "left",
                   }}
                 >
-                  {truncate(stripTags(template.description), { length: 70 })}
+                  {truncate(stripTags(template.description), { length: 67 })}
                 </Typography>
               )}
             </Stack>
@@ -206,17 +219,20 @@ function CardTemplate({ template }: CardTemplateProps) {
               </Stack>
             </Box>
 
-            {tags.length > 0 && (
+            {tags.length > 0 && !isMobile && (
               <Box
                 display="flex"
                 gap="8px"
                 flexWrap="wrap"
               >
                 {displayedTags.map((tag, index) => (
-                  <>
+                  <Fragment key={tag.id}>
                     {index === 0 ? (
                       <Chip
-                        key={tag.id}
+                        onClick={e => {
+                          e.preventDefault();
+                          handleClickTag(tag);
+                        }}
                         label={tag.name}
                         size="small"
                         sx={{
@@ -224,7 +240,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                           fontWeight: 500,
                           lineHeight: "16px",
                           textAlign: "left",
-                          padding: "7px 12px 7px 12px",
+                          padding: "7px 5px 7px 5px",
                           borderRadius: "100px",
                           border: "1px solid rgba(0, 0, 0, 0.08)",
                           bgcolor: "white",
@@ -236,11 +252,15 @@ function CardTemplate({ template }: CardTemplateProps) {
                     ) : (
                       <Stack
                         gap="8px"
-                        direction={{ xs: "column", md: "row" }}
+                        direction={{ xs: "column", sm: "row" }}
                         alignItems={{ xs: "start", md: "center" }}
+                        flexWrap={"wrap"}
                       >
                         <Chip
-                          key={tag.id}
+                          onClick={e => {
+                            e.preventDefault();
+                            handleClickTag(tag);
+                          }}
                           label={tag.name}
                           size="small"
                           sx={{
@@ -248,34 +268,36 @@ function CardTemplate({ template }: CardTemplateProps) {
                             fontWeight: 500,
                             lineHeight: "16px",
                             textAlign: "left",
-                            padding: "7px 12px 7px 12px",
+                            padding: "7px 5px 7px 5px",
                             borderRadius: "100px",
                             border: "1px solid rgba(0, 0, 0, 0.08)",
                             bgcolor: "white",
                           }}
                         />
                         {remainingTagsCount > 0 && (
-                          <Chip
-                            label={`+${remainingTagsCount}`}
-                            size="small"
-                            sx={{
-                              fontSize: "11px",
-                              fontWeight: 500,
-                              lineHeight: "16px",
-                              textAlign: "left",
-                              p: "7px 1px 7px 1px",
-                              borderRadius: "100px",
-                              border: "1px solid rgba(0, 0, 0, 0.08)",
-                              bgcolor: "white",
-                              "& .MuiChip-label": {
-                                p: "10px",
-                              },
-                            }}
-                          />
+                          <Tooltip title={remainingTags.map(tag => tag.name).join(", ")}>
+                            <Chip
+                              label={`+${remainingTagsCount}`}
+                              size="small"
+                              sx={{
+                                fontSize: "11px",
+                                fontWeight: 500,
+                                lineHeight: "16px",
+                                textAlign: "left",
+                                p: "7px 1px 7px 1px",
+                                borderRadius: "100px",
+                                border: "1px solid rgba(0, 0, 0, 0.08)",
+                                bgcolor: "white",
+                                "& .MuiChip-label": {
+                                  p: "10px",
+                                },
+                              }}
+                            />
+                          </Tooltip>
                         )}
                       </Stack>
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </Box>
             )}

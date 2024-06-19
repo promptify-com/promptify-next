@@ -10,9 +10,10 @@ import ArrowForward from "@mui/icons-material/ArrowForward";
 import TemplatePage from ".";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
-import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { initialState as initialTemplatesState, updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
 import DocumentPage from "@/components/Documents/DocumentPage";
+import { setDocumentTitle } from "@/core/store/documentsSlice";
 
 interface NavigationBoxProps {
   template: Templates | null;
@@ -70,7 +71,9 @@ const NavigationBox = ({ template, type }: NavigationBoxProps) => {
 };
 
 function TemplateDocumentModal() {
-  const { data, previous, next } = useAppSelector(state => state.template.popupTemplateDocument);
+  const { data } = useAppSelector(
+    state => state.templates?.popupTemplateDocument ?? initialTemplatesState.popupTemplateDocument,
+  );
   const dispatch = useDispatch();
 
   const close = () => {
@@ -79,6 +82,7 @@ function TemplateDocumentModal() {
         data: null,
       }),
     );
+    dispatch(setDocumentTitle(""));
   };
 
   if (!data) return;

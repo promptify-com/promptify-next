@@ -4,14 +4,14 @@ import { Window, LinkedIn, Reddit, GitHub } from "@mui/icons-material";
 import { CONNECTIONS } from "./constants";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
-import Storage from "./storage";
+import { LocalStorage } from "./storage";
 
 interface TokenResponse {
   token: string;
 }
 export const saveToken = ({ token }: TokenResponse) => {
   if (typeof window !== "undefined") {
-    Storage.set("token", token);
+    LocalStorage.set("token", token);
   }
 };
 
@@ -19,19 +19,19 @@ export const getToken = () => {
   let token = null;
 
   if (typeof window !== "undefined") {
-    token = Storage.get("token");
+    token = LocalStorage.get("token") as string;
   }
 
   return token;
 };
 
 export const deleteToken = () => {
-  Storage.remove("token");
+  LocalStorage.remove("token");
 };
 
 export const savePathURL = (path: string) => {
   if (typeof window !== "undefined") {
-    Storage.set("path", path);
+    LocalStorage.set("path", path);
   }
 };
 
@@ -39,14 +39,14 @@ export const getPathURL = () => {
   let path = null;
 
   if (typeof window !== "undefined") {
-    path = Storage.get("path");
+    path = LocalStorage.get("path");
   }
 
   return path;
 };
 
 export const deletePathURL = () => {
-  Storage.remove("path");
+  LocalStorage.remove("path");
 };
 
 export const formatConnection = (item: IConnection) => {

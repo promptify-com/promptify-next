@@ -1,13 +1,13 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setStickyDocumentsFilters } from "@/core/store/sidebarSlice";
-import Storage from "@/common/storage";
+import { LocalStorage } from "@/common/storage";
 import { useEffect, useState } from "react";
 import DrawerContainer from "@/components/sidebar/DrawerContainer";
 import DocumentsFilters from "./DocumentsFilters";
 import { Stack } from "@mui/material";
 import FilterFloatButton from "@/components/sidebar/FilterFloatButton";
 import useBrowser from "@/hooks/useBrowser";
-import { countSelectedFilters } from "@/core/store/documentsSlice";
+import { countSelectedFilters, initialState as initialDocumentsState } from "@/core/store/documentsSlice";
 
 interface Props {
   expandedOnHover?: boolean;
@@ -17,7 +17,7 @@ export default function DocumentsDrawer({ expandedOnHover = false }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-  const filters = useAppSelector(state => state.documents.filter);
+  const filters = useAppSelector(state => state.documents?.filter ?? initialDocumentsState.filter);
   const filterCount = countSelectedFilters(filters);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 
@@ -28,7 +28,7 @@ export default function DocumentsDrawer({ expandedOnHover = false }: Props) {
   useEffect(() => {
     if (isMobile) return;
 
-    const isDocumentsFiltersSticky = Boolean(Storage.get("isDocumentsFiltersSticky"));
+    const isDocumentsFiltersSticky = Boolean(LocalStorage.get("isDocumentsFiltersSticky"));
     if (isDocumentsFiltersSticky) {
       dispatch(setStickyDocumentsFilters(isDocumentsFiltersSticky));
     }

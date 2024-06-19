@@ -4,8 +4,8 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.NODE_ENV === 'production')
     Sentry.init({
         dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
         integrations: [
-            new Sentry.BrowserTracing(),
-            new Sentry.Replay(),
+            Sentry.browserTracingIntegration(),
+            Sentry.replayIntegration(),
         ],
         tracePropagationTargets: [/^https:\/\/api.promptify.com/],
         tracesSampleRate: 0.8,
@@ -16,8 +16,9 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.NODE_ENV === 'production')
             'ResizeObserver loop completed with undelivered notifications',
             'jigsaw is not defined',
             /undefined is not an object \(evaluating '\e.startTime\'/i,
+            /Fetch is aborted/i,
         ],
-         denyUrls: [
+        denyUrls: [
             // Chrome extensions
             /extensions\//i,
             /chrome-extension/i,

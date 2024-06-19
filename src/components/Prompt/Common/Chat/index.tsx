@@ -1,7 +1,7 @@
 import { useMemo, memo, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { executionsApi } from "@/core/api/executions";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { initialState as initialExecutionsState, setSelectedExecution } from "@/core/store/executionsSlice";
 import useChat from "@/components/Prompt/Hooks/useChat";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setInputs, setParams, setParamsValues } from "@/core/store/chatSlice";
@@ -15,6 +15,7 @@ import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import { randomId } from "@/common/helpers";
 import useChatBox from "../../Hooks/useChatBox";
+import { initialState as initialTemplatesState } from "@/core/store/templatesSlice";
 
 interface Props {
   template: Templates;
@@ -32,8 +33,12 @@ const CommonChat: React.FC<Props> = ({ template, questionPrefixContent }) => {
   const { isVariantA } = useVariant();
   const dispatch = useAppDispatch();
 
-  const { generatedExecution } = useAppSelector(state => state.executions);
-  const { isGenerating, activeSideBarLink: isSidebarExpanded } = useAppSelector(state => state.template);
+  const generatedExecution = useAppSelector(
+    state => state.executions?.generatedExecution ?? initialExecutionsState.generatedExecution,
+  );
+  const { isGenerating, activeSideBarLink: isSidebarExpanded } = useAppSelector(
+    state => state.templates ?? initialTemplatesState,
+  );
   const {
     messages,
     initialMessages,

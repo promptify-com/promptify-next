@@ -19,7 +19,7 @@ function AdsBox() {
       }}
     >
       <Image
-        src={require("@/components/Homepage/GuestUserLayout/Landing/guestPage2.webp")}
+        src={"/assets/images/Homepage/TryGPT.webp"}
         alt={"Promptify"}
         fill
         sizes="(max-width: 600px) 344px, (max-width: 900px) 437px, 437px"
@@ -51,7 +51,7 @@ function AdsBox() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.push("/automation")}
+          onClick={() => router.push("/gpts")}
           sx={{
             bgcolor: "inverseSurface",
             borderColor: "inverseSurface",

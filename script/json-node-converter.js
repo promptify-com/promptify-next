@@ -5,7 +5,12 @@ function convertJSON(inputFile, outputFile) {
         const data = fs.readFileSync(inputFile, 'utf8');
         const nodes = JSON.parse(data);
         const processedNodes = nodes.reduce((acc, node) => {
-            acc[node.type] = node;
+            acc[node.name] = {
+                name: node.displayName,
+                type: node.name,
+                iconUrl: node.iconUrl ?? "",
+                description: node.description ?? "",
+            };
 
             return acc;
         }, {});

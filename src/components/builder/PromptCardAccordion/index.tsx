@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import React, { memo, useMemo, useRef, useState } from "react";
+import React, { ReactElement, memo, useMemo, useRef, useState } from "react";
 import Header from "./Header";
 import StylerAccordion from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -21,6 +21,7 @@ import PromptTestDialog from "./PromptTest";
 import { useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
 import { useCreatePromptMutation, useUpdatePromptMutation } from "@/core/api/templates";
+import { initialState as initialBuilderState } from "@/core/store/builderSlice";
 
 interface Props {
   prompt: IEditPrompts;
@@ -53,7 +54,7 @@ const PromptCardAccordion = ({
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
-  const { template, isTemplateOwner } = useAppSelector(state => state.builder);
+  const { template, isTemplateOwner } = useAppSelector(state => state.builder ?? initialBuilderState);
   const isDraft = template?.status === "DRAFT";
 
   const [savePrompt] = useUpdatePromptMutation();
@@ -148,6 +149,7 @@ const PromptCardAccordion = ({
 
   return (
     <Box
+      // @ts-expect-error
       ref={(node: ConnectableElement) => preview(drop(node))}
       sx={{
         bgcolor: "surface.1",
@@ -233,7 +235,7 @@ const PromptCardAccordion = ({
               label="Prompt"
               initialValue={promptData.title}
               onSave={val => {
-                updatePrompt({ ...promptData, title: val });
+                updatePrompt({ ...promptData, title: val.trim() });
                 setRenameAllow(false);
               }}
               onCancel={() => setRenameAllow(false)}

@@ -25,6 +25,7 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { authClient } from "@/common/axios";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 const PromptsDrawerLazy = lazy(() => import("@/components/sidebar/PromptsFilter/PromptsDrawer"), {
   ssr: false,
@@ -61,7 +62,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const isValidUser = useAppSelector(isValidUserFn);
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
-  const isFavorite = useAppSelector(state => state.filters.isFavourite);
+  const { filters } = usePromptsFilter();
 
   const {
     data: suggestedTemplates,
@@ -122,7 +123,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
           <FiltersSelected show={!allFilterParamsNull} />
 
           {allFilterParamsNull &&
-            !isFavorite &&
+            !filters.isFavorite &&
             (seeAll ? (
               <Stack p={"8px 16px"}>
                 <Typography
@@ -192,14 +193,22 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                   <CardTemplatePlaceholder count={4} />
                 </Grid>
               ) : templates?.length === 0 ? (
-                <Typography
-                  fontSize={{ xs: 14, md: 18 }}
-                  fontWeight={400}
-                  textAlign={"center"}
-                  color={"onSurface"}
+                <Stack
+                  justifyContent={"center"}
+                  minHeight={{ xs: "50svh", md: "60svh" }}
                 >
-                  No templates found. Please adjust your filters.
-                </Typography>
+                  <Typography
+                    fontSize={{ xs: 14, md: 18 }}
+                    fontWeight={400}
+                    color={"onSurface"}
+                    sx={{
+                      textAlign: "center",
+                      my: "50px",
+                    }}
+                  >
+                    No templates found. Please adjust your filters.
+                  </Typography>
+                </Stack>
               ) : (
                 <PaginatedList
                   loading={isFetching}
@@ -212,7 +221,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                   <Grid
                     container
                     spacing={1}
-                    alignItems={"flex-start"}
                     sx={{
                       overflow: { xs: "auto", md: "initial" },
                       WebkitOverflowScrolling: { xs: "touch", md: "initial" },

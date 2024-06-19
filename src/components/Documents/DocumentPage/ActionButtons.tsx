@@ -12,9 +12,10 @@ import useBrowser from "@/hooks/useBrowser";
 import Edit from "@mui/icons-material/Edit";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setDocumentTitle, toggleShowPreviews } from "@/core/store/documentsSlice";
+import { setDocumentTitle, setFavorites, toggleShowPreviews } from "@/core/store/documentsSlice";
 import { theme } from "@/theme";
 import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -24,7 +25,7 @@ interface Props {
 function ActionButtons({ document, onFavorite }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const showPreviews = useAppSelector(state => state.documents.showPreviews);
+  const showPreviews = useAppSelector(state => state.documents?.showPreviews ?? false);
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
   const [isFavorite, setIsFavorite] = useState(document.is_favorite);
 
@@ -35,12 +36,15 @@ function ActionButtons({ document, onFavorite }: Props) {
     const status = isFavorite;
     setIsFavorite(!isFavorite);
     onFavorite?.(!isFavorite);
+
     try {
       if (status) {
         await deleteExecutionFavorite(document.id);
       } else {
         await favoriteExecution(document.id);
       }
+
+      dispatch(setFavorites({ [document.id]: !status }));
     } catch (error) {
       console.error(error);
     }
@@ -94,7 +98,14 @@ function ActionButtons({ document, onFavorite }: Props) {
           type={popup}
           activeExecution={document}
           onClose={() => setPopup(null)}
-          onUpdate={updateDocument => dispatch(setDocumentTitle(updateDocument.title))}
+          onUpdate={updateDocument => {
+            dispatch(setDocumentTitle(updateDocument.title));
+            dispatch(
+              updatePopupTemplate({
+                data: updateDocument,
+              }),
+            );
+          }}
         />
       )}
       {popup === "export" && (

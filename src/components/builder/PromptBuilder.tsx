@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -16,7 +16,7 @@ import { useGetEnginesQuery } from "@/core/api/engines";
 import { updateTemplate } from "@/hooks/api/templates";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
-import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
+import builderSlice, { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
 import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import { Layout } from "@/layout";
@@ -30,6 +30,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import { DesktopIcon } from "@/assets/icons/DesktopIcon";
 import useBrowser from "@/hooks/useBrowser";
+import store from "@/core/store";
 
 export const PromptBuilder = ({ isNewTemplate = false }) => {
   const router = useRouter();
@@ -38,7 +39,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const theme = useTheme();
   const [publishTemplate] = usePublishTemplateMutation();
   const currentUser = useAppSelector(state => state.user.currentUser);
-
+  const removedEditorQS = useRef(false);
   const { isMobile } = useBrowser();
 
   const slug = router.query.slug as string;
@@ -52,6 +53,13 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const [templateData, setTemplateData] = useState<Templates | undefined>(
     isNewTemplate ? ({ title: "new_template_12345" } as Templates) : undefined,
   );
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+    store.injectReducers([{ key: "builder", asyncReducer: builderSlice }]);
+  }, [store]);
 
   useEffect(() => {
     if (engines) {
@@ -84,20 +92,21 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
 
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
 
-  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Number(router.query.editor) === 1);
 
   const createMode = isNewTemplate ? "create" : "edit";
 
   useEffect(() => {
     if (!token) {
       router.push("/signin");
-    } else if (router.query.editor) {
+    } else if (router.query.editor && !removedEditorQS.current) {
       const { editor, ...restQueryParams } = router.query;
+      removedEditorQS.current = true;
 
       router.replace(
         {
           pathname: router.pathname,
-          query: restQueryParams,
+          query: Object.keys(restQueryParams).length ? restQueryParams : null,
         },
         undefined,
         { scroll: false, shallow: true },

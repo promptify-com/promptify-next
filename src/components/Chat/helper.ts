@@ -10,8 +10,8 @@ import { CHATS_LIST_PAGINATION_LIMIT } from "./Constants";
 import type { NextRouter } from "next/router";
 import type { IChat } from "@/core/api/dto/chats";
 import type { AppDispatcher } from "@/hooks/useStore";
-import type { IWorkflow } from "@/components/Automation/types";
-import type { ToastState } from "@/core/store/toastSlice";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
+import type { IToastSliceState } from "@/core/store/types";
 
 interface SendMessageResponse {
   output?: string;
@@ -52,7 +52,7 @@ export function extractWorkflowIDs(message: string) {
   );
 }
 
-export function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {
+export function isTemplates(data: Templates[] | ITemplateWorkflow[]): data is Templates[] {
   if (!data.length) return false;
 
   return "favorites_count" in data[0];
@@ -71,7 +71,7 @@ export async function fetchData(ids: number[], isTemplate: boolean) {
         return _data.value;
       }
     })
-    .filter(_data => _data?.id) as IWorkflow[] | Templates[];
+    .filter(_data => _data?.id) as ITemplateWorkflow[] | Templates[];
 
   return filteredData;
 }
@@ -81,8 +81,9 @@ export function prepareQuestions(inputs: IPromptInput[], params: PromptParams[])
     inputName: input.name,
     question: input.question || ` what is your ${input.fullName}?`,
     required: input.required,
-    type: "input",
+    type: input.type,
     prompt: input.prompt,
+    choices: input.choices,
   }));
 
   const paramQuestions: IQuestion[] = params.map(param => ({
@@ -101,6 +102,7 @@ export const createMessage = ({
   timestamp = new Date().toISOString(),
   fromUser = false,
   noHeader = false,
+  isHighlight = false,
   isEditable = false,
   isRequired = false,
   questionIndex,
@@ -110,6 +112,7 @@ export const createMessage = ({
   template,
   isLatestExecution,
   data,
+  choices,
 }: CreateMessageProps) => ({
   id: randomId(),
   text,
@@ -118,6 +121,7 @@ export const createMessage = ({
   fromUser,
   noHeader,
   isEditable,
+  isHighlight,
   isRequired,
   questionIndex,
   questionInputName,
@@ -125,6 +129,7 @@ export const createMessage = ({
   template,
   isLatestExecution,
   data,
+  choices,
 });
 
 export const suggestionsMessageText = (content?: string) => {
@@ -173,12 +178,12 @@ export function createExecuteErrorToast(
   promptTitle: string = "",
   current: number = 0,
   total: number = 0,
-): Omit<ToastState, "open"> {
+): Omit<IToastSliceState, "open"> {
   const message = `Failed to execute the prompt « ${promptTitle} » ${current}/${total}`;
   const severity = "error";
   const duration = 6000;
 
-  const toast: Omit<ToastState, "open"> = {
+  const toast: Omit<IToastSliceState, "open"> = {
     message,
     severity,
     duration,

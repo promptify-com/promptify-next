@@ -1,4 +1,4 @@
-import { IWorkflow } from "../../../components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import type { Templates, TemplatesExecutions } from "./templates";
 
 export interface IChat {
@@ -67,7 +67,7 @@ export interface SuggestionsMessage {
   updated_at: string;
   sender: Sender;
   templates: Templates[];
-  workflows: IWorkflow[];
+  workflows: ITemplateWorkflow[];
   text: string;
 }
 

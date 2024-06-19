@@ -1,10 +1,10 @@
 import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
-import { useAppSelector } from "@/hooks/useStore";
-import type { Templates, FilterParams, LowercaseTemplateStatus, SelectedFilters } from "@/core/api/dto/templates";
+import type { Templates, FilterParams, LowercaseTemplateStatus } from "@/core/api/dto/templates";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
+import type { IFilterSliceState } from "@/core/store/types";
 
 interface Props {
   catId?: number;
@@ -31,14 +31,15 @@ export function useGetTemplatesByFilter({
 }: Props = {}) {
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
-  const filters = useAppSelector(state => state.filters);
-  const { tag: tags, engine, title, engineType, isFavourite } = filters;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<LowercaseTemplateStatus | undefined>(initialStatus);
   const PAGINATION_LIMIT = templateLimit ?? 10;
+
+  const { filters } = usePromptsFilter();
+  const { title, isFavorite, engine, engineType, tag: tags } = filters;
 
   const params: FilterParams = {
     tags,
@@ -51,7 +52,7 @@ export function useGetTemplatesByFilter({
     limit: PAGINATION_LIMIT,
     status,
     ordering,
-    isFavourite: isFavourite,
+    isFavorite,
     isInternal: false,
     include: `id,slug,thumbnail,title,description,favorites_count,likes,created_by,tags,status,executions_count${
       includeExtraFields?.length ? includeExtraFields : ""
@@ -86,13 +87,14 @@ export function useGetTemplatesByFilter({
     }
   }, [templates?.results]);
 
-  function areAllStatesNull(filters: SelectedFilters): boolean {
+  function areAllStatesNull(filters: IFilterSliceState): boolean {
     return (
-      filters.engine === null &&
-      filters.tag.every(tag => tag === null) &&
-      filters.title === null &&
-      filters.category === null &&
-      filters.subCategory === null &&
+      !filters.isFavorite &&
+      !filters.engine &&
+      !filters.tag.length &&
+      !filters.title &&
+      !filters.category &&
+      !filters.subCategory &&
       !filters.engineType.length
     );
   }
@@ -125,7 +127,6 @@ export function useGetTemplatesByFilter({
     allFilterParamsNull,
     templates: allTemplates,
     isTemplatesLoading,
-    filters,
     handleNextPage,
     resetOffest,
     isFetching,

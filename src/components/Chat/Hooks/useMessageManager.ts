@@ -19,6 +19,8 @@ import {
   setParamsValues,
   clearParameterSelection,
   setSelectedTemplate,
+  setChoiceSelected,
+  initialState as initialChatState,
 } from "@/core/store/chatSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
@@ -27,7 +29,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
 import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
 import useChatsManager from "./useChatsManager";
 
@@ -40,19 +42,20 @@ const useMessageManager = () => {
   const {
     selectedTemplate,
     selectedWorkflow,
-    isSimulationStreaming,
+    isSimulationStreaming = false,
     selectedChat,
-    inputs,
-    params,
-    answers,
-    chatMode,
-    initialChat,
-    parameterSelected,
-    currentExecutionDetails,
-    selectedChatOption,
-  } = useAppSelector(state => state.chat);
+    inputs = [],
+    params = [],
+    answers = [],
+    chatMode = "automation",
+    initialChat = true,
+    parameterSelected = null,
+    currentExecutionDetails = { id: null, isFavorite: false },
+    selectedChatOption = null,
+    choiceSelected,
+  } = useAppSelector(state => state.chat ?? initialChatState);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
+  const repeatedExecution = useAppSelector(state => state.executions?.repeatedExecution ?? null);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
@@ -70,12 +73,14 @@ const useMessageManager = () => {
   const inputStyle = currentUser?.preferences?.input_style || selectedChatOption;
 
   useEffect(() => {
-    if (!parameterSelected) {
-      return;
+    if (parameterSelected) {
+      questionAnswerSubmitMessage(parameterSelected, true);
+      dispatch(clearParameterSelection());
+    } else if (choiceSelected) {
+      questionAnswerSubmitMessage(choiceSelected, true);
+      dispatch(setChoiceSelected(undefined));
     }
-    questionAnswerSubmitMessage(parameterSelected, true);
-    dispatch(clearParameterSelection());
-  }, [parameterSelected]);
+  }, [parameterSelected, choiceSelected]);
 
   useEffect(() => {
     if (!currentExecutionDetails.id) {
@@ -126,10 +131,15 @@ const useMessageManager = () => {
       setQueueSavedMessages(newMessages => newMessages.concat(headerWithTextMessage));
 
       const questionMessage = createMessage({
-        type: "questionInput",
+        type:
+          questions[0].type === "number" || questions[0].type === "text" || questions[0].type === "code"
+            ? "questionInput"
+            : questions[0].type,
         text: `${filteredQuestions[0] || `What is your ${questions[0].fullName}?`}`,
         isRequired: questions[0].required,
         questionIndex: 1,
+        choices: questions[0].choices,
+        questionInputName: questions[0].name,
       });
 
       setMessages(prevMessages =>
@@ -245,7 +255,7 @@ const useMessageManager = () => {
               setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
             if (workflowIDs.length) {
-              const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+              const workflows = (await fetchData(workflowIDs, false)) as ITemplateWorkflow[];
               const suggestionsMessage = createMessage({
                 type: "workflows_suggestion",
                 data: workflows,
@@ -268,11 +278,11 @@ const useMessageManager = () => {
     }
   };
 
-  const questionAnswerSubmitMessage = async (value: string, isParam = false) => {
+  const questionAnswerSubmitMessage = async (value: string, isChoice = false) => {
     if (!value) {
       return;
     }
-    const currentIndex = isParam ? answers.length - 1 : answers.length;
+    const currentIndex = isChoice ? answers.length - 1 : answers.length;
 
     const currentQuestion = questions[currentIndex];
 
@@ -282,13 +292,13 @@ const useMessageManager = () => {
       type: "text",
       text: value,
       fromUser: true,
-      isEditable: type === "input",
+      isEditable: type !== "param" && type !== "choices",
       questionInputName: inputName,
     });
     setMessages(prevMessages => prevMessages.concat(userMessage));
     setQueueSavedMessages(newMessages => newMessages.concat(userMessage));
 
-    if (type === "input") {
+    if (type !== "param" && type !== "choices") {
       const newAnswer: IAnswer = {
         question: question || inputName,
         required,
@@ -301,20 +311,28 @@ const useMessageManager = () => {
       dispatch(setAnswers(_answers));
     }
     const nextQuestion = questions[currentIndex + 1];
+
     if (nextQuestion) {
       const botMessage = createMessage({
-        type: nextQuestion.type === "input" ? "questionInput" : "questionParam",
+        type:
+          nextQuestion.type === "param"
+            ? "questionParam"
+            : nextQuestion.type === "number" || nextQuestion.type === "text"
+              ? "questionInput"
+              : nextQuestion.type,
         text: nextQuestion.question,
         isRequired: nextQuestion.required,
         questionIndex: currentIndex + 2,
         questionInputName: nextQuestion.inputName,
+        choices: nextQuestion.choices,
       });
+
       setMessages(prevMessages => prevMessages.concat(botMessage));
       const formattedQuestionMessage = { ...botMessage };
       formattedQuestionMessage.text = `Question ${currentIndex + 2} of ${questions.length}##/${botMessage.text}##/${
-        botMessage.type === "questionInput"
-          ? `This question is ${botMessage.isRequired ? "Required" : "Optional"}`
-          : "Choose option"
+        botMessage.type === "questionParam"
+          ? "Choose option"
+          : `This question is ${botMessage.isRequired ? "Required" : "Optional"}`
       }`;
       setQueueSavedMessages(newMessages => newMessages.concat(formattedQuestionMessage));
 

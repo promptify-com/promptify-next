@@ -40,7 +40,6 @@ function ExploreCardCategory({ category, priority }: Props) {
               borderRadius: "24px",
               bgcolor: "#ffffff",
               width: "208px",
-              height: "350px",
               p: "8px 8px 4px 8px",
             }}
           >

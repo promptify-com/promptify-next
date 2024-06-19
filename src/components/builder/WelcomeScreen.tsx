@@ -13,7 +13,7 @@ import { useLazyGetMyTemplatesQuery } from "@/core/api/templates";
 const createPageLinks = [
   {
     label: "New chained prompt",
-    href: "/prompt-builder/create?editor",
+    href: "/prompt-builder/create?editor=2",
     type: "NEW",
   },
   {
@@ -118,7 +118,7 @@ export default function WelcomeScreen() {
           ))}
         </Stack>
 
-        <>
+        <Stack pb={2}>
           {isLoading && <TemplateSuggestionPlaceholder />}
 
           {(templates as TemplatesWithPagination)?.results.length > 0 && !isLoading && (
@@ -142,7 +142,7 @@ export default function WelcomeScreen() {
               />
             </Stack>
           )}
-        </>
+        </Stack>
       </Stack>
     </Stack>
   );

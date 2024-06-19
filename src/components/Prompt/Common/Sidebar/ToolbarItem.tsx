@@ -26,7 +26,7 @@ function ToolbarItem({ item, template, executionsLength }: Props) {
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
   const { cloneTemplate } = useCloneTemplate({ template });
-  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+  const activeLink = useAppSelector(state => state.templates?.activeSideBarLink ?? null);
 
   const handleClick = (link: Link) => {
     if (link.name === "clone") {

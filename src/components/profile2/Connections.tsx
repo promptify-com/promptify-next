@@ -14,10 +14,12 @@ import Image from "@/components/design-system/Image";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import useBrowser from "@/hooks/useBrowser";
+import useLogout from "@/hooks/useLogout";
 
 export const Connections = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const logout = useLogout();
   const [connections, setConnections] = useState<IConnection[] | []>([]);
   const [authConnection, setAuthConnection] = useState<string[]>([]);
   const [openDisconnect, setOpenDisconnect] = useState<boolean>(false);
@@ -53,13 +55,17 @@ export const Connections = () => {
   };
   const handleDeleteConnection = (connection: IConnection) => {
     useDeferredAction(connection.id)
-      .then(res => {
+      .then(async res => {
         if (!res && connections?.length) {
           const filterConnection = connections.filter(el => el.id !== connection.id);
-          const cnx = filterConnection.map((cn: any) => cn.provider);
-          setAuthConnection(cnx);
-          setConnections(filterConnection);
-          dispatch(setToast({ message: "Connection deleted successfully", severity: "success", duration: 6000 }));
+          if (connections.length === 1) {
+            await logout();
+          } else {
+            const cnx = filterConnection.map((cn: any) => cn.provider);
+            setAuthConnection(cnx);
+            setConnections(filterConnection);
+            dispatch(setToast({ message: "Connection deleted successfully", severity: "success", duration: 6000 }));
+          }
         } else {
           dispatch(setToast({ message: "Connection not deleted", severity: "error", duration: 6000 }));
         }
@@ -169,6 +175,9 @@ export const Connections = () => {
                   fontSize: 14,
                   fontWeight: 500,
                   color: "onSurface",
+                  ":hover": {
+                    background: "#EFEDF1",
+                  },
                 }}
               >
                 Disconnect

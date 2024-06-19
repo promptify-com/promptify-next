@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Search from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
-
 import { useAppDispatch } from "@/hooks/useStore";
-import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import useDebounce from "@/hooks/useDebounce";
+import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
 
 export default function PromptsReviewSearch({ title }: { title: string | null }) {
   const dispatch = useAppDispatch();
   const [textInput, setTextInput] = useState(title ?? "");
   const debouncedSearchName = useDebounce<string>(textInput, 300);
+  const { handleSelectKeyword } = usePromptsFilter();
 
   useEffect(() => {
-    dispatch(setSelectedKeyword(debouncedSearchName || null));
+    handleSelectKeyword(debouncedSearchName);
   }, [debouncedSearchName]);
 
   return (
