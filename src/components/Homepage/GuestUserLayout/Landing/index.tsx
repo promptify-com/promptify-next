@@ -20,16 +20,18 @@ function Landing() {
   const handleCloseSocial = () => setSocialAnchor(null);
 
   useEffect(() => {
+    const handleScroll = () => {
+      setSocialAnchor(null);
+    };
     if (socialOpened) {
-      const handleScroll = () => {
-        setSocialAnchor(null);
-      };
       window.addEventListener("scroll", handleScroll);
-
-      return () => {
-        window.removeEventListener("scroll", handleScroll);
-      };
+    } else {
+      window.removeEventListener("scroll", handleScroll);
     }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [socialOpened]);
 
   return (
