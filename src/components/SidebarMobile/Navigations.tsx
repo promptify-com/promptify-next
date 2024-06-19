@@ -38,6 +38,7 @@ function Navigations({ onCloseDrawer }: Props) {
   const pathname = router.pathname;
 
   const { filters, handleSelectKeyword } = usePromptsFilter();
+  const title = filters.title ?? "";
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
@@ -163,7 +164,7 @@ function Navigations({ onCloseDrawer }: Props) {
           onChange={e => {
             setTextInput(e.target.value);
           }}
-          value={textInput}
+          value={textInput ?? title}
         />
       </Stack>
       {!showTemplatesResult ? (
