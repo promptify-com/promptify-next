@@ -142,10 +142,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           promptOutputMap={promptOutputMap}
                         />
                       </Collapse>
-                      <Stack
-                        gap={1}
-                        sx={{ pb: "24px" }}
-                      >
+                      <Stack gap={1}>
                         {/* is Text Output */}
                         {!isImageOutput(exec.content, engineType) && (
                           <Stack
@@ -171,11 +168,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                                   }}
                                   sx={{
                                     borderRadius: "8px",
-                                    width: "40%",
+                                    width: "100%",
                                     objectFit: "cover",
                                     float: "right",
-                                    ml: "20px",
-                                    mb: "10px",
                                   }}
                                 />
                               )}
@@ -196,11 +191,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                               onClick={() => setPopupOpen(true)}
                               sx={{
                                 borderRadius: "8px",
-                                width: "40%",
+                                width: "100%",
                                 objectFit: "cover",
                                 float: "right",
-                                ml: "20px",
-                                mb: "10px",
                                 cursor: "pointer",
                               }}
                             />
