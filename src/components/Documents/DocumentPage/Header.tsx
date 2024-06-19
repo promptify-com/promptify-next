@@ -48,6 +48,7 @@ function Header({ document }: Props) {
           direction={"row"}
           alignItems={"center"}
           gap={1}
+          width={{ xs: "96%", md: "auto" }}
         >
           <Typography
             fontSize={16}

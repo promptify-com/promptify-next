@@ -140,6 +140,9 @@ const Feedback = () => {
             fontSize={14}
             fontWeight={400}
             color={"onSurface"}
+            sx={{
+              pb: { xs: "16px", md: "0" },
+            }}
           >
             No feedback yet
           </Typography>
