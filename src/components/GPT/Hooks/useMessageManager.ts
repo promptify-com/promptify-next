@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-
-import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState, setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
-import type { ICredentialInput, INode } from "@/components/Automation/types";
+import type { ICredentialInput, INode, IWorkflowCreateResponse } from "@/components/Automation/types";
+import { createMessage } from "@/components/Chat/helper";
 
 interface Props {
   initialMessageTitle: string;
@@ -37,21 +36,6 @@ function useMessageManager({ initialMessageTitle }: Props) {
     (showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
     Boolean(!inputs.length || !inputs[0]?.required);
 
-  const createMessage = ({
-    type,
-    timestamp = new Date().toISOString(),
-    fromUser = false,
-    noHeader = false,
-    text = "",
-  }: CreateMessageProps) => ({
-    id: randomId(),
-    text,
-    type,
-    createdAt: timestamp,
-    fromUser,
-    noHeader,
-  });
-
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const welcomeMessage = createMessage({
       type: "text",
@@ -72,19 +56,28 @@ function useMessageManager({ initialMessageTitle }: Props) {
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
     if (requiresAuthentication || requiresOauth) {
-      const credMessage = createMessage({ type: "credentials", noHeader: true });
+      const credMessage = createMessage({ type: "credentials", noHeader: true, text: "" });
       initialMessages.push(credMessage);
     }
-    const formMessage = createMessage({ type: "form", noHeader: true });
+    const formMessage = createMessage({ type: "form", noHeader: true, text: "" });
     initialMessages.push(formMessage);
 
     setMessages(initialMessages);
   }
 
   const messageAnswersForm = (message: string, type: MessageType = "text") => {
-    const botMessage = createMessage({ type, noHeader: true });
-    botMessage.text = message;
+    const botMessage = createMessage({ type, noHeader: true, text: message });
     setMessages(prevMessages => prevMessages.concat(botMessage));
+  };
+
+  const messageWorkflowExecution = (message: string, workflowData: IWorkflowCreateResponse | undefined) => {
+    const ExecutionMessage = createMessage({
+      type: "workflowExecution",
+      text: message,
+      data: workflowData,
+    });
+    console.log(ExecutionMessage);
+    setMessages(prevMessages => prevMessages.concat(ExecutionMessage));
   };
 
   function allRequiredInputsAnswered(): boolean {
@@ -117,6 +110,7 @@ function useMessageManager({ initialMessageTitle }: Props) {
     showGenerate,
     isValidatingAnswer,
     setIsValidatingAnswer,
+    messageWorkflowExecution,
   };
 }
 

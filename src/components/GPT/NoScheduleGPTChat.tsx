@@ -1,32 +1,29 @@
 import { useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-
 import { useAppSelector } from "@/hooks/useStore";
-
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
-
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Message from "./Message";
 import MessageInputs from "./MessageInputs";
 import CredentialsContainer from "./CredentialsContainer";
 import RunButton from "@/components/GPT/RunButton";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
-import type { ITemplateWorkflow } from "../Automation/types";
+import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
 
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
+  retryRunWorkflow: (executionWorkflow: IWorkflowCreateResponse) => void;
   showGenerate: boolean;
-  isExecuting: boolean;
   processData: (skipInitialMessages?: boolean) => Promise<void>;
   workflow: ITemplateWorkflow;
 }
 
-function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, workflow }: Props) {
+function NoScheduleGPTChat({ messages, onGenerate, retryRunWorkflow, showGenerate, workflow }: Props) {
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
@@ -38,8 +35,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
   });
 
   const hasInputs = inputs.length > 0;
-  const allowNoInputsRun =
-    !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating && !isExecuting;
+  const allowNoInputsRun = !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating;
 
   function showForm(messageType: MessageType): boolean {
     return Boolean((messageType === "credentials" && !areCredentialsStored) || (messageType === "form" && hasInputs));
@@ -84,14 +80,19 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
                     message={msg}
                   />
                 )}
-                {msg.type === "html" && <Message message={msg} />}
+                {msg.type === "workflowExecution" && (
+                  <Message
+                    message={msg}
+                    retryExecution={() => retryRunWorkflow(msg.data as IWorkflowCreateResponse)}
+                  />
+                )}
 
                 {showForm(msg.type) && msg.type === "form" && (
                   <MessageInputs
                     allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
                     onGenerate={onGenerate}
                     message={msg}
-                    isExecuting={isExecuting || isGenerating}
+                    isExecuting={isGenerating}
                   />
                 )}
 
@@ -114,7 +115,7 @@ function NoScheduleGPTChat({ messages, onGenerate, showGenerate, isExecuting, wo
               <RunButton
                 onClick={onGenerate}
                 showIcon
-                loading={isExecuting || isGenerating}
+                loading={isGenerating}
               />
             </Stack>
           )}

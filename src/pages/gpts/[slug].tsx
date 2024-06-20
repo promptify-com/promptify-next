@@ -18,13 +18,14 @@ import Workflow from "@/components/GPTs/FlowData";
 import useMessageManager from "@/components/GPT/Hooks/useMessageManager";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
-import type { ITemplateWorkflow } from "@/components/Automation/types";
+import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import { isValidUserFn } from "@/core/store/userSlice";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
-import templatesSlice from "@/core/store/templatesSlice";
+import templatesSlice, { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -36,17 +37,30 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   const router = useRouter();
   const isValidUser = useAppSelector(isValidUserFn);
   const generatedExecution = useAppSelector(store => store.executions?.generatedExecution ?? undefined);
+  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? undefined);
+
   const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(workflow);
   const { extractCredentialsInputFromNodes } = useCredentials();
   const { streamExecutionHandler } = useGenerateExecution({});
 
+  const [updateWorkflowHandler] = useUpdateWorkflowMutation();
+
+  const updateWorkflow = async (workflowData: IWorkflowCreateResponse) => {
+    try {
+      return await updateWorkflowHandler({
+        workflowId: workflowData.id,
+        data: workflowData,
+      }).unwrap();
+    } catch (error) {
+      console.error("Updating workflow failed", error);
+    }
+  };
+
   const {
     messages,
-    isValidatingAnswer,
     showGenerate,
-    setIsValidatingAnswer,
     prepareAndQueueMessages,
-    messageAnswersForm,
+    messageWorkflowExecution,
     showGenerateButton: allowActivateButton,
   } = useMessageManager({
     initialMessageTitle: `${selectedWorkflow?.name}`,
@@ -101,9 +115,33 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
     store.injectReducers([{ key: "templates", asyncReducer: templatesSlice }]);
   }, [store]);
 
+  const retryRunWorkflow = async (executionWorkflow: IWorkflowCreateResponse) => {
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
+
+    const { periodic_task: currentPeriodicTask } = clonedWorkflow;
+    const { periodic_task: executionPeriodicTask } = executionWorkflow;
+    const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
+
+    const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
+
+    if (updatedWorkflow) {
+      executeWorkflow();
+      if (!noInputsChange) {
+        updateWorkflow(structuredClone(clonedWorkflow));
+      }
+    }
+  };
+
   const executeWorkflow = async () => {
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
+
     try {
-      setIsValidatingAnswer(true);
+      dispatch(setGeneratingStatus(true));
+
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
         if (response.toLowerCase().includes("[error")) {
@@ -112,7 +150,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
 
           if (!match) {
-            messageAnswersForm(response, "html");
+            messageWorkflowExecution(response, clonedWorkflow);
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
@@ -123,7 +161,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
     } catch (error) {
       failedExecutionHandler();
     } finally {
-      setIsValidatingAnswer(false);
+      dispatch(setGeneratingStatus(false));
     }
   };
 
@@ -133,10 +171,12 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   };
 
   const messageGeneratedExecution = (execution: PromptLiveResponse) => {
-    const title = execution.temp_title;
-    const promptsOutput = execution.data.map(data => data.message).join(" ");
-    const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
-    messageAnswersForm(output, "html");
+    if (clonedWorkflow) {
+      const title = execution.temp_title;
+      const promptsOutput = execution.data.map(data => data.message).join(" ");
+      const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
+      messageWorkflowExecution(output, clonedWorkflow);
+    }
   };
 
   useEffect(() => {
@@ -189,7 +229,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
                 messages={messages}
                 showGenerate={showGenerate}
                 onGenerate={executeWorkflow}
-                isExecuting={isValidatingAnswer}
+                retryRunWorkflow={retryRunWorkflow}
                 processData={processData}
               />
             )}
