@@ -130,7 +130,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
             justifyContent: "center",
             alignItems: "center",
             padding: "8px 22px",
-            height: "42px",
+            height: { xs: "50px", sm: "42px" },
             width: "100%",
             background: "#3B4050",
             boxShadow:
@@ -168,7 +168,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
             justifyContent: "center",
             alignItems: "center",
             padding: "8px 22px",
-            height: "42px",
+            height: { xs: "50px", sm: "42px" },
             width: "100%",
             background: "#1877F2",
             boxShadow:
@@ -219,7 +219,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
             justifyContent: "center",
             alignItems: "center",
             padding: "8px 22px",
-            height: "42px",
+            height: { xs: "50px", sm: "42px" },
             width: "100%",
             background: "#FF4500",
             boxShadow:
@@ -257,7 +257,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
             justifyContent: "center",
             alignItems: "center",
             padding: "8px 22px",
-            height: "42px",
+            height: { xs: "50px", sm: "42px" },
             width: "100%",
             background: "#1877f280",
             boxShadow:
