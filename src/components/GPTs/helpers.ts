@@ -103,7 +103,14 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
 
   return Array.from(relations).filter(
     ([_, { type }]) =>
-      !["n8n-nodes-base.set", "n8n-nodes-base.webhook", "n8n-nodes-base.code", "n8n-nodes-base.filter"].includes(type),
+      ![
+        "n8n-nodes-base.set",
+        "n8n-nodes-base.webhook",
+        "n8n-nodes-base.code",
+        "n8n-nodes-base.filter",
+        "n8n-nodes-base.splitOut",
+        "n8n-nodes-base.merge",
+      ].includes(type),
   );
 }
 
