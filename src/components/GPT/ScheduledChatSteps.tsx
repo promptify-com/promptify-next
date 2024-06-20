@@ -47,6 +47,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const isAdmin = useAppSelector(isAdminFn);
   const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
+  const alreadyScheduled = useRef(workflowScheduled);
 
   const scrollTo = useScrollToElement("smooth");
 
@@ -55,10 +57,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      scrollToBottom();
-    }, 100);
+    setTimeout(() => scrollToBottom(), 100);
   }, [messages, generatedExecution]);
+
+  useEffect(() => {
+    if (!alreadyScheduled.current && workflowScheduled) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+    alreadyScheduled.current = workflowScheduled;
+  }, [workflowScheduled]);
 
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
@@ -84,8 +91,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     }
   }, [clonedWorkflow, dispatch]);
 
-  const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.filter(freq => freq !== "hourly");
+
+  const lastExecution = messages[messages.length - 1];
+  const isLastExecution = lastExecution?.type === "workflowExecution";
 
   return (
     <Stack
@@ -98,58 +107,60 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     >
       {!!messages.length ? (
         <>
-          {messages.map((message, idx) => (
-            <Box
-              key={message.id}
-              sx={{
-                ...(message.noHeader && {
-                  mt: "-34px",
-                }),
-              }}
-            >
-              {!generatedExecution && idx === messages.length - 1 && <div id="scroll_ref"></div>}
+          {messages.map(message => {
+            return (
+              <Box
+                key={message.id}
+                sx={{
+                  ...(message.noHeader && {
+                    mt: "-34px",
+                  }),
+                }}
+              >
+                {!generatedExecution && isLastExecution && message.id === lastExecution?.id && <div id="scroll_ref" />}
 
-              {message.type === "text" && <Message message={message} />}
-              {message.type === "workflowExecution" && (
-                <Message
-                  message={message}
-                  retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
-                />
-              )}
+                {message.type === "text" && <Message message={message} />}
+                {message.type === "workflowExecution" && (
+                  <Message
+                    message={message}
+                    retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
+                  />
+                )}
 
-              {message.type === "credentials" && (
-                <CredentialsContainer
-                  message={message.text}
-                  workflow={workflow}
-                  isScheduled
-                />
-              )}
-              {message.type === "schedule_frequency" && (
-                <Choices
-                  message={message.text}
-                  items={FREQUENCIES}
-                  onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
-                  defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
-                />
-              )}
-              {message.type === "schedule_time" && (
-                <FrequencyTimeSelector
-                  message={message.text}
-                  onSelect={setScheduleTime}
-                />
-              )}
-              {message.type === "schedule_providers" && (
-                <Stack gap={8}>
-                  <ResponseProvidersContainer
+                {message.type === "credentials" && (
+                  <CredentialsContainer
                     message={message.text}
                     workflow={workflow}
-                    injectProvider={injectProvider}
-                    removeProvider={removeProvider}
+                    isScheduled
                   />
-                </Stack>
-              )}
-            </Box>
-          ))}
+                )}
+                {message.type === "schedule_frequency" && (
+                  <Choices
+                    message={message.text}
+                    items={FREQUENCIES}
+                    onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
+                    defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
+                  />
+                )}
+                {message.type === "schedule_time" && (
+                  <FrequencyTimeSelector
+                    message={message.text}
+                    onSelect={setScheduleTime}
+                  />
+                )}
+                {message.type === "schedule_providers" && (
+                  <Stack gap={8}>
+                    <ResponseProvidersContainer
+                      message={message.text}
+                      workflow={workflow}
+                      injectProvider={injectProvider}
+                      removeProvider={removeProvider}
+                    />
+                  </Stack>
+                )}
+              </Box>
+            );
+          })}
 
           {generatedExecution && (
             <>
@@ -176,6 +187,12 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 allowActivateButton={allowActivateButton}
               />
             </>
+          )}
+          {!generatedExecution && !isLastExecution && (
+            <div
+              id="scroll_ref"
+              style={{ marginTop: "-64px" }}
+            />
           )}
         </>
       ) : (
