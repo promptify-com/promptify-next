@@ -4,7 +4,7 @@ import { createMessage } from "@/components/Chat/helper";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
-import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
+import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
@@ -157,6 +157,7 @@ const useChat = ({ workflow }: Props) => {
         data: clonedWorkflow,
       });
       setMessages(prev => prev.concat(executionMessage));
+      dispatch(setGeneratedExecution(null));
     }
   }, [generatedExecution]);
 
@@ -279,9 +280,7 @@ const useChat = ({ workflow }: Props) => {
 
       dispatch(setGeneratingStatus(true));
 
-      let _workflow = structuredClone(clonedWorkflow);
-
-      const webhook = extractWebhookPath(_workflow.nodes);
+      const webhook = extractWebhookPath(clonedWorkflow.nodes);
 
       const response = await sendMessageAPI(webhook);
       if (response && typeof response === "string") {
@@ -294,7 +293,7 @@ const useChat = ({ workflow }: Props) => {
             const executionMessage = createMessage({
               type: "workflowExecution",
               text: response,
-              data: _workflow,
+              data: clonedWorkflow,
             });
             setMessages(prev => prev.concat(executionMessage));
           } else if (!match[2] || match[2] === "undefined") {

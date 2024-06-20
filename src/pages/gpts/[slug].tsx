@@ -7,25 +7,20 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
 import chatSlice, { setClonedWorkflow, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { setToast } from "@/core/store/toastSlice";
-import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
-import executionsSlice, { setGeneratedExecution } from "@/core/store/executionsSlice";
+import executionsSlice from "@/core/store/executionsSlice";
 import Header from "@/components/GPT/Header";
 import store from "@/core/store";
 import Workflow from "@/components/GPTs/FlowData";
 import useMessageManager from "@/components/GPT/Hooks/useMessageManager";
-import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
-import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import type { ITemplateWorkflow } from "@/components/Automation/types";
+import type { IPromptInput } from "@/common/types/prompt";
 import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import { isValidUserFn } from "@/core/store/userSlice";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
-import templatesSlice, { setGeneratingStatus } from "@/core/store/templatesSlice";
-import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import templatesSlice from "@/core/store/templatesSlice";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -36,25 +31,9 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const isValidUser = useAppSelector(isValidUserFn);
-  const generatedExecution = useAppSelector(store => store.executions?.generatedExecution ?? undefined);
-  const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? undefined);
 
-  const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded, sendMessageAPI } = useWorkflow(workflow);
+  const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded } = useWorkflow(workflow);
   const { extractCredentialsInputFromNodes } = useCredentials();
-  const { streamExecutionHandler } = useGenerateExecution({});
-
-  const [updateWorkflowHandler] = useUpdateWorkflowMutation();
-
-  const updateWorkflow = async (workflowData: IWorkflowCreateResponse) => {
-    try {
-      return await updateWorkflowHandler({
-        workflowId: workflowData.id,
-        data: workflowData,
-      }).unwrap();
-    } catch (error) {
-      console.error("Updating workflow failed", error);
-    }
-  };
 
   const {
     messages,
@@ -115,81 +94,6 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
     store.injectReducers([{ key: "templates", asyncReducer: templatesSlice }]);
   }, [store]);
 
-  const retryRunWorkflow = async (executionWorkflow: IWorkflowCreateResponse) => {
-    if (!clonedWorkflow) {
-      throw new Error("Cloned workflow not found");
-    }
-
-    const { periodic_task: currentPeriodicTask } = clonedWorkflow;
-    const { periodic_task: executionPeriodicTask } = executionWorkflow;
-    const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
-
-    const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
-
-    if (updatedWorkflow) {
-      executeWorkflow();
-      if (!noInputsChange) {
-        updateWorkflow(structuredClone(clonedWorkflow));
-      }
-    }
-  };
-
-  const executeWorkflow = async () => {
-    if (!clonedWorkflow) {
-      throw new Error("Cloned workflow not found");
-    }
-
-    try {
-      dispatch(setGeneratingStatus(true));
-
-      const response = await sendMessageAPI();
-      if (response && typeof response === "string") {
-        if (response.toLowerCase().includes("[error")) {
-          failedExecutionHandler();
-        } else {
-          const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
-
-          if (!match) {
-            messageWorkflowExecution(response, clonedWorkflow);
-          } else if (!match[2] || match[2] === "undefined") {
-            failedExecutionHandler();
-          } else {
-            streamExecutionHandler(response);
-          }
-        }
-      }
-    } catch (error) {
-      failedExecutionHandler();
-    } finally {
-      dispatch(setGeneratingStatus(false));
-    }
-  };
-
-  const failedExecutionHandler = () => {
-    dispatch(setToast(EXECUTE_ERROR_TOAST));
-    dispatch(setGeneratedExecution(null));
-  };
-
-  const messageGeneratedExecution = (execution: PromptLiveResponse) => {
-    if (clonedWorkflow) {
-      const title = execution.temp_title;
-      const promptsOutput = execution.data.map(data => data.message).join(" ");
-      const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
-      messageWorkflowExecution(output, clonedWorkflow);
-    }
-  };
-
-  useEffect(() => {
-    if (generatedExecution?.data?.length) {
-      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
-
-      if (allPromptsCompleted) {
-        messageGeneratedExecution(generatedExecution);
-        dispatch(setGeneratedExecution(null));
-      }
-    }
-  }, [generatedExecution]);
-
   return (
     <Layout>
       {isWorkflowLoading ? (
@@ -228,9 +132,8 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
                 workflow={workflow}
                 messages={messages}
                 showGenerate={showGenerate}
-                onGenerate={executeWorkflow}
-                retryRunWorkflow={retryRunWorkflow}
                 processData={processData}
+                messageWorkflowExecution={messageWorkflowExecution}
               />
             )}
             <Workflow workflow={selectedWorkflow} />
