@@ -78,7 +78,7 @@ export interface IQuestion {
 
 export interface CreateMessageProps {
   type: MessageType;
-  text: string;
+  text?: string;
   fromUser?: boolean;
   noHeader?: boolean;
   isHighlight?: boolean;

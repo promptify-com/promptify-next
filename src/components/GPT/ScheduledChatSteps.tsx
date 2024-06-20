@@ -91,10 +91,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     }
   }, [clonedWorkflow, dispatch]);
 
-  const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.filter(freq => freq !== "hourly");
+  const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
-  const lastExecution = messages[messages.length - 1];
-  const isLastExecution = lastExecution?.type === "workflowExecution";
+  const lastMessage = messages[messages.length - 1];
+  const isLastExecution = lastMessage?.type === "workflowExecution";
 
   return (
     <Stack
@@ -117,7 +117,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   }),
                 }}
               >
-                {!generatedExecution && isLastExecution && message.id === lastExecution?.id && <div id="scroll_ref" />}
+                {!generatedExecution && isLastExecution && message.id === lastMessage?.id && <div id="scroll_ref" />}
 
                 {message.type === "text" && <Message message={message} />}
                 {message.type === "workflowExecution" && (
