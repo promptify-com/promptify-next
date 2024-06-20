@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -15,12 +15,11 @@ import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
-import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
+import { kwargsToAnswers } from "@/components/GPTs/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -31,6 +30,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
+  const [showInputs, setShowInputs] = useState(false);
+
   const {
     messages,
     initialMessages,
@@ -75,26 +76,23 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
       const kwargs = clonedWorkflow.periodic_task?.kwargs;
       if (kwargs) {
-        const parsedKwargs = JSON.parse(kwargs || "{}");
-        const workflowData = parsedKwargs.workflow_data || {};
-
-        const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
-          inputName,
-          required: true,
-          question: ``,
-          answer: answer as PromptInputType,
-          prompt: 0,
-        }));
-
-        dispatch(setAnswers(answers));
+        dispatch(setAnswers(kwargsToAnswers(kwargs)));
       }
     }
   }, [clonedWorkflow, dispatch]);
 
+  const handleRunWorkflow = (runFn: () => void) => {
+    return () => {
+      setShowInputs(false);
+      runFn();
+    };
+  };
+
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.filter(freq => freq !== "hourly");
 
-  const lastExecution = messages[messages.length - 1];
-  const isLastExecution = lastExecution?.type === "workflowExecution";
+  const lastMessage = messages[messages.length - 1];
+  const isLastExecution = lastMessage?.type === "workflowExecution";
+  const hasExecution = messages.some(msg => msg.type === "workflowExecution");
 
   return (
     <Stack
@@ -117,13 +115,16 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   }),
                 }}
               >
-                {!generatedExecution && isLastExecution && message.id === lastExecution?.id && <div id="scroll_ref" />}
+                {!generatedExecution && isLastExecution && message.id === lastMessage?.id && <div id="scroll_ref" />}
 
                 {message.type === "text" && <Message message={message} />}
                 {message.type === "workflowExecution" && (
                   <Message
                     message={message}
-                    retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
+                    retryExecution={() =>
+                      handleRunWorkflow(() => retryRunWorkflow(message.data as IWorkflowCreateResponse))
+                    }
+                    showInputs={() => setShowInputs(true)}
                   />
                 )}
 
@@ -174,7 +175,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
           {workflowScheduled && (
             <>
-              {!!inputs.length && (
+              {!!inputs.length && (showInputs || !hasExecution) && (
                 <MessageInputs
                   message={createMessage({
                     type: "form",
@@ -183,7 +184,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 />
               )}
               <RunWorkflowMessage
-                onRun={runWorkflow}
+                onRun={() => handleRunWorkflow(runWorkflow)}
                 allowActivateButton={allowActivateButton}
               />
             </>
