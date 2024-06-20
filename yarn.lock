@@ -3384,10 +3384,10 @@ embla-carousel-auto-height@^8.1.4:
   resolved "https://registry.yarnpkg.com/embla-carousel-auto-height/-/embla-carousel-auto-height-8.1.4.tgz#e7723572d32a214c8ec84662606d28a6fbb1f4a2"
   integrity sha512-qnahRVawbJQkYkE8rH+vQaOJAu+qszRt6Iszk098FhwV7OWiqdPy4ugVzXl1BjXBQwfAdvNV+HnwPEyzSjA4nA==
 
-embla-carousel-autoplay@^8.1.4:
-  version "8.1.4"
-  resolved "https://registry.yarnpkg.com/embla-carousel-autoplay/-/embla-carousel-autoplay-8.1.4.tgz#b88fff22b16dd466557b45ec523df4430563c09b"
-  integrity sha512-lsQkKiU5sIVg5vuaWo6BTzQT+7Z6AEMnCIQho4bS6KFeBE8FtsL/HOmtLx7fLu2reH6keJ1vNmLn6L/w9CQj+Q==
+embla-carousel-autoplay@^8.1.5:
+  version "8.1.5"
+  resolved "https://registry.yarnpkg.com/embla-carousel-autoplay/-/embla-carousel-autoplay-8.1.5.tgz#88451b5db9be460889d039e692cf69f5234212d0"
+  integrity sha512-9pHIezRqiO9yism7wRFwmM1j/W9c9hBNX4hq3F4aTPbK84M0M57ryG8QUwhbsTGJbDoBBVTm//YEd0T6i/5YgA==
 
 embla-carousel-react@^8.1.5:
   version "8.1.5"
