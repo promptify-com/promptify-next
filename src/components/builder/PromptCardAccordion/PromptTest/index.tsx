@@ -26,6 +26,7 @@ import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { randomId } from "@/common/helpers";
+import { initialState } from "@/core/store/builderSlice";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -46,7 +47,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const template = useAppSelector(state => state.builder?.template ?? null);
-  const engines = useAppSelector(state => state.builder?.engines ?? []);
+  const engines = useAppSelector(state => state.builder?.engines ?? initialState.engines);
   const engine = engines.find(engine => engine.id === prompt.engine);
 
   const [copyToClipboard, copyResult] = useCopyToClipboard();

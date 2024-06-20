@@ -8,7 +8,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Add from "@mui/icons-material/Add";
 
-import { setAnswers } from "@/core/store/chatSlice";
+import { initialState, setAnswers } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { MessageType } from "@/components/Prompt/Types/chat";
 
@@ -21,7 +21,7 @@ interface Props {
 function HeaderForm({ title, type, isExpanded }: Props) {
   const dispatch = useAppDispatch();
 
-  const answers = useAppSelector(state => state.chat?.answers ?? []);
+  const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   return (
     <Stack
       direction={"row"}
