@@ -7,6 +7,7 @@ import { isUrl } from "@/common/helpers";
 import { useAppSelector } from "@/hooks/useStore";
 import Tooltip from "@mui/material/Tooltip";
 import Error from "@mui/icons-material/Error";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
   value: File;
@@ -16,7 +17,7 @@ interface Props {
 
 function File({ input, value, onChange }: Props) {
   const { truncate } = useTruncate();
-  const answers = useAppSelector(state => state.chat?.answers ?? []);
+  const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
   const hasError = answers.find(answer => answer.inputName === input.name && answer.error);
 

@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 
-import { setAnswers } from "@/core/store/chatSlice";
+import { initialState, setAnswers } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 interface Props {
@@ -16,7 +16,7 @@ function GenerateAndClearButton({ isValidating, showGenerate, onGenerate }: Prop
   const dispatch = useAppDispatch();
   const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
-  const answers = useAppSelector(state => state.chat?.answers ?? []);
+  const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   const isSimulationStreaming = useAppSelector(state => state.chat?.isSimulationStreaming ?? false);
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);

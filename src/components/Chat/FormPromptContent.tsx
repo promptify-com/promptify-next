@@ -7,13 +7,14 @@ import HighlightContent from "@/components/Chat/HighlightPrompt";
 import FormParam from "@/components/Prompt/Common/Chat/FormParam";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
 }
 
 function FormPromptContent({ template }: Props) {
-  const params = useAppSelector(state => state.chat?.params ?? []);
+  const params = useAppSelector(state => state.chat?.params ?? initialState.params);
   return (
     <>
       <Stack p={"16px 24px"}>

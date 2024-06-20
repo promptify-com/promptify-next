@@ -13,6 +13,7 @@ import { BUILDER_TYPE } from "@/common/constants";
 import type { IEditPrompts } from "@/common/types/builder";
 import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
 import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/builderSlice";
 
 interface Props {
   prompts: IEditPrompts[];
@@ -23,7 +24,7 @@ interface Props {
 function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
-  const engines = useAppSelector(state => state.builder?.engines ?? []);
+  const engines = useAppSelector(state => state.builder?.engines ?? initialState.engines);
 
   const setSmoothScrollTarget = useScrollToElement("smooth");
 

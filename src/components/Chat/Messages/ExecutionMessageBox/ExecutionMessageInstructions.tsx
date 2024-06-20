@@ -2,9 +2,10 @@ import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/chatSlice";
 
 function ExecutionMessageInstructions() {
-  const answers = useAppSelector(state => state.chat?.answers ?? []);
+  const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   return (
     <Stack
       p={" 8px 24px"}

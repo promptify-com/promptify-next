@@ -16,6 +16,7 @@ import { Message } from "@/components/Prompt/Common/Chat/Message";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptLiveResponse } from "@/common/types/prompt";
+import { initialState } from "@/core/store/chatSlice";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -34,7 +35,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   const selectedExecution = useAppSelector(state => state.executions?.selectedExecution ?? null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
-  const inputs = useAppSelector(state => state.chat?.inputs ?? []);
+  const inputs = useAppSelector(state => state.chat?.inputs ?? initialState.inputs);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 

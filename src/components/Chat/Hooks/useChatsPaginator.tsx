@@ -3,7 +3,7 @@ import { useGetChatsQuery } from "@/core/api/chats";
 import { useRouter } from "next/router";
 import { CHATS_LIST_PAGINATION_LIMIT } from "@/components/Chat/Constants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setChats } from "@/core/store/chatSlice";
+import { initialState, setChats } from "@/core/store/chatSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 
 export function useChatsPaginator() {
@@ -11,7 +11,7 @@ export function useChatsPaginator() {
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const [offset, setOffset] = useState(0);
-  const chats = useAppSelector(state => state.chat?.chats ?? []);
+  const chats = useAppSelector(state => state.chat?.chats ?? initialState.chats);
 
   const {
     data: fetchedChats,
