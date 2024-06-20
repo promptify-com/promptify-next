@@ -109,6 +109,7 @@ export default function StackedInput({
               fontSize: 16,
               fontWeight: 400,
               color: "onSurface",
+              width: { xs: "200px", md: "100%" },
             },
             fieldset: {
               border: "none",

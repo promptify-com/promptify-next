@@ -181,7 +181,7 @@ function ProfilePrompts() {
                 >
                   <ProfileImageButton />
                   <Typography
-                    fontSize={14}
+                    fontSize={{ xs: 12, md: 14 }}
                     fontWeight={400}
                     color={"secondary.light"}
                   >

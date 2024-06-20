@@ -103,7 +103,7 @@ function Navigations({ onCloseDrawer }: Props) {
     {
       label: "Learn",
       icon: <Book3 />,
-      href: "/learn",
+      href: "https://blog.promptify.com/",
       active: isLearnPage,
       external: false,
     },
