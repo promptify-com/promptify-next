@@ -98,16 +98,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
           {messages.map((message, idx) => (
             <Box
               key={message.id}
-              {...(!generatedExecution &&
-                idx === messages.length - 1 && {
-                  id: "scroll_ref",
-                })}
               sx={{
                 ...(message.noHeader && {
                   mt: "-34px",
                 }),
               }}
             >
+              {!generatedExecution && idx === messages.length - 1 && <div id="scroll_ref"></div>}
+
               {message.type === "text" && <Message message={message} />}
               {message.type === "workflowExecution" && (
                 <Message

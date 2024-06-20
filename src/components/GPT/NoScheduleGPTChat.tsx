@@ -1,10 +1,8 @@
-import { useRef } from "react";
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppSelector } from "@/hooks/useStore";
-import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
-import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Message from "./Message";
 import MessageInputs from "./MessageInputs";
@@ -13,6 +11,7 @@ import RunButton from "@/components/GPT/RunButton";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
+import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 interface Props {
   messages: IMessage[];
@@ -28,11 +27,18 @@ function NoScheduleGPTChat({ messages, onGenerate, retryRunWorkflow, showGenerat
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const { inputs = [], areCredentialsStored } = useAppSelector(state => state.chat ?? initialChatState);
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const { showScrollDown, scrollToBottom } = useScrollToBottom({
-    ref: messagesContainerRef,
-    content: messages,
-  });
+
+  const scrollTo = useScrollToElement("smooth");
+
+  const scrollToBottom = () => {
+    scrollTo("#scroll_ref");
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  }, [messages, generatedExecution]);
 
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun = !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating;
@@ -43,13 +49,10 @@ function NoScheduleGPTChat({ messages, onGenerate, retryRunWorkflow, showGenerat
 
   return (
     <Stack
-      ref={messagesContainerRef}
       gap={3}
       mx={{ xs: "16px", md: "40px" }}
       position={"relative"}
     >
-      {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
-
       <Stack
         pb={{ md: "38px" }}
         direction={"column"}
@@ -62,21 +65,13 @@ function NoScheduleGPTChat({ messages, onGenerate, retryRunWorkflow, showGenerat
           width={"100%"}
         >
           {!!messages.length ? (
-            messages.map(msg => (
-              <Box
-                key={msg.id}
-                sx={{
-                  ...(!msg.fromUser && {
-                    mr: { md: "56px" },
-                  }),
-                  ...(msg.fromUser && {
-                    ml: { md: "56px" },
-                  }),
-                }}
-              >
+            messages.map((msg, idx) => (
+              <Box key={msg.id}>
+                {!generatedExecution && idx === messages.length - 1 && <div id="scroll_ref"></div>}
+
                 {msg.type === "text" && (
                   <Message
-                    isInitialMessage={messages[0] === msg}
+                    isInitialMessage={idx === 0}
                     message={msg}
                   />
                 )}
@@ -119,7 +114,16 @@ function NoScheduleGPTChat({ messages, onGenerate, retryRunWorkflow, showGenerat
               />
             </Stack>
           )}
-          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
+
+          {generatedExecution && (
+            <>
+              <ExecutionMessage execution={generatedExecution} />
+              <div
+                id="scroll_ref"
+                style={{ marginTop: "-64px" }}
+              ></div>
+            </>
+          )}
         </Stack>
       </Stack>
     </Stack>
