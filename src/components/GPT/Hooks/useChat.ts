@@ -185,19 +185,21 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   };
 
-  const insertProvidersMessages = (message: string) => {
-    const confirmMessage = createMessage({
-      type: "text",
-      text: message,
-      isHighlight: true,
-    });
-    const providersMessage = createMessage({
-      type: "schedule_providers",
-      text: "Where should we send your scheduled GPT?",
-    });
-    setMessages(prev =>
-      prev.filter(msg => msg.type !== "schedule_providers").concat([confirmMessage, providersMessage]),
-    );
+  const insertProvidersMessages = (scheduleData: IWorkflowSchedule) => {
+    if (!messages.find(msg => msg.type === "schedule_providers")) {
+      const hour = scheduleData.hour ? ` at ${TIMES[scheduleData.hour]}` : "";
+      const message = `Awesome, We’ll run this GPT for you here ${scheduleData.frequency}${hour}, do you want to receive them in your favorite platforms?`;
+      const confirmMessage = createMessage({
+        type: "text",
+        text: message,
+        isHighlight: true,
+      });
+      const providersMessage = createMessage({
+        type: "schedule_providers",
+        text: "Where should we send your scheduled GPT?",
+      });
+      setMessages(prev => prev.concat([confirmMessage, providersMessage]));
+    }
   };
 
   const handleUpdateWorkflow = async (workflowData?: IWorkflowCreateResponse) => {
@@ -224,16 +226,29 @@ const useChat = ({ workflow }: Props) => {
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
 
-    setSchedulingData({ ...schedulingData, frequency });
+    const isHourly = frequency === "hourly";
 
-    if (!messages.find(msg => msg.type === "schedule_time")) {
-      const timeMessage = createMessage({
-        type: "schedule_time",
-        text: "At what time?",
-      });
-      messages.push(timeMessage);
+    let _messages = messages;
+    if (isHourly) {
+      updateScheduleMode.current = true;
+      _messages = _messages.filter(msg => msg.type !== "schedule_time");
+    } else {
+      if (!_messages.find(msg => msg.type === "schedule_time")) {
+        const timeMessage: IMessage = createMessage({
+          type: "schedule_time",
+          text: "At what time?",
+        });
+        _messages = _messages.flatMap(msg => (msg.type === "schedule_frequency" ? [msg, timeMessage] : msg));
+      }
     }
-    setMessages(messages);
+
+    const scheduleData = { ...schedulingData, frequency };
+    setSchedulingData(scheduleData);
+    setMessages(_messages);
+
+    if (isHourly) {
+      insertProvidersMessages(scheduleData);
+    }
   };
 
   const setScheduleTime = (frequencyTime: { day?: number; time: number }) => {
@@ -242,17 +257,15 @@ const useChat = ({ workflow }: Props) => {
     const isWeekly = schedulingData?.frequency === "weekly";
     const day = frequencyTime.day ?? 0;
     const frequencyDay = isWeekly ? { day_of_week: day } : { day_of_month: day };
-    setSchedulingData({
+
+    const scheduleData = {
       ...schedulingData,
       ...frequencyDay,
       hour: frequencyTime.time,
-    });
+    };
+    setSchedulingData(scheduleData);
 
-    if (!messages.find(msg => msg.type === "schedule_providers")) {
-      const hour = schedulingData?.hour ? ` at ${TIMES[schedulingData?.hour]}` : "";
-      const message = `Awesome, We’ll run this GPT for you here ${schedulingData?.frequency}${hour}, do you want to receive them in your favorite platforms?`;
-      insertProvidersMessages(message);
-    }
+    insertProvidersMessages(scheduleData);
   };
 
   const injectProvider = async (providerType: ProviderType, generatedWorkflow: IWorkflowCreateResponse) => {

@@ -20,6 +20,7 @@ import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
+import { isAdminFn } from "@/core/store/userSlice";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -43,6 +44,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     workflow,
   });
 
+  const isAdmin = useAppSelector(isAdminFn);
   const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
@@ -83,6 +85,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   }, [clonedWorkflow, dispatch]);
 
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
+  const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.filter(freq => freq !== "hourly");
 
   return (
     <Stack
@@ -124,7 +127,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               {message.type === "schedule_frequency" && (
                 <Choices
                   message={message.text}
-                  items={FREQUENCY_ITEMS}
+                  items={FREQUENCIES}
                   onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
                   defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
                 />
