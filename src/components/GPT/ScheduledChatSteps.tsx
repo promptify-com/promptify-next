@@ -21,7 +21,6 @@ import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
-import { Button } from "@mui/material";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
 
@@ -111,7 +110,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       }}
       position={"relative"}
     >
-      <Button onClick={scrollToBottom}>scroll</Button>
       {!!messages.length ? (
         <>
           {messages.map(message => {

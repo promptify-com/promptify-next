@@ -135,14 +135,11 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }
   };
 
+  // Pass run workflow generated execution as a new message after all prompts completed
   useEffect(() => {
-    if (generatedExecution?.data?.length) {
-      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
-
-      if (allPromptsCompleted) {
-        messageGeneratedExecution(generatedExecution);
-        dispatch(setGeneratedExecution(null));
-      }
+    if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
+      messageGeneratedExecution(generatedExecution);
+      dispatch(setGeneratedExecution(null));
     }
   }, [generatedExecution]);
 
