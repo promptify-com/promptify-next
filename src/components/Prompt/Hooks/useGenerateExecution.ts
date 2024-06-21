@@ -232,7 +232,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
               if (message === "[INITIALIZING]") {
                 if (activePromptIndex === -1) {
                   newState.data.push({
-                    message: "",
+                    message: "\n\n",
                     prompt,
                     isLoading: true,
                     created_at: new Date(),

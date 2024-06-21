@@ -110,15 +110,16 @@ export const ProfileImageButton = () => {
 
           <Box
             display="flex"
-            justifyContent="flex-end"
+            justifyContent={{ xs: "center", sm: "flex-end" }}
+            width={{ xs: "100%", sm: "auto" }}
             mb="2rem"
             mr="2rem"
           >
             <Button
               sx={{
                 color: "#424242",
-                width: "160px",
-                height: "50px",
+                width: { xs: "100px", sm: "160px" },
+                height: { xs: "40px", sm: "50px" },
                 borderRadius: "25px",
                 display: "flex",
                 alignItems: "center",
@@ -139,8 +140,8 @@ export const ProfileImageButton = () => {
             <Button
               disabled={isLoading}
               sx={{
-                width: "160px",
-                height: "50px",
+                width: { xs: "100px", sm: "160px" },
+                height: { xs: "40px", sm: "50px" },
                 borderRadius: "25px",
                 display: "flex",
                 alignItems: "center",
@@ -149,6 +150,7 @@ export const ProfileImageButton = () => {
                 border: "1px solid",
                 bgcolor: "#424242",
                 color: "#FFF",
+                fontSize: { xs: "0.6rem", sm: "0.8rem" },
                 ":hover, :disabled": {
                   bgcolor: "transparent",
                   color: "#424242",

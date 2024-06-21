@@ -8,7 +8,7 @@ import Message from "./Message";
 import MessageInputs from "./MessageInputs";
 import CredentialsContainer from "./CredentialsContainer";
 import RunButton from "@/components/GPT/RunButton";
-import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
 import { useScrollToElement } from "@/hooks/useScrollToElement";

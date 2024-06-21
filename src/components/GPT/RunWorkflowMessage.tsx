@@ -37,6 +37,7 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
           disabled={!allowActivateButton || isGenerating}
           loading={isGenerating}
           text="Run"
+          inline
         />
       </Stack>
     </MessageContainer>
