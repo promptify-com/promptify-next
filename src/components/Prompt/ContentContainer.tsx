@@ -179,7 +179,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           transition: "all 0.5s ease-in-out",
         }}
       >
-        {false ? <Feedback /> : <PromptFeedbackPlaceholder />}
+        {observers.feedbackObserver?.isIntersecting ? <Feedback /> : <PromptFeedbackPlaceholder />}
       </Box>
       {isMobile && <Footer />}
     </Box>
