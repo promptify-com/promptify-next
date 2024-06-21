@@ -7,6 +7,7 @@ function FeedbackPlaceholder({ count = 1 }) {
       key={index}
       direction={"row"}
       gap={1.5}
+      pb={3}
     >
       <Skeleton
         variant="circular"
