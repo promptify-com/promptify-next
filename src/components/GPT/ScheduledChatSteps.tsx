@@ -86,17 +86,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   }, [clonedWorkflow, dispatch]);
 
   const handleRunWorkflow = (runFn: () => void) => {
-    return () => {
-      setShowInputs(false);
-      runFn();
-    };
+    setShowInputs(false);
+    runFn();
   };
-
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
   const hasExecution = messages.some(msg => msg.type === "workflowExecution");
+  const showInputsForm = !!inputs.length && !generatedExecution && (showInputs || !hasExecution);
 
   return (
     <Stack
@@ -128,7 +126,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     retryExecution={() =>
                       handleRunWorkflow(() => retryRunWorkflow(message.data as IWorkflowCreateResponse))
                     }
-                    showInputs={() => setShowInputs(true)}
+                    showInputs={() => {
+                      setShowInputs(true);
+                      setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+                    }}
                   />
                 )}
 
@@ -179,13 +180,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
           {workflowScheduled && (
             <>
-              {!!inputs.length && (showInputs || !hasExecution) && (
-                <MessageInputs
-                  message={createMessage({
-                    type: "form",
-                    text: "Please fill out the following details:",
-                  })}
-                />
+              {showInputsForm && (
+                <Box id="inputs_form">
+                  <MessageInputs
+                    message={createMessage({
+                      type: "form",
+                      text: "Please fill out the following details:",
+                    })}
+                  />
+                </Box>
               )}
               <RunWorkflowMessage
                 onRun={() => handleRunWorkflow(runWorkflow)}
