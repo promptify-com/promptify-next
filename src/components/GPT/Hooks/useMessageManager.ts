@@ -56,10 +56,10 @@ function useMessageManager({ initialMessageTitle }: Props) {
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
     if (requiresAuthentication || requiresOauth) {
-      const credMessage = createMessage({ type: "credentials", noHeader: true, text: "" });
+      const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialMessages.push(credMessage);
     }
-    const formMessage = createMessage({ type: "form", noHeader: true, text: "" });
+    const formMessage = createMessage({ type: "form", noHeader: true });
     initialMessages.push(formMessage);
 
     setMessages(initialMessages);
@@ -76,7 +76,6 @@ function useMessageManager({ initialMessageTitle }: Props) {
       text: message,
       data: workflowData,
     });
-    console.log(ExecutionMessage);
     setMessages(prevMessages => prevMessages.concat(ExecutionMessage));
   };
 

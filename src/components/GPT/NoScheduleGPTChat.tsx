@@ -21,6 +21,8 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import useBrowser from "@/hooks/useBrowser";
+import { theme } from "@/theme";
 
 interface Props {
   messages: IMessage[];
@@ -32,6 +34,8 @@ interface Props {
 
 function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowExecution }: Props) {
   const dispatch = useAppDispatch();
+  const { isMobile } = useBrowser();
+
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
@@ -54,9 +58,9 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
   };
 
   const scrollTo = useScrollToElement("smooth");
-
+  const headerHeight = parseFloat(isMobile ? theme.custom.headerHeight.xs : theme.custom.headerHeight.md);
   const scrollToBottom = () => {
-    scrollTo("#scroll_ref");
+    scrollTo("#scroll_ref", headerHeight);
   };
 
   useEffect(() => {
@@ -131,14 +135,11 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }
   };
 
+  // Pass run workflow generated execution as a new message after all prompts completed
   useEffect(() => {
-    if (generatedExecution?.data?.length) {
-      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
-
-      if (allPromptsCompleted) {
-        messageGeneratedExecution(generatedExecution);
-        dispatch(setGeneratedExecution(null));
-      }
+    if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
+      messageGeneratedExecution(generatedExecution);
+      dispatch(setGeneratedExecution(null));
     }
   }, [generatedExecution]);
 

@@ -18,16 +18,17 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
         direction={"row"}
         alignItems={"center"}
         gap={2}
+        sx={{
+          width: "fit-content",
+          p: "16px 20px",
+          borderRadius: "0px 16px 16px 16px",
+          bgcolor: "#DFDAFF",
+        }}
       >
         <Typography
           fontSize={14}
           fontWeight={500}
           color={"onSurface"}
-          sx={{
-            p: "16px 20px",
-            borderRadius: "0px 16px 16px 16px",
-            bgcolor: "#DFDAFF",
-          }}
         >
           Ready to test this GPT
         </Typography>

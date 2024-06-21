@@ -20,6 +20,8 @@ import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
 import { kwargsToAnswers } from "@/components/GPTs/helpers";
+import useBrowser from "@/hooks/useBrowser";
+import { theme } from "@/theme";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -31,6 +33,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
   const [showInputs, setShowInputs] = useState(false);
+  const { isMobile } = useBrowser();
 
   const {
     messages,
@@ -52,9 +55,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const alreadyScheduled = useRef(workflowScheduled);
 
   const scrollTo = useScrollToElement("smooth");
+  const headerHeight = parseFloat(isMobile ? theme.custom.headerHeight.xs : theme.custom.headerHeight.md);
 
   const scrollToBottom = () => {
-    scrollTo("#scroll_ref");
+    scrollTo("#scroll_ref", headerHeight);
   };
 
   useEffect(() => {
@@ -88,7 +92,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     };
   };
 
-  const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.filter(freq => freq !== "hourly");
+  const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
