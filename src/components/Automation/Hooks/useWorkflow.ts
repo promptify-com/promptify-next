@@ -12,6 +12,7 @@ import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@
 import type { Category } from "@/core/api/dto/templates";
 import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import { isValidUserFn } from "@/core/store/userSlice";
+import { IAnswer } from "@/components/Prompt/Types/chat";
 
 const useWorkflow = (workflow: ITemplateWorkflow) => {
   const router = useRouter();
@@ -92,11 +93,11 @@ const useWorkflow = (workflow: ITemplateWorkflow) => {
     return createdWorkflow;
   };
 
-  async function sendMessageAPI(webhook?: string): Promise<any> {
+  async function sendMessageAPI(webhook?: string, givenAnswers?: IAnswer[]): Promise<any> {
     let inputsData: Record<string, string> = {};
 
     inputs.forEach(input => {
-      const answer = answers.find(answer => answer.inputName === input.name);
+      const answer = [...(givenAnswers ?? answers)].find(answer => answer.inputName === input.name);
       inputsData[input.name] = answer?.answer as string;
     });
 

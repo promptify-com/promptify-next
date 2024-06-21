@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { initialState, setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChat";
 import Message from "@/components/GPT/Message";
 import CredentialsContainer from "@/components/GPT/CredentialsContainer";
@@ -49,8 +49,9 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   });
 
   const isAdmin = useAppSelector(isAdminFn);
-  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
+  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const alreadyScheduled = useRef(workflowScheduled);
 
@@ -96,6 +97,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       dispatch(setAnswers(kwargsToAnswers(kwargs ?? "")));
     }
     setShowInputs(true);
+    scrollToInputsForm();
+  };
+
+  const scrollToInputsForm = () => {
     setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
   };
 
@@ -104,7 +109,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
   const hasExecution = messages.some(msg => msg.type === "workflowExecution");
-  const showInputsForm = !!inputs.length && !generatedExecution && (showInputs || !hasExecution);
+  const showInputsForm = !!inputs.length && !generatedExecution && (showInputs || !hasExecution || isGenerating);
 
   return (
     <Stack
