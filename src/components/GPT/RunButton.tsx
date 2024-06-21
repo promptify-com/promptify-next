@@ -30,7 +30,7 @@ function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon }: P
       endIcon={icon}
       sx={{
         ...BtnStyle,
-        p: "13px 24px",
+        p: "8px 24px",
       }}
     >
       {loading ? "Generating..." : text}

@@ -19,7 +19,8 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
         alignItems={"center"}
         gap={2}
         sx={{
-          p: "10px 16px",
+          width: "fit-content",
+          p: "16px 20px",
           borderRadius: "0px 16px 16px 16px",
           bgcolor: "#DFDAFF",
         }}
