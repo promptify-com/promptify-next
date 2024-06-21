@@ -85,6 +85,14 @@ function buildNextConnectedData({
   }
 }
 
+const unwantedDataFlowNodes = [
+  "n8n-nodes-base.set",
+  "n8n-nodes-base.webhook",
+  "n8n-nodes-base.code",
+  "n8n-nodes-base.filter",
+  "n8n-nodes-base.splitOut",
+  "n8n-nodes-base.merge",
+];
 export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   const webhookNodeName = workflow.data.nodes.find(node => node.type === "n8n-nodes-base.webhook")?.name;
 
@@ -93,6 +101,7 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   }
 
   const relations = new Map<string, IRelation>();
+  const relationsSet = new Set<string>();
 
   buildNextConnectedData({
     nodeName: webhookNodeName,
@@ -101,17 +110,16 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
     workflow,
   });
 
-  return Array.from(relations).filter(
-    ([_, { type }]) =>
-      ![
-        "n8n-nodes-base.set",
-        "n8n-nodes-base.webhook",
-        "n8n-nodes-base.code",
-        "n8n-nodes-base.filter",
-        "n8n-nodes-base.splitOut",
-        "n8n-nodes-base.merge",
-      ].includes(type),
-  );
+  return Array.from(relations).filter(([_, { type }]) => {
+    if (unwantedDataFlowNodes.includes(type)) {
+      return false;
+    }
+
+    const seen = relationsSet.has(type);
+    relationsSet.add(type);
+
+    return !seen;
+  });
 }
 
 const MAIN_CONNECTION_KEY = "main";
