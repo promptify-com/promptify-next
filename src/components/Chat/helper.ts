@@ -107,7 +107,7 @@ export const createMessage = ({
   isRequired = false,
   questionIndex,
   questionInputName,
-  text,
+  text = "",
   executionId,
   template,
   isLatestExecution,
@@ -164,10 +164,10 @@ export function updateChatsList(
             op === "ADD"
               ? [chat, ...chats.results]
               : op === "DELETE"
-              ? chats.results.filter(_chat => _chat.id !== chat.id)
-              : op === "UPDATE"
-              ? chats.results.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
-              : chats.results,
+                ? chats.results.filter(_chat => _chat.id !== chat.id)
+                : op === "UPDATE"
+                  ? chats.results.map(_chat => ({ ...(_chat.id === chat.id ? chat : _chat) }))
+                  : chats.results,
         };
       },
     ),

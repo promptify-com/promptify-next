@@ -105,7 +105,7 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
-export type FrequencyType = "daily" | "weekly" | "bi-weekly" | "monthly";
+export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly";
 
 export interface IWorkflowSchedule {
   frequency: FrequencyType;

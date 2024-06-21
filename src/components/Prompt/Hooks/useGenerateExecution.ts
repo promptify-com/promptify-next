@@ -49,7 +49,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     data: [],
   });
   const abortController = useRef(new AbortController());
-  const generatingCompleted = useRef(false);
+  const [generatingCompleted, setGeneratingCompleted] = useState(false);
 
   const { preparePromptsData } = useChatBox();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
@@ -114,7 +114,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     let regex = new RegExp(N8N_RESPONSE_REGEX);
 
     dispatch(setGeneratedExecution({ data: [], created_at: new Date(), hasNext: true }));
-    generatingCompleted.current = false;
+    setGeneratingCompleted(false);
     while ((executionMatch = regex.exec(response)) !== null) {
       if (isNaN(parseInt(executionMatch[2]))) {
         continue;
@@ -125,14 +125,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
       await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
     }
-
-    if (!generatedExecution?.data.length) {
-      dispatch(setToast({ message: "No data available!", severity: "info" }));
-      dispatch(setGeneratedExecution(null));
-      dispatch(setGeneratingStatus(false));
-    }
-
-    generatingCompleted.current = true;
+    setGeneratingCompleted(true);
   };
 
   const fetchExecution = async ({
@@ -239,7 +232,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
               if (message === "[INITIALIZING]") {
                 if (activePromptIndex === -1) {
                   newState.data.push({
-                    message: "",
+                    message: "\n\n",
                     prompt,
                     isLoading: true,
                     created_at: new Date(),
@@ -293,11 +286,11 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       dispatch(
         setGeneratedExecution({
           ...generatingResponse,
-          hasNext: !generatingCompleted.current,
+          hasNext: !generatingCompleted,
         }),
       );
     }
-  }, [generatingResponse]);
+  }, [generatingResponse, generatingCompleted]);
 
   return { generateExecutionHandler, streamExecutionHandler, disableChatInput, abortConnection };
 };
