@@ -89,6 +89,16 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     setShowInputs(false);
     runFn();
   };
+
+  const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
+    if (data) {
+      const kwargs = data.periodic_task?.kwargs;
+      dispatch(setAnswers(kwargsToAnswers(kwargs ?? "")));
+    }
+    setShowInputs(true);
+    setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+  };
+
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
   const lastMessage = messages[messages.length - 1];
@@ -126,10 +136,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     retryExecution={() =>
                       handleRunWorkflow(() => retryRunWorkflow(message.data as IWorkflowCreateResponse))
                     }
-                    showInputs={() => {
-                      setShowInputs(true);
-                      setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
-                    }}
+                    showInputs={() => cloneExecutionInputs(message.data as IWorkflowCreateResponse)}
                   />
                 )}
 

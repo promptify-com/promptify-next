@@ -11,14 +11,6 @@ interface Props {
   initialMessageTitle: string;
 }
 
-interface CreateMessageProps {
-  type: MessageType;
-  fromUser?: boolean;
-  noHeader?: boolean;
-  timestamp?: string;
-  text?: string;
-}
-
 function useMessageManager({ initialMessageTitle }: Props) {
   const dispatch = useAppDispatch();
 
@@ -32,7 +24,6 @@ function useMessageManager({ initialMessageTitle }: Props) {
   const { checkAllCredentialsStored } = useCredentials();
 
   const showGenerate =
-    //  (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required))
     (showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
     Boolean(!inputs.length || !inputs[0]?.required);
 
@@ -59,8 +50,6 @@ function useMessageManager({ initialMessageTitle }: Props) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialMessages.push(credMessage);
     }
-    const formMessage = createMessage({ type: "form", noHeader: true });
-    initialMessages.push(formMessage);
 
     setMessages(initialMessages);
   }
@@ -74,7 +63,7 @@ function useMessageManager({ initialMessageTitle }: Props) {
     const ExecutionMessage = createMessage({
       type: "workflowExecution",
       text: message,
-      data: workflowData,
+      data: answers,
     });
     setMessages(prevMessages => prevMessages.concat(ExecutionMessage));
   };

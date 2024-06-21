@@ -6,7 +6,7 @@ import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { ExecutionContent } from "../common/ExecutionContent";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Button, IconButton, Stack } from "@mui/material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import Done from "@mui/icons-material/Done";
@@ -14,8 +14,6 @@ import ContentCopy from "@mui/icons-material/ContentCopy";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import Replay from "@mui/icons-material/Replay";
 import EditOutlined from "@mui/icons-material/EditOutlined";
-import { IWorkflowCreateResponse } from "@/components/Automation/types";
-import { kwargsToAnswers } from "@/components/GPTs/helpers";
 
 interface Props {
   message: IMessage;
@@ -68,19 +66,11 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
 });
 
 export default function Message({ message, isInitialMessage = false, retryExecution, showInputs }: Props) {
-  const dispatch = useAppDispatch();
   const { fromUser, isHighlight, type, text } = message;
   const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const inputs = useAppSelector(store => store.chat?.inputs ?? []);
-
-  const editInputs = () => {
-    const workflowData = message.data as IWorkflowCreateResponse;
-    const kwargs = workflowData.periodic_task?.kwargs;
-    dispatch(setAnswers(kwargsToAnswers(kwargs ?? "")));
-    showInputs?.();
-  };
 
   return (
     <MessageContainer message={message}>
@@ -137,7 +127,7 @@ export default function Message({ message, isInitialMessage = false, retryExecut
             {!!inputs.length && (
               <CustomTooltip title={"Edit"}>
                 <IconButton
-                  onClick={editInputs}
+                  onClick={showInputs}
                   disabled={isGenerating}
                   sx={iconBtnStyle}
                 >

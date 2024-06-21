@@ -1,14 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
-import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import Message from "./Message";
 import MessageInputs from "./MessageInputs";
 import CredentialsContainer from "./CredentialsContainer";
 import RunButton from "@/components/GPT/RunButton";
-import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
@@ -23,6 +23,7 @@ import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
+import { createMessage } from "@/components/Chat/helper";
 
 interface Props {
   messages: IMessage[];
@@ -35,6 +36,8 @@ interface Props {
 function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowExecution }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
+
+  const [showInputs, setShowInputs] = useState(false);
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
@@ -143,12 +146,23 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }
   }, [generatedExecution]);
 
+  const handleRunWorkflow = (runFn: () => void) => {
+    setShowInputs(false);
+    runFn();
+  };
+
+  const cloneExecutionAnswers = (answers: IAnswer[]) => {
+    if (answers?.length) {
+      dispatch(setAnswers(answers));
+    }
+    setShowInputs(true);
+    setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+  };
+
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun = !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating;
-
-  function showForm(messageType: MessageType): boolean {
-    return Boolean((messageType === "credentials" && !areCredentialsStored) || (messageType === "form" && hasInputs));
-  }
+  const hasExecution = messages.some(msg => msg.type === "workflowExecution");
+  const showInputsForm = hasInputs && !generatedExecution && (showInputs || !hasExecution);
 
   return (
     <Stack
@@ -181,16 +195,10 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
                 {msg.type === "workflowExecution" && (
                   <Message
                     message={msg}
-                    retryExecution={() => retryRunWorkflow(msg.data as IWorkflowCreateResponse)}
-                  />
-                )}
-
-                {showForm(msg.type) && msg.type === "form" && (
-                  <MessageInputs
-                    allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
-                    onGenerate={executeWorkflow}
-                    message={msg}
-                    isExecuting={isGenerating}
+                    retryExecution={() =>
+                      handleRunWorkflow(() => retryRunWorkflow(msg.data as IWorkflowCreateResponse))
+                    }
+                    showInputs={() => cloneExecutionAnswers(msg.data as IAnswer[])}
                   />
                 )}
 
@@ -205,13 +213,27 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
           ) : (
             <ChatCredentialsPlaceholder />
           )}
+
+          {showInputsForm && (
+            <Box id="inputs_form">
+              <MessageInputs
+                allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
+                onGenerate={() => handleRunWorkflow(executeWorkflow)}
+                message={createMessage({
+                  type: "form",
+                  noHeader: true,
+                })}
+              />
+            </Box>
+          )}
+
           {allowNoInputsRun && (
             <Stack
               alignItems={"start"}
               justifyContent={"start"}
             >
               <RunButton
-                onClick={executeWorkflow}
+                onClick={() => handleRunWorkflow(executeWorkflow)}
                 showIcon
                 loading={isGenerating}
               />

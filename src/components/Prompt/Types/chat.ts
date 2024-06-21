@@ -28,7 +28,7 @@ export type MessageType =
   | "input"
   | InputType;
 
-type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse;
+type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse | IAnswer[];
 
 export interface IMessage {
   id: number;
