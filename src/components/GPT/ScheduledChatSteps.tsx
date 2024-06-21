@@ -32,7 +32,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
-  const [showInputs, setShowInputs] = useState(false);
+  const [showInputs, setShowInputs] = useState(true);
   const { isMobile } = useBrowser();
 
   const {
@@ -86,11 +86,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     }
   }, [clonedWorkflow, dispatch]);
 
-  const handleRunWorkflow = (runFn: () => void) => {
-    setShowInputs(false);
-    runFn();
-  };
-
   const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
     if (data) {
       const kwargs = data.periodic_task?.kwargs;
@@ -108,8 +103,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
-  const hasExecution = messages.some(msg => msg.type === "workflowExecution");
-  const showInputsForm = !!inputs.length && !generatedExecution && (showInputs || !hasExecution || isGenerating);
+  const showInputsForm = !!inputs.length && !generatedExecution && (showInputs || isGenerating);
 
   return (
     <Stack
@@ -138,9 +132,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 {message.type === "workflowExecution" && (
                   <Message
                     message={message}
-                    retryExecution={() =>
-                      handleRunWorkflow(() => retryRunWorkflow(message.data as IWorkflowCreateResponse))
-                    }
+                    retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
                     showInputs={() => cloneExecutionInputs(message.data as IWorkflowCreateResponse)}
                   />
                 )}
@@ -203,7 +195,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 </Box>
               )}
               <RunWorkflowMessage
-                onRun={() => handleRunWorkflow(runWorkflow)}
+                onRun={runWorkflow}
                 allowActivateButton={allowActivateButton}
               />
             </>
