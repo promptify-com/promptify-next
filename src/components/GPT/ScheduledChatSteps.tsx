@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -32,7 +32,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
-  const [showInputs, setShowInputs] = useState(true);
   const { isMobile } = useBrowser();
 
   const {
@@ -91,7 +90,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       const kwargs = data.periodic_task?.kwargs;
       dispatch(setAnswers(kwargsToAnswers(kwargs ?? "")));
     }
-    setShowInputs(true);
     scrollToInputsForm();
   };
 
@@ -103,7 +101,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
-  const showInputsForm = !!inputs.length && !generatedExecution && (showInputs || isGenerating);
+  const showInputsForm = !!inputs.length && !generatedExecution;
 
   return (
     <Stack

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -36,8 +36,6 @@ interface Props {
 function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowExecution }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-
-  const [showInputs, setShowInputs] = useState(true);
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const currentUser = useAppSelector(state => state.user?.currentUser ?? null);
@@ -144,7 +142,6 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     if (answers?.length) {
       dispatch(setAnswers(answers));
     }
-    setShowInputs(true);
     scrollToInputsForm();
   };
 
@@ -154,7 +151,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
 
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun = !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating;
-  const showInputsForm = hasInputs && !generatedExecution && (showInputs || isGenerating);
+  const showInputsForm = hasInputs && !generatedExecution;
 
   return (
     <Stack
