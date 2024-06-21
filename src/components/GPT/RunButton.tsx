@@ -10,9 +10,10 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   showIcon?: boolean;
+  inline?: boolean;
 }
 
-function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon }: Props) {
+function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon, inline }: Props) {
   const icon = loading ? (
     <CircularProgress
       size={12}
@@ -30,7 +31,7 @@ function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon }: P
       endIcon={icon}
       sx={{
         ...BtnStyle,
-        p: "8px 24px",
+        p: inline ? "8px 24px" : "13px 24px",
       }}
     >
       {loading ? "Generating..." : text}
