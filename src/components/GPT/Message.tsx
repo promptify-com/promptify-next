@@ -6,7 +6,7 @@ import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { ExecutionContent } from "../common/ExecutionContent";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Button, IconButton, Stack } from "@mui/material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import Done from "@mui/icons-material/Done";
@@ -70,7 +70,7 @@ export default function Message({ message, isInitialMessage = false, retryExecut
   const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
-  const inputs = useAppSelector(store => store.chat?.inputs ?? []);
+  const inputs = useAppSelector(store => store.chat?.inputs ?? initialChatState.inputs);
 
   return (
     <MessageContainer message={message}>
