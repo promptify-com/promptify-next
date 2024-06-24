@@ -25,7 +25,7 @@ import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { PromptInputType } from "@/components/Prompt/Types";
 
-interface IRelation {
+export interface IRelation {
   nextNode: string;
   type: string;
   iconUrl: string;

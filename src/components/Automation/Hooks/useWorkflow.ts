@@ -94,7 +94,7 @@ const useWorkflow = (workflow: ITemplateWorkflow) => {
   };
 
   async function sendMessageAPI(webhook?: string, givenAnswers?: IAnswer[]): Promise<any> {
-    let inputsData: Record<string, string> = {};
+    const inputsData: Record<string, string> = {};
 
     inputs.forEach(input => {
       const answer = [...(givenAnswers ?? answers)].find(answer => answer.inputName === input.name);
