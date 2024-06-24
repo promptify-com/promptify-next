@@ -5,7 +5,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import MessageContainer from "./MessageContainer";
 
 interface Props {
-  onRun(): Promise<void>;
+  onRun(): void;
   allowActivateButton?: boolean;
 }
 

@@ -6,18 +6,20 @@ import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { ExecutionContent } from "../common/ExecutionContent";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Button, IconButton, Stack } from "@mui/material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import Done from "@mui/icons-material/Done";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import Replay from "@mui/icons-material/Replay";
+import EditOutlined from "@mui/icons-material/EditOutlined";
 
 interface Props {
   message: IMessage;
   isInitialMessage?: boolean;
   retryExecution?(): void;
+  showInputs?(): void;
 }
 
 interface MessageContentProps {
@@ -63,11 +65,12 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
-export default function Message({ message, isInitialMessage = false, retryExecution }: Props) {
+export default function Message({ message, isInitialMessage = false, retryExecution, showInputs }: Props) {
   const { fromUser, isHighlight, type, text } = message;
   const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const inputs = useAppSelector(store => store.chat?.inputs ?? initialChatState.inputs);
 
   return (
     <MessageContainer message={message}>
@@ -106,23 +109,33 @@ export default function Message({ message, isInitialMessage = false, retryExecut
           alignItems={"center"}
           gap={2}
         >
-          <CustomTooltip title={"Repeat"}>
-            <IconButton
-              onClick={retryExecution}
-              disabled={isGenerating}
-              sx={{
-                ...btnStyle,
-                border: "none",
-                p: "6px",
-                svg: {
-                  width: 22,
-                  height: 22,
-                },
-              }}
-            >
-              <Replay />
-            </IconButton>
-          </CustomTooltip>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={2}
+          >
+            <CustomTooltip title={"Repeat"}>
+              <IconButton
+                onClick={retryExecution}
+                disabled={isGenerating}
+                sx={iconBtnStyle}
+              >
+                <Replay />
+              </IconButton>
+            </CustomTooltip>
+            {!!inputs.length && (
+              <CustomTooltip title={"Edit"}>
+                <IconButton
+                  onClick={showInputs}
+                  disabled={isGenerating}
+                  sx={iconBtnStyle}
+                >
+                  <EditOutlined />
+                </IconButton>
+              </CustomTooltip>
+            )}
+          </Stack>
           <Button
             onClick={() => copyToClipboard(message.text)}
             startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
@@ -148,5 +161,15 @@ const btnStyle = {
   "&:hover": {
     bgcolor: "action.hover",
     color: "onSurface",
+  },
+};
+
+const iconBtnStyle = {
+  ...btnStyle,
+  border: "none",
+  p: "6px",
+  svg: {
+    width: 22,
+    height: 22,
   },
 };

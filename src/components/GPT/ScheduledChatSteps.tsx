@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { initialState, setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChat";
 import Message from "@/components/GPT/Message";
 import CredentialsContainer from "@/components/GPT/CredentialsContainer";
@@ -15,12 +15,11 @@ import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
-import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
+import { kwargsToAnswers } from "@/components/GPTs/helpers";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
 
@@ -49,7 +48,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   });
 
   const isAdmin = useAppSelector(isAdminFn);
-  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
+  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const alreadyScheduled = useRef(workflowScheduled);
@@ -80,26 +79,28 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
       const kwargs = clonedWorkflow.periodic_task?.kwargs;
       if (kwargs) {
-        const parsedKwargs = JSON.parse(kwargs || "{}");
-        const workflowData = parsedKwargs.workflow_data || {};
-
-        const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
-          inputName,
-          required: true,
-          question: ``,
-          answer: answer as PromptInputType,
-          prompt: 0,
-        }));
-
-        dispatch(setAnswers(answers));
+        dispatch(setAnswers(kwargsToAnswers(kwargs)));
       }
     }
   }, [clonedWorkflow, dispatch]);
+
+  const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
+    if (data) {
+      const kwargs = data.periodic_task?.kwargs;
+      dispatch(setAnswers(kwargsToAnswers(kwargs ?? "")));
+    }
+    scrollToInputsForm();
+  };
+
+  const scrollToInputsForm = () => {
+    setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+  };
 
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
+  const showInputsForm = !!inputs.length && !generatedExecution;
 
   return (
     <Stack
@@ -129,6 +130,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   <Message
                     message={message}
                     retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
+                    showInputs={() => cloneExecutionInputs(message.data as IWorkflowCreateResponse)}
                   />
                 )}
 
@@ -179,13 +181,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
           {workflowScheduled && (
             <>
-              {!!inputs.length && (
-                <MessageInputs
-                  message={createMessage({
-                    type: "form",
-                    text: "Please fill out the following details:",
-                  })}
-                />
+              {showInputsForm && (
+                <Box id="inputs_form">
+                  <MessageInputs
+                    message={createMessage({
+                      type: "form",
+                      text: "Please fill out the following details:",
+                    })}
+                  />
+                </Box>
               )}
               <RunWorkflowMessage
                 onRun={runWorkflow}

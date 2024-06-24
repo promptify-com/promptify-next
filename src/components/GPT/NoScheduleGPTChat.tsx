@@ -3,12 +3,12 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
-import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import Message from "./Message";
 import MessageInputs from "./MessageInputs";
 import CredentialsContainer from "./CredentialsContainer";
 import RunButton from "@/components/GPT/RunButton";
-import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ChatCredentialsPlaceholder from "./ChatCredentialsPlaceholder";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
@@ -23,6 +23,7 @@ import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
+import { createMessage } from "@/components/Chat/helper";
 
 interface Props {
   messages: IMessage[];
@@ -69,7 +70,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }, 100);
   }, [messages, generatedExecution]);
 
-  const executeWorkflow = async () => {
+  const executeWorkflow = async (answers?: IAnswer[]) => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
@@ -79,7 +80,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
 
       const webhook = extractWebhookPath(clonedWorkflow.nodes);
 
-      const response = await sendMessageAPI(webhook);
+      const response = await sendMessageAPI(webhook, answers);
       if (response && typeof response === "string") {
         if (response.toLowerCase().includes("[error")) {
           failedExecutionHandler();
@@ -102,23 +103,17 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }
   };
 
-  const retryRunWorkflow = async (executionWorkflow: IWorkflowCreateResponse) => {
+  const retryRunWorkflow = async (executionAnswers: IAnswer[]) => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
     }
 
-    const { periodic_task: currentPeriodicTask } = clonedWorkflow;
-    const { periodic_task: executionPeriodicTask } = executionWorkflow;
-    const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
-
-    const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
-
-    if (updatedWorkflow) {
-      executeWorkflow();
-      if (!noInputsChange) {
-        updateWorkflow(structuredClone(clonedWorkflow));
-      }
+    if (executionAnswers?.length) {
+      dispatch(setAnswers(executionAnswers));
     }
+
+    executeWorkflow(executionAnswers);
+    scrollToInputsForm();
   };
 
   const failedExecutionHandler = () => {
@@ -143,12 +138,20 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }
   }, [generatedExecution]);
 
+  const cloneExecutionAnswers = (answers: IAnswer[]) => {
+    if (answers?.length) {
+      dispatch(setAnswers(answers));
+    }
+    scrollToInputsForm();
+  };
+
+  const scrollToInputsForm = () => {
+    setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+  };
+
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun = !hasInputs && areCredentialsStored && showGenerate && currentUser?.id && !isGenerating;
-
-  function showForm(messageType: MessageType): boolean {
-    return Boolean((messageType === "credentials" && !areCredentialsStored) || (messageType === "form" && hasInputs));
-  }
+  const showInputsForm = hasInputs && !generatedExecution;
 
   return (
     <Stack
@@ -181,16 +184,8 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
                 {msg.type === "workflowExecution" && (
                   <Message
                     message={msg}
-                    retryExecution={() => retryRunWorkflow(msg.data as IWorkflowCreateResponse)}
-                  />
-                )}
-
-                {showForm(msg.type) && msg.type === "form" && (
-                  <MessageInputs
-                    allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
-                    onGenerate={executeWorkflow}
-                    message={msg}
-                    isExecuting={isGenerating}
+                    retryExecution={() => retryRunWorkflow(msg.data as IAnswer[])}
+                    showInputs={() => cloneExecutionAnswers(msg.data as IAnswer[])}
                   />
                 )}
 
@@ -205,6 +200,21 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
           ) : (
             <ChatCredentialsPlaceholder />
           )}
+
+          {showInputsForm && (
+            <Box id="inputs_form">
+              <MessageInputs
+                allowGenerate={Boolean(showGenerate || allowNoInputsRun)}
+                onGenerate={executeWorkflow}
+                message={createMessage({
+                  type: "form",
+                  noHeader: true,
+                })}
+                isExecuting={isGenerating}
+              />
+            </Box>
+          )}
+
           {allowNoInputsRun && (
             <Stack
               alignItems={"start"}
