@@ -44,6 +44,7 @@ export interface IChatSliceState {
   chats: IChat[];
   clonedWorkflow?: IWorkflowCreateResponse;
   choiceSelected?: string;
+  gptGenerationStatus: "pending" | "started" | "generated" | "streaming";
 }
 
 export type DocumentFilterStatusType = "draft" | "saved" | null;

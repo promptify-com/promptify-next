@@ -69,7 +69,9 @@ export default function Message({ message, isInitialMessage = false, retryExecut
   const { fromUser, isHighlight, type, text } = message;
   const [copyToClipboard, copyResult] = useCopyToClipboard();
 
-  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const gptGenerationStatus = useAppSelector(
+    state => state.chat?.gptGenerationStatus ?? initialChatState.gptGenerationStatus,
+  );
   const inputs = useAppSelector(store => store.chat?.inputs ?? initialChatState.inputs);
 
   return (
@@ -118,7 +120,7 @@ export default function Message({ message, isInitialMessage = false, retryExecut
             <CustomTooltip title={"Repeat"}>
               <IconButton
                 onClick={retryExecution}
-                disabled={isGenerating}
+                disabled={["started", "streaming"].includes(gptGenerationStatus)}
                 sx={iconBtnStyle}
               >
                 <Replay />
@@ -128,7 +130,7 @@ export default function Message({ message, isInitialMessage = false, retryExecut
               <CustomTooltip title={"Edit"}>
                 <IconButton
                   onClick={showInputs}
-                  disabled={isGenerating}
+                  disabled={["started", "streaming"].includes(gptGenerationStatus)}
                   sx={iconBtnStyle}
                 >
                   <EditOutlined />

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { createMessage } from "@/components/Chat/helper";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { setAreCredentialsStored, setClonedWorkflow } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setClonedWorkflow, setGptGenerationStatus } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
@@ -20,7 +20,6 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useDebounce from "@/hooks/useDebounce";
-import { setGeneratingStatus } from "@/core/store/templatesSlice";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -291,11 +290,13 @@ const useChat = ({ workflow }: Props) => {
         throw new Error("Cloned workflow not found");
       }
 
-      dispatch(setGeneratingStatus(true));
+      dispatch(setGptGenerationStatus("started"));
 
       const webhook = extractWebhookPath(clonedWorkflow.nodes);
-
       const response = await sendMessageAPI(webhook);
+
+      dispatch(setGptGenerationStatus("generated"));
+
       if (response && typeof response === "string") {
         if (response.toLowerCase().includes("[error")) {
           failedExecutionHandler();
@@ -312,6 +313,7 @@ const useChat = ({ workflow }: Props) => {
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
+            dispatch(setGptGenerationStatus("streaming"));
             await streamExecutionHandler(response);
           }
         }
@@ -319,7 +321,7 @@ const useChat = ({ workflow }: Props) => {
     } catch (error) {
       failedExecutionHandler();
     } finally {
-      dispatch(setGeneratingStatus(false));
+      dispatch(setGptGenerationStatus("pending"));
     }
   };
 
