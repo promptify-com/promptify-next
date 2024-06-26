@@ -6,7 +6,7 @@ import { setAreCredentialsStored, setClonedWorkflow, setGptGenerationStatus } fr
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
-import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import { useSaveGPTDocumentMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
@@ -54,6 +54,7 @@ const useChat = ({ workflow }: Props) => {
   const { streamExecutionHandler } = useGenerateExecution({});
 
   const [updateWorkflowHandler] = useUpdateWorkflowMutation();
+  const [saveAsGPTDocument] = useSaveGPTDocumentMutation();
 
   const updateWorkflow = async (workflowData: IWorkflowCreateResponse) => {
     try {
@@ -344,6 +345,26 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
+  const saveGPTDocument = async (executionWorkflow: IWorkflowCreateResponse, content: string) => {
+    if (!executionWorkflow) {
+      return false;
+    }
+
+    try {
+      await saveAsGPTDocument({
+        output: content,
+        title: executionWorkflow.name,
+        workflow_id: executionWorkflow.id,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+    }
+
+    return false;
+  };
+
   const failedExecutionHandler = () => {
     const failMessage = createMessage({
       type: "text",
@@ -373,6 +394,7 @@ const useChat = ({ workflow }: Props) => {
     removeProvider,
     runWorkflow,
     retryRunWorkflow,
+    saveGPTDocument,
   };
 };
 

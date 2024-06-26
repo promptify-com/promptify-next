@@ -18,7 +18,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
-import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import { useSaveGPTDocumentMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
 import { createMessage } from "@/components/Chat/helper";
@@ -49,6 +49,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
   const { streamExecutionHandler } = useGenerateExecution({});
 
   const [updateWorkflowHandler] = useUpdateWorkflowMutation();
+  const [saveAsGPTDocument] = useSaveGPTDocumentMutation();
 
   const updateWorkflow = async (workflowData: IWorkflowCreateResponse) => {
     try {
@@ -151,6 +152,25 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     }
     scrollToInputsForm();
   };
+  const saveGPTDocument = async (_: IWorkflowCreateResponse, content: string) => {
+    if (!clonedWorkflow) {
+      throw new Error("Cloned workflow not found");
+    }
+
+    try {
+      await saveAsGPTDocument({
+        output: content,
+        title: clonedWorkflow.name,
+        workflow_id: clonedWorkflow.id,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+    }
+
+    return false;
+  };
 
   const scrollToInputsForm = () => {
     setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
@@ -193,6 +213,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
                     message={msg}
                     retryExecution={() => retryRunWorkflow(msg.data as IAnswer[])}
                     showInputs={() => cloneExecutionAnswers(msg.data as IAnswer[])}
+                    saveAsDocument={() => saveGPTDocument(msg.data as IWorkflowCreateResponse, msg.text)}
                   />
                 )}
 

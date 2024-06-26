@@ -43,6 +43,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     removeProvider,
     runWorkflow,
     retryRunWorkflow,
+    saveGPTDocument,
   } = useChat({
     workflow,
   });
@@ -131,6 +132,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     message={message}
                     retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
                     showInputs={() => cloneExecutionInputs(message.data as IWorkflowCreateResponse)}
+                    saveAsDocument={() => saveGPTDocument(message.data as IWorkflowCreateResponse, message.text)}
                   />
                 )}
 
