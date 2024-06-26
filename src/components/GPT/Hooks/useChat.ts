@@ -354,7 +354,7 @@ const useChat = ({ workflow }: Props) => {
       await saveAsGPTDocument({
         output: content,
         title: executionWorkflow.name,
-        workflow: executionWorkflow.id,
+        workflow_id: executionWorkflow.id,
       });
 
       return true;

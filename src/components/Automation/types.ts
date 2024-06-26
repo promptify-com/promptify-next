@@ -231,7 +231,7 @@ export interface IWorkflowCategory {
 export interface IGPTDocumentPayload {
   title: string;
   output: string;
-  workflow: string;
+  workflow_id: string;
 }
 
 export interface IGPTDocumentResponse {

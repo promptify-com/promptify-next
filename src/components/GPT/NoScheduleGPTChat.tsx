@@ -161,7 +161,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
       await saveAsGPTDocument({
         output: content,
         title: clonedWorkflow.name,
-        workflow: clonedWorkflow.id,
+        workflow_id: clonedWorkflow.id,
       });
 
       return true;
