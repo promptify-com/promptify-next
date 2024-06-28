@@ -31,7 +31,7 @@ function CardTemplate({ template }: CardTemplateProps) {
   const { handleClickTag } = usePromptsFilter();
   const pathname = router.pathname;
   const isUserPage = pathname === "/users/[username]";
-  console.log({ isUserPage, pathname });
+
   const { tags } = template;
   const imgPriority = observer?.isIntersecting;
   const displayedTags = tags.slice(0, 2);
