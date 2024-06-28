@@ -196,6 +196,10 @@ function CardTemplate({ template }: CardTemplateProps) {
                 direction={"row"}
                 alignItems={"center"}
                 gap={1}
+                onClick={e => {
+                  e.preventDefault();
+                  router.push(`/users/${template.created_by?.username}`);
+                }}
               >
                 <Image
                   src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
