@@ -4,17 +4,20 @@ import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import FormInput from "@/components/GPT/FormInput";
 import MessageContainer from "@/components/GPT/MessageContainer";
-import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import RunButton from "@/components/GPT/RunButton";
+import { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   message?: IMessage;
   allowGenerate?: boolean;
   onGenerate?: () => void;
   isExecuting?: boolean;
+  answers?: IAnswer[];
+  disabled?: boolean;
 }
 
-function MessageInputs({ message, onGenerate, allowGenerate, isExecuting }: Props) {
+function MessageInputs({ message, onGenerate, allowGenerate, isExecuting, answers = [], disabled }: Props) {
   const inputs = useAppSelector(state => state.chat?.inputs ?? initialChatState.inputs);
 
   return (
@@ -63,12 +66,17 @@ function MessageInputs({ message, onGenerate, allowGenerate, isExecuting }: Prop
           >
             WORKFLOW Information
           </Typography>
-          {inputs.map(input => (
-            <FormInput
-              key={input.name}
-              input={input}
-            />
-          ))}
+          {inputs.map(input => {
+            const value = answers.find(answer => answer.inputName === input.name);
+            return (
+              <FormInput
+                key={input.name}
+                input={input}
+                answer={value}
+                disabled={disabled}
+              />
+            );
+          })}
         </Stack>
         {allowGenerate && (
           <RunButton

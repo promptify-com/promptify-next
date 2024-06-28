@@ -13,6 +13,10 @@ import Done from "@mui/icons-material/Done";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import Replay from "@mui/icons-material/Replay";
+import MessageInputs from "./MessageInputs";
+import { createMessage } from "../Chat/helper";
+import { getWorkflowInputsValues } from "../GPTs/helpers";
+import { IWorkflowCreateResponse } from "../Automation/types";
 
 interface Props {
   message: IMessage;
@@ -68,9 +72,17 @@ export default function Message({ message, isInitialMessage = false, retryExecut
   const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const answers = type === "workflowExecution" ? getWorkflowInputsValues(message.data as IWorkflowCreateResponse) : [];
 
   return (
     <MessageContainer message={message}>
+      {type === "workflowExecution" && (
+        <MessageInputs
+          message={createMessage({ type: "form", noHeader: true })}
+          answers={answers}
+          disabled
+        />
+      )}
       <Typography
         fontSize={14}
         fontWeight={500}

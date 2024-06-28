@@ -22,6 +22,8 @@ import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
 import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { IAnswer } from "../Prompt/Types/chat";
+import { PromptInputType } from "../Prompt/Types";
 
 interface IRelation {
   nextNode: string;
@@ -523,4 +525,24 @@ export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart:
   }
 
   return dates;
+};
+
+export const getWorkflowInputsValues = (workflow: IWorkflowCreateResponse) => {
+  let values: IAnswer[] = [];
+
+  const kwargs = workflow.periodic_task?.kwargs;
+  if (kwargs) {
+    const parsedKwargs = JSON.parse(kwargs || "{}");
+    const workflowData = parsedKwargs.workflow_data || {};
+
+    values = Object.entries(workflowData).map(([inputName, answer]) => ({
+      inputName,
+      required: true,
+      question: ``,
+      answer: answer as PromptInputType,
+      prompt: 0,
+    }));
+  }
+
+  return values;
 };

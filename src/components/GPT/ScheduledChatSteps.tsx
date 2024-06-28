@@ -23,6 +23,7 @@ import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
+import { getWorkflowInputsValues } from "../GPTs/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -78,21 +79,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       initializeCredentials();
       workflowLoaded.current = true;
 
-      const kwargs = clonedWorkflow.periodic_task?.kwargs;
-      if (kwargs) {
-        const parsedKwargs = JSON.parse(kwargs || "{}");
-        const workflowData = parsedKwargs.workflow_data || {};
-
-        const answers: IAnswer[] = Object.entries(workflowData).map(([inputName, answer]) => ({
-          inputName,
-          required: true,
-          question: ``,
-          answer: answer as PromptInputType,
-          prompt: 0,
-        }));
-
-        dispatch(setAnswers(answers));
-      }
+      const answers = getWorkflowInputsValues(clonedWorkflow);
+      dispatch(setAnswers(answers));
     }
   }, [clonedWorkflow, dispatch]);
 
