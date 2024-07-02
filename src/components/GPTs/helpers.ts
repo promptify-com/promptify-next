@@ -22,10 +22,10 @@ import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
 import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { IAnswer } from "../Prompt/Types/chat";
-import { PromptInputType } from "../Prompt/Types";
+import { IAnswer } from "@/components/Prompt/Types/chat";
+import { PromptInputType } from "@/components/Prompt/Types";
 
-interface IRelation {
+export interface IRelation {
   nextNode: string;
   type: string;
   iconUrl: string;

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { initialState, setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChat";
 import Message from "@/components/GPT/Message";
 import CredentialsContainer from "@/components/GPT/CredentialsContainer";
@@ -15,8 +15,6 @@ import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlaceholder";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
-import type { PromptInputType } from "@/components/Prompt/Types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
@@ -45,12 +43,13 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     removeProvider,
     runWorkflow,
     retryRunWorkflow,
+    saveGPTDocument,
   } = useChat({
     workflow,
   });
 
   const isAdmin = useAppSelector(isAdminFn);
-  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialState);
+  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const alreadyScheduled = useRef(workflowScheduled);
@@ -84,10 +83,22 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     }
   }, [clonedWorkflow, dispatch]);
 
+  const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
+    if (data) {
+      dispatch(setAnswers(getWorkflowInputsValues(data)));
+    }
+    scrollToInputsForm();
+  };
+
+  const scrollToInputsForm = () => {
+    setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+  };
+
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
   const lastMessage = messages[messages.length - 1];
   const isLastExecution = lastMessage?.type === "workflowExecution";
+  const showInputsForm = !!inputs.length && !generatedExecution;
 
   return (
     <Stack
@@ -117,6 +128,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   <Message
                     message={message}
                     retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
+                    showInputs={() => cloneExecutionInputs(message.data as IWorkflowCreateResponse)}
+                    saveAsDocument={() => saveGPTDocument(message.data as IWorkflowCreateResponse, message.text)}
                   />
                 )}
 
@@ -167,13 +180,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
           {workflowScheduled && (
             <>
-              {!!inputs.length && (
-                <MessageInputs
-                  message={createMessage({
-                    type: "form",
-                    text: "Please fill out the following details:",
-                  })}
-                />
+              {showInputsForm && (
+                <Box id="inputs_form">
+                  <MessageInputs
+                    message={createMessage({
+                      type: "form",
+                      text: "Please fill out the following details:",
+                    })}
+                  />
+                </Box>
               )}
               <RunWorkflowMessage
                 onRun={runWorkflow}

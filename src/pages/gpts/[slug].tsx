@@ -5,7 +5,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
-import chatSlice, { setClonedWorkflow, setInputs } from "@/core/store/chatSlice";
+import chatSlice, { setClonedWorkflow, setGptGenerationStatus, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import executionsSlice from "@/core/store/executionsSlice";
@@ -81,6 +81,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
 
     return () => {
       dispatch(setClonedWorkflow(undefined));
+      dispatch(setGptGenerationStatus("pending"));
     };
   }, [isValidUser]);
 

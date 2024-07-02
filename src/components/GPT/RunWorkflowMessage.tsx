@@ -3,14 +3,19 @@ import Stack from "@mui/material/Stack";
 import RunButton from "./RunButton";
 import { useAppSelector } from "@/hooks/useStore";
 import MessageContainer from "./MessageContainer";
+import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
+import { Box } from "@mui/material";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
-  onRun(): Promise<void>;
+  onRun(): void;
   allowActivateButton?: boolean;
 }
 
 export default function runWorkflowMessage({ onRun, allowActivateButton }: Props) {
-  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const gptGenerationStatus = useAppSelector(
+    state => state.chat?.gptGenerationStatus ?? initialState.gptGenerationStatus,
+  );
 
   return (
     <MessageContainer>
@@ -19,25 +24,28 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
         alignItems={"center"}
         gap={2}
         sx={{
-          width: "fit-content",
+          width: gptGenerationStatus === "started" ? "68%" : "fit-content",
           p: "16px 20px",
           borderRadius: "0px 16px 16px 16px",
           bgcolor: "#DFDAFF",
         }}
       >
         <Typography
-          fontSize={14}
-          fontWeight={500}
-          color={"onSurface"}
+          sx={{
+            fontSize: 14,
+            fontWeight: 500,
+            color: "onSurface",
+            ...(gptGenerationStatus === "started" && { width: "45%" }),
+          }}
         >
           Ready to test this GPT
         </Typography>
-        <RunButton
+        <RunButtonWithProgressBar
           onClick={onRun}
-          disabled={!allowActivateButton || isGenerating}
-          loading={isGenerating}
           text="Run"
-          inline
+          sx={{ p: "8px 24px" }}
+          loading={gptGenerationStatus === "started"}
+          disabled={gptGenerationStatus !== "pending"}
         />
       </Stack>
     </MessageContainer>

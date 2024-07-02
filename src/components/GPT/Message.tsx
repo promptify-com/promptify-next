@@ -6,7 +6,7 @@ import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { ExecutionContent } from "../common/ExecutionContent";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Button, IconButton, Stack } from "@mui/material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import Done from "@mui/icons-material/Done";
@@ -17,11 +17,16 @@ import MessageInputs from "./MessageInputs";
 import { createMessage } from "../Chat/helper";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
 import { IWorkflowCreateResponse } from "../Automation/types";
+import EditOutlined from "@mui/icons-material/EditOutlined";
+import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   message: IMessage;
   isInitialMessage?: boolean;
   retryExecution?(): void;
+  showInputs?(): void;
+  saveAsDocument?(): Promise<boolean>;
 }
 
 interface MessageContentProps {
@@ -30,7 +35,7 @@ interface MessageContentProps {
   onStreamingFinished?: () => void;
 }
 
-const MessageContentWithHTML = memo(({ content }: { content: string }) => {
+export const MessageContentWithHTML = memo(({ content }: { content: string }) => {
   const [html, setHtml] = useState("");
 
   useEffect(() => {
@@ -67,12 +72,40 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
-export default function Message({ message, isInitialMessage = false, retryExecution }: Props) {
+export default function Message({
+  message,
+  isInitialMessage = false,
+  retryExecution,
+  showInputs,
+  saveAsDocument,
+}: Props) {
   const { fromUser, isHighlight, type, text } = message;
+  const dispatch = useAppDispatch();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
+  const [documentSaved, setSaveDocument] = useState(false);
 
-  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const gptGenerationStatus = useAppSelector(
+    state => state.chat?.gptGenerationStatus ?? initialChatState.gptGenerationStatus,
+  );
+
+  const inputs = useAppSelector(store => store.chat?.inputs ?? initialChatState.inputs);
   const answers = type === "workflowExecution" ? getWorkflowInputsValues(message.data as IWorkflowCreateResponse) : [];
+
+  const saveDocument = async () => {
+    if (typeof saveAsDocument !== "function" || documentSaved) {
+      return;
+    }
+
+    setSaveDocument(true);
+
+    const saved = saveAsDocument();
+
+    if (!saved) {
+      setSaveDocument(false);
+      dispatch(setToast({ message: "Document was not saved, please retry again.", severity: "warning" }));
+      return;
+    }
+  };
 
   return (
     <MessageContainer message={message}>
@@ -118,23 +151,42 @@ export default function Message({ message, isInitialMessage = false, retryExecut
           alignItems={"center"}
           gap={2}
         >
-          <CustomTooltip title={"Repeat"}>
-            <IconButton
-              onClick={retryExecution}
-              disabled={isGenerating}
-              sx={{
-                ...btnStyle,
-                border: "none",
-                p: "6px",
-                svg: {
-                  width: 22,
-                  height: 22,
-                },
-              }}
-            >
-              <Replay />
-            </IconButton>
-          </CustomTooltip>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={2}
+          >
+            <CustomTooltip title={"Repeat"}>
+              <IconButton
+                onClick={retryExecution}
+                disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                sx={iconBtnStyle}
+              >
+                <Replay />
+              </IconButton>
+            </CustomTooltip>
+            {!!inputs.length && (
+              <CustomTooltip title={"Edit"}>
+                <IconButton
+                  onClick={showInputs}
+                  disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                  sx={iconBtnStyle}
+                >
+                  <EditOutlined />
+                </IconButton>
+              </CustomTooltip>
+            )}
+            <CustomTooltip title={documentSaved ? "Document saved" : "Save as document"}>
+              <IconButton
+                onClick={saveDocument}
+                disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
+                sx={iconBtnStyle}
+              >
+                <CreateNewFolderOutlined />
+              </IconButton>
+            </CustomTooltip>
+          </Stack>
           <Button
             onClick={() => copyToClipboard(message.text)}
             startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
@@ -160,5 +212,15 @@ const btnStyle = {
   "&:hover": {
     bgcolor: "action.hover",
     color: "onSurface",
+  },
+};
+
+const iconBtnStyle = {
+  ...btnStyle,
+  border: "none",
+  p: "6px",
+  svg: {
+    width: 22,
+    height: 22,
   },
 };

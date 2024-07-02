@@ -29,6 +29,7 @@ import templatesSlice, { updatePopupTemplate } from "@/core/store/templatesSlice
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import store from "@/core/store";
+import GPTDocumentsContainer from "@/components/Documents/GPTDocumentsContainer";
 
 const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
@@ -186,6 +187,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
               isLoading={isTemplatesLoading}
             />
           )}
+          <GPTDocumentsContainer />
           <PaginatedList
             loading={isExecutionsFetching}
             hasNext={hasNext}

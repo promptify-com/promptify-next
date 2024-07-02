@@ -7,6 +7,8 @@ import type {
   UserWorkflowExecutionsResponse,
   UserWorkflowsResponse,
   IWorkflowCategory,
+  IGPTDocumentPayload,
+  IGPTDocumentResponse,
 } from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
@@ -160,6 +162,27 @@ export const workflowsApi = baseApi.injectEndpoints({
           invalidatesTags: ["Workflow"],
         }),
       }),
+      saveGPTDocument: builder.mutation<void, IGPTDocumentPayload>({
+        query: data => ({
+          url: `/api/n8n/documents`,
+          method: "post",
+          data,
+        }),
+      }),
+      getGPTDocuments: builder.query<IGPTDocumentResponse[], void>({
+        query: () => ({
+          url: `/api/n8n/documents`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+      }),
+      updateGPTDocument: builder.mutation<void, { workflowDbId: number; data: Partial<IGPTDocumentPayload> }>({
+        query: ({ workflowDbId, data }) => ({
+          url: `/api/n8n/documents/${workflowDbId}`,
+          method: "patch",
+          data,
+        }),
+      }),
     };
   },
 });
@@ -182,4 +205,7 @@ export const {
   useDislikeWorkflowMutation,
   usePauseWorkflowMutation,
   useResumeWorkflowMutation,
+  useSaveGPTDocumentMutation,
+  useGetGPTDocumentsQuery,
+  useUpdateGPTDocumentMutation,
 } = workflowsApi;

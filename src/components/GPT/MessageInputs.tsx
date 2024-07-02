@@ -7,6 +7,7 @@ import MessageContainer from "@/components/GPT/MessageContainer";
 import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import RunButton from "@/components/GPT/RunButton";
 import { IPromptInput } from "@/common/types/prompt";
+import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
 
 interface Props {
   message?: IMessage;
@@ -15,9 +16,20 @@ interface Props {
   isExecuting?: boolean;
   answers?: IAnswer[];
   disabled?: boolean;
+  progressBarButton?: boolean;
+  disableGenerateBtn?: boolean;
 }
 
-function MessageInputs({ message, onGenerate, allowGenerate, isExecuting, answers = [], disabled }: Props) {
+function MessageInputs({
+  message,
+  onGenerate,
+  allowGenerate,
+  isExecuting,
+  answers = [],
+  disabled,
+  progressBarButton,
+  disableGenerateBtn,
+}: Props) {
   const inputs = useAppSelector(state => state.chat?.inputs ?? initialChatState.inputs);
 
   return (
@@ -78,13 +90,21 @@ function MessageInputs({ message, onGenerate, allowGenerate, isExecuting, answer
             );
           })}
         </Stack>
-        {allowGenerate && (
-          <RunButton
-            loading={isExecuting}
-            onClick={() => onGenerate?.()}
-            showIcon
-          />
-        )}
+        {allowGenerate ? (
+          progressBarButton ? (
+            <RunButtonWithProgressBar
+              loading={isExecuting}
+              onClick={() => onGenerate?.()}
+              disabled={disableGenerateBtn}
+            />
+          ) : (
+            <RunButton
+              loading={isExecuting}
+              onClick={() => onGenerate?.()}
+              showIcon
+            />
+          )
+        ) : null}
       </Stack>
     </MessageContainer>
   );

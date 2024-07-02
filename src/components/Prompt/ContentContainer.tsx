@@ -8,38 +8,23 @@ import ForumOutlined from "@mui/icons-material/ForumOutlined";
 import DataObject from "@mui/icons-material/DataObject";
 import Instructions from "./Instructions";
 import ExecutionExample from "./ExecutionExample";
-
 import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
 import useBrowser from "@/hooks/useBrowser";
 import lazy from "next/dynamic";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import ApiAccessPlaceholder from "./ApiAccessPlaceholder";
+import PromptFeedbackPlaceholder from "./PromptFeedbackPlaceholder";
 
 const ApiAccess = lazy(() => import("./ApiAccess"), { ssr: false });
 const Feedback = lazy(() => import("./Feedback"), { ssr: false });
 const Footer = lazy(() => import("../Footer"), { ssr: false });
 
 const ScrollTabs: Link[] = [
-  {
-    name: "instructions",
-    title: "Prompt Instructions",
-    icon: <DataObject />,
-  },
-  {
-    name: "example",
-    title: "Example Content",
-    icon: <ArticleOutlined />,
-  },
-  {
-    name: "api",
-    title: "API Access",
-    icon: <Api />,
-  },
-  {
-    name: "feedback",
-    title: "Feedback",
-    icon: <ForumOutlined />,
-  },
+  { name: "instructions", title: "Prompt Instructions", icon: <DataObject /> },
+  { name: "example", title: "Example Content", icon: <ArticleOutlined /> },
+  { name: "api", title: "API Access", icon: <Api /> },
+  { name: "feedback", title: "Feedback", icon: <ForumOutlined /> },
 ];
 
 interface Props {
@@ -50,9 +35,12 @@ interface Props {
 export default function ContentContainer({ template, tabsFixed }: Props) {
   const { isMobile } = useBrowser();
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const apiAccessContainerRef = useRef<HTMLDivElement | null>(null);
   const feedbackContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const activeSectionRef = useRef<string | null>(null);
 
   const observers = {
     apiAccessObserver: useIntersectionObserver(apiAccessContainerRef, { threshold: 0.5 }),
@@ -60,30 +48,35 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
   };
 
   const handleTabChange = (tab: Link) => {
+    setIsScrolling(true);
     setSelectedTab(tab);
+    activeSectionRef.current = tab.name;
     const section = document.getElementById(tab.name);
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    setTimeout(() => {
+      setIsScrolling(false);
+      activeSectionRef.current = null;
+    }, 1000);
   };
 
   useEffect(() => {
     const sectionRatios = new Map();
-
+    if (isScrolling) return;
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           sectionRatios.set(entry.target.id, entry.intersectionRatio);
-
           let maxRatio = 0;
           let currentSectionId: string | null = null;
-
           sectionRatios.forEach((ratio, id) => {
             if (ratio > maxRatio) {
               maxRatio = ratio;
               currentSectionId = id;
             }
           });
-
-          if (currentSectionId) {
+          if (currentSectionId && currentSectionId !== activeSectionRef.current && !isScrolling) {
+            setIsScrolling(false);
             const newSelectedTab = ScrollTabs.find(tab => tab.name === currentSectionId);
             if (newSelectedTab) setSelectedTab(newSelectedTab);
           }
@@ -97,11 +90,14 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
 
     ScrollTabs.forEach(tab => {
       const section = document.getElementById(tab.name);
-      if (section) observer.observe(section);
+      if (section) {
+        observer.observe(section);
+        setIsScrolling(false);
+      }
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [isScrolling]);
 
   return (
     <Box>
@@ -137,7 +133,6 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                   flex: 1,
                   minWidth: "fit-content",
                   fontSize: 12,
-
                   p: "8px 16px",
                   color: selected ? "onSecondary" : "onSurface",
                   bgcolor: selected ? "secondary.main" : "transparent",
@@ -169,9 +164,10 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           ["@media (min-width: 768px) and (max-width: 1024px)"]: {
             minHeight: "50px",
           },
+          transition: "all 0.5s ease-in-out",
         }}
       >
-        {observers.apiAccessObserver?.isIntersecting && <ApiAccess template={template} />}
+        {observers.apiAccessObserver?.isIntersecting ? <ApiAccess template={template} /> : <ApiAccessPlaceholder />}
       </Box>
       <Box
         id="feedback"
@@ -180,9 +176,10 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           ["@media (min-width: 768px) and (max-width: 1024px)"]: {
             minHeight: "50px",
           },
+          transition: "all 0.5s ease-in-out",
         }}
       >
-        {observers.feedbackObserver?.isIntersecting && <Feedback />}
+        {observers.feedbackObserver?.isIntersecting ? <Feedback /> : <PromptFeedbackPlaceholder />}
       </Box>
       {isMobile && <Footer />}
     </Box>

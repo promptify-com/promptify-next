@@ -4,7 +4,6 @@ import type {
   ITemplateExecutionPut,
   ResponseType,
   TemplateExecutionsWithPagination,
-  Templates,
   TemplatesExecutions,
 } from "./dto/templates";
 import { getSearchParams } from "./templates";
