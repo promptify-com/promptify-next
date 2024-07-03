@@ -7,7 +7,9 @@ import { ExecutionContent } from "../common/ExecutionContent";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { initialState as initialChatState, setIsSimulationStreaming } from "@/core/store/chatSlice";
-import { Button, IconButton, Stack } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import Done from "@mui/icons-material/Done";
 import ContentCopy from "@mui/icons-material/ContentCopy";
@@ -16,7 +18,7 @@ import Replay from "@mui/icons-material/Replay";
 import MessageInputs from "./MessageInputs";
 import { createMessage } from "../Chat/helper";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
-import { IWorkflowCreateResponse } from "../Automation/types";
+import type { IWorkflowCreateResponse } from "../Automation/types";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
 import { setToast } from "@/core/store/toastSlice";
@@ -108,7 +110,7 @@ export default function Message({
   };
 
   return (
-    <MessageContainer message={message}>
+    <Stack sx={{ gap: "24px" }}>
       {type === "workflowExecution" && (
         <MessageInputs
           message={createMessage({ type: "form", noHeader: true })}
@@ -116,88 +118,90 @@ export default function Message({
           disabled
         />
       )}
-      <Typography
-        fontSize={14}
-        fontWeight={500}
-        color={"onSurface"}
-        sx={{
-          p: "16px 20px",
-          borderRadius: fromUser
-            ? "100px 100px 100px 0px"
-            : isInitialMessage
-              ? "0px 100px 100px 100px"
-              : "0px 16px 16px 16px",
-          bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
-        }}
-      >
-        {["workflowExecution", "html"].includes(type) ? (
-          <Stack
-            width={"100%"}
-            minHeight={"40px"}
-          >
-            <MessageContentWithHTML content={text} />
-          </Stack>
-        ) : (
-          <MessageContent
-            content={text}
-            shouldStream={!fromUser}
-          />
-        )}
-      </Typography>
-      {type === "workflowExecution" && (
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          gap={2}
+      <MessageContainer message={message}>
+        <Typography
+          fontSize={14}
+          fontWeight={500}
+          color={"onSurface"}
+          sx={{
+            p: "16px 20px",
+            borderRadius: fromUser
+              ? "100px 100px 100px 0px"
+              : isInitialMessage
+                ? "0px 100px 100px 100px"
+                : "0px 16px 16px 16px",
+            bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
+          }}
         >
+          {["workflowExecution", "html"].includes(type) ? (
+            <Stack
+              width={"100%"}
+              minHeight={"40px"}
+            >
+              <MessageContentWithHTML content={text} />
+            </Stack>
+          ) : (
+            <MessageContent
+              content={text}
+              shouldStream={!fromUser}
+            />
+          )}
+        </Typography>
+        {type === "workflowExecution" && (
           <Stack
             direction={"row"}
             justifyContent={"space-between"}
             alignItems={"center"}
             gap={2}
           >
-            <CustomTooltip title={"Repeat"}>
-              <IconButton
-                onClick={retryExecution}
-                disabled={["started", "streaming"].includes(gptGenerationStatus)}
-                sx={iconBtnStyle}
-              >
-                <Replay />
-              </IconButton>
-            </CustomTooltip>
-            {!!inputs.length && (
-              <CustomTooltip title={"Edit"}>
+            <Stack
+              direction={"row"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              gap={2}
+            >
+              <CustomTooltip title={"Repeat"}>
                 <IconButton
-                  onClick={showInputs}
+                  onClick={retryExecution}
                   disabled={["started", "streaming"].includes(gptGenerationStatus)}
                   sx={iconBtnStyle}
                 >
-                  <EditOutlined />
+                  <Replay />
                 </IconButton>
               </CustomTooltip>
-            )}
-            <CustomTooltip title={documentSaved ? "Document saved" : "Save as document"}>
-              <IconButton
-                onClick={saveDocument}
-                disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
-                sx={iconBtnStyle}
-              >
-                <CreateNewFolderOutlined />
-              </IconButton>
-            </CustomTooltip>
+              {!!inputs.length && (
+                <CustomTooltip title={"Edit"}>
+                  <IconButton
+                    onClick={showInputs}
+                    disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                    sx={iconBtnStyle}
+                  >
+                    <EditOutlined />
+                  </IconButton>
+                </CustomTooltip>
+              )}
+              <CustomTooltip title={documentSaved ? "Document saved" : "Save as document"}>
+                <IconButton
+                  onClick={saveDocument}
+                  disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
+                  sx={iconBtnStyle}
+                >
+                  <CreateNewFolderOutlined />
+                </IconButton>
+              </CustomTooltip>
+            </Stack>
+            <Button
+              onClick={() => copyToClipboard(message.text)}
+              startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
+              variant="text"
+              sx={btnStyle}
+            >
+              Copy
+            </Button>
           </Stack>
-          <Button
-            onClick={() => copyToClipboard(message.text)}
-            startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
-            variant="text"
-            sx={btnStyle}
-          >
-            Copy
-          </Button>
-        </Stack>
-      )}
-    </MessageContainer>
+        )}
+      </MessageContainer>
+    </Stack>
   );
 }
 
