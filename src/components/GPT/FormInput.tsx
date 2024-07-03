@@ -4,7 +4,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-
 import RenderInputType from "@/components/Prompt/Common/Chat/Inputs";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -16,14 +15,16 @@ import type { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   input: IPromptInput;
+  answer?: IAnswer;
+  disabled?: boolean;
 }
 
-function FormInput({ input }: Props) {
+function FormInput({ input, answer, disabled }: Props) {
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat ?? initialChatState);
   const dispatch = useAppDispatch();
 
   const { fullName, required, type, name: inputName, question, prompt } = input;
-  const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
+  const value = answer?.answer ?? answers.find(answer => answer.inputName === inputName)?.answer ?? "";
   const isTextualType = ["text", "number", "integer"].includes(type);
 
   const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
@@ -106,6 +107,7 @@ function FormInput({ input }: Props) {
           input={input}
           value={value}
           onChange={onChange}
+          disabled={disabled}
         />
       </Stack>
       <Stack

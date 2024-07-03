@@ -527,17 +527,22 @@ export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart:
   return dates;
 };
 
-export const kwargsToAnswers = (kwargs: string): IAnswer[] => {
-  const parsedKwargs = JSON.parse(kwargs || "{}");
-  const workflowData = parsedKwargs.workflow_data || {};
+export const getWorkflowInputsValues = (workflow: IWorkflowCreateResponse) => {
+  let values: IAnswer[] = [];
 
-  const answers = Object.entries(workflowData).map(([inputName, answer]) => ({
-    inputName,
-    required: true,
-    question: ``,
-    answer: answer as PromptInputType,
-    prompt: 0,
-  }));
+  const kwargs = workflow.periodic_task?.kwargs;
+  if (kwargs) {
+    const parsedKwargs = JSON.parse(kwargs || "{}");
+    const workflowData = parsedKwargs.workflow_data || {};
 
-  return answers;
+    values = Object.entries(workflowData).map(([inputName, answer]) => ({
+      inputName,
+      required: true,
+      question: ``,
+      answer: answer as PromptInputType,
+      prompt: 0,
+    }));
+  }
+
+  return values;
 };

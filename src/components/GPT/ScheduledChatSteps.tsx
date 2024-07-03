@@ -19,9 +19,9 @@ import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
-import { kwargsToAnswers } from "@/components/GPTs/helpers";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
+import { getWorkflowInputsValues } from "../GPTs/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -78,17 +78,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       initializeCredentials();
       workflowLoaded.current = true;
 
-      const kwargs = clonedWorkflow.periodic_task?.kwargs;
-      if (kwargs) {
-        dispatch(setAnswers(kwargsToAnswers(kwargs)));
-      }
+      const answers = getWorkflowInputsValues(clonedWorkflow);
+      dispatch(setAnswers(answers));
     }
   }, [clonedWorkflow, dispatch]);
 
   const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
     if (data) {
-      const kwargs = data.periodic_task?.kwargs;
-      dispatch(setAnswers(kwargsToAnswers(kwargs ?? "")));
+      dispatch(setAnswers(getWorkflowInputsValues(data)));
     }
     scrollToInputsForm();
   };

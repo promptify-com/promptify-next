@@ -12,9 +12,10 @@ interface Props {
   input: IPromptInput;
   value: PromptInputType;
   onChange: (value: PromptInputType) => void;
+  disabled?: boolean;
 }
 
-function RenderInputType({ input, value: initialValue, onChange }: Props) {
+function RenderInputType({ input, value: initialValue, onChange, disabled }: Props) {
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
   const isSimulationStreaming = useAppSelector(state => state.chat?.isSimulationStreaming ?? false);
 
@@ -40,6 +41,7 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
           onChange={handleOnChange}
           value={initialValue}
           isGenerating={isGenerating}
+          disabled={disabled}
         />
       );
     case "choices":
@@ -49,6 +51,7 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
           value={initialValue}
           onChange={handleOnChange}
           isGenerating={isGenerating}
+          disabled={disabled}
         />
       );
     case "file":
@@ -57,6 +60,7 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
           input={input}
           value={initialValue as File}
           onChange={handleOnChange}
+          disabled={disabled}
         />
       );
     case "credentials":
@@ -75,6 +79,7 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
           input={input}
           value={localValue}
           onChange={handleOnChange}
+          disabled={disabled}
         />
       );
   }
