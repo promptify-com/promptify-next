@@ -31,7 +31,7 @@ function MessageSender({
   useEffect(() => {
     if (!queryPrompt) return;
 
-    setMessageSenderValue(queryPrompt);
+    onSubmit(queryPrompt);
 
     delete router.query.prompt;
     router.replace({ pathname: router.pathname, query: router.query }, undefined, {
