@@ -6,6 +6,7 @@ import AccordionBox from "@/components/common/AccordionBox";
 import { Prompts } from "@/core/api/dto/prompts";
 import Image from "../design-system/Image";
 import { highlight } from "@/common/constants";
+import Tooltip from "@mui/material/Tooltip";
 
 interface Props {
   prompts: Prompts[];
@@ -24,14 +25,37 @@ export default function Instructions({ prompts }: Props) {
         if (match.index > lastIndex) {
           result.push(content.slice(lastIndex, match.index));
         }
-        result.push(
-          <span
-            key={`${match[0]}-${match.index}`}
-            className={className}
-          >
-            {match[0]}
-          </span>,
-        );
+
+        if (className === "input-variable") {
+          // Extract the variable name between {{ and :
+          const variableMatch = match[0].match(/{{([^:]+):/);
+          const variableName = variableMatch ? variableMatch[1].trim() : "variable";
+
+          result.push(
+            <Tooltip
+              key={`${match[0]}-${match.index}`}
+              title={`The user will be asked to fill the ${variableName} input`}
+              arrow
+              placement="top"
+            >
+              <span
+                className={className}
+                style={{ cursor: "pointer" }}
+              >
+                {match[0]}
+              </span>
+            </Tooltip>,
+          );
+        } else {
+          result.push(
+            <span
+              key={`${match[0]}-${match.index}`}
+              className={className}
+            >
+              {match[0]}
+            </span>,
+          );
+        }
         lastIndex = regex.lastIndex;
       }
     });
@@ -42,6 +66,7 @@ export default function Instructions({ prompts }: Props) {
 
     return result;
   }
+
   return (
     <Stack
       gap={3}
@@ -118,6 +143,16 @@ export default function Instructions({ prompts }: Props) {
                     component="div"
                   >
                     {highlightContent(prompt.content)}
+                  </Typography>
+                  <Typography
+                    fontSize={{ xs: 12, md: 13 }}
+                    fontWeight={400}
+                    color={"secondary.light"}
+                    fontStyle="italic"
+                    mt={2}
+                  >
+                    The output of this prompt will be stored in the variable: $
+                    {prompt.title.toLowerCase().replace(/[#\s]+/g, "")}
                   </Typography>
                 </Box>
               </Stack>
