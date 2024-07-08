@@ -5,12 +5,43 @@ import { theme } from "@/theme";
 import AccordionBox from "@/components/common/AccordionBox";
 import { Prompts } from "@/core/api/dto/prompts";
 import Image from "../design-system/Image";
+import { highlight } from "@/common/constants";
 
 interface Props {
   prompts: Prompts[];
 }
 
 export default function Instructions({ prompts }: Props) {
+  function highlightContent(content: string) {
+    let result = [];
+    let lastIndex = 0;
+
+    highlight.forEach(({ highlight, className }) => {
+      const regex = new RegExp(highlight);
+      let match;
+
+      while ((match = regex.exec(content)) !== null) {
+        if (match.index > lastIndex) {
+          result.push(content.slice(lastIndex, match.index));
+        }
+        result.push(
+          <span
+            key={`${match[0]}-${match.index}`}
+            className={className}
+          >
+            {match[0]}
+          </span>,
+        );
+        lastIndex = regex.lastIndex;
+      }
+    });
+
+    if (lastIndex < content.length) {
+      result.push(content.slice(lastIndex));
+    }
+
+    return result;
+  }
   return (
     <Stack
       gap={3}
@@ -46,7 +77,7 @@ export default function Instructions({ prompts }: Props) {
                   <Stack
                     direction={"row"}
                     alignItems={"center"}
-                    gap={"8px"}
+                    gap={"4px"}
                   >
                     <Box
                       width={"16px"}
@@ -84,8 +115,9 @@ export default function Instructions({ prompts }: Props) {
                     color={"onSurface"}
                     fontFamily={"Roboto, Mono"}
                     whiteSpace={"pre-wrap"}
+                    component="div"
                   >
-                    {prompt.content}
+                    {highlightContent(prompt.content)}
                   </Typography>
                 </Box>
               </Stack>
