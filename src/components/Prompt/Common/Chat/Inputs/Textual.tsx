@@ -10,9 +10,10 @@ interface Props {
   input: IPromptInput;
   value: PromptInputType;
   onChange: (value: string | File) => void;
+  disabled?: boolean;
 }
 
-function Textual({ input, value, onChange }: Props) {
+function Textual({ input, value, onChange, disabled }: Props) {
   const type = input.type;
   const { isAutomationPage } = useVariant();
 
@@ -21,7 +22,7 @@ function Textual({ input, value, onChange }: Props) {
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
 
-  const disableInput = Boolean(isGenerating || (!areAllCredentialsStored && isAutomationPage));
+  const disableInput = disabled || isGenerating || (!areAllCredentialsStored && isAutomationPage);
 
   return (
     <Stack

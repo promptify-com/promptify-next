@@ -13,9 +13,10 @@ interface Props {
   value: File;
   input: IPromptInput;
   onChange: (value: string | File, input: IPromptInput) => void;
+  disabled?: boolean;
 }
 
-function File({ input, value, onChange }: Props) {
+function File({ input, value, onChange, disabled }: Props) {
   const { truncate } = useTruncate();
   const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
@@ -30,6 +31,7 @@ function File({ input, value, onChange }: Props) {
       <Button
         component="label"
         variant="contained"
+        disabled={disabled}
         sx={{ border: "1px solid", p: "3px 12px", fontSize: { xs: 12, md: 14 }, fontWeight: 500 }}
       >
         {_value ? truncate(_value, { length: 20 }) : "Upload file"}

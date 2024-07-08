@@ -9,12 +9,13 @@ interface Props {
   value: PromptInputType;
   input: IPromptInput;
   onChange: (value: string | File, input: IPromptInput) => void;
+  disabled?: boolean;
 }
 
-function Choices({ isGenerating, value, input, onChange }: Props) {
+function Choices({ isGenerating, value, input, onChange, disabled }: Props) {
   return (
     <Select
-      disabled={isGenerating}
+      disabled={disabled || isGenerating}
       sx={{
         ".MuiSelect-select": {
           p: "3px 12px",
