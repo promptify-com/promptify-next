@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { theme } from "@/theme";
 import AccordionBox from "@/components/common/AccordionBox";
 import { Prompts } from "@/core/api/dto/prompts";
+import Image from "../design-system/Image";
 
 interface Props {
   prompts: Prompts[];
@@ -42,13 +43,33 @@ export default function Instructions({ prompts }: Props) {
                   >
                     {prompt.title}
                   </Typography>
-                  <Typography
-                    fontSize={{ xs: 14, md: 16 }}
-                    fontWeight={400}
-                    color={"secondary.main"}
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"8px"}
                   >
-                    {prompt.engine.name}
-                  </Typography>
+                    <Box
+                      width={"16px"}
+                      height={"16px"}
+                      borderRadius={"16px"}
+                      overflow={"hidden"}
+                      position={"relative"}
+                    >
+                      <Image
+                        fill
+                        style={{ objectFit: "cover" }}
+                        alt={prompt.engine.name}
+                        src={prompt.engine.icon}
+                      />
+                    </Box>
+                    <Typography
+                      fontSize={{ xs: 14, md: 16 }}
+                      fontWeight={400}
+                      color={"secondary.main"}
+                    >
+                      {prompt.engine.name}
+                    </Typography>
+                  </Stack>
                 </Stack>
                 <Box
                   sx={{
