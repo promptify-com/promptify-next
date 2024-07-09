@@ -7,6 +7,14 @@ import InstructionsAccordion from "./InstructionsAccordion";
 import useBrowser from "@/hooks/useBrowser";
 import ActionButtons from "./ActionButtons";
 import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { isAdminFn } from "@/core/store/userSlice";
+import Button from "@mui/material/Button";
+import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
+import { useUpdateTemplateMutation } from "@/core/api/templates";
+import { IEditTemplate } from "@/common/types/editTemplate";
+import { setToast } from "@/core/store/toastSlice";
+import { useState } from "react";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -14,7 +22,42 @@ interface Props {
 
 function Details({ document }: Props) {
   const { isMobile } = useBrowser();
+  const dispatch = useAppDispatch();
   const template = document.template;
+
+  const [updateTemplate] = useUpdateTemplateMutation();
+
+  const isAdmin = useAppSelector(isAdminFn);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const handleSetAsTemplateExample = async () => {
+    if (template?.id && document.id) {
+      setIsButtonDisabled(true);
+      try {
+        const updateData: Partial<IEditTemplate> = {
+          example_execution: document.id,
+        };
+        await updateTemplate({
+          id: template.id,
+          data: updateData,
+        }).unwrap();
+
+        dispatch(setToast({ message: "Template example updated successfully", severity: "success", duration: 6000 }));
+      } catch (error) {
+        console.error("Failed to set as template example:", error);
+        dispatch(
+          setToast({
+            message: "could not update template example, please try again!",
+            severity: "error",
+            duration: 6000,
+          }),
+        );
+        setIsButtonDisabled(false);
+      }
+    }
+  };
+
+  console.log(template);
 
   return (
     <Stack
@@ -105,6 +148,19 @@ function Details({ document }: Props) {
         >
           <span className="label">Created at:</span> {formatDate(document.created_at)}
         </Typography>
+      )}
+      {isAdmin && (
+        <Button
+          variant="outlined"
+          onClick={handleSetAsTemplateExample}
+          startIcon={<CreateNewFolderOutlined />}
+          sx={{
+            fontWeight: 500,
+          }}
+          disabled={isButtonDisabled}
+        >
+          Set as template example
+        </Button>
       )}
     </Stack>
   );

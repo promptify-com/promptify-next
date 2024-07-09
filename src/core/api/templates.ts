@@ -129,8 +129,8 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
-      updateTemplate: builder.mutation<Templates, { id: number; data: IEditTemplate }>({
-        query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
+      updateTemplate: builder.mutation<Templates, { id: number; data: Partial<IEditTemplate> | IEditTemplate }>({
+        query: ({ data, id }: { data: Partial<IEditTemplate>; id: number }) => ({
           url: `/api/meta/templates/${id}/`,
           method: "put",
           data,
