@@ -16,6 +16,7 @@ import SuggestionsList from "./SuggestionsList";
 import ClientOnly from "../base/ClientOnly";
 import SuggestionsListDetailed from "./SuggestionsListDetailed";
 import { InputType } from "@/common/types/prompt";
+import { highlight } from "@/common/constants";
 
 interface Props {
   prompt: IEditPrompts;
@@ -27,17 +28,6 @@ interface Props {
   setHighlightedValue: (str: string) => void;
   type: BuilderType;
 }
-
-const highlight = [
-  {
-    highlight: /{{[^{}]*[^}]*(?:}}|$)/g,
-    className: "input-variable",
-  },
-  {
-    highlight: /\$[\w]*|\$/g,
-    className: "output-variable",
-  },
-];
 
 function HighlightTextarea({
   prompt,
