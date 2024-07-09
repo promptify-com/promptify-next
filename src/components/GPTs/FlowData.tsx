@@ -13,6 +13,9 @@ import { useAppSelector } from "@/hooks/useStore";
 import LoadingDots from "@/components/design-system/LoadingDots";
 import { IChatSliceState } from "@/core/store/types";
 import { initialState } from "@/core/store/chatSlice";
+import { isAdminFn } from "@/core/store/userSlice";
+import { useRouter } from "next/router";
+import { useGetTemplateByIdQuery } from "@/core/api/templates";
 
 function Workflow({ workflow }: { workflow: ITemplateWorkflow }) {
   const steps = getWorkflowDataFlow(workflow);
@@ -87,6 +90,7 @@ function Steps({ steps }: { steps: [string, IRelation][] }) {
         iconUrl={step[1].iconUrl}
         activeNode={activeNode === index}
         gptGenerationStatus={gptGenerationStatus}
+        templateId={step[1].templateId}
       />
       {index < steps.length - 1 && (
         <Stack
@@ -118,6 +122,7 @@ interface IFlowDataCard {
   iconUrl: string;
   activeNode: boolean;
   gptGenerationStatus: IChatSliceState["gptGenerationStatus"];
+  templateId?: number;
 }
 
 function FlowDataCard({
@@ -127,9 +132,22 @@ function FlowDataCard({
   iconUrl,
   activeNode,
   gptGenerationStatus,
+  templateId,
 }: IFlowDataCard) {
+  const router = useRouter();
+  const isAdmin = useAppSelector(isAdminFn);
+  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplateByIdQuery(templateId! as unknown as number, {
+    skip: !templateId,
+  });
+
+  const handleCardClick = () => {
+    if (isAdmin && title === "Promptify" && templates) {
+      router.push(`/prompt-builder/${templates.slug}`);
+    }
+  };
   return (
     <Card
+      onClick={handleCardClick}
       sx={{
         display: "flex",
         alignItems: "center",
@@ -143,6 +161,7 @@ function FlowDataCard({
         position: "relative",
         overflow: "visible",
         boxShadow: "none",
+        cursor: isAdmin && title === "Promptify" ? "pointer" : "default",
       }}
     >
       <Box

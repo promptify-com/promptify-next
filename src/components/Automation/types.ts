@@ -7,6 +7,7 @@ interface IParameters {
   nodeCredentialType?: string;
   mode?: string;
   markdown?: string;
+  template?: number;
   fields?: {
     values: {
       name: string;

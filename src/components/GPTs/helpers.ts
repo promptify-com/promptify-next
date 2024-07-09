@@ -30,6 +30,7 @@ export interface IRelation {
   type: string;
   iconUrl: string;
   description: string;
+  templateId?: number;
 }
 
 export const cleanCredentialName = (name: string) => name.replace(/Api\s*|Oauth2\s*/gi, "").trim();
@@ -71,12 +72,20 @@ function buildNextConnectedData({
     const nodeType = getNodeByName(workflow.data.nodes, nodeName).type;
     const nodeInfo = (nodesData as NodesFileData)[nodeType];
 
-    relations.set(nodeName, {
+    const promptifyNode = workflow.data.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+
+    const relationData: IRelation = {
       nextNode: connections[nodeName].main[0][0].node,
       type: nodeType,
       iconUrl: nodeInfo.iconUrl ? `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${nodeInfo.iconUrl}` : "",
       description: nodeInfo.description ?? "",
-    });
+    };
+
+    if (promptifyNode?.name === "Promptify" && nodeType === PROMPTIFY_NODE_TYPE) {
+      relationData.templateId = promptifyNode.parameters.template;
+    }
+
+    relations.set(nodeName, relationData);
 
     buildNextConnectedData({
       nodeName: connections[nodeName].main[0][0].node,
