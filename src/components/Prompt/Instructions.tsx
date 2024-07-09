@@ -151,7 +151,13 @@ export default function Instructions({ prompts }: Props) {
                     fontStyle="italic"
                     mt={2}
                   >
-                    The output of this prompt will be stored in the variable: {prompt.prompt_output_variable}
+                    The output of this prompt will be stored in the variable:
+                    <span
+                      className="output-variable"
+                      style={{ marginLeft: "7px" }}
+                    >
+                      {prompt.prompt_output_variable}
+                    </span>
                   </Typography>
                 </Box>
               </Stack>
