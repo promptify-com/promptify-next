@@ -1,20 +1,21 @@
+import { useState } from "react";
+import Link from "next/link";
 import Stack from "@mui/material/Stack";
-import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Typography from "@mui/material/Typography";
+import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
+import Button from "@mui/material/Button";
+
+import type { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
 import { formatDate } from "@/common/helpers/timeManipulation";
 import InstructionsAccordion from "./InstructionsAccordion";
 import useBrowser from "@/hooks/useBrowser";
 import ActionButtons from "./ActionButtons";
-import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isAdminFn } from "@/core/store/userSlice";
-import Button from "@mui/material/Button";
-import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
 import { useUpdateTemplateMutation } from "@/core/api/templates";
-import { IEditTemplate } from "@/common/types/editTemplate";
 import { setToast } from "@/core/store/toastSlice";
-import { useState } from "react";
+import type { IEditTemplate } from "@/common/types/editTemplate";
 
 interface Props {
   document: ExecutionWithTemplate;
