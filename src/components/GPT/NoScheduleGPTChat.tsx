@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -18,7 +18,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
-import { useSaveGPTDocumentMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
+import { useSaveGPTDocumentMutation } from "@/core/api/workflows";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
 import { createMessage } from "@/components/Chat/helper";
@@ -48,19 +48,9 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
   const { sendMessageAPI } = useWorkflow(workflow);
   const { streamExecutionHandler } = useGenerateExecution({});
 
-  const [updateWorkflowHandler] = useUpdateWorkflowMutation();
   const [saveAsGPTDocument] = useSaveGPTDocumentMutation();
 
-  const updateWorkflow = async (workflowData: IWorkflowCreateResponse) => {
-    try {
-      return await updateWorkflowHandler({
-        workflowId: workflowData.id,
-        data: workflowData,
-      }).unwrap();
-    } catch (error) {
-      console.error("Updating workflow failed", error);
-    }
-  };
+  const [showInputsAfterExecution, setShowInputsAfterExecution] = useState(true);
 
   const scrollTo = useScrollToElement("smooth");
   const headerHeight = parseFloat(isMobile ? theme.custom.headerHeight.xs : theme.custom.headerHeight.md);
@@ -87,6 +77,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
       const response = await sendMessageAPI(webhook, answers);
 
       dispatch(setGptGenerationStatus("generated"));
+      setShowInputsAfterExecution(false);
 
       if (response && typeof response === "string") {
         if (response.toLowerCase().includes("[error")) {
@@ -150,8 +141,10 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
     if (answers?.length) {
       dispatch(setAnswers(answers));
     }
+    setShowInputsAfterExecution(true);
     scrollToInputsForm();
   };
+
   const saveGPTDocument = async (_: IWorkflowCreateResponse, content: string) => {
     if (!clonedWorkflow) {
       throw new Error("Cloned workflow not found");
@@ -163,10 +156,11 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
         title: clonedWorkflow.name,
         workflow_id: clonedWorkflow.id,
       });
-
+      dispatch(setToast({ message: "Document added successfully", severity: "success", duration: 6000 }));
       return true;
     } catch (error) {
       console.error(error);
+      dispatch(setToast({ message: "DOcument not created! Please try again.", severity: "error", duration: 6000 }));
     }
 
     return false;
@@ -178,7 +172,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
 
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun = !hasInputs && areCredentialsStored && showGenerate && currentUser?.id;
-  const showInputsForm = hasInputs && !generatedExecution;
+  const showInputsForm = hasInputs && !generatedExecution && showInputsAfterExecution;
 
   return (
     <Stack
