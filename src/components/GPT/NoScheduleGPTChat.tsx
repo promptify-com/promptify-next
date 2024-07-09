@@ -160,7 +160,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
       return true;
     } catch (error) {
       console.error(error);
-      dispatch(setToast({ message: "DOcument not created! Please try again.", severity: "error", duration: 6000 }));
+      dispatch(setToast({ message: "Document not created! Please try again.", severity: "error", duration: 6000 }));
     }
 
     return false;
