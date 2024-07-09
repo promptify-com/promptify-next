@@ -25,7 +25,7 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box sx={{ width: "100%", mr: maxValueReached ? 0 : 1 }}>
         {maxValueReached ? (
-          <LinearProgress />
+          <LinearProgress color="success" />
         ) : (
           <LinearProgress
             variant="determinate"
@@ -73,7 +73,10 @@ export function LinearWithValueLabel() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <LinearProgressWithLabel value={progress} />
+      <LinearProgressWithLabel
+        value={progress}
+        color="success"
+      />
     </Box>
   );
 }
