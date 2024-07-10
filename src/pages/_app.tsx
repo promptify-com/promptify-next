@@ -81,7 +81,7 @@ function App({ Component, pageProps }: AppProps) {
       // TODO: find out why "routeChangeComplete" isn't triggered sometimes
       setTimeout(() => {
         _navigationLoadingSpinnerOverlay?.remove();
-      }, 5000);
+      }, 3000);
     };
     const handleRouteChangeComplete = (_url: string) => {
       const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
