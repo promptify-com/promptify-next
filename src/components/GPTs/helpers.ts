@@ -81,7 +81,7 @@ function buildNextConnectedData({
       description: nodeInfo.description ?? "",
     };
 
-    if (promptifyNode?.name === "Promptify" && nodeType === PROMPTIFY_NODE_TYPE) {
+    if (promptifyNode?.name.includes("Promptify") && nodeType === PROMPTIFY_NODE_TYPE) {
       relationData.templateId = promptifyNode.parameters.template;
     }
 
