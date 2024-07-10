@@ -41,6 +41,10 @@ function CardTemplate({ template }: CardTemplateProps) {
   return (
     <Link
       href={`/prompt/${template.slug}`}
+      onClick={e => {
+        e.preventDefault();
+        router.push(`/prompt/${template.slug}`);
+      }}
       style={{
         flex: !isMobile ? 1 : "none",
         width: !isMobile ? "auto" : "100%",
