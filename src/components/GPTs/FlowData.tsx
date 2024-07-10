@@ -136,12 +136,12 @@ function FlowDataCard({
 }: IFlowDataCard) {
   const router = useRouter();
   const isAdmin = useAppSelector(isAdminFn);
-  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplateByIdQuery(templateId! as unknown as number, {
+  const { data: templates } = useGetTemplateByIdQuery(templateId! as unknown as number, {
     skip: !templateId,
   });
 
   const handleCardClick = () => {
-    if (isAdmin && title === "Promptify" && templates) {
+    if (isAdmin && title.includes("Promptify") && templates) {
       router.push(`/prompt-builder/${templates.slug}`);
     }
   };
@@ -161,7 +161,7 @@ function FlowDataCard({
         position: "relative",
         overflow: "visible",
         boxShadow: "none",
-        cursor: isAdmin && title === "Promptify" ? "pointer" : "default",
+        cursor: isAdmin && title.includes("Promptify") ? "pointer" : "default",
       }}
     >
       <Box
