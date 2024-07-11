@@ -8,6 +8,7 @@ import { ExecutionContent } from "../common/ExecutionContent";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { PromptExecutions, TemplatesExecutions } from "@/core/api/dto/templates";
+import { theme } from "@/theme";
 
 interface Props {
   execution: TemplatesExecutions | null;
@@ -68,13 +69,19 @@ export default function ExecutionExample({ execution, promptsData }: Props) {
                       {prompt.title}
                     </Typography>
                   </Stack>
-                  <Box
+
+                  <Stack
                     sx={{
-                      px: "8px",
+                      p: "16px 16px 16px 32px",
+                      borderLeft: `1px solid`,
+                      borderLeftColor: "secondary.main",
                     }}
                   >
-                    <ExecutionContent content={sanitizeHTML(exec.output)} />
-                  </Box>
+                    <ExecutionContent
+                      content={sanitizeHTML(exec.output)}
+                      sx={{ fontSize: 16, color: "onSurface", fontWeight: 400 }}
+                    />
+                  </Stack>
                 </Stack>
               );
             })}
