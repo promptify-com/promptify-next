@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { theme } from "@/theme";
+
 import AccordionBox from "@/components/common/AccordionBox";
-import { Prompts } from "@/core/api/dto/prompts";
+import { ExecutionContent } from "../common/ExecutionContent";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import type { Prompts } from "@/core/api/dto/prompts";
+import type { PromptExecutions, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   execution: TemplatesExecutions | null;
@@ -12,6 +15,24 @@ interface Props {
 }
 
 export default function ExecutionExample({ execution, promptsData }: Props) {
+  const [processedExecutions, setProcessedExecutions] = useState<PromptExecutions[]>([]);
+
+  useEffect(() => {
+    const processExecutions = async () => {
+      if (execution?.prompt_executions) {
+        const processed = await Promise.all(
+          execution.prompt_executions.map(async exec => ({
+            ...exec,
+            output: await markdownToHTML(exec.output),
+          })),
+        );
+        setProcessedExecutions(processed);
+      }
+    };
+
+    processExecutions();
+  }, [execution]);
+
   return (
     <Stack
       gap={3}
@@ -28,7 +49,7 @@ export default function ExecutionExample({ execution, promptsData }: Props) {
       {execution ? (
         <AccordionBox>
           <Stack gap={3}>
-            {execution?.prompt_executions?.map(exec => {
+            {processedExecutions?.map(exec => {
               const prompt = promptsData.find(_prompt => _prompt.id === exec.prompt) as Prompts;
               return (
                 <Stack
@@ -52,17 +73,7 @@ export default function ExecutionExample({ execution, promptsData }: Props) {
                       px: "8px",
                     }}
                   >
-                    <Typography
-                      fontSize={16}
-                      fontWeight={400}
-                      color={"onSurface"}
-                      sx={{
-                        p: "16px 16px 16px 32px",
-                        borderLeft: `1px solid ${theme.palette.secondary.main}`,
-                      }}
-                    >
-                      {exec.output}
-                    </Typography>
+                    <ExecutionContent content={sanitizeHTML(exec.output)} />
                   </Box>
                 </Stack>
               );
