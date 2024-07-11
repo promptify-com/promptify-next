@@ -8,7 +8,7 @@ import { authClient } from "@/common/axios";
 import chatSlice, { setClonedWorkflow, setGptGenerationStatus, setInputs } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import executionsSlice from "@/core/store/executionsSlice";
+import executionsSlice, { clearExecutionsStates } from "@/core/store/executionsSlice";
 import Header from "@/components/GPT/Header";
 import store from "@/core/store";
 import Workflow from "@/components/GPTs/FlowData";
@@ -75,6 +75,18 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
         console.error("Error handling the workflow creation:", error);
       });
   };
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      dispatch(clearExecutionsStates());
+    };
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [router, dispatch]);
 
   useEffect(() => {
     processData();
