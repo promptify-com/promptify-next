@@ -119,6 +119,11 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
         p: { xs: "16px", md: "48px" },
         height: "calc(100svh - 90px)",
         overflowY: "scroll",
+        msOverflowStyle: "none",
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
       }}
     >
       {!!messages.length ? (
