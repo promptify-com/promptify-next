@@ -22,6 +22,7 @@ import { isAdminFn } from "@/core/store/userSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
+import useScrollToBottom from "../Prompt/Hooks/useScrollToBottom";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -54,15 +55,26 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const alreadyScheduled = useRef(workflowScheduled);
 
-  const scrollTo = useScrollToElement("smooth");
-  const headerHeight = parseFloat(isMobile ? theme.custom.headerHeight.xs : theme.custom.headerHeight.md);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    scrollTo("#scroll_ref", headerHeight);
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({
+    ref: containerRef,
+    content: messages,
+  });
+
+  const scrollToTarget = (target: string, delay = 0) => {
+    setTimeout(() => {
+      const element = document.querySelector(target);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+    }, delay);
   };
 
   useEffect(() => {
-    setTimeout(() => scrollToBottom(), 100);
+    if (messages.length > 0 || generatedExecution) {
+      scrollToBottom();
+    }
   }, [messages, generatedExecution]);
 
   useEffect(() => {
@@ -91,23 +103,24 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   };
 
   const scrollToInputsForm = () => {
-    setTimeout(() => scrollTo("#inputs_form", headerHeight), 300);
+    scrollToTarget("#inputs_form", 300);
   };
 
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
 
-  const lastMessage = messages[messages.length - 1];
-  const isLastExecution = lastMessage?.type === "workflowExecution";
   const showInputsForm = !!inputs.length && !generatedExecution;
 
   return (
     <Stack
       flex={1}
       gap={8}
+      position={"relative"}
+      ref={containerRef}
       sx={{
         p: { xs: "16px", md: "48px" },
+        height: "calc(100svh - 90px)",
+        overflowY: "scroll",
       }}
-      position={"relative"}
     >
       {!!messages.length ? (
         <>
@@ -121,8 +134,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   }),
                 }}
               >
-                {!generatedExecution && isLastExecution && message.id === lastMessage?.id && <div id="scroll_ref" />}
-
                 {message.type === "text" && <Message message={message} />}
                 {message.type === "workflowExecution" && (
                   <Message
@@ -167,17 +178,11 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               </Box>
             );
           })}
-
           {generatedExecution && (
             <>
               <ExecutionMessage execution={generatedExecution} />
-              <div
-                id="scroll_ref"
-                style={{ marginTop: "-64px" }}
-              ></div>
             </>
           )}
-
           {workflowScheduled && (
             <>
               {showInputsForm && (
@@ -195,12 +200,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 allowActivateButton={allowActivateButton}
               />
             </>
-          )}
-          {!generatedExecution && !isLastExecution && (
-            <div
-              id="scroll_ref"
-              style={{ marginTop: "-64px" }}
-            />
           )}
         </>
       ) : (

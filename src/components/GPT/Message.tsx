@@ -111,7 +111,7 @@ export default function Message({
 
   return (
     <Stack sx={{ gap: "24px" }}>
-      {type === "workflowExecution" && (
+      {type === "workflowExecution" && inputs.length > 0 && (
         <MessageInputs
           message={createMessage({ type: "form", noHeader: true })}
           answers={answers}
