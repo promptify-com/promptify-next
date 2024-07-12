@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -18,7 +18,6 @@ import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { isAdminFn } from "@/core/store/userSlice";
-import useBrowser from "@/hooks/useBrowser";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
 import useScrollToBottom from "../Prompt/Hooks/useScrollToBottom";
 
@@ -53,28 +52,44 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const alreadyScheduled = useRef(workflowScheduled);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = useCallback(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, []);
 
-  const { scrollToBottom } = useScrollToBottom({
-    ref: containerRef,
-    content: messages,
-  });
-
-  const scrollToTarget = (target: string, delay = 0) => {
-    setTimeout(() => {
-      const element = document.querySelector(target);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "end" });
+  const checkScrollAndAdjust = useCallback(() => {
+    if (spacerRef.current) {
+      const rect = spacerRef.current.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 60) {
+        scrollToBottom();
       }
-    }, delay);
-  };
+    }
+  }, [scrollToBottom]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          checkScrollAndAdjust();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (spacerRef.current) {
+      observer.observe(spacerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [checkScrollAndAdjust]);
 
   useEffect(() => {
     if (messages.length > 0 || generatedExecution) {
-      scrollToBottom();
+      checkScrollAndAdjust();
     }
-  }, [messages, generatedExecution]);
+  }, [messages, generatedExecution, isGenerating]);
 
   useEffect(() => {
     if (!alreadyScheduled.current && workflowScheduled) {
@@ -101,6 +116,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     scrollToInputsForm();
   };
 
+  const scrollToTarget = (target: string, delay = 0) => {
+    setTimeout(() => {
+      const element = document.querySelector(target);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+    }, delay);
+  };
+
   const scrollToInputsForm = () => {
     scrollToTarget("#inputs_form", 300);
   };
@@ -114,16 +138,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       flex={1}
       gap={8}
       position={"relative"}
-      ref={containerRef}
       sx={{
         p: { xs: "16px", md: "48px" },
-        height: "calc(100svh - 90px)",
-        overflowY: "scroll",
-        msOverflowStyle: "none",
-        scrollbarWidth: "none",
-        "&::-webkit-scrollbar": {
-          display: "none",
-        },
       }}
     >
       {!!messages.length ? (
@@ -201,7 +217,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
               )}
               {!isGenerating && (
                 <RunWorkflowMessage
-                  onRun={runWorkflow}
+                  onRun={() => {
+                    runWorkflow();
+                    scrollToBottom();
+                  }}
                   allowActivateButton={allowActivateButton}
                 />
               )}
@@ -211,6 +230,12 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
       ) : (
         <ChatCredentialsPlaceholder />
       )}
+      <div
+        ref={spacerRef}
+        style={{ height: "60px" }}
+      />
+
+      <div ref={bottomRef} />
     </Stack>
   );
 }
