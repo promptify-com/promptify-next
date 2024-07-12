@@ -17,10 +17,8 @@ import ChatCredentialsPlaceholder from "@/components/GPT/ChatCredentialsPlacehol
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
-import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { isAdminFn } from "@/core/store/userSlice";
 import useBrowser from "@/hooks/useBrowser";
-import { theme } from "@/theme";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
 import useScrollToBottom from "../Prompt/Hooks/useScrollToBottom";
 
@@ -33,7 +31,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const dispatch = useAppDispatch();
   const { initializeCredentials } = useCredentials();
   const workflowLoaded = useRef(false);
-  const { isMobile } = useBrowser();
 
   const {
     messages,
@@ -52,12 +49,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const isAdmin = useAppSelector(isAdminFn);
   const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
+  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? null);
+
   const workflowScheduled = !!clonedWorkflow?.periodic_task?.crontab;
   const alreadyScheduled = useRef(workflowScheduled);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { showScrollDown, scrollToBottom } = useScrollToBottom({
+  const { scrollToBottom } = useScrollToBottom({
     ref: containerRef,
     content: messages,
   });
@@ -195,10 +194,12 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   />
                 </Box>
               )}
-              <RunWorkflowMessage
-                onRun={runWorkflow}
-                allowActivateButton={allowActivateButton}
-              />
+              {!isGenerating && (
+                <RunWorkflowMessage
+                  onRun={runWorkflow}
+                  allowActivateButton={allowActivateButton}
+                />
+              )}
             </>
           )}
         </>
