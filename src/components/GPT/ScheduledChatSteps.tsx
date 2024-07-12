@@ -92,6 +92,13 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   }, [messages, generatedExecution, isGenerating]);
 
   useEffect(() => {
+    if (!generatedExecution) {
+      return;
+    }
+    scrollToTarget("#run-message", 300);
+  }, [isGenerating, generatedExecution]);
+
+  useEffect(() => {
     if (!alreadyScheduled.current && workflowScheduled) {
       setTimeout(() => scrollToBottom(), 100);
     }
@@ -216,13 +223,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 </Box>
               )}
               {!isGenerating && (
-                <RunWorkflowMessage
-                  onRun={() => {
-                    runWorkflow();
-                    scrollToBottom();
-                  }}
-                  allowActivateButton={allowActivateButton}
-                />
+                <div id="run-message">
+                  <RunWorkflowMessage
+                    onRun={() => {
+                      runWorkflow();
+                      scrollToBottom();
+                    }}
+                    allowActivateButton={allowActivateButton}
+                  />
+                </div>
               )}
             </>
           )}
