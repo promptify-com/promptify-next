@@ -16,9 +16,13 @@ import { initialState } from "@/core/store/chatSlice";
 import { isAdminFn } from "@/core/store/userSlice";
 import { useRouter } from "next/router";
 import { useGetTemplateByIdQuery } from "@/core/api/templates";
+import ShareIcon from "@/assets/icons/ShareIcon";
+import Link from "next/link";
 
 function Workflow({ workflow }: { workflow: ITemplateWorkflow }) {
   const steps = getWorkflowDataFlow(workflow);
+  const isAdmin = useAppSelector(isAdminFn);
+  const userWorkflowId = useAppSelector(state => state.chat?.clonedWorkflow?.id ?? null);
 
   return (
     <Stack
@@ -31,15 +35,30 @@ function Workflow({ workflow }: { workflow: ITemplateWorkflow }) {
         backgroundSize: "10px 10px",
       }}
     >
-      <Typography
-        fontSize={14}
-        fontWeight={500}
-        color={"common.black"}
-        fontStyle={"normal"}
-        lineHeight={"100%"}
+      <Stack
+        flexDirection={"row"}
+        gap={1}
+        alignItems={"center"}
       >
-        Data flow
-      </Typography>
+        <Typography
+          fontSize={14}
+          fontWeight={500}
+          color={"common.black"}
+          fontStyle={"normal"}
+          lineHeight={"100%"}
+        >
+          Data flow
+        </Typography>
+        {isAdmin && userWorkflowId && (
+          <Link
+            href={`https://automation.promptify.com/workflow/${userWorkflowId}`}
+            style={{ textDecoration: "none" }}
+            target="_blank"
+          >
+            <ShareIcon opacity={1} />
+          </Link>
+        )}
+      </Stack>
       <Stack>
         <Steps steps={steps} />
       </Stack>
