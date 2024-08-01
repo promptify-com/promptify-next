@@ -37,7 +37,7 @@ const MessageContentWithHTML = memo(({ content, shouldStream, onStreamingFinishe
       dispatch(setIsSimulationStreaming(false));
       onStreamingFinished();
     }
-  }, [streamedText, hasFinished, dispatch, onStreamingFinished]);
+  }, [streamedText, hasFinished]);
 
   return (
     <div
