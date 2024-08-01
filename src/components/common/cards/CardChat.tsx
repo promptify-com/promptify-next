@@ -10,7 +10,6 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
-import FileCopyOutlined from "@mui/icons-material/FileCopyOutlined";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { memo, useState } from "react";
 import Edit from "@mui/icons-material/Edit";
@@ -37,7 +36,7 @@ export const ChatCard = memo(({ chat, active, onClick }: Props) => {
   const [renameAllow, setRenameAllow] = useState(false);
   const { selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
 
-  const { updateChat, deleteChat, duplicateChat } = useChatsManager();
+  const { updateChat, deleteChat } = useChatsManager();
 
   const handleUpdateChat = async (title: string) => {
     if (title === chat.title) return;
@@ -50,12 +49,6 @@ export const ChatCard = memo(({ chat, active, onClick }: Props) => {
     if (deleted && selectedChat?.id === chat.id) {
       dispatch(setSelectedChat(undefined));
     }
-  };
-
-  const handleDuplicateChat = async () => {
-    handleCloseActions();
-    const newChat = await duplicateChat(chat);
-    dispatch(setSelectedChat(newChat));
   };
 
   return (
@@ -195,13 +188,6 @@ export const ChatCard = memo(({ chat, active, onClick }: Props) => {
             >
               <Edit />
               <Box>Rename</Box>
-            </MenuItem>
-            <MenuItem
-              onClick={handleDuplicateChat}
-              sx={menuItemStyle}
-            >
-              <FileCopyOutlined />
-              <Box>Duplicate</Box>
             </MenuItem>
             <MenuItem
               onClick={() => setConfirmDelete(true)}

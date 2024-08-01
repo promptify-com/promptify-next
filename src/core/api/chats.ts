@@ -59,12 +59,6 @@ export const chatsApi = baseApi.injectEndpoints({
           data,
         }),
       }),
-      duplicateChat: builder.mutation<IChat, number>({
-        query: (id: number) => ({
-          url: `/api/chat/chats/${id}/duplicate`,
-          method: "post",
-        }),
-      }),
       saveChatInput: builder.mutation<void, ISaveChatInput>({
         query: ({ chat, text, type, sender }) => ({
           url: "/api/chat/inputs/",
@@ -144,7 +138,6 @@ export const {
   useCreateChatMutation,
   useDeleteChatMutation,
   useUpdateChatMutation,
-  useDuplicateChatMutation,
   useSaveChatInputMutation,
   useSaveChatSuggestionsTemplatesMutation,
   useSaveChatSuggestionsWorkflowsMutation,
