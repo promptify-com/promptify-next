@@ -1,4 +1,3 @@
-import { ITemplate } from "@/common/types/template";
 import type { User, UserPartial } from "@/core/api/dto/user";
 
 interface IParameters {
@@ -8,6 +7,7 @@ interface IParameters {
   nodeCredentialType?: string;
   mode?: string;
   markdown?: string;
+  template?: number;
   fields?: {
     values: {
       name: string;
@@ -105,7 +105,7 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
-export type FrequencyType = "daily" | "weekly" | "bi-weekly" | "monthly";
+export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly";
 
 export interface IWorkflowSchedule {
   frequency: FrequencyType;
@@ -227,4 +227,29 @@ export interface IAvailableCredentials {
 export interface IWorkflowCategory {
   category: string;
   templates: ITemplateWorkflow[];
+}
+
+export interface IGPTDocumentPayload {
+  title: string;
+  output: string;
+  workflow_id: string;
+}
+
+export interface IGPTDocumentResponse {
+  id: number;
+  workflow: {
+    id: number;
+    workflow_id: string;
+    created_at: string;
+    updated_at: string;
+    template_workflow: {
+      id: number;
+      name: string;
+      description: string;
+    };
+  };
+  title: string;
+  output: string;
+  created_at: string;
+  user: number;
 }

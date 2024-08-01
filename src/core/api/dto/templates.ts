@@ -233,6 +233,7 @@ export interface TemplateExecutionsDisplay {
   executions_count: number;
   is_internal?: boolean;
   self_executions_count?: number;
+  example_execution?: Execution | null;
 }
 
 export interface TemplateExecutionsWithPagination {

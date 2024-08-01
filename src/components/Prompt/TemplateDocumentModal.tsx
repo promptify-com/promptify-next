@@ -120,6 +120,10 @@ function TemplateDocumentModal() {
             border: "none",
             bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
             ":hover": { bgcolor: "surfaceContainerHigh" },
+            "& svg": {
+              width: { xs: "15px", md: "19px" },
+              height: { xs: "15px", md: "19px" },
+            },
           }}
         >
           <Close />

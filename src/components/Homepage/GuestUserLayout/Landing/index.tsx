@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Google } from "@/assets/icons/google";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SocialMediaAuth from "@/components/login/SocialMediaAuth";
 import { BLOG_URL } from "@/common/constants";
 import Link from "next/link";
@@ -18,6 +18,15 @@ function Landing() {
 
   const handleOpenSocial = (e: React.MouseEvent<HTMLElement>) => setSocialAnchor(e.currentTarget);
   const handleCloseSocial = () => setSocialAnchor(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setSocialAnchor(null);
+    };
+    if (socialOpened) {
+      window.addEventListener("scroll", handleScroll, { once: true });
+    }
+  }, [socialOpened]);
 
   return (
     <Stack
@@ -93,7 +102,6 @@ function Landing() {
           <Menu
             anchorEl={socialAnchor}
             open={socialOpened}
-            disableScrollLock
             onClose={handleCloseSocial}
             sx={{
               ".MuiPaper-root": {

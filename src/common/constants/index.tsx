@@ -193,3 +193,14 @@ export const AUTOMATION_DESCRIPTION =
   "Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.";
 export const BUILDER_DESCRIPTION =
   "Structure your prompts for a productive and more deterministic AI. Your chained prompts will guide AI content creation with focus and intent.";
+
+export const highlight = [
+  {
+    highlight: /{{[^{}]*[^}]*(?:}}|$)/g,
+    className: "input-variable",
+  },
+  {
+    highlight: /\$[\w]*|\$/g,
+    className: "output-variable",
+  },
+];

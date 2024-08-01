@@ -2,39 +2,52 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import RunButton from "./RunButton";
 import { useAppSelector } from "@/hooks/useStore";
+import MessageContainer from "./MessageContainer";
+import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
+import { Box } from "@mui/material";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
-  onRun(): Promise<void>;
+  onRun(): void;
   allowActivateButton?: boolean;
 }
 
 export default function runWorkflowMessage({ onRun, allowActivateButton }: Props) {
-  const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
+  const gptGenerationStatus = useAppSelector(
+    state => state.chat?.gptGenerationStatus ?? initialState.gptGenerationStatus,
+  );
 
   return (
-    <Stack
-      justifyContent={"center"}
-      alignItems={"center"}
-      gap={3}
-      sx={{
-        p: "40px 20px",
-        borderRadius: "0px 24px 24px 24px",
-        bgcolor: "#F8F7FF",
-      }}
-    >
-      <Typography
-        fontSize={16}
-        fontWeight={500}
-        color={"common.black"}
+    <MessageContainer>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={2}
+        sx={{
+          width: gptGenerationStatus === "started" ? "68%" : "fit-content",
+          p: "16px 20px",
+          borderRadius: "0px 16px 16px 16px",
+          bgcolor: "#DFDAFF",
+        }}
       >
-        Ready to test this GPT
-      </Typography>
-      <RunButton
-        onClick={onRun}
-        disabled={!allowActivateButton || isGenerating}
-        loading={isGenerating}
-        text="Run"
-      />
-    </Stack>
+        <Typography
+          sx={{
+            fontSize: 14,
+            fontWeight: 500,
+            color: "onSurface",
+            ...(gptGenerationStatus === "started" && { width: "45%" }),
+          }}
+        >
+          Ready to test this GPT
+        </Typography>
+        <RunButtonWithProgressBar
+          onClick={onRun}
+          text="Run"
+          sx={{ p: "8px 24px" }}
+          loading={gptGenerationStatus === "started"}
+          disabled={gptGenerationStatus !== "pending"}
+        />
+      </Stack>
+    </MessageContainer>
   );
 }

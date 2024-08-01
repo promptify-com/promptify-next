@@ -4,7 +4,7 @@ import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import useToken from "@/hooks/useToken";
 import RetryRequestError from "./errors/RetryRequestError";
 
-const IGNORED_RESPONSE_STATUS_CODES = [401, 403, 404, 500];
+const IGNORED_RESPONSE_STATUS_CODES = [401, 403, 404, 500, 502, 400, 405];
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));

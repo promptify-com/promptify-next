@@ -22,12 +22,15 @@ import type { WorkflowExecution } from "@/components/Automation/types";
 import type { ProviderType } from "@/components/GPT/Types";
 import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/GPT/Constants";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { IAnswer } from "@/components/Prompt/Types/chat";
+import { PromptInputType } from "@/components/Prompt/Types";
 
-interface IRelation {
+export interface IRelation {
   nextNode: string;
   type: string;
   iconUrl: string;
   description: string;
+  templateId?: number;
 }
 
 export const cleanCredentialName = (name: string) => name.replace(/Api\s*|Oauth2\s*/gi, "").trim();
@@ -69,12 +72,20 @@ function buildNextConnectedData({
     const nodeType = getNodeByName(workflow.data.nodes, nodeName).type;
     const nodeInfo = (nodesData as NodesFileData)[nodeType];
 
-    relations.set(nodeName, {
+    const promptifyNode = workflow.data.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+
+    const relationData: IRelation = {
       nextNode: connections[nodeName].main[0][0].node,
       type: nodeType,
       iconUrl: nodeInfo.iconUrl ? `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${nodeInfo.iconUrl}` : "",
       description: nodeInfo.description ?? "",
-    });
+    };
+
+    if (promptifyNode?.name.includes("Promptify") && nodeType === PROMPTIFY_NODE_TYPE) {
+      relationData.templateId = promptifyNode.parameters.template;
+    }
+
+    relations.set(nodeName, relationData);
 
     buildNextConnectedData({
       nodeName: connections[nodeName].main[0][0].node,
@@ -85,6 +96,14 @@ function buildNextConnectedData({
   }
 }
 
+const unwantedDataFlowNodes = [
+  "n8n-nodes-base.set",
+  "n8n-nodes-base.webhook",
+  "n8n-nodes-base.code",
+  "n8n-nodes-base.filter",
+  "n8n-nodes-base.splitOut",
+  "n8n-nodes-base.merge",
+];
 export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   const webhookNodeName = workflow.data.nodes.find(node => node.type === "n8n-nodes-base.webhook")?.name;
 
@@ -93,6 +112,7 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   }
 
   const relations = new Map<string, IRelation>();
+  const relationsSet = new Set<string>();
 
   buildNextConnectedData({
     nodeName: webhookNodeName,
@@ -101,9 +121,16 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
     workflow,
   });
 
-  return Array.from(relations).filter(
-    ([_, { type }]) => !["n8n-nodes-base.set", "n8n-nodes-base.webhook"].includes(type),
-  );
+  return Array.from(relations).filter(([_, { type }]) => {
+    if (unwantedDataFlowNodes.includes(type)) {
+      return false;
+    }
+
+    const seen = relationsSet.has(type);
+    relationsSet.add(type);
+
+    return !seen;
+  });
 }
 
 const MAIN_CONNECTION_KEY = "main";
@@ -507,4 +534,24 @@ export const calculateScheduledDates = (schedule: IWorkflowSchedule, monthStart:
   }
 
   return dates;
+};
+
+export const getWorkflowInputsValues = (workflow: IWorkflowCreateResponse) => {
+  let values: IAnswer[] = [];
+
+  const kwargs = workflow.periodic_task?.kwargs;
+  if (kwargs) {
+    const parsedKwargs = JSON.parse(kwargs || "{}");
+    const workflowData = parsedKwargs.workflow_data || {};
+
+    values = Object.entries(workflowData).map(([inputName, answer]) => ({
+      inputName,
+      required: true,
+      question: ``,
+      answer: answer as PromptInputType,
+      prompt: 0,
+    }));
+  }
+
+  return values;
 };

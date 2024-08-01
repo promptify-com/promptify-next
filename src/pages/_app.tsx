@@ -62,10 +62,9 @@ function App({ Component, pageProps }: AppProps) {
 
       const cleanedAsPath = router.asPath.includes("?") ? router.asPath.split("?")[0] : router.asPath;
       const cleanedUrl = url.includes("?") ? url.split("?")[0] : url;
+      const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
 
       if (cleanedAsPath !== cleanedUrl) {
-        const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");
-
         if (!_navigationLoadingSpinnerOverlay) {
           const navigationLoadingSpinnerOverlay = document.createElement("div");
           const navigationLoadingSpinner = document.createElement("div");
@@ -78,6 +77,11 @@ function App({ Component, pageProps }: AppProps) {
           _navigationLoadingSpinnerOverlay.remove();
         }
       }
+
+      // TODO: find out why "routeChangeComplete" isn't triggered sometimes
+      setTimeout(() => {
+        _navigationLoadingSpinnerOverlay?.remove();
+      }, 3000);
     };
     const handleRouteChangeComplete = (_url: string) => {
       const _navigationLoadingSpinnerOverlay = document.querySelector(".navigationSpinnerOverlay");

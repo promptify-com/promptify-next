@@ -121,7 +121,7 @@ const ProfileImageSignUp = ({ user, token }: Props) => {
                 color: "var(--secondary, var(--secondary, #575E71))",
                 textAlign: "right",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "14px",
+                fontSize: { xs: "12px", sm: "14px" },
                 fontStyle: "normal",
                 fontWeight: "400",
                 lineHeight: "140%",

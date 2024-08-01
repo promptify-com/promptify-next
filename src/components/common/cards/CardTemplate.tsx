@@ -29,6 +29,8 @@ function CardTemplate({ template }: CardTemplateProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {});
   const { handleClickTag } = usePromptsFilter();
+  const pathname = router.pathname;
+  const isUserPage = pathname === "/users/[username]";
 
   const { tags } = template;
   const imgPriority = observer?.isIntersecting;
@@ -192,31 +194,37 @@ function CardTemplate({ template }: CardTemplateProps) {
               display="flex"
               alignItems="center"
             >
-              <Stack
-                direction={"row"}
-                alignItems={"center"}
-                gap={1}
-              >
-                <Image
-                  src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                  alt={template.created_by?.first_name ?? "Promptify"}
-                  width={18}
-                  height={18}
-                  style={{
-                    backgroundColor: theme.palette.surface[5],
-                    borderRadius: "50%",
+              {!isUserPage && (
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={1}
+                  onClick={e => {
+                    e.preventDefault();
+                    router.push(`/users/${template.created_by?.username}`);
                   }}
-                />
-
-                <Typography
-                  fontSize={11}
-                  fontWeight={500}
-                  lineHeight={"13.2px"}
-                  textAlign={"left"}
                 >
-                  {template.created_by?.first_name}
-                </Typography>
-              </Stack>
+                  <Image
+                    src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                    alt={template.created_by?.first_name ?? "Promptify"}
+                    width={18}
+                    height={18}
+                    style={{
+                      backgroundColor: theme.palette.surface[5],
+                      borderRadius: "50%",
+                    }}
+                  />
+
+                  <Typography
+                    fontSize={11}
+                    fontWeight={500}
+                    lineHeight={"13.2px"}
+                    textAlign={"left"}
+                  >
+                    {template.created_by?.first_name}
+                  </Typography>
+                </Stack>
+              )}
             </Box>
 
             {tags.length > 0 && !isMobile && (

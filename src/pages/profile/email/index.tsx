@@ -69,7 +69,7 @@ function ProfileEmail() {
               <Stack
                 direction={"row"}
                 alignItems={"center"}
-                gap={2}
+                gap={{ xs: 0, md: 2 }}
                 sx={{
                   width: "calc(100% - 32px)",
                   border: "1px solid",

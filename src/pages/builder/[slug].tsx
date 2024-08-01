@@ -41,9 +41,10 @@ import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
+import builderSlice, { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
+import store from "@/core/store";
 
 const spaceMono = Space_Mono({
   subsets: ["latin"],
@@ -72,6 +73,14 @@ export const Builder = () => {
   const token = useToken();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  useEffect(() => {
+    if (!store) {
+      return;
+    }
+
+    store.injectReducers([{ key: "builder", asyncReducer: builderSlice }]);
+  }, [store]);
 
   useEffect(() => {
     dispatch(setEngines(engines || []));

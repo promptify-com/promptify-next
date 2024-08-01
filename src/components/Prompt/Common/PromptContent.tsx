@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
   execution: TemplatesExecutions | null;
@@ -14,7 +15,7 @@ interface Props {
 }
 
 function PromptContent({ execution, content, engineName, id }: Props) {
-  const answers = useAppSelector(state => state.chat?.answers ?? []);
+  const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;

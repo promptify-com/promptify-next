@@ -1,32 +1,23 @@
 import { useState } from "react";
-import type { ExecutionTemplatePopupType, ExecutionWithTemplate } from "@/core/api/dto/templates";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Edit from "@mui/icons-material/Edit";
-import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import CloudDone from "@mui/icons-material/CloudDone";
-import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
-import { daysFrom } from "@/common/helpers/timeManipulation";
 import useBrowser from "@/hooks/useBrowser";
-import ActionButtons from "./ActionButtons";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setDocumentTitle } from "@/core/store/documentsSlice";
 import { theme } from "@/theme";
-import { calculateDocumentDeleteDeadline } from "@/components/Documents/Helper";
-import { updatePopupTemplate } from "@/core/store/templatesSlice";
+import { IGPTDocumentResponse } from "@/components/Automation/types";
+import UpdateTextInputModal from "@/components/dialog/UpdateTextInputModal";
 
 interface Props {
-  document: ExecutionWithTemplate;
+  gpt: IGPTDocumentResponse;
+  onUpdate: (title: string, gptKey: string) => void;
 }
 
-function Header({ document }: Props) {
-  const dispatch = useAppDispatch();
+function Header({ gpt, onUpdate }: Props) {
   const { isMobile } = useBrowser();
-  const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
-  const [isFavorite, setIsFavorite] = useState(document.is_favorite);
-
-  const daysLeft = calculateDocumentDeleteDeadline(document.created_at);
+  const [popup, setPopup] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>(gpt.title);
 
   return (
     <Stack
@@ -61,7 +52,7 @@ function Header({ document }: Props) {
               overflow: "hidden",
             }}
           >
-            {document.title}
+            {title}
           </Typography>
           {!isMobile && (
             <IconButton
@@ -83,39 +74,21 @@ function Header({ document }: Props) {
             gap: 1,
           }}
         >
-          {isFavorite ? (
-            <>
-              <CloudDone color="primary" />
-              Saved as document
-            </>
-          ) : (
-            <>
-              <ScheduleOutlined sx={{ color: "secondary.light" }} />
-              {daysLeft !== "0" ? `Saved as draft for ${daysLeft}` : "Soon"}
-            </>
-          )}
+          <>
+            <CloudDone color="primary" />
+            Saved as document
+          </>
         </Typography>
       </Stack>
 
-      {!isMobile && (
-        <ActionButtons
-          document={document}
-          onFavorite={setIsFavorite}
-        />
-      )}
-
-      {(popup === "delete" || popup === "update") && (
-        <SparkSaveDeletePopup
-          type={popup}
-          activeExecution={document}
+      {popup === "update" && (
+        <UpdateTextInputModal
+          title={gpt.title}
           onClose={() => setPopup(null)}
-          onUpdate={updateDocument => {
-            dispatch(setDocumentTitle(updateDocument.title));
-            dispatch(
-              updatePopupTemplate({
-                data: updateDocument,
-              }),
-            );
+          onUpdate={newTitle => {
+            onUpdate(newTitle, `${gpt.id}_${gpt.created_at}`);
+            setTitle(newTitle);
+            setPopup(null);
           }}
         />
       )}

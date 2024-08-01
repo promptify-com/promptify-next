@@ -8,6 +8,7 @@ import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import type { PromptParams } from "@/core/api/dto/prompts";
 import { useAppSelector } from "@/hooks/useStore";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
   param: PromptParams;
@@ -30,7 +31,7 @@ const HelpIcon = () => {
 };
 
 function ParamSlider({ param, onChange }: Props) {
-  const paramsValues = useAppSelector(state => state.chat?.paramsValues ?? []);
+  const paramsValues = useAppSelector(state => state.chat?.paramsValues ?? initialState.paramsValues);
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? false);
 
   const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);

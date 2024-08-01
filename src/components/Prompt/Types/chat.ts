@@ -28,7 +28,7 @@ export type MessageType =
   | "input"
   | InputType;
 
-type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse;
+type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse | IAnswer[];
 
 export interface IMessage {
   id: number;
@@ -78,7 +78,7 @@ export interface IQuestion {
 
 export interface CreateMessageProps {
   type: MessageType;
-  text: string;
+  text?: string;
   fromUser?: boolean;
   noHeader?: boolean;
   isHighlight?: boolean;

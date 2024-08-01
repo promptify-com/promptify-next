@@ -1,4 +1,4 @@
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import InputBase from "@mui/material/InputBase";
 import List from "@mui/material/List";
@@ -39,7 +39,6 @@ function Navigations({ onCloseDrawer }: Props) {
 
   const { filters, handleSelectKeyword } = usePromptsFilter();
   const title = filters.title ?? "";
-
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
@@ -104,11 +103,17 @@ function Navigations({ onCloseDrawer }: Props) {
     {
       label: "Learn",
       icon: <Book3 />,
-      href: "/learn",
+      href: "https://blog.promptify.com/",
       active: isLearnPage,
       external: false,
     },
   ];
+
+  useEffect(() => {
+    return () => {
+      setTextInput("");
+    };
+  }, [onCloseDrawer]);
 
   const onSearchClicked = () => {
     if (isExplorePage) {

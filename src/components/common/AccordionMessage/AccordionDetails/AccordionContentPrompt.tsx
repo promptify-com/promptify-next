@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 
 import { useAppSelector } from "@/hooks/useStore";
 import RunButton from "@/components/Prompt/Common/RunButton";
+import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
   title: string;
@@ -13,7 +14,7 @@ interface Props {
 }
 
 function AccordionContentPrompt({ title, children, onGenerate, showRunButton }: Props) {
-  const inputs = useAppSelector(state => state.chat?.inputs ?? []);
+  const inputs = useAppSelector(state => state.chat?.inputs ?? initialState.inputs);
 
   return (
     <>

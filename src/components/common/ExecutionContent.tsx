@@ -1,3 +1,4 @@
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
 
@@ -9,7 +10,7 @@ function wrapImages(content: string) {
   });
 }
 
-export const ExecutionContent = ({ content }: { content: string }) => {
+export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProps }) => {
   useEffect(() => {
     const handleClick = async (event: MouseEvent) => {
       const clickTarget = event.target as HTMLElement;
@@ -90,6 +91,7 @@ export const ExecutionContent = ({ content }: { content: string }) => {
             color: "#efefef",
           },
         },
+        ...(sx || {}),
       }}
       dangerouslySetInnerHTML={{
         __html: wrapImages(content),

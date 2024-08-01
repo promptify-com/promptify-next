@@ -10,15 +10,16 @@ interface CodeInputProps {
   isGenerating: boolean;
   value: PromptInputType;
   onChange: (value: string | File, input: IPromptInput) => void;
+  disabled?: boolean;
 }
 
-function Code({ input, isGenerating, value, onChange }: CodeInputProps) {
+function Code({ input, isGenerating, value, onChange, disabled }: CodeInputProps) {
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
   return (
     <>
       <BaseButton
-        disabled={isGenerating}
+        disabled={disabled || isGenerating}
         size="small"
         onClick={() => {
           setCodeFieldOpen(true);

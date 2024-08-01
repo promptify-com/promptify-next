@@ -129,7 +129,13 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     }
   }
 
-  return credentialsInput;
+  const credentialsSet = new Set<string>();
+  return credentialsInput.filter(credentials => {
+    const seen = credentialsSet.has(credentials.name);
+    credentialsSet.add(credentials.name);
+
+    return !seen;
+  });
 }
 
 export const attachCredentialsToNode = (node: INode) => {

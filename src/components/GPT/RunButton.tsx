@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 import { BtnStyle } from "./Constants";
+import type { SxProps } from "@mui/material/styles";
 
 interface Props {
   onClick: () => void;
@@ -10,9 +11,10 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   showIcon?: boolean;
+  sx?: SxProps;
 }
 
-function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon }: Props) {
+function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon, sx = {} }: Props) {
   const icon = loading ? (
     <CircularProgress
       size={12}
@@ -31,6 +33,7 @@ function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon }: P
       sx={{
         ...BtnStyle,
         p: "13px 24px",
+        ...sx,
       }}
     >
       {loading ? "Generating..." : text}

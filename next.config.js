@@ -27,6 +27,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "uploads-ssl.webflow.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+      }
     ],
     minimumCacheTTL: 3600,
   },
@@ -36,15 +40,12 @@ const nextConfig = {
 if (process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.SENTRY_AUTH_TOKEN) {
   const { withSentryConfig } = require("@sentry/nextjs");
 
-  nextConfig.sentry = {
-    hideSourceMaps: true,
-  };
-
   module.exports = withSentryConfig(nextConfig, {
     org: "matious-corp",
     project: "promptify-web-production",
     silent: true,
     authToken: process.env.SENTRY_AUTH_TOKEN,
+    hideSourceMaps: true,
   });
 } else {
   module.exports = nextConfig;

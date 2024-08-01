@@ -4,12 +4,69 @@ import Typography from "@mui/material/Typography";
 import { theme } from "@/theme";
 import AccordionBox from "@/components/common/AccordionBox";
 import { Prompts } from "@/core/api/dto/prompts";
+import Image from "../design-system/Image";
+import { highlight } from "@/common/constants";
+import Tooltip from "@mui/material/Tooltip";
 
 interface Props {
   prompts: Prompts[];
 }
 
 export default function Instructions({ prompts }: Props) {
+  function highlightContent(content: string) {
+    let result = [];
+    let lastIndex = 0;
+
+    highlight.forEach(({ highlight, className }) => {
+      const regex = new RegExp(highlight);
+      let match;
+
+      while ((match = regex.exec(content)) !== null) {
+        if (match.index > lastIndex) {
+          result.push(content.slice(lastIndex, match.index));
+        }
+
+        if (className === "input-variable") {
+          // Extract the variable name between {{ and :
+          const variableMatch = match[0].match(/{{([^:]+):/);
+          const variableName = variableMatch ? variableMatch[1].trim() : "variable";
+
+          result.push(
+            <Tooltip
+              key={`${match[0]}-${match.index}`}
+              title={`The user will be asked to fill the ${variableName} input`}
+              arrow
+              placement="top"
+            >
+              <span
+                className={className}
+                style={{ cursor: "pointer" }}
+              >
+                {match[0]}
+              </span>
+            </Tooltip>,
+          );
+        } else {
+          result.push(
+            <span
+              key={`${match[0]}-${match.index}`}
+              className={className}
+            >
+              {match[0]}
+            </span>,
+          );
+        }
+        lastIndex = regex.lastIndex;
+      }
+    });
+
+    if (lastIndex < content.length) {
+      result.push(content.slice(lastIndex));
+    }
+
+    return result;
+  }
+
   return (
     <Stack
       gap={3}
@@ -42,13 +99,33 @@ export default function Instructions({ prompts }: Props) {
                   >
                     {prompt.title}
                   </Typography>
-                  <Typography
-                    fontSize={{ xs: 14, md: 16 }}
-                    fontWeight={400}
-                    color={"secondary.main"}
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"4px"}
                   >
-                    {prompt.engine.name}
-                  </Typography>
+                    <Box
+                      width={"16px"}
+                      height={"16px"}
+                      borderRadius={"16px"}
+                      overflow={"hidden"}
+                      position={"relative"}
+                    >
+                      <Image
+                        fill
+                        style={{ objectFit: "cover" }}
+                        alt={prompt.engine.name}
+                        src={prompt.engine.icon}
+                      />
+                    </Box>
+                    <Typography
+                      fontSize={{ xs: 14, md: 16 }}
+                      fontWeight={400}
+                      color={"secondary.main"}
+                    >
+                      {prompt.engine.name}
+                    </Typography>
+                  </Stack>
                 </Stack>
                 <Box
                   sx={{
@@ -63,8 +140,24 @@ export default function Instructions({ prompts }: Props) {
                     color={"onSurface"}
                     fontFamily={"Roboto, Mono"}
                     whiteSpace={"pre-wrap"}
+                    component="div"
                   >
-                    {prompt.content}
+                    {highlightContent(prompt.content)}
+                  </Typography>
+                  <Typography
+                    fontSize={{ xs: 12, md: 13 }}
+                    fontWeight={400}
+                    color={"secondary.light"}
+                    fontStyle="italic"
+                    mt={2}
+                  >
+                    The output of this prompt will be stored in the variable:
+                    <span
+                      className="output-variable"
+                      style={{ marginLeft: "7px" }}
+                    >
+                      {prompt.prompt_output_variable}
+                    </span>
                   </Typography>
                 </Box>
               </Stack>

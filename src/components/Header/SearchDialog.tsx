@@ -36,6 +36,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
 
   const handleClose = (e: any) => {
     e.stopPropagation();
+    setTextInput("");
     close();
   };
 

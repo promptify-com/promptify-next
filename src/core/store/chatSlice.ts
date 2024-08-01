@@ -27,6 +27,7 @@ export const initialState: IChatSliceState = {
   selectedWorkflow: undefined,
   chats: [],
   clonedWorkflow: undefined,
+  gptGenerationStatus: "pending",
 };
 
 export const chatSlice = createSlice({
@@ -96,6 +97,9 @@ export const chatSlice = createSlice({
     setChoiceSelected: (state, action: PayloadAction<string | undefined>) => {
       state.choiceSelected = action.payload;
     },
+    setGptGenerationStatus: (state, action: PayloadAction<IChatSliceState["gptGenerationStatus"]>) => {
+      state.gptGenerationStatus = action.payload;
+    },
   },
 });
 
@@ -121,6 +125,7 @@ export const {
   setChats,
   setClonedWorkflow,
   setChoiceSelected,
+  setGptGenerationStatus,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

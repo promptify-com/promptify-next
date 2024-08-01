@@ -12,6 +12,8 @@ type SessionFilter = { [key: string]: ParsedUrlQueryInput };
 const usePromptsFilter = () => {
   const router = useRouter();
   const isExplorePage = router.pathname === "/explore";
+  const isPromptBuilderPage = router.pathname === "/prompt-builder/create";
+
   const [filters, setFilters] = useState<IFilterSliceState>({
     title: null,
     isFavorite: false,
@@ -169,7 +171,7 @@ const usePromptsFilter = () => {
   };
 
   useEffect(() => {
-    if (enginesLoading) return;
+    if (enginesLoading || isPromptBuilderPage) return;
 
     const isFavorite = Boolean(routerIsFavorite);
     const selectedEngine = routerEngine ? engines?.find(eng => eng.id === Number(routerEngine)) : null;
@@ -204,6 +206,7 @@ const usePromptsFilter = () => {
   }, [router.query, enginesLoading]);
 
   useEffect(() => {
+    if (isPromptBuilderPage) return;
     const sessionFilters = SessionStorage.get("filters") as unknown as SessionFilter;
     const sessionQueryParams = sessionFilters?.[router.pathname];
     if (sessionQueryParams) {
