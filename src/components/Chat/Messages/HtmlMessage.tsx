@@ -1,42 +1,60 @@
 import { memo, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import ClientOnly from "@/components/base/ClientOnly";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 
-interface Props {
-  message: IMessage;
+interface MessageContentWithHTMLProps {
+  content: string;
+  shouldStream: boolean;
+  onStreamingFinished: () => void;
 }
 
-const MessageContentWithHTML = memo(({ content }: { content: string }) => {
+const MessageContentWithHTML = memo(({ content, shouldStream, onStreamingFinished }: MessageContentWithHTMLProps) => {
+  const dispatch = useAppDispatch();
+  const { streamedText, hasFinished } = useTextSimulationStreaming({
+    text: content,
+    shouldStream,
+  });
   const [html, setHtml] = useState("");
 
   useEffect(() => {
-    if (!content) {
-      return;
-    }
-
-    const generateFinalHtml = async () => {
-      const _html = await markdownToHTML(content);
-      setHtml(_html);
+    const generateFinalHtml = async (text: string) => {
+      const _html = await markdownToHTML(text);
+      setHtml(sanitizeHTML(_html));
     };
 
-    generateFinalHtml();
-  }, [content]);
+    if (streamedText) {
+      generateFinalHtml(streamedText);
+    }
+
+    if (hasFinished) {
+      dispatch(setIsSimulationStreaming(false));
+      onStreamingFinished();
+    }
+  }, [streamedText, hasFinished, dispatch, onStreamingFinished]);
+
   return (
     <div
       dangerouslySetInnerHTML={{
-        __html: sanitizeHTML(html),
+        __html: html,
       }}
     />
   );
 });
 
-const HtmlMessage = ({ message }: Props) => {
+interface Props {
+  message: IMessage;
+  shouldStream: boolean;
+  onStreamingFinished: () => void;
+}
+
+const HtmlMessage = ({ message, shouldStream, onStreamingFinished }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt } = message;
@@ -90,7 +108,11 @@ const HtmlMessage = ({ message }: Props) => {
           gap={"8px"}
           alignItems={"start"}
         >
-          <MessageContentWithHTML content={text} />
+          <MessageContentWithHTML
+            content={text}
+            shouldStream={shouldStream && !fromUser}
+            onStreamingFinished={onStreamingFinished}
+          />
         </Grid>
       </Grid>
     </Grid>

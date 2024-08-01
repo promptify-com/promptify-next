@@ -49,38 +49,28 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
         />
       )}
 
-      {message.type === "html" && <HtmlMessage message={message} />}
+      {message.type === "html" && (
+        <HtmlMessage
+          message={message}
+          shouldStream={true}
+          onStreamingFinished={onScrollToBottom}
+        />
+      )}
 
       {message.type === "templates_suggestion" && !!message.data && (
-        <Fade
-          in={true}
-          unmountOnExit
-          timeout={800}
-          onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
-        >
-          <Stack>
-            <TemplateSuggestions
-              message={message}
-              scrollToBottom={onScrollToBottom}
-            />
-          </Stack>
-        </Fade>
+        <TemplateSuggestions
+          message={message}
+          scrollToBottom={onScrollToBottom}
+          lastMessage={lastMessage}
+        />
       )}
 
       {message.type === "workflows_suggestion" && !!message.data && (
-        <Fade
-          in={true}
-          unmountOnExit
-          timeout={800}
-          onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
-        >
-          <Stack>
-            <WorkflowSuggestions
-              message={message}
-              scrollToBottom={onScrollToBottom}
-            />
-          </Stack>
-        </Fade>
+        <WorkflowSuggestions
+          message={message}
+          scrollToBottom={onScrollToBottom}
+          lastMessage={lastMessage}
+        />
       )}
       {message.type === "form" && (
         <Fade
@@ -183,7 +173,13 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           onGenerate={onGenerate}
         />
       )}
-      {message.type === "workflowExecution" && <HtmlMessage message={generatedExecutionMessage} />}
+      {message.type === "workflowExecution" && (
+        <HtmlMessage
+          message={generatedExecutionMessage}
+          shouldStream={true}
+          onStreamingFinished={onScrollToBottom}
+        />
+      )}
     </>
   );
 }
