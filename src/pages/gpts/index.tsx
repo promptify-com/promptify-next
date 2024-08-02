@@ -129,8 +129,8 @@ function GPTsPage() {
           ) : (
             <Fragment>
               <GPTsSection
-                header="Scheduled GPTs"
-                subheader="Easily view, pause, or tweak your scheduled Promptify GPTs. 
+                header="Scheduled AI Apps"
+                subheader="Easily view, pause, or tweak your scheduled Promptify AI Apps. 
                 Stay on top of your tasks and keep your workflow smooth and flexible."
                 workflows={scheduleGPTs}
                 isLoading={isLoadingUserWorkflows}
@@ -153,8 +153,8 @@ function GPTsPage() {
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
                   <GPTsSection
-                    header="Recently Used GPTs"
-                    subheader="Quickly access and reuse the Promptify GPTs you've recently employed to ensure continuity and efficiency in your ongoing tasks."
+                    header="Recently Used AI Apps"
+                    subheader="Quickly access and reuse the Promptify AI Apps you've recently employed to ensure continuity and efficiency in your ongoing tasks."
                     workflows={recentlyUserdWorkflows}
                     isLoading={isLoadingUserWorkflows}
                   />
@@ -164,8 +164,8 @@ function GPTsPage() {
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
                   <GPTsSection
-                    header="Latest GPTs"
-                    subheader="Discover the latest Promptify GPTs to amplify your productivity. Stay ahead, keep things fresh,
+                    header="Latest AI Apps"
+                    subheader="Discover the latest Promptify AI Apps to amplify your productivity. Stay ahead, keep things fresh,
                      and make daily tasks a breeze with cutting-edge Generative AI."
                     workflows={latestCreatedWorkflows}
                     isLoading={isLoadingAllWorkflows}
@@ -203,7 +203,7 @@ function GPTsPage() {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "GPTs",
+      title: "AI Apps",
       description: AUTOMATION_DESCRIPTION,
     },
   };
