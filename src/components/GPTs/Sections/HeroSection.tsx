@@ -59,7 +59,7 @@ function HeroSection({ onFilter }: Props) {
           fontWeight={500}
           lineHeight={"120%"}
         >
-          GPTs
+          AI Apps
         </Typography>
         <Typography
           fontSize={14}

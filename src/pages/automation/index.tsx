@@ -50,7 +50,7 @@ export default function Automation({ workflows = [] }: Props) {
                 lineHeight={"34.32px"}
                 letterSpacing={"0.17"}
               >
-                GPTs
+                AI Apps
               </Typography>
               <Typography variant="body1">{AUTOMATION_DESCRIPTION}</Typography>
             </Box>
@@ -95,7 +95,7 @@ export async function getServerSideProps({ query }: Props) {
 
     return {
       props: {
-        title: "GPTs",
+        title: "AI Apps",
         description: AUTOMATION_DESCRIPTION,
         workflows,
       },
@@ -103,7 +103,7 @@ export async function getServerSideProps({ query }: Props) {
   } catch (error) {
     return {
       props: {
-        title: "GPTs",
+        title: "AI Apps",
         description: AUTOMATION_DESCRIPTION,
         workflows: [],
       },
