@@ -4,20 +4,21 @@ import Stack from "@mui/material/Stack";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import useCarousel from "@/hooks/useCarousel";
 import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
-import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 import useBrowser from "@/hooks/useBrowser";
+import { AIApps } from "../Automation/types";
+import CardAIAppsTemplate from "../common/cards/CardAIAppsTemplate";
 
 interface Props {
-  templates: TemplateExecutionsDisplay[] | undefined;
+  templates?: AIApps[];
   isLoading: boolean;
 }
 
-export default function TemplatesCarousel({ templates, isLoading }: Props) {
+export default function LatestAIAppsCarousel({ templates, isLoading }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ skipSnaps: true, slidesToScroll: 2 });
@@ -26,12 +27,14 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const activeTemplate = useAppSelector(state => state.documents?.filter?.template ?? null);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
-  const handleSelectTemplate = (template: TemplateExecutionsDisplay) => {
+  const handleSelectTemplate = (template: AIApps) => {
     dispatch(setDocumentsTemplate(template.id === activeTemplate ? null : template.id));
   };
 
   const isEmpty = !isLoading && !templates?.length;
   const showCarousel = templates && templates?.length > 1;
+
+  console.log(templates);
 
   if (isEmpty) return;
   return (
@@ -50,7 +53,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
         >
-          Latest Prompt Templates
+          Latest AI Apps
         </Typography>
         {isCarousel && showCarousel && (
           <Stack
@@ -139,7 +142,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                         flex: 0,
                       }}
                     >
-                      <CardDocumentTemplate
+                      <CardAIAppsTemplate
                         template={template}
                         onClick={e => {
                           e.preventDefault();
@@ -161,7 +164,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                             flex: 0,
                           }}
                         >
-                          <CardDocumentTemplate
+                          <CardAIAppsTemplate
                             template={templates[index + 1]}
                             onClick={e => {
                               e.preventDefault();
@@ -189,7 +192,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                   flex: 0,
                 }}
               >
-                <CardDocumentTemplate
+                <CardAIAppsTemplate
                   template={template}
                   onClick={e => {
                     e.preventDefault();

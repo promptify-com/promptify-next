@@ -9,6 +9,7 @@ import type {
   IWorkflowCategory,
   IGPTDocumentPayload,
   IGPTDocumentResponse,
+  AIApps,
 } from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
@@ -183,6 +184,12 @@ export const workflowsApi = baseApi.injectEndpoints({
           data,
         }),
       }),
+      getAIApps: builder.query<AIApps[], void>({
+        query: () => ({
+          url: `/api/n8n/workflows/execution_count/`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -208,4 +215,5 @@ export const {
   useSaveGPTDocumentMutation,
   useGetGPTDocumentsQuery,
   useUpdateGPTDocumentMutation,
+  useGetAIAppsQuery,
 } = workflowsApi;

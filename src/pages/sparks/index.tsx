@@ -30,6 +30,8 @@ import { getExecutionByHash } from "@/hooks/api/executions";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import store from "@/core/store";
 import GPTDocumentsContainer from "@/components/Documents/GPTDocumentsContainer";
+import LatestAIAppsCarousel from "@/components/Documents/LatestAIAppsCarousel";
+import { useGetAIAppsQuery } from "@/core/api/workflows";
 
 const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
@@ -50,6 +52,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
 
   const { data: templates, isLoading: isTemplatesLoading } = useGetExecutedTemplatesQuery();
+  const { data: AIApps, isLoading: isAIAppsLoading } = useGetAIAppsQuery();
 
   const params: ExecutionsFilterParams = useMemo(
     () => ({
@@ -187,6 +190,14 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
               isLoading={isTemplatesLoading}
             />
           )}
+
+          {!activeTemplate && (
+            <LatestAIAppsCarousel
+              templates={AIApps}
+              isLoading={isAIAppsLoading}
+            />
+          )}
+
           {!activeTemplate && <GPTDocumentsContainer />}
           <PaginatedList
             loading={isExecutionsFetching}
