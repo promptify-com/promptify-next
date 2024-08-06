@@ -165,7 +165,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                   </Avatar>
                 }
                 actionLabel="Let's Go!"
-                href="/chat"
+                href="/chat?go=true"
               />
             </Grid>
             {chats?.results[0] && (

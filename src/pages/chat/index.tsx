@@ -45,6 +45,7 @@ function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
+
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [stopScrollingToBottom, setStopScrollingToBottom] = useState<boolean>(false);
   const [loadingInitialMessages, setLoadingInitialMessages] = useState(false);
@@ -86,11 +87,23 @@ function Chat() {
   const dynamicTheme = useDynamicColors(selectedChat?.thumbnail);
   const isInputStyleQA = currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa";
 
-  const handleCreateChat = async () => {
-    if (!selectedTemplate) return;
+  useEffect(() => {
+    if (!router.isReady) return;
 
+    if (router.query.go === "true") {
+      handleCreateChat({ title: "Welcome" });
+      handleSubmitInput("Provide templates to write short and long stories, novels, concepts...");
+
+      const { go, ...restQuery } = router.query;
+      router.replace({ pathname: router.pathname, query: { ...restQuery } }, undefined, {
+        shallow: true,
+      });
+    }
+  }, [router.isReady]);
+
+  const handleCreateChat = async ({ title, thumbnail }: { title: string; thumbnail?: string }) => {
     const newChat = await createChat({
-      data: { title: selectedTemplate.title, thumbnail: selectedTemplate.thumbnail },
+      data: { title, thumbnail },
     });
     dispatch(setSelectedChat(newChat));
   };
@@ -223,7 +236,9 @@ function Chat() {
     if (selectedChat && selectedTemplate?.title) {
       handleTitleChat();
     } else {
-      handleCreateChat();
+      if (selectedTemplate) {
+        handleCreateChat(selectedTemplate);
+      }
     }
   }, [selectedTemplate]);
 
