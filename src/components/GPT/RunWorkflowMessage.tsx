@@ -38,7 +38,7 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
             ...(gptGenerationStatus === "started" && { width: "45%" }),
           }}
         >
-          Ready to test this GPT
+          Ready to test this AI App
         </Typography>
         <RunButtonWithProgressBar
           onClick={onRun}

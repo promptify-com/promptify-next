@@ -47,7 +47,7 @@ function GPTDocumentsContainer() {
           fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
         >
-          GPT documents
+          AI Apps documents
         </Typography>
       </Stack>
       <Grid
@@ -102,7 +102,7 @@ function GPTDocumentsContainer() {
               color: "onSurface",
             }}
           >
-            No GPT document found
+            No AI Apps document found
           </Stack>
         )}
       </Grid>

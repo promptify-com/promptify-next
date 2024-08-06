@@ -94,19 +94,19 @@ function WorkflowActionsModal({
                   sx={menuItemStyle}
                   onClick={onEdit}
                 >
-                  Edit GPT
+                  Edit AI App
                 </MenuItem>
                 <MenuItem
                   sx={menuItemStyle}
                   onClick={isPaused ? onResume : onPause}
                 >
-                  {isPaused ? "Resume GPT" : "Pause GPT"}
+                  {isPaused ? "Resume AI App" : "Pause AI App"}
                 </MenuItem>
                 <MenuItem
                   sx={menuItemStyle}
                   onClick={onRemove}
                 >
-                  Remove GPT
+                  Remove AI App
                 </MenuItem>
               </Stack>
             </ClickAwayListener>

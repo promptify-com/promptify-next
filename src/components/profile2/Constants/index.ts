@@ -17,7 +17,7 @@ export const navItems = [
     label: "Account",
     items: [
       { title: "Account connections", link: "/profile/social-accounts" },
-      { title: "GPT credentials", link: "/profile/credentials" },
+      { title: "AI App credentials", link: "/profile/credentials" },
       { title: "Email settings", link: "/profile/email" },
     ],
   },

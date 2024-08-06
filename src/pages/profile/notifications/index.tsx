@@ -54,8 +54,8 @@ function ProfileNotifications() {
                 onChange={checked => handleChangePreferences({ generation_finished: checked })}
               />
               <StackedSwitch
-                title="GPT notification"
-                description="Allow GPT’s send me notifications"
+                title="AI App notification"
+                description="Allow AI Apps to send me notifications"
                 checked={Boolean(preferences?.gpt_notification)}
                 onChange={checked => handleChangePreferences({ gpt_notification: checked })}
               />

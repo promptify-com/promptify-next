@@ -34,11 +34,11 @@ function AdsBox() {
         gap={2}
       >
         <Typography
-          fontSize={38}
+          fontSize={36}
           color={"onPrimary"}
           lineHeight={"50.4px"}
         >
-          Try GPT’s
+          Try AI Apps
         </Typography>
 
         <Typography

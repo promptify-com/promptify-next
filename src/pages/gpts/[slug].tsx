@@ -165,7 +165,7 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
-        title: workflow.name ?? "GPT",
+        title: workflow.name ?? "AI App",
         description: workflow.description ?? AUTOMATION_DESCRIPTION,
         image: workflow.image,
         workflow,
@@ -174,7 +174,7 @@ export async function getServerSideProps({ params }: any) {
   } catch (error) {
     return {
       props: {
-        title: "GPT",
+        title: "AI App",
         description: AUTOMATION_DESCRIPTION,
         workflow: {},
       },

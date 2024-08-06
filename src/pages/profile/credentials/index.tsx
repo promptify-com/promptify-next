@@ -10,7 +10,7 @@ function ProfileCredentials() {
     <Protected>
       <Layout>
         <ContentWrapper
-          title="GPT credentials"
+          title="AI App credentials"
           description="Manage and update your account credentials to ensure the security and integrity of your account."
         >
           <Credentials />
