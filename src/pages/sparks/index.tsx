@@ -187,7 +187,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
               isLoading={isTemplatesLoading}
             />
           )}
-          <GPTDocumentsContainer />
+          {!activeTemplate && <GPTDocumentsContainer />}
           <PaginatedList
             loading={isExecutionsFetching}
             hasNext={hasNext}
