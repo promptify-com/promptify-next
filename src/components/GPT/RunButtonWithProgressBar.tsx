@@ -81,7 +81,7 @@ export function LinearWithValueLabel() {
   );
 }
 
-export function RunButtonWithProgressBar({ onClick, text = "Run GPT", disabled, loading, sx = {} }: Props) {
+export function RunButtonWithProgressBar({ onClick, text = "Run AI App", disabled, loading, sx = {} }: Props) {
   if (loading) {
     return <LinearWithValueLabel />;
   }

@@ -6,7 +6,6 @@ import FormInput from "@/components/GPT/FormInput";
 import MessageContainer from "@/components/GPT/MessageContainer";
 import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import RunButton from "@/components/GPT/RunButton";
-import { IPromptInput } from "@/common/types/prompt";
 import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
 
 interface Props {

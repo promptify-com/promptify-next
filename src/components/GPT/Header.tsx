@@ -98,7 +98,7 @@ export default function Header({ workflow }: Props) {
               color="#FFF"
               small
             />
-            GPT
+            AI App
           </Stack>
           <Typography
             fontSize={{ xs: 33, md: 40 }}
