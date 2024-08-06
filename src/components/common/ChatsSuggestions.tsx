@@ -12,6 +12,10 @@ import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { usePrepareTemplatesExecutions } from "@/components/Documents/Hooks/usePrepareTemplatesExecutions";
 import { useGetTemplateByIdQuery } from "@/core/api/templates";
 import type { EngineOutput, TemplateExecutionsDisplay, TemplatesExecutions } from "@/core/api/dto/templates";
+import { useGetGPTDocumentsQuery, useUpdateGPTDocumentMutation } from "@/core/api/workflows";
+import GPTDocumentPage from "../Documents/GPTDocumentPage";
+import { IGPTDocumentResponse } from "../Automation/types";
+import SuggestionCardWithoutLink from "../Homepage/SuggestionCardWithoutLink";
 
 interface Props {
   carouselRef?: RefObject<HTMLDivElement>;
@@ -22,6 +26,9 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
   const { data: chats } = useGetChatsQuery({ limit: slice });
   const { data: fetchExecutions, isFetching: isExecutionsFetching } = useGetExecutionsByMeQuery({ limit: 1 });
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
+  const [selectedGPT, setSelectedGPT] = useState<IGPTDocumentResponse | null>(null);
+  const [newGPts, setNewGPTs] = useState<IGPTDocumentResponse[]>([]);
+  const [lastUpdatedGPT, setLastUpdatedGPT] = useState<IGPTDocumentResponse | null>(null);
 
   const templateId = executions.length && executions[0].template ? executions[0].template.id : null;
   const { data: templates, isLoading: isTemplatesLoading } = useGetTemplateByIdQuery(templateId!, {
@@ -33,6 +40,24 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
     ([templates] as TemplateExecutionsDisplay[]) ?? [],
     isTemplatesLoading,
   );
+  const {
+    data: gptDocuments,
+    isLoading: isGPTDocumentsLoading,
+    refetch: refetchGPTDocuments,
+  } = useGetGPTDocumentsQuery();
+  const [updateGPTDocument] = useUpdateGPTDocumentMutation();
+
+  useEffect(() => {
+    if (gptDocuments?.length) {
+      setNewGPTs(gptDocuments);
+
+      const sortedDocuments = [...gptDocuments].sort(
+        (a, b) => new Date(a.workflow.updated_at).getTime() - new Date(b.workflow.updated_at).getTime(),
+      );
+
+      setLastUpdatedGPT(sortedDocuments[0]);
+    }
+  }, [gptDocuments, isGPTDocumentsLoading]);
 
   useEffect(() => {
     if (fetchExecutions?.results) {
@@ -64,6 +89,21 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
     );
     documentDescription = firstFoundExecution ? firstFoundExecution.output : "";
   }
+
+  const onUpdateHandler = async (title: string, gptKey: string) => {
+    const _gpt = newGPts.find(gpt => `${gpt.id}_${gpt.created_at}` === gptKey);
+
+    if (_gpt) {
+      setNewGPTs(prevGPTs => prevGPTs.map(gpt => (`${gpt.id}_${gpt.created_at}` === gptKey ? { ...gpt, title } : gpt)));
+      await updateGPTDocument({
+        workflowDbId: _gpt.id,
+        data: {
+          title,
+        },
+      });
+      refetchGPTDocuments();
+    }
+  };
 
   return (
     <>
@@ -182,6 +222,32 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                 />
               </Grid>
             )}
+
+            {!profilePage && lastUpdatedGPT && (
+              <Grid
+                item
+                mr={2}
+                xs={12}
+                md={4}
+                sx={{
+                  maxWidth: { xs: "290px", sm: "330px", xl: "100%" },
+                }}
+                onClick={() => setSelectedGPT(lastUpdatedGPT)}
+              >
+                <SuggestionCardWithoutLink
+                  title="Your Last AI Work"
+                  description={lastUpdatedGPT.title}
+                  avatar={
+                    <Avatar
+                      src=""
+                      variant="explore"
+                    />
+                  }
+                  actionLabel="Check This Work!"
+                />
+              </Grid>
+            )}
+
             {!profilePage && (
               <Grid
                 item
@@ -236,6 +302,14 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
             </Grid>
           </Grid>
         </Stack>
+      )}
+
+      {selectedGPT && (
+        <GPTDocumentPage
+          gpt={selectedGPT}
+          onClose={() => setSelectedGPT(null)}
+          onUpdate={onUpdateHandler}
+        />
       )}
     </>
   );
