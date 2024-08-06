@@ -118,7 +118,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                 />
               </Box>
             </Box>
-          ) : (
+          ) : isCarousel ? (
             templates?.map((template, index) => (
               <Grid
                 item
@@ -173,6 +173,29 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                     )}
                   </>
                 )}
+              </Grid>
+            ))
+          ) : (
+            templates?.map(template => (
+              <Grid
+                key={template.id}
+                item
+                xs={6}
+                sm={4}
+                md={isDocumentsFiltersSticky ? 8 : 6}
+                lg={isDocumentsFiltersSticky ? 4 : 3}
+                xl={3}
+                sx={{
+                  flex: 0,
+                }}
+              >
+                <CardDocumentTemplate
+                  template={template}
+                  onClick={e => {
+                    e.preventDefault();
+                    handleSelectTemplate(template);
+                  }}
+                />
               </Grid>
             ))
           )}
