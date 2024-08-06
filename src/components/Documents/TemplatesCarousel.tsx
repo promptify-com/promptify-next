@@ -7,7 +7,7 @@ import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate
 import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useState } from "react";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setDocumentsTemplate } from "@/core/store/documentsSlice";
 import useBrowser from "@/hooks/useBrowser";
@@ -20,7 +20,7 @@ interface Props {
 export default function TemplatesCarousel({ templates, isLoading }: Props) {
   const dispatch = useAppDispatch();
   const { isMobile } = useBrowser();
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel();
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ skipSnaps: true, slidesToScroll: 2 });
   const [isCarousel, setIsCarousel] = useState(true);
 
   const activeTemplate = useAppSelector(state => state.documents?.filter?.template ?? null);
@@ -93,35 +93,86 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           })}
         >
           {isLoading ? (
-            <CardDocumentTemplatePlaceholder
-              count={5}
-              sx={{
-                width: { xs: 212, md: 278 },
-                height: { xs: 219, md: 278 },
-                p: "16px 16px 8px",
-              }}
-            />
-          ) : (
-            templates?.map(template => (
-              <Grid
-                key={template.id}
-                item
-                xs={6}
-                sm={4}
-                md={isDocumentsFiltersSticky ? 8 : 6}
-                lg={isDocumentsFiltersSticky ? 4 : 3}
-                xl={3}
-                sx={{
-                  flex: 0,
-                }}
-              >
-                <CardDocumentTemplate
-                  template={template}
-                  onClick={e => {
-                    e.preventDefault();
-                    handleSelectTemplate(template);
+            <Box
+              display="flex"
+              flexDirection="column"
+            >
+              <Box display="flex">
+                <CardDocumentTemplatePlaceholder
+                  count={4}
+                  sx={{
+                    width: { xs: 212, md: 278 },
+                    height: { xs: 219, md: 278 },
+                    p: "16px 16px 8px",
                   }}
                 />
+              </Box>
+              <Box display="flex">
+                <CardDocumentTemplatePlaceholder
+                  count={4}
+                  sx={{
+                    width: { xs: 212, md: 278 },
+                    height: { xs: 219, md: 278 },
+                    p: "16px 16px 8px",
+                  }}
+                />
+              </Box>
+            </Box>
+          ) : (
+            templates?.map((template, index) => (
+              <Grid
+                item
+                display="flex"
+                flexDirection="column"
+              >
+                {index % 2 === 0 && (
+                  <>
+                    <Grid
+                      key={template.id}
+                      item
+                      xs={6}
+                      sm={4}
+                      md={isDocumentsFiltersSticky ? 8 : 6}
+                      lg={isDocumentsFiltersSticky ? 4 : 3}
+                      xl={3}
+                      sx={{
+                        flex: 0,
+                      }}
+                    >
+                      <CardDocumentTemplate
+                        template={template}
+                        onClick={e => {
+                          e.preventDefault();
+                          handleSelectTemplate(template);
+                        }}
+                      />
+                    </Grid>
+                    {templates[index + 1] && (
+                      <>
+                        <Grid
+                          key={templates[index + 1].id}
+                          item
+                          xs={6}
+                          sm={4}
+                          md={isDocumentsFiltersSticky ? 8 : 6}
+                          lg={isDocumentsFiltersSticky ? 4 : 3}
+                          xl={3}
+                          sx={{
+                            flex: 0,
+                          }}
+                        >
+                          <CardDocumentTemplate
+                            template={templates[index + 1]}
+                            onClick={e => {
+                              e.preventDefault();
+                              handleSelectTemplate(templates[index + 1]);
+                            }}
+                          />
+                        </Grid>
+                      </>
+                    )}
+                  </>
+                )}
               </Grid>
             ))
           )}
