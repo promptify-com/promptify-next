@@ -7,7 +7,7 @@ import DocumentsContainer from "@/components/Documents/DocumentsContainer";
 import { useGetExecutionsByMeQuery } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import type { ExecutionsFilterParams, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { AIAppsParams, ExecutionsFilterParams, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import PaginatedList from "@/components/PaginatedList";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGetExecutedTemplatesQuery } from "@/core/api/templates";
@@ -31,7 +31,9 @@ import { getTemplateBySlug } from "@/hooks/api/templates";
 import store from "@/core/store";
 import GPTDocumentsContainer from "@/components/Documents/GPTDocumentsContainer";
 import LatestAIAppsCarousel from "@/components/Documents/LatestAIAppsCarousel";
-import { useGetAIAppsQuery } from "@/core/api/workflows";
+import { useGetAIAppsQuery, useGetAIAppsWorkflowQuery } from "@/core/api/workflows";
+import { AIApps, IGPTDocumentResponse } from "@/components/Automation/types";
+import AIAppsDocumentsContainer from "@/components/Documents/AIAppsDocumentsContainer";
 
 const DocumentsDrawerLazy = lazy(() => import("@/components/sidebar/DocumentsFilter/DocumentsDrawer"), {
   ssr: false,
@@ -50,9 +52,16 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   const documentTitle = useAppSelector(state => state.documents?.title);
   const [offset, setOffset] = useState(0);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>([]);
+  const [activeAIApp, setActiveAIApp] = useState<AIApps | null>(null);
+  const [AIAppsOffset, setAIAppsOffset] = useState(0);
+  const [AIAppsData, setAIAppsData] = useState<IGPTDocumentResponse[]>([]);
 
   const { data: templates, isLoading: isTemplatesLoading } = useGetExecutedTemplatesQuery();
-  const { data: AIApps, isLoading: isAIAppsLoading } = useGetAIAppsQuery();
+  const { data: AIApps, isLoading: isAIAppsQueryLoading } = useGetAIAppsQuery();
+
+  useEffect(() => {
+    window?.scrollTo(0, 0);
+  }, [activeAIApp]);
 
   const params: ExecutionsFilterParams = useMemo(
     () => ({
@@ -64,6 +73,21 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
     }),
     [filter.contentTypes, filter.engine?.id, filter.template, offset],
   );
+
+  const AiAppsParams: AIAppsParams = useMemo(
+    () => ({
+      offset: AIAppsOffset,
+      limit: PAGINATION_LIMIT,
+      workflow_id: activeAIApp?.workflow_id ?? undefined,
+    }),
+    [activeAIApp, AIAppsOffset],
+  );
+
+  const {
+    data: fetchAIApps,
+    isLoading: isAIAppsLoading,
+    isFetching: isAIAppsFetching,
+  } = useGetAIAppsWorkflowQuery(AiAppsParams, { skip: !activeAIApp });
 
   const {
     data: fetchExecutions,
@@ -83,6 +107,12 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
     }
   };
 
+  const handleNextAIAppsPage = () => {
+    if (!!fetchAIApps?.next) {
+      setAIAppsOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
+    }
+  };
+
   useEffect(() => {
     setOffset(0);
   }, [filter.contentTypes, filter.engine?.id, filter.template, filter.status, documentTitle]);
@@ -96,6 +126,16 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
       }
     }
   }, [fetchExecutions?.results]);
+
+  useEffect(() => {
+    if (fetchAIApps?.results) {
+      if (AIAppsOffset === 0) {
+        setAIAppsData(fetchAIApps?.results as IGPTDocumentResponse[]);
+      } else {
+        setAIAppsData(prevTemplates => prevTemplates.concat(fetchAIApps?.results as IGPTDocumentResponse[]));
+      }
+    }
+  }, [fetchAIApps?.results]);
 
   useEffect(() => {
     if (!!hashedExecution && !!fetchedTemplate) {
@@ -127,6 +167,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   }, [templatesExecutions, filter.status]);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
   const hasNext = Boolean(fetchExecutions?.next && filteredExecutions.length >= PAGINATION_LIMIT);
+  const hasAIAppsNext = Boolean(fetchAIApps?.next && fetchAIApps?.results.length >= PAGINATION_LIMIT);
   const activeTemplate = templates?.find(template => template.id === filter.template);
   const templateBreadcrumbs = [
     <Link
@@ -154,6 +195,32 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
     </Typography>,
   ];
 
+  const AIAppsBreadcrumbs = [
+    <Link
+      key={"0"}
+      href="/sparks"
+      onClick={e => {
+        e.preventDefault();
+        setActiveAIApp(null);
+      }}
+      sx={breadcrumbStyle}
+    >
+      All AI Apps
+    </Link>,
+    <Typography
+      key={"1"}
+      sx={{
+        ...breadcrumbStyle,
+        color: "onSurface",
+        ":hover": {
+          color: "onSurface",
+        },
+      }}
+    >
+      {activeAIApp?.template_workflow.name}
+    </Typography>,
+  ];
+
   return (
     <Protected>
       <Layout>
@@ -175,50 +242,87 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
             }),
           }}
         >
-          {activeTemplate ? (
+          {!activeAIApp &&
+            (activeTemplate ? (
+              <Breadcrumbs
+                separator={<ArrowBackIosNew sx={{ fontSize: 14, color: alpha(theme.palette.onSurface, 0.3) }} />}
+                sx={{
+                  p: { xs: "24px 16px 0", md: 0 },
+                }}
+              >
+                {templateBreadcrumbs}
+              </Breadcrumbs>
+            ) : (
+              <TemplatesCarousel
+                templates={templates}
+                isLoading={isTemplatesLoading}
+              />
+            ))}
+
+          {activeAIApp ? (
             <Breadcrumbs
               separator={<ArrowBackIosNew sx={{ fontSize: 14, color: alpha(theme.palette.onSurface, 0.3) }} />}
               sx={{
                 p: { xs: "24px 16px 0", md: 0 },
               }}
             >
-              {templateBreadcrumbs}
+              {AIAppsBreadcrumbs}
             </Breadcrumbs>
           ) : (
-            <TemplatesCarousel
-              templates={templates}
-              isLoading={isTemplatesLoading}
-            />
+            !activeTemplate && (
+              <LatestAIAppsCarousel
+                templates={AIApps}
+                isLoading={isAIAppsQueryLoading}
+                setActiveAIApp={setActiveAIApp}
+              />
+            )
           )}
 
-          {!activeTemplate && (
-            <LatestAIAppsCarousel
-              templates={AIApps}
-              isLoading={isAIAppsLoading}
-            />
-          )}
+          {!activeTemplate && !activeAIApp && <GPTDocumentsContainer />}
 
-          {!activeTemplate && <GPTDocumentsContainer />}
-          <PaginatedList
-            loading={isExecutionsFetching}
-            hasNext={hasNext}
-            onNextPage={handleNextPage}
-            buttonText={isExecutionsFetching ? "Loading..." : "Load more"}
-            variant="outlined"
-            endIcon={
-              isExecutionsFetching && (
-                <CircularProgress
-                  size={24}
-                  color="primary"
-                />
-              )
-            }
-          >
-            <DocumentsContainer
-              executions={filteredExecutions}
-              isLoading={isTemplatesLoading || isExecutionsLoading}
-            />
-          </PaginatedList>
+          {!activeAIApp ? (
+            <PaginatedList
+              loading={isExecutionsFetching}
+              hasNext={hasNext}
+              onNextPage={handleNextPage}
+              buttonText={isExecutionsFetching ? "Loading..." : "Load more"}
+              variant="outlined"
+              endIcon={
+                isExecutionsFetching && (
+                  <CircularProgress
+                    size={24}
+                    color="primary"
+                  />
+                )
+              }
+            >
+              <DocumentsContainer
+                executions={filteredExecutions}
+                isLoading={isTemplatesLoading || isExecutionsLoading}
+              />
+            </PaginatedList>
+          ) : (
+            <PaginatedList
+              loading={isAIAppsFetching}
+              hasNext={hasAIAppsNext}
+              onNextPage={handleNextAIAppsPage}
+              buttonText={isAIAppsFetching ? "Loading..." : "Load more"}
+              variant="outlined"
+              endIcon={
+                isAIAppsFetching && (
+                  <CircularProgress
+                    size={24}
+                    color="primary"
+                  />
+                )
+              }
+            >
+              <AIAppsDocumentsContainer
+                executions={AIAppsData}
+                isLoading={isAIAppsLoading || isAIAppsFetching}
+              />
+            </PaginatedList>
+          )}
         </Stack>
       </Layout>
     </Protected>

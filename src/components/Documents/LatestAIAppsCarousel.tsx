@@ -3,12 +3,10 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import useCarousel from "@/hooks/useCarousel";
-import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setDocumentsTemplate } from "@/core/store/documentsSlice";
+import { useAppSelector } from "@/hooks/useStore";
 import useBrowser from "@/hooks/useBrowser";
 import { AIApps } from "../Automation/types";
 import CardAIAppsTemplate from "../common/cards/CardAIAppsTemplate";
@@ -16,25 +14,18 @@ import CardAIAppsTemplate from "../common/cards/CardAIAppsTemplate";
 interface Props {
   templates?: AIApps[];
   isLoading: boolean;
+  setActiveAIApp: (item: AIApps | null) => void;
 }
 
-export default function LatestAIAppsCarousel({ templates, isLoading }: Props) {
-  const dispatch = useAppDispatch();
+export default function LatestAIAppsCarousel({ templates, isLoading, setActiveAIApp }: Props) {
   const { isMobile } = useBrowser();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ skipSnaps: true, slidesToScroll: 2 });
   const [isCarousel, setIsCarousel] = useState(true);
 
-  const activeTemplate = useAppSelector(state => state.documents?.filter?.template ?? null);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
-
-  const handleSelectTemplate = (template: AIApps) => {
-    dispatch(setDocumentsTemplate(template.id === activeTemplate ? null : template.id));
-  };
 
   const isEmpty = !isLoading && !templates?.length;
   const showCarousel = templates && templates?.length > 1;
-
-  console.log(templates);
 
   if (isEmpty) return;
   return (
@@ -146,7 +137,7 @@ export default function LatestAIAppsCarousel({ templates, isLoading }: Props) {
                         template={template}
                         onClick={e => {
                           e.preventDefault();
-                          handleSelectTemplate(template);
+                          setActiveAIApp(template);
                         }}
                       />
                     </Grid>
@@ -168,7 +159,7 @@ export default function LatestAIAppsCarousel({ templates, isLoading }: Props) {
                             template={templates[index + 1]}
                             onClick={e => {
                               e.preventDefault();
-                              handleSelectTemplate(templates[index + 1]);
+                              setActiveAIApp(templates[index + 1]);
                             }}
                           />
                         </Grid>
@@ -196,7 +187,7 @@ export default function LatestAIAppsCarousel({ templates, isLoading }: Props) {
                   template={template}
                   onClick={e => {
                     e.preventDefault();
-                    handleSelectTemplate(template);
+                    setActiveAIApp(template);
                   }}
                 />
               </Grid>

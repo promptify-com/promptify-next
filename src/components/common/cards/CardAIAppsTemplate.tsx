@@ -3,9 +3,8 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
-
 import { AIApps } from "@/components/Automation/types";
-import { Box } from "@mui/material";
+import Link from "next/link";
 
 type CardDAIAppsTemplateProps = {
   template: AIApps;
@@ -14,12 +13,11 @@ type CardDAIAppsTemplateProps = {
 
 function CardAIAppsTemplate({ template, onClick }: CardDAIAppsTemplateProps) {
   return (
-    <Box
-      component="span"
+    <Link
+      href={``}
       onClick={onClick}
       style={{
         textDecoration: "none",
-        cursor: "pointer",
       }}
     >
       <Card
@@ -87,7 +85,7 @@ function CardAIAppsTemplate({ template, onClick }: CardDAIAppsTemplateProps) {
           </Stack>
         </Stack>
       </Card>
-    </Box>
+    </Link>
   );
 }
 
