@@ -125,7 +125,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
         setExecutions(prevTemplates => prevTemplates.concat(fetchExecutions?.results));
       }
     }
-  }, [fetchExecutions?.results]);
+  }, [fetchExecutions?.results, offset]);
 
   useEffect(() => {
     if (fetchAIApps?.results) {
@@ -135,7 +135,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
         setAIAppsData(prevTemplates => prevTemplates.concat(fetchAIApps?.results as IGPTDocumentResponse[]));
       }
     }
-  }, [fetchAIApps?.results]);
+  }, [AIAppsOffset, fetchAIApps?.results]);
 
   useEffect(() => {
     if (!!hashedExecution && !!fetchedTemplate) {
@@ -145,7 +145,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
         }),
       );
     }
-  }, []);
+  }, [dispatch, fetchedTemplate, hashedExecution]);
 
   useEffect(() => {
     if (!store) {
@@ -156,7 +156,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
       { key: "documents", asyncReducer: documentsSlice },
       { key: "templates", asyncReducer: templatesSlice },
     ]);
-  }, [store]);
+  }, []);
 
   const filteredExecutions = useMemo(() => {
     return templatesExecutions.filter(exec => {
