@@ -130,9 +130,9 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
   useEffect(() => {
     if (fetchAIApps?.results) {
       if (AIAppsOffset === 0) {
-        setAIAppsData(fetchAIApps?.results as IGPTDocumentResponse[]);
+        setAIAppsData(fetchAIApps?.results);
       } else {
-        setAIAppsData(prevTemplates => prevTemplates.concat(fetchAIApps?.results as IGPTDocumentResponse[]));
+        setAIAppsData(prevTemplates => prevTemplates.concat(fetchAIApps?.results));
       }
     }
   }, [AIAppsOffset, fetchAIApps?.results]);
