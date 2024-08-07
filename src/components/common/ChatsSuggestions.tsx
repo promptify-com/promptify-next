@@ -165,7 +165,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
                   </Avatar>
                 }
                 actionLabel="Let's Go!"
-                href="/chat"
+                href="/chat?prompt=Provide templates to write short and long stories, novels, concepts..."
               />
             </Grid>
             {chats?.results[0] && (

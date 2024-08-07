@@ -95,6 +95,7 @@ function Sidebar() {
       active: isAutomationPage,
       external: false,
       reload: false,
+      sx: { whiteSpace: "nowrap" },
     },
     {
       name: "Chrome Extension",

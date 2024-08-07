@@ -1,3 +1,5 @@
+import { type SxProps } from "@mui/material";
+
 export interface NavItem {
   name: string;
   href: string;
@@ -5,4 +7,5 @@ export interface NavItem {
   active: boolean;
   external: boolean;
   reload: boolean;
+  sx?: SxProps;
 }

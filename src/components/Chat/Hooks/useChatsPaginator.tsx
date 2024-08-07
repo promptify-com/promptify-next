@@ -20,10 +20,12 @@ export function useChatsPaginator() {
   } = useGetChatsQuery({ limit: CHATS_LIST_PAGINATION_LIMIT, offset }, { skip: !isValidUser });
 
   useEffect(() => {
+    if (!router.isReady) return;
+
     router.replace({ pathname: router.pathname, query: { ...router.query, ch_o: 0 } }, undefined, {
       shallow: true,
     });
-  }, []);
+  }, [router.isReady]);
 
   useEffect(() => {
     if (!fetchedChats?.results?.length) {
