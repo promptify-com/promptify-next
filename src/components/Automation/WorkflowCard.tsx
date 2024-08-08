@@ -124,7 +124,7 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
           sx={btnStyle}
           onClick={handleSelectWorkflow}
         >
-          Run Workflow
+          Try this AI app
         </Button>
       </Stack>
     </Stack>

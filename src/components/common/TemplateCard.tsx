@@ -338,7 +338,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
               sx={btnStyle}
               onClick={handleRunPrompt}
             >
-              Run prompt
+              Try this prompt template
             </Button>
             <TemplateActions
               template={template}
@@ -370,4 +370,5 @@ const btnStyle = {
   "&:hover": {
     bgcolor: "action.hover",
   },
+  marginLeft: "-50px",
 };
