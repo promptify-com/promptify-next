@@ -9,7 +9,10 @@ import type {
   IWorkflowCategory,
   IGPTDocumentPayload,
   IGPTDocumentResponse,
+  AIApps,
 } from "@/components/Automation/types";
+import { getSearchParams } from "./templates";
+import { AIAppsParams, AIAppsWithPagination } from "./dto/templates";
 
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -183,6 +186,18 @@ export const workflowsApi = baseApi.injectEndpoints({
           data,
         }),
       }),
+      getAIApps: builder.query<AIApps[], void>({
+        query: () => ({
+          url: `/api/n8n/workflows/execution_count/`,
+          method: "get",
+        }),
+      }),
+      getAIAppsWorkflow: builder.query<AIAppsWithPagination, AIAppsParams>({
+        query: params => ({
+          url: `/api/n8n/documents/workflow_documents/?${getSearchParams(params)}`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -208,4 +223,6 @@ export const {
   useSaveGPTDocumentMutation,
   useGetGPTDocumentsQuery,
   useUpdateGPTDocumentMutation,
+  useGetAIAppsQuery,
+  useGetAIAppsWorkflowQuery,
 } = workflowsApi;

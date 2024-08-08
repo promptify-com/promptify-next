@@ -3,35 +3,30 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import useCarousel from "@/hooks/useCarousel";
-import CardDocumentTemplate from "@/components/common/cards/CardDocumentTemplate";
-import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
 import { useState } from "react";
-import { Box, Grid } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setDocumentsTemplate } from "@/core/store/documentsSlice";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import { useAppSelector } from "@/hooks/useStore";
 import useBrowser from "@/hooks/useBrowser";
+import { AIApps } from "../Automation/types";
+import CardAIAppsTemplate from "../common/cards/CardAIAppsTemplate";
 
 interface Props {
-  templates: TemplateExecutionsDisplay[] | undefined;
+  gpts?: AIApps[];
   isLoading: boolean;
+  setActiveAIApp: (item: AIApps | null) => void;
 }
 
-export default function TemplatesCarousel({ templates, isLoading }: Props) {
-  const dispatch = useAppDispatch();
+export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }: Props) {
   const { isMobile } = useBrowser();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ skipSnaps: true, slidesToScroll: 2 });
   const [isCarousel, setIsCarousel] = useState(true);
 
-  const activeTemplate = useAppSelector(state => state.documents?.filter?.template ?? null);
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
-  const handleSelectTemplate = (template: TemplateExecutionsDisplay) => {
-    dispatch(setDocumentsTemplate(template.id === activeTemplate ? null : template.id));
-  };
-
-  const isEmpty = !isLoading && !templates?.length;
-  const showCarousel = templates && templates?.length > 1;
+  const isEmpty = !isLoading && !gpts?.length;
+  const showCarousel = gpts && gpts?.length > 1;
 
   if (isEmpty) return;
   return (
@@ -50,7 +45,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
           fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
         >
-          Latest Prompt Templates
+          Latest AI Apps
         </Typography>
         {isCarousel && showCarousel && (
           <Stack
@@ -118,11 +113,11 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                 />
               </Box>
             </Box>
-          ) : isCarousel && templates && templates?.length > 4 ? (
-            templates?.map((template, index) => (
+          ) : isCarousel && gpts && gpts?.length > 4 ? (
+            gpts?.map((gpt, index) => (
               <Grid
                 item
-                key={template.id}
+                key={gpt.id}
                 display="flex"
                 flexDirection="column"
               >
@@ -139,15 +134,15 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                         flex: 0,
                       }}
                     >
-                      <CardDocumentTemplate
-                        template={template}
+                      <CardAIAppsTemplate
+                        gpt={gpt}
                         onClick={e => {
                           e.preventDefault();
-                          handleSelectTemplate(template);
+                          setActiveAIApp(gpt);
                         }}
                       />
                     </Grid>
-                    {templates[index + 1] && (
+                    {gpts[index + 1] && (
                       <>
                         <Grid
                           item
@@ -160,11 +155,11 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                             flex: 0,
                           }}
                         >
-                          <CardDocumentTemplate
-                            template={templates[index + 1]}
+                          <CardAIAppsTemplate
+                            gpt={gpts[index + 1]}
                             onClick={e => {
                               e.preventDefault();
-                              handleSelectTemplate(templates[index + 1]);
+                              setActiveAIApp(gpts[index + 1]);
                             }}
                           />
                         </Grid>
@@ -175,9 +170,9 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
               </Grid>
             ))
           ) : (
-            templates?.map(template => (
+            gpts?.map(gpt => (
               <Grid
-                key={template.id}
+                key={gpt.id}
                 item
                 xs={6}
                 sm={4}
@@ -188,11 +183,11 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                   flex: 0,
                 }}
               >
-                <CardDocumentTemplate
-                  template={template}
+                <CardAIAppsTemplate
+                  gpt={gpt}
                   onClick={e => {
                     e.preventDefault();
-                    handleSelectTemplate(template);
+                    setActiveAIApp(gpt);
                   }}
                 />
               </Grid>
