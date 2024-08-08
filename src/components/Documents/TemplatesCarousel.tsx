@@ -122,6 +122,7 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
             templates?.map((template, index) => (
               <Grid
                 item
+                key={template.id}
                 display="flex"
                 flexDirection="column"
               >
