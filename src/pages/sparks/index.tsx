@@ -156,7 +156,8 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
       { key: "documents", asyncReducer: documentsSlice },
       { key: "templates", asyncReducer: templatesSlice },
     ]);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store]);
 
   const filteredExecutions = useMemo(() => {
     return templatesExecutions.filter(exec => {
