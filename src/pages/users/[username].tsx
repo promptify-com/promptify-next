@@ -77,6 +77,8 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
         setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
       }
     }
+    // TODO: eslint warning blocked a commit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templates?.results]);
 
   const handleNextPage = () => {

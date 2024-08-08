@@ -254,4 +254,20 @@ export interface IGPTDocumentResponse {
   output: string;
   created_at: string;
   user: number;
+  sent_to: string[];
 }
+
+export type AIApps = {
+  id: number;
+  workflow_id: string;
+  created_at: string;
+  updated_at: string;
+  template_workflow: {
+    id: number;
+    name: string;
+    description: string;
+    category: string | null;
+    image: string | null;
+  };
+  self_executions_count: number;
+};

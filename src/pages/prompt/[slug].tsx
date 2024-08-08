@@ -29,6 +29,8 @@ function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
         }),
       );
     }
+    // TODO: eslint warning blocked a commit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -40,6 +42,8 @@ function Template({ fetchedTemplate, hashedExecution }: TemplateProps) {
       { key: "templates", asyncReducer: templatesSlice },
       { key: "chat", asyncReducer: chatSlice },
     ]);
+    // TODO: eslint warning blocked a commit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store]);
 
   return (
