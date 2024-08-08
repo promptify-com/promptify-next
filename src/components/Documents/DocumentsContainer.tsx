@@ -9,8 +9,6 @@ import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { getTemplateById } from "@/hooks/api/templates";
 import TemplateDocumentModal from "@/components/Prompt/TemplateDocumentModal";
 import { initialState as initialDocumentsState } from "@/core/store/documentsSlice";
-import store from "@/core/store";
-import { useEffect } from "react";
 
 interface Props {
   executions: ExecutionWithTemplate[] | undefined;
@@ -51,7 +49,7 @@ export default function DocumentsContainer({ executions = [], isLoading }: Props
             fontSize={{ xs: 24, md: 32 }}
             fontWeight={400}
           >
-            All documents
+            Templates Generated Content
           </Typography>
         )}
       </Stack>

@@ -8,6 +8,7 @@ import useBrowser from "@/hooks/useBrowser";
 import { theme } from "@/theme";
 import { IGPTDocumentResponse } from "@/components/Automation/types";
 import UpdateTextInputModal from "@/components/dialog/UpdateTextInputModal";
+import { format } from "date-fns";
 
 interface Props {
   gpt: IGPTDocumentResponse;
@@ -79,11 +80,24 @@ function Header({ gpt, onUpdate }: Props) {
             Saved as document
           </>
         </Typography>
+        <Typography
+          fontSize={13}
+          fontWeight={400}
+          lineHeight={"28px"}
+          color={"text.secondary"}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          {`Generated on ${format(new Date(gpt.created_at), "dd MMM, yyyy 'at' HH:mm")}.${gpt.sent_to.length > 0 ? `Sent to ${gpt.sent_to.join(", ")}` : ""}`}
+        </Typography>
       </Stack>
 
       {popup === "update" && (
         <UpdateTextInputModal
-          title={gpt.title}
+          title={title}
           onClose={() => setPopup(null)}
           onUpdate={newTitle => {
             onUpdate(newTitle, `${gpt.id}_${gpt.created_at}`);

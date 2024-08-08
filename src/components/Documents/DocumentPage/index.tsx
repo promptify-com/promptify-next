@@ -5,12 +5,8 @@ import { ExecutionCard } from "@/components/Prompt/ExecutionCard";
 import Header from "./Header";
 import Details from "./Details";
 import { useEffect } from "react";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
-import useBrowser from "@/hooks/useBrowser";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setDocumentTitle, toggleShowPreviews } from "@/core/store/documentsSlice";
+import { setDocumentTitle } from "@/core/store/documentsSlice";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface Props {
@@ -19,7 +15,6 @@ interface Props {
 
 function DocumentPage({ document }: Props) {
   const dispatch = useAppDispatch();
-  const { isMobile } = useBrowser();
   const showPreviews = useAppSelector(state => state.documents?.showPreviews ?? false);
   const template = document.template;
 
@@ -61,33 +56,6 @@ function DocumentPage({ document }: Props) {
           },
         }}
       >
-        {!isMobile && (
-          <Tooltip
-            title={`${showPreviews ? "Hide" : "Show"} Preview`}
-            enterDelay={500}
-            enterNextDelay={500}
-          >
-            <IconButton
-              sx={{
-                position: "absolute",
-                zIndex: 999,
-                top: "170px",
-                left: "22px",
-                border: "none",
-                p: "16px",
-                bgcolor: showPreviews ? "surfaceContainer" : "transparent",
-                color: "onSurface",
-                ":hover": {
-                  bgcolor: showPreviews ? "surfaceContainer" : "transparent",
-                  color: "onSurface",
-                },
-              }}
-              onClick={() => dispatch(toggleShowPreviews())}
-            >
-              <VisibilityOutlined />
-            </IconButton>
-          </Tooltip>
-        )}
         <Box
           sx={{
             order: { md: 1 },

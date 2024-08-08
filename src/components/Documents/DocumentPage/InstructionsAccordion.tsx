@@ -59,7 +59,7 @@ function InstructionsAccordion({ document }: Props) {
         ".MuiAccordionDetails-root": { p: 0 },
       }}
     >
-      <AccordionSummary expandIcon={<ExpandMore />}>Prompt instruction:</AccordionSummary>
+      <AccordionSummary expandIcon={<ExpandMore />}>Prompt Inputs:</AccordionSummary>
       <AccordionDetails>
         <Stack gap={1}>
           <Box sx={inputsContainer}>

@@ -252,6 +252,7 @@ export interface IGPTDocumentResponse {
   output: string;
   created_at: string;
   user: number;
+  sent_to: string[];
 }
 
 export type AIApps = {
