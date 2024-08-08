@@ -81,8 +81,19 @@ function ChatsHistory({ onClose }: Props) {
   }, [router, loadedChats]);
 
   const filteredChats = useMemo(() => {
-    return search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
+
+    const filteredChatsBy30Days = chats.filter(item => {
+      const createdAt = new Date(item.created_at);
+      return createdAt >= thirtyDaysAgo;
+    });
+
+    return search.length >= 2
+      ? filteredChatsBy30Days?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1)
+      : filteredChatsBy30Days;
   }, [search, chats]);
+
   const emptyChats = filteredChats?.length === 0;
   const CardsPlaceholder = <ChatCardPlaceholder count={6} />;
 
@@ -123,7 +134,7 @@ function ChatsHistory({ onClose }: Props) {
           fontWeight={500}
           color={"onSurface"}
         >
-          Recent:
+          Last 30 days:
         </Typography>
         {isChatsLoading ? (
           CardsPlaceholder
