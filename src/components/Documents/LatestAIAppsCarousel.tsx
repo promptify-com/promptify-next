@@ -117,13 +117,13 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
             gpts?.map((gpt, index) => (
               <Grid
                 item
+                key={gpt.id}
                 display="flex"
                 flexDirection="column"
               >
                 {index % 2 === 0 && (
                   <>
                     <Grid
-                      key={gpt.id}
                       item
                       xs={6}
                       sm={4}
@@ -145,7 +145,6 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
                     {gpts[index + 1] && (
                       <>
                         <Grid
-                          key={gpts[index + 1].id}
                           item
                           xs={6}
                           sm={4}

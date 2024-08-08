@@ -129,7 +129,6 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                 {index % 2 === 0 && (
                   <>
                     <Grid
-                      key={template.id}
                       item
                       xs={6}
                       sm={4}
@@ -151,7 +150,6 @@ export default function TemplatesCarousel({ templates, isLoading }: Props) {
                     {templates[index + 1] && (
                       <>
                         <Grid
-                          key={templates[index + 1].id}
                           item
                           xs={6}
                           sm={4}
