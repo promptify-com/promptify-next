@@ -33,6 +33,13 @@ export const workflowsApi = baseApi.injectEndpoints({
           keepUnusedDataFor: 21600,
         }),
       }),
+      getWorkflowById: builder.query<ITemplateWorkflow, number>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}`,
+          method: "get",
+          keepUnusedDataFor: 21600,
+        }),
+      }),
       createUserWorkflow: builder.mutation<IWorkflowCreateResponse, number>({
         query: workflowId => ({
           url: `/api/n8n/workflows/${workflowId}/create/`,
@@ -223,6 +230,7 @@ export const {
   useSaveGPTDocumentMutation,
   useGetGPTDocumentsQuery,
   useUpdateGPTDocumentMutation,
+  useGetWorkflowByIdQuery,
   useGetAIAppsQuery,
   useGetAIAppsWorkflowQuery,
 } = workflowsApi;
