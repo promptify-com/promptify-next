@@ -90,7 +90,7 @@ export default function AIAppsDocumentsContainer({ gpts = [], isLoading }: Props
               color: "onSurface",
             }}
           >
-            No document found
+            No AI App found
           </Stack>
         )}
       </Grid>
