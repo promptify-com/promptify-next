@@ -48,9 +48,7 @@ function CardAIAppsTemplate({ template, onClick }: CardDAIAppsTemplateProps) {
             }}
           >
             <Image
-              // TODO: No thumbnail at this moment
-              // src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-              src={require("@/assets/images/default-thumbnail.jpg")}
+              src={template.template_workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
               alt={template.template_workflow.name}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />

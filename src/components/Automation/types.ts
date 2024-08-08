@@ -264,6 +264,7 @@ export type AIApps = {
     name: string;
     description: string;
     category: string | null;
+    image: string | null;
   };
   self_executions_count: number;
 };
