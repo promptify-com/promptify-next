@@ -17,7 +17,7 @@ interface Props {
   setActiveAIApp: (item: AIApps | null) => void;
 }
 
-export default function LatestAIAppsCarousel({ templates, isLoading, setActiveAIApp }: Props) {
+export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }: Props) {
   const { isMobile } = useBrowser();
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ skipSnaps: true, slidesToScroll: 2 });
   const [isCarousel, setIsCarousel] = useState(true);
