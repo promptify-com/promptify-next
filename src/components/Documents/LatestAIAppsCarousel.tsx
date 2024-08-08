@@ -13,7 +13,7 @@ import { AIApps } from "../Automation/types";
 import CardAIAppsTemplate from "../common/cards/CardAIAppsTemplate";
 
 interface Props {
-  templates?: AIApps[];
+  gpts?: AIApps[];
   isLoading: boolean;
   setActiveAIApp: (item: AIApps | null) => void;
 }
@@ -25,8 +25,8 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
 
   const isDocumentsFiltersSticky = useAppSelector(state => state.sidebar.isDocumentsFiltersSticky);
 
-  const isEmpty = !isLoading && !templates?.length;
-  const showCarousel = templates && templates?.length > 1;
+  const isEmpty = !isLoading && !gpts?.length;
+  const showCarousel = gpts && gpts?.length > 1;
 
   if (isEmpty) return;
   return (
@@ -113,8 +113,8 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
                 />
               </Box>
             </Box>
-          ) : isCarousel && templates && templates?.length > 4 ? (
-            templates?.map((template, index) => (
+          ) : isCarousel && gpts && gpts?.length > 4 ? (
+            gpts?.map((gpt, index) => (
               <Grid
                 item
                 display="flex"
@@ -123,7 +123,7 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
                 {index % 2 === 0 && (
                   <>
                     <Grid
-                      key={template.id}
+                      key={gpt.id}
                       item
                       xs={6}
                       sm={4}
@@ -135,17 +135,17 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
                       }}
                     >
                       <CardAIAppsTemplate
-                        template={template}
+                        gpt={gpt}
                         onClick={e => {
                           e.preventDefault();
-                          setActiveAIApp(template);
+                          setActiveAIApp(gpt);
                         }}
                       />
                     </Grid>
-                    {templates[index + 1] && (
+                    {gpts[index + 1] && (
                       <>
                         <Grid
-                          key={templates[index + 1].id}
+                          key={gpts[index + 1].id}
                           item
                           xs={6}
                           sm={4}
@@ -157,10 +157,10 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
                           }}
                         >
                           <CardAIAppsTemplate
-                            template={templates[index + 1]}
+                            gpt={gpts[index + 1]}
                             onClick={e => {
                               e.preventDefault();
-                              setActiveAIApp(templates[index + 1]);
+                              setActiveAIApp(gpts[index + 1]);
                             }}
                           />
                         </Grid>
@@ -171,9 +171,9 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
               </Grid>
             ))
           ) : (
-            templates?.map(template => (
+            gpts?.map(gpt => (
               <Grid
-                key={template.id}
+                key={gpt.id}
                 item
                 xs={6}
                 sm={4}
@@ -185,10 +185,10 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
                 }}
               >
                 <CardAIAppsTemplate
-                  template={template}
+                  gpt={gpt}
                   onClick={e => {
                     e.preventDefault();
-                    setActiveAIApp(template);
+                    setActiveAIApp(gpt);
                   }}
                 />
               </Grid>

@@ -7,7 +7,7 @@ import { AIApps } from "@/components/Automation/types";
 import Link from "next/link";
 
 type CardDAIAppsTemplateProps = {
-  template: AIApps;
+  gpt: AIApps;
   onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 };
 
@@ -48,8 +48,8 @@ function CardAIAppsTemplate({ gpt, onClick }: CardDAIAppsTemplateProps) {
             }}
           >
             <Image
-              src={template.template_workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
-              alt={template.template_workflow.name}
+              src={gpt.template_workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={gpt.template_workflow.name}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           </CardMedia>
@@ -68,7 +68,7 @@ function CardAIAppsTemplate({ gpt, onClick }: CardDAIAppsTemplateProps) {
                 overflow: "hidden",
               }}
             >
-              {template.template_workflow.name}
+              {gpt.template_workflow.name}
             </Typography>
             <Typography
               fontSize={13}
@@ -78,7 +78,7 @@ function CardAIAppsTemplate({ gpt, onClick }: CardDAIAppsTemplateProps) {
                 opacity: 0.75,
               }}
             >
-              {template.self_executions_count} documents
+              {gpt.self_executions_count} documents
             </Typography>
           </Stack>
         </Stack>

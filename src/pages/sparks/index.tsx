@@ -272,7 +272,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
           ) : (
             !activeTemplate && (
               <LatestAIAppsCarousel
-                templates={AIApps}
+                gpts={AIApps}
                 isLoading={isAIAppsQueryLoading}
                 setActiveAIApp={setActiveAIApp}
               />
