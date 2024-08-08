@@ -58,8 +58,6 @@ function Details({ document }: Props) {
     }
   };
 
-  console.log(template);
-
   return (
     <Stack
       gap={{ xs: 2, md: 3 }}

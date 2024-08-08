@@ -246,6 +246,8 @@ export interface IGPTDocumentResponse {
       id: number;
       name: string;
       description: string;
+      image: string;
+      nodes: INode[];
     };
   };
   title: string;
