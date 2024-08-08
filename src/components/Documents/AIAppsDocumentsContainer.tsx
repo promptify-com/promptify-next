@@ -14,7 +14,7 @@ interface Props {
   isLoading: boolean;
 }
 
-export default function AIAppsDocumentsContainer({ executions = [], isLoading }: Props) {
+export default function AIAppsDocumentsContainer({ gpts = [], isLoading }: Props) {
   const [selectedGPT, setSelectedGPT] = useState<IGPTDocumentResponse | null>(null);
   const [newGPts, setNewGPTs] = useState<IGPTDocumentResponse[]>([]);
 
