@@ -20,6 +20,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useDebounce from "@/hooks/useDebounce";
+import { formatDateWithOrdinal } from "@/common/helpers/dateWithSuffix";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -353,7 +354,7 @@ const useChat = ({ workflow }: Props) => {
     try {
       await saveAsGPTDocument({
         output: content,
-        title: executionWorkflow.name,
+        title: executionWorkflow.name + ", " + formatDateWithOrdinal(new Date().toISOString()),
         workflow_id: executionWorkflow.id,
       });
 
