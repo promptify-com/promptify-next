@@ -11,7 +11,7 @@ type CardDAIAppsTemplateProps = {
   onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 };
 
-function CardAIAppsTemplate({ template, onClick }: CardDAIAppsTemplateProps) {
+function CardAIAppsTemplate({ gpt, onClick }: CardDAIAppsTemplateProps) {
   return (
     <Link
       href={``}
