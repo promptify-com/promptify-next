@@ -93,7 +93,7 @@ const ChatInterface = ({
       >
         {!!selectedChat && (
           <ChatHeading
-            title={selectedChat.title}
+            title={selectedChat.title !== "Welcome" ? selectedChat.title : messages[0].text ?? "Welcome"}
             thumbnail={selectedChat.thumbnail}
           />
         )}
