@@ -319,7 +319,7 @@ function DocumentsPage({ fetchedTemplate, hashedExecution }: TemplateProps) {
               }
             >
               <AIAppsDocumentsContainer
-                executions={AIAppsData}
+                gpts={AIAppsData}
                 isLoading={isAIAppsLoading || isAIAppsFetching}
               />
             </PaginatedList>

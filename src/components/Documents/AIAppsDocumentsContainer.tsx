@@ -1,8 +1,7 @@
 import Stack from "@mui/material/Stack";
 import CardDocumentTemplatePlaceholder from "@/components/placeholders/CardDocumentTemplatePlaceholder";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import Grid from "@mui/material/Grid";
-import { initialState as initialDocumentsState } from "@/core/store/documentsSlice";
 import { useState } from "react";
 import GPTCardDocument from "./GPTCardDocument";
 import GPTDocumentPage from "./GPTDocumentPage";
@@ -10,7 +9,7 @@ import { IGPTDocumentResponse } from "../Automation/types";
 import { useUpdateGPTDocumentMutation } from "@/core/api/workflows";
 
 interface Props {
-  executions: IGPTDocumentResponse[] | undefined;
+  gpts: IGPTDocumentResponse[] | undefined;
   isLoading: boolean;
 }
 
@@ -57,10 +56,10 @@ export default function AIAppsDocumentsContainer({ gpts = [], isLoading }: Props
               }}
             />
           </Stack>
-        ) : executions.length ? (
-          executions.map(execution => (
+        ) : gpts.length ? (
+          gpts.map(gpt => (
             <Grid
-              key={execution.id}
+              key={gpt.id}
               item
               xs={12}
               sm={6}
@@ -69,10 +68,10 @@ export default function AIAppsDocumentsContainer({ gpts = [], isLoading }: Props
               xl={3}
             >
               <GPTCardDocument
-                gpt={execution as any}
+                gpt={gpt}
                 onClick={e => {
                   e.preventDefault();
-                  setSelectedGPT(execution);
+                  setSelectedGPT(gpt);
                 }}
               />
             </Grid>
