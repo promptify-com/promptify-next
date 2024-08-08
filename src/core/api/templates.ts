@@ -30,6 +30,7 @@ export const getSearchParams = (params: FilterParams) => {
   params.isFavorite && searchParams.append("is_favorite", String(params.isFavorite));
   typeof params.isInternal === "boolean" && searchParams.append("is_internal", String(params.isInternal));
   params.include && searchParams.append("include", params.include);
+  params.workflow_id && searchParams.append("workflow_id", params.workflow_id);
 
   return searchParams.toString();
 };

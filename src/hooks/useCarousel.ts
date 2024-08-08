@@ -8,9 +8,17 @@ interface Props {
   autoplay?: boolean;
   autoHeight?: boolean;
   options?: EmblaOptionsType;
+  skipSnaps?: boolean;
+  slidesToScroll?: number;
 }
 
-export default function useCarousel({ autoplay = false, autoHeight = false, options }: Props = {}) {
+export default function useCarousel({
+  autoplay = false,
+  autoHeight = false,
+  skipSnaps = false,
+  slidesToScroll = 1,
+  options,
+}: Props = {}) {
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(true);
   const [selectedSlide, setSelectedSlide] = useState(0);
@@ -26,6 +34,8 @@ export default function useCarousel({ autoplay = false, autoHeight = false, opti
       dragFree: true,
       loop: true,
       align: "start",
+      skipSnaps,
+      slidesToScroll,
       ...options,
     },
     plugins,
