@@ -49,6 +49,7 @@ function TemplateSuggestions({ message, scrollToBottom, lastMessage }: Props) {
             setShowSuggestions(true);
             scrollToBottom();
           }}
+          onScrollToBottom={scrollToBottom}
         />
       )}
 

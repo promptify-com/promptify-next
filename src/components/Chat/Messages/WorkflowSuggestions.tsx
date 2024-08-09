@@ -51,6 +51,7 @@ function WorkflowSuggestions({ message, scrollToBottom, lastMessage }: Props) {
             setShowSuggestions(true);
             scrollToBottom();
           }}
+          onScrollToBottom={scrollToBottom}
         />
       )}
 

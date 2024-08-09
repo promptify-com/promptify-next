@@ -13,48 +13,53 @@ interface MessageContentWithHTMLProps {
   content: string;
   shouldStream: boolean;
   onStreamingFinished: () => void;
+  onScrollToBottom?: () => void;
 }
 
-const MessageContentWithHTML = memo(({ content, shouldStream, onStreamingFinished }: MessageContentWithHTMLProps) => {
-  const dispatch = useAppDispatch();
-  const { streamedText, hasFinished } = useTextSimulationStreaming({
-    text: content,
-    shouldStream,
-  });
-  const [html, setHtml] = useState("");
+const MessageContentWithHTML = memo(
+  ({ content, shouldStream, onStreamingFinished, onScrollToBottom }: MessageContentWithHTMLProps) => {
+    const dispatch = useAppDispatch();
+    const { streamedText, hasFinished } = useTextSimulationStreaming({
+      text: content,
+      shouldStream,
+      scrollToBottom: onScrollToBottom,
+    });
+    const [html, setHtml] = useState("");
 
-  useEffect(() => {
-    const generateFinalHtml = async (text: string) => {
-      const _html = await markdownToHTML(text);
-      setHtml(sanitizeHTML(_html));
-    };
+    useEffect(() => {
+      const generateFinalHtml = async (text: string) => {
+        const _html = await markdownToHTML(text);
+        setHtml(sanitizeHTML(_html));
+      };
 
-    if (streamedText) {
-      generateFinalHtml(streamedText);
-    }
+      if (streamedText) {
+        generateFinalHtml(streamedText);
+      }
 
-    if (hasFinished) {
-      dispatch(setIsSimulationStreaming(false));
-      onStreamingFinished();
-    }
-  }, [streamedText, hasFinished]);
+      if (hasFinished) {
+        dispatch(setIsSimulationStreaming(false));
+        onStreamingFinished();
+      }
+    }, [streamedText, hasFinished]);
 
-  return (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: html,
-      }}
-    />
-  );
-});
+    return (
+      <div
+        dangerouslySetInnerHTML={{
+          __html: html,
+        }}
+      />
+    );
+  },
+);
 
 interface Props {
   message: IMessage;
   shouldStream: boolean;
   onStreamingFinished: () => void;
+  onScrollToBottom?: () => void;
 }
 
-const HtmlMessage = ({ message, shouldStream, onStreamingFinished }: Props) => {
+const HtmlMessage = ({ message, shouldStream, onStreamingFinished, onScrollToBottom }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt } = message;
@@ -112,6 +117,7 @@ const HtmlMessage = ({ message, shouldStream, onStreamingFinished }: Props) => {
             content={text}
             shouldStream={shouldStream && !fromUser}
             onStreamingFinished={onStreamingFinished}
+            onScrollToBottom={onScrollToBottom}
           />
         </Grid>
       </Grid>

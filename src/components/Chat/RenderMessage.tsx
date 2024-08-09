@@ -55,6 +55,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={message}
           shouldStream={checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={onScrollToBottom}
+          onScrollToBottom={onScrollToBottom}
         />
       )}
 
@@ -179,6 +180,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={generatedExecutionMessage}
           shouldStream={checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={onScrollToBottom}
+          onScrollToBottom={onScrollToBottom}
         />
       )}
     </>
