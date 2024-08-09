@@ -7,6 +7,7 @@ import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import WorkflowCard from "@/components/Automation/WorkflowCard";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
+import { checkIfWithinLastMinute } from "@/common/helpers/timeManipulation";
 
 interface Props {
   message: IMessage;
@@ -45,7 +46,7 @@ function WorkflowSuggestions({ message, scrollToBottom, lastMessage }: Props) {
       ) : (
         <HtmlMessage
           message={message}
-          shouldStream={isLastMessage}
+          shouldStream={isLastMessage && checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={() => {
             setShowSuggestions(true);
             scrollToBottom();

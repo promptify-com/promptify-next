@@ -84,3 +84,15 @@ export function getCurrentDateFormatted(): string {
   };
   return currentDate.toLocaleDateString("en-US", options);
 }
+
+export const checkIfWithinLastMinute = (dateString: string | Date) => {
+  const date = new Date(dateString).getTime();
+
+  const now = new Date().getTime();
+
+  const difference = now - date;
+
+  const differenceInHours = difference / (1000 * 60);
+
+  return differenceInHours <= 1;
+};

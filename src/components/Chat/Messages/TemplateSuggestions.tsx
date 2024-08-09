@@ -7,6 +7,7 @@ import Fade from "@mui/material/Fade";
 import HtmlMessage from "@/components/Chat/Messages/HtmlMessage";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { checkIfWithinLastMinute } from "@/common/helpers/timeManipulation";
 
 interface Props {
   message: IMessage;
@@ -43,7 +44,7 @@ function TemplateSuggestions({ message, scrollToBottom, lastMessage }: Props) {
       ) : (
         <HtmlMessage
           message={message}
-          shouldStream={isLastMessage}
+          shouldStream={isLastMessage && checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={() => {
             setShowSuggestions(true);
             scrollToBottom();

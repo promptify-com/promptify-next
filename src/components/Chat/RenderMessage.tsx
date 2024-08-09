@@ -16,6 +16,7 @@ import CredentialsMessage from "./Messages/CredentialsMessage";
 import { createMessage } from "./helper";
 import Box from "@mui/material/Box";
 import { initialState as initialExecutionsState } from "@/core/store/executionsSlice";
+import { checkIfWithinLastMinute } from "@/common/helpers/timeManipulation";
 
 interface Props {
   message: IMessage;
@@ -52,7 +53,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
       {message.type === "html" && (
         <HtmlMessage
           message={message}
-          shouldStream={true}
+          shouldStream={checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={onScrollToBottom}
         />
       )}
@@ -176,7 +177,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
       {message.type === "workflowExecution" && (
         <HtmlMessage
           message={generatedExecutionMessage}
-          shouldStream={true}
+          shouldStream={checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={onScrollToBottom}
         />
       )}
