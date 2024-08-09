@@ -233,7 +233,8 @@ export interface IAvailableCredentials {
 }
 
 export interface IWorkflowCategory {
-  category: string;
+  name: string;
+  description: string;
   templates: ITemplateWorkflow[];
 }
 
