@@ -128,6 +128,12 @@ export const chatsApi = baseApi.injectEndpoints({
           method: "GET",
         }),
       }),
+      getSuggestions: builder.query<any, void>({
+        query: () => ({
+          url: "/api/chat/suggestions-queries",
+          method: "GET",
+        }),
+      }),
     };
   },
 });
@@ -145,4 +151,5 @@ export const {
   useSaveChatTemplateMutation,
   useBatchingMessagesMutation,
   useGetChatMessagesQuery,
+  useGetSuggestionsQuery,
 } = chatsApi;

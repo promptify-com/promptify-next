@@ -3,9 +3,15 @@ import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import Typography from "@mui/material/Typography";
 import { fadeIn } from "@/theme/animations";
 import { useRouter } from "next/router";
+import { useGetSuggestionsQuery } from "@/core/api/chats";
+import { useEffect, useState } from "react";
 
 function SuggestedPrompts() {
   const router = useRouter();
+
+  const [prompts, setPrompts] = useState<string[]>([]);
+
+  const { data: fetchedPrompts } = useGetSuggestionsQuery();
 
   const handleClickPrompt = (prompt: string) => {
     router.replace({ pathname: router.pathname, query: { ...router.query, prompt } }, undefined, {
@@ -13,11 +19,12 @@ function SuggestedPrompts() {
     });
   };
 
-  const prompts = [
-    "Explain to me how Promptify works",
-    "What is the difference between LLM models?",
-    "How to plan my exercise schedule?",
-  ];
+  useEffect(() => {
+    if (fetchedPrompts) {
+      const tempPrompts = fetchedPrompts.map((prompt: any) => prompt.question);
+      setPrompts(tempPrompts);
+    }
+  }, [fetchedPrompts]);
 
   return (
     <Stack
