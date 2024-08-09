@@ -144,7 +144,7 @@ const Message = ({ message, onScrollToBottom, lastMessage }: Props) => {
         flexDirection={"column"}
         width={fromUser ? "fit-content" : "100%"}
         gap={"8px"}
-        p={fromUser ? "16px 16px 16px 24px" : 0}
+        p={fromUser ? "16px" : 0}
         borderRadius={"24px"}
         bgcolor={fromUser ? "primary.main" : "transparent"}
         ml={"auto"}
