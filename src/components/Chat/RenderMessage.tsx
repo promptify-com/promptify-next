@@ -50,7 +50,9 @@ function RenderMessage({
   });
 
   const autoScrollToBottom = () => {
-    return isUserScrollingUp ? () => null : onScrollToBottom;
+    if (!isUserScrollingUp) {
+      onScrollToBottom();
+    }
   };
 
   return (
