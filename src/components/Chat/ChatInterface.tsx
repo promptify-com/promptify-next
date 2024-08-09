@@ -89,7 +89,7 @@ const ChatInterface = ({
   const showChatOptions = Boolean(selectedTemplate && !currentUser?.preferences?.input_style && !selectedChatOption);
   const showRunButton =
     showGenerateButton && (currentUser?.preferences?.input_style === "qa" || selectedChatOption === "qa");
-  console.log(isUserScrollingUp);
+
   return (
     <Stack
       ref={messagesContainerRef}

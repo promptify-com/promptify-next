@@ -60,7 +60,6 @@ interface Props {
 }
 
 const HtmlMessage = ({ message, shouldStream, onStreamingFinished, autoScrollToBottom }: Props) => {
-  console.log(autoScrollToBottom);
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt } = message;
