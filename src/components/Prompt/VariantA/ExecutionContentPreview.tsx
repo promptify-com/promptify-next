@@ -14,7 +14,6 @@ interface Props {
 }
 
 function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }: Props) {
-  console.log(promptOutputMap);
   const replacePlaceholdersWithAnswers = (content: string) => {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
@@ -51,7 +50,7 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
           if (execution.parameters.hasOwnProperty(promptId)) {
             const params = execution.parameters[promptId];
             if (params[inputName]) {
-              replacement = params[inputName] as string;
+              replacement = inputName;
               break;
             }
           }
@@ -70,7 +69,7 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
             key={`placeholder-${index}`}
             sx={highlightGreenStyle}
           >
-            {typeof replacement === "object" ? JSON.stringify(replacement) : replacement}
+            {typeof replacement === "object" ? `{{${JSON.stringify(replacement)}}}` : `{{${replacement}}}`}
           </Box>,
         );
       } else {
