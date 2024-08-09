@@ -22,7 +22,7 @@ function SuggestedPrompts() {
 
   useEffect(() => {
     if (fetchedPrompts) {
-      const tempPrompts = fetchedPrompts.map((prompt: any) => prompt.question);
+      const tempPrompts = fetchedPrompts.map((prompt: ISuggestion) => prompt.question);
 
       setPrompts(tempPrompts);
     }
