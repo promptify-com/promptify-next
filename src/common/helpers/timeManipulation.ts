@@ -1,3 +1,5 @@
+import { differenceInMinutes } from "date-fns";
+
 export function formatDate(input: Date | string) {
   const date = input instanceof Date ? input : new Date(input);
 
@@ -92,7 +94,7 @@ export const checkIfWithinLastMinute = (dateString: string | Date) => {
 
   const difference = now - date;
 
-  const differenceInHours = difference / (1000 * 60);
+  const differenceInMinutes = difference / (1000 * 60);
 
-  return differenceInHours <= 1;
+  return differenceInMinutes <= 1;
 };
