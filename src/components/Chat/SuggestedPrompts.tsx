@@ -5,6 +5,7 @@ import { fadeIn } from "@/theme/animations";
 import { useRouter } from "next/router";
 import { useGetSuggestionsQuery } from "@/core/api/chats";
 import { useEffect, useState } from "react";
+import { ISuggestion } from "@/core/api/dto/chats";
 
 function SuggestedPrompts() {
   const router = useRouter();
@@ -21,7 +22,16 @@ function SuggestedPrompts() {
 
   useEffect(() => {
     if (fetchedPrompts) {
-      const tempPrompts = fetchedPrompts.map((prompt: any) => prompt.question);
+      const tempPrompts: string[] = [];
+
+      fetchedPrompts.forEach((prompt: ISuggestion, index) => {
+        if (index < 3) {
+          tempPrompts.push(prompt.question);
+        } else {
+          return;
+        }
+      });
+
       setPrompts(tempPrompts);
     }
   }, [fetchedPrompts]);
