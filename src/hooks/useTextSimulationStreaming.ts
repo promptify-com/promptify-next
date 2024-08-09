@@ -4,9 +4,10 @@ export interface Props {
   text: string;
   shouldStream?: boolean;
   speed?: number;
+  scrollToBottom?: () => void;
 }
 
-const useTextSimulationStreaming = ({ shouldStream = true, speed = 20, text }: Props) => {
+const useTextSimulationStreaming = ({ shouldStream = true, speed = 20, text, scrollToBottom }: Props) => {
   const chars = text.split("");
   const [streamedText, setStreamedText] = useState("");
   const [hasFinished, setHasFinished] = useState(false);
@@ -26,6 +27,7 @@ const useTextSimulationStreaming = ({ shouldStream = true, speed = 20, text }: P
       }
 
       setStreamedText(prevChars => prevChars + chars.shift());
+      scrollToBottom?.();
     }, speed);
   }, []);
 
