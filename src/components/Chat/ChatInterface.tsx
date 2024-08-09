@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -11,6 +11,8 @@ import RunButton from "@/components/Chat/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import IconButton from "@mui/material/IconButton";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 interface Props {
   messages: IMessage[];
@@ -48,6 +50,28 @@ const ChatInterface = ({
     content: messages,
     skipScroll: stopScrollingToBottom,
   });
+
+  const [isUserScrollingUp, setIsUserScrollingUp] = useState(false);
+
+  useEffect(() => {
+    const chatContainer = messagesContainerRef.current;
+
+    const handleScroll = () => {
+      if (chatContainer) {
+        if (chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.clientHeight) {
+          setIsUserScrollingUp(true);
+        } else {
+          setIsUserScrollingUp(false);
+        }
+      }
+    };
+
+    chatContainer?.addEventListener("scroll", handleScroll);
+
+    return () => {
+      chatContainer?.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -128,11 +152,28 @@ const ChatInterface = ({
                 onAbort={onAbort}
                 onExecuteWorkflow={onExecuteWorkflow}
                 lastMessage={messages[messages.length - 1]}
+                isUserScrollingUp={isUserScrollingUp}
               />
             </Fragment>
           ))}
 
           {showChatOptions && <ChatOptions />}
+
+          {isUserScrollingUp && (
+            <IconButton
+              onClick={() => {
+                scrollToBottom();
+                setIsUserScrollingUp(false);
+              }}
+              sx={{
+                position: "fixed",
+                bottom: 150,
+                right: 40,
+              }}
+            >
+              <ArrowDownwardIcon />
+            </IconButton>
+          )}
         </Stack>
         <Stack
           direction={"row"}

@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import CloudDone from "@mui/icons-material/CloudDone";
-import { formatDate } from "@/common/helpers/timeManipulation";
+import { formatDateTime } from "@/common/helpers/timeManipulation";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 import type { IGPTDocumentResponse } from "../Automation/types";
@@ -117,7 +117,7 @@ export default function GPTCardDocument({ gpt, onClick }: Props) {
           color={"secondary.light"}
           sx={oneLineStyle}
         >
-          {formatDate(gpt.created_at)}
+          {formatDateTime(gpt.created_at)}
         </Typography>
       </Box>
       <Box

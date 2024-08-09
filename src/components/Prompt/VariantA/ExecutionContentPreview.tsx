@@ -31,7 +31,7 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
             key={`dollar-${index}`}
             sx={{ color: "primary.main", whiteSpace: "pre-wrap" }}
           >
-            {promptOutputMap[match] ?? match}
+            {match}
           </Box>,
         );
         lastIndexDollarWords = index + match.length;
@@ -50,7 +50,7 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
           if (execution.parameters.hasOwnProperty(promptId)) {
             const params = execution.parameters[promptId];
             if (params[inputName]) {
-              replacement = params[inputName] as string;
+              replacement = inputName;
               break;
             }
           }
@@ -67,9 +67,9 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
           <Box
             component={"span"}
             key={`placeholder-${index}`}
-            sx={highlightStyle}
+            sx={highlightGreenStyle}
           >
-            {typeof replacement === "object" ? JSON.stringify(replacement) : replacement}
+            {typeof replacement === "object" ? `{{${JSON.stringify(replacement)}}}` : `{{${replacement}}}`}
           </Box>,
         );
       } else {
@@ -131,6 +131,12 @@ export default ExecutionContentPreview;
 
 const highlightStyle = {
   color: "primary.main",
+  wordBreak: "break-word",
+  whiteSpace: "pre-wrap",
+};
+
+const highlightGreenStyle = {
+  color: "#00897b",
   wordBreak: "break-word",
   whiteSpace: "pre-wrap",
 };

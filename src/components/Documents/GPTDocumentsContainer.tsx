@@ -16,7 +16,9 @@ function GPTDocumentsContainer() {
 
   useEffect(() => {
     if (data.length) {
-      setNewGPTs(data);
+      const sortedArray = [...data].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setNewGPTs(sortedArray);
     }
   }, [data, isLoading]);
 
