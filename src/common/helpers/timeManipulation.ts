@@ -4,6 +4,18 @@ export function formatDate(input: Date | string) {
   return date.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
 }
 
+export function formatDateTime(input: Date | string) {
+  const date = input instanceof Date ? input : new Date(input);
+
+  return date.toLocaleString("en-GB", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function timeAgo(input: Date | string) {
   const date = input instanceof Date ? input : new Date(input);
   const formatter = new Intl.RelativeTimeFormat("en");
@@ -56,10 +68,10 @@ export function timeLeft(input: Date | string): string {
   return days > 0
     ? `${days} ${days === 1 ? "day" : "days"}`
     : hours > 0
-    ? `${hours} ${hours === 1 ? "hour" : "hours"}`
-    : minutes > 0
-    ? `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
-    : " couple of seconds";
+      ? `${hours} ${hours === 1 ? "hour" : "hours"}`
+      : minutes > 0
+        ? `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
+        : " couple of seconds";
 }
 
 export function getCurrentDateFormatted(): string {

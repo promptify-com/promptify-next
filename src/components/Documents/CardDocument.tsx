@@ -17,7 +17,7 @@ import CloudDone from "@mui/icons-material/CloudDone";
 import CloudOffOutlined from "@mui/icons-material/CloudOffOutlined";
 import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
-import { formatDate, timeLeft } from "@/common/helpers/timeManipulation";
+import { formatDateTime } from "@/common/helpers/timeManipulation";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 import { calculateDocumentDeleteDeadline } from "./Helper";
@@ -180,7 +180,7 @@ export default function CardDocument({ execution, onClick }: Props) {
             color={"secondary.light"}
             sx={oneLineStyle}
           >
-            {formatDate(execution.created_at)}
+            {formatDateTime(execution.created_at)}
           </Typography>
         </Box>
         <Box
