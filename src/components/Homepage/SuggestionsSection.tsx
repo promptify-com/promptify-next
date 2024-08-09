@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
@@ -11,13 +11,16 @@ function SuggestionsSection() {
   const { isMobile } = useBrowser();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
+  const [hovered, setIsHovered] = useState(false);
 
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: true });
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: !hovered });
 
   return (
     <Stack
       direction={"column"}
       gap={"32px"}
+      onMouseEnter={e => setIsHovered(true)}
+      onMouseLeave={e => setIsHovered(false)}
     >
       <Stack
         ref={carouselContainerRef}
