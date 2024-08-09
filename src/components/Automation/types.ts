@@ -63,6 +63,13 @@ interface IData {
   connections: Record<string, INodeConnection>;
 }
 
+interface Category {
+  name: string;
+  description: string;
+  slug: null | string;
+  is_visible: boolean;
+}
+
 export interface ITemplateWorkflow {
   slug: string;
   id: number;
@@ -75,6 +82,7 @@ export interface ITemplateWorkflow {
   is_schedulable: boolean;
   is_liked: boolean;
   likes: number;
+  category: Category;
   activities?: {
     likes_count: number;
     favorites_count: number;
