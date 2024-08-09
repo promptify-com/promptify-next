@@ -104,6 +104,7 @@ const unwantedDataFlowNodes = [
   "n8n-nodes-base.splitOut",
   "n8n-nodes-base.merge",
   "n8n-nodes-base.function",
+  "n8n-nodes-base.splitInBatches",
 ];
 export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   const webhookNodeName = workflow.data.nodes.find(node => node.type === "n8n-nodes-base.webhook")?.name;
