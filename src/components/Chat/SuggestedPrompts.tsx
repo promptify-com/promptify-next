@@ -22,15 +22,7 @@ function SuggestedPrompts() {
 
   useEffect(() => {
     if (fetchedPrompts) {
-      const tempPrompts: string[] = [];
-
-      fetchedPrompts.forEach((prompt: ISuggestion, index) => {
-        if (index < 3) {
-          tempPrompts.push(prompt.question);
-        } else {
-          return;
-        }
-      });
+      const tempPrompts = fetchedPrompts.map((prompt: any) => prompt.question);
 
       setPrompts(tempPrompts);
     }
