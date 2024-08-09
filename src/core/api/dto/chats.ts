@@ -93,3 +93,10 @@ export interface IMessagesList {
   previous: string | null;
   results: IMessageResult[];
 }
+
+export interface ISuggestion {
+  id: number;
+  question: string;
+  created_at: string;
+  updated_at: string;
+}
