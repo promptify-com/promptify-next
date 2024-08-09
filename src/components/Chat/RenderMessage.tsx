@@ -25,9 +25,18 @@ interface Props {
   onAbort: () => void;
   onExecuteWorkflow?: () => void;
   lastMessage: IMessage;
+  isUserScrollingUp: boolean;
 }
 
-function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecuteWorkflow, lastMessage }: Props) {
+function RenderMessage({
+  message,
+  onScrollToBottom,
+  onGenerate,
+  onAbort,
+  onExecuteWorkflow,
+  lastMessage,
+  isUserScrollingUp,
+}: Props) {
   const dispatch = useAppDispatch();
   const generatedExecution = useAppSelector(
     state => state.executions?.generatedExecution ?? initialExecutionsState.generatedExecution,
@@ -39,6 +48,10 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
     type: "html",
     text: generatedExecution?.data?.map(promptExec => promptExec.message).join(" ") ?? "",
   });
+
+  const autoScrollToBottom = () => {
+    return isUserScrollingUp ? () => null : onScrollToBottom;
+  };
 
   return (
     <>
@@ -55,7 +68,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={message}
           shouldStream={checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={onScrollToBottom}
-          onScrollToBottom={onScrollToBottom}
+          autoScrollToBottom={autoScrollToBottom}
         />
       )}
 
@@ -64,6 +77,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={message}
           scrollToBottom={onScrollToBottom}
           lastMessage={lastMessage}
+          autoScrollToBottom={autoScrollToBottom}
         />
       )}
 
@@ -72,6 +86,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={message}
           scrollToBottom={onScrollToBottom}
           lastMessage={lastMessage}
+          autoScrollToBottom={autoScrollToBottom}
         />
       )}
       {message.type === "form" && (
@@ -180,7 +195,7 @@ function RenderMessage({ message, onScrollToBottom, onGenerate, onAbort, onExecu
           message={generatedExecutionMessage}
           shouldStream={checkIfWithinLastMinute(message.createdAt)}
           onStreamingFinished={onScrollToBottom}
-          onScrollToBottom={onScrollToBottom}
+          autoScrollToBottom={autoScrollToBottom}
         />
       )}
     </>

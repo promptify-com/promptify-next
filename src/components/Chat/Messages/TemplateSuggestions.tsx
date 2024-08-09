@@ -13,9 +13,10 @@ interface Props {
   message: IMessage;
   scrollToBottom: () => void;
   lastMessage: IMessage;
+  autoScrollToBottom: () => void;
 }
 
-function TemplateSuggestions({ message, scrollToBottom, lastMessage }: Props) {
+function TemplateSuggestions({ message, scrollToBottom, lastMessage, autoScrollToBottom }: Props) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
   const templates = (message.data as Templates[]) || [];
@@ -49,7 +50,7 @@ function TemplateSuggestions({ message, scrollToBottom, lastMessage }: Props) {
             setShowSuggestions(true);
             scrollToBottom();
           }}
-          onScrollToBottom={scrollToBottom}
+          autoScrollToBottom={autoScrollToBottom}
         />
       )}
 

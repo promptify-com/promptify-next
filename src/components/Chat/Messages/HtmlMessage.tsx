@@ -13,16 +13,16 @@ interface MessageContentWithHTMLProps {
   content: string;
   shouldStream: boolean;
   onStreamingFinished: () => void;
-  onScrollToBottom?: () => void;
+  autoScrollToBottom: () => void;
 }
 
 const MessageContentWithHTML = memo(
-  ({ content, shouldStream, onStreamingFinished, onScrollToBottom }: MessageContentWithHTMLProps) => {
+  ({ content, shouldStream, onStreamingFinished, autoScrollToBottom }: MessageContentWithHTMLProps) => {
     const dispatch = useAppDispatch();
     const { streamedText, hasFinished } = useTextSimulationStreaming({
       text: content,
       shouldStream,
-      scrollToBottom: onScrollToBottom,
+      scrollToBottom: autoScrollToBottom,
     });
     const [html, setHtml] = useState("");
 
@@ -56,10 +56,11 @@ interface Props {
   message: IMessage;
   shouldStream: boolean;
   onStreamingFinished: () => void;
-  onScrollToBottom?: () => void;
+  autoScrollToBottom: () => void;
 }
 
-const HtmlMessage = ({ message, shouldStream, onStreamingFinished, onScrollToBottom }: Props) => {
+const HtmlMessage = ({ message, shouldStream, onStreamingFinished, autoScrollToBottom }: Props) => {
+  console.log(autoScrollToBottom);
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt } = message;
@@ -117,7 +118,7 @@ const HtmlMessage = ({ message, shouldStream, onStreamingFinished, onScrollToBot
             content={text}
             shouldStream={shouldStream && !fromUser}
             onStreamingFinished={onStreamingFinished}
-            onScrollToBottom={onScrollToBottom}
+            autoScrollToBottom={autoScrollToBottom}
           />
         </Grid>
       </Grid>

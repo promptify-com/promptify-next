@@ -13,9 +13,10 @@ interface Props {
   message: IMessage;
   scrollToBottom: () => void;
   lastMessage: IMessage;
+  autoScrollToBottom: () => void;
 }
 
-function WorkflowSuggestions({ message, scrollToBottom, lastMessage }: Props) {
+function WorkflowSuggestions({ message, scrollToBottom, lastMessage, autoScrollToBottom }: Props) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
   const workflows = (message.data as ITemplateWorkflow[]) || [];
@@ -51,7 +52,7 @@ function WorkflowSuggestions({ message, scrollToBottom, lastMessage }: Props) {
             setShowSuggestions(true);
             scrollToBottom();
           }}
-          onScrollToBottom={scrollToBottom}
+          autoScrollToBottom={autoScrollToBottom}
         />
       )}
 
