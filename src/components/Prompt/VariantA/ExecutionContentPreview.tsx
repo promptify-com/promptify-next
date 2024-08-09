@@ -14,6 +14,7 @@ interface Props {
 }
 
 function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }: Props) {
+  console.log(promptOutputMap);
   const replacePlaceholdersWithAnswers = (content: string) => {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
@@ -31,7 +32,7 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
             key={`dollar-${index}`}
             sx={{ color: "primary.main", whiteSpace: "pre-wrap" }}
           >
-            {promptOutputMap[match] ?? match}
+            {match}
           </Box>,
         );
         lastIndexDollarWords = index + match.length;
@@ -67,7 +68,7 @@ function ExecutionContentPreview({ execution, prompt, answers, promptOutputMap }
           <Box
             component={"span"}
             key={`placeholder-${index}`}
-            sx={highlightStyle}
+            sx={highlightGreenStyle}
           >
             {typeof replacement === "object" ? JSON.stringify(replacement) : replacement}
           </Box>,
@@ -131,6 +132,12 @@ export default ExecutionContentPreview;
 
 const highlightStyle = {
   color: "primary.main",
+  wordBreak: "break-word",
+  whiteSpace: "pre-wrap",
+};
+
+const highlightGreenStyle = {
+  color: "#00897b",
   wordBreak: "break-word",
   whiteSpace: "pre-wrap",
 };
