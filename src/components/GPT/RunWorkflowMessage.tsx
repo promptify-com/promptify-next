@@ -35,7 +35,11 @@ export default function runWorkflowMessage({ onRun, allowActivateButton }: Props
             fontSize: 14,
             fontWeight: 500,
             color: "onSurface",
-            ...(gptGenerationStatus === "started" && { width: "45%" }),
+            ...(gptGenerationStatus === "started" && {
+              whiteSpace: "nowrap",
+              width: "45%",
+              mr: "10px",
+            }),
           }}
         >
           Ready to test this AI App
