@@ -83,7 +83,7 @@ function Details({ gpt, workflow, isLoading }: Props) {
                   wordBreak: "break-word",
                 }}
               >
-                {workflow?.category.name}
+                {workflow?.category?.name}
               </Typography>
             </Stack>
           </Stack>

@@ -52,7 +52,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
       setNewGPTs(gptDocuments);
 
       const sortedDocuments = [...gptDocuments].sort(
-        (a, b) => new Date(a.workflow.updated_at).getTime() - new Date(b.workflow.updated_at).getTime(),
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
       setLastUpdatedGPT(sortedDocuments[0]);
