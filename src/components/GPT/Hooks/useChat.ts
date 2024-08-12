@@ -85,7 +85,7 @@ const useChat = ({ workflow }: Props) => {
 
       const credentialsMessage = createMessage({
         type: "credentials",
-        text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(",")}:`,
+        text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
       });
       initMessages.push(credentialsMessage);
     }
