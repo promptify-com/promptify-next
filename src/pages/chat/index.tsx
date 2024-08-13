@@ -63,7 +63,6 @@ function Chat() {
     selectedChat,
     chatMode = "automation",
     initialChat = true,
-    sessionFirstMessage,
   } = useAppSelector(state => state.chat ?? initialChatState);
   const { createChat, updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
