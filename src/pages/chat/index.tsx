@@ -63,6 +63,7 @@ function Chat() {
     selectedChat,
     chatMode = "automation",
     initialChat = true,
+    sessionFirstMessage,
   } = useAppSelector(state => state.chat ?? initialChatState);
   const { createChat, updateChat } = useChatsManager();
   const [getMessages] = chatsApi.endpoints.getChatMessages.useLazyQuery();
@@ -214,17 +215,6 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    setStopScrollingToBottom(false);
-
-    if (!initialChat) {
-      resetStates();
-      loadInitialMessages();
-    }
-    // TODO: eslint warning blocked a commit
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat]);
-
-  useEffect(() => {
     if (selectedChat && selectedTemplate?.title) {
       handleTitleChat();
     } else {
@@ -235,6 +225,17 @@ function Chat() {
     // TODO: eslint warning blocked a commit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTemplate]);
+
+  useEffect(() => {
+    setStopScrollingToBottom(false);
+
+    if (!initialChat) {
+      resetStates();
+      loadInitialMessages();
+    }
+    // TODO: eslint warning blocked a commit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat, initialChat]);
 
   useEffect(() => {
     if (!queueSavedMessages.length) {

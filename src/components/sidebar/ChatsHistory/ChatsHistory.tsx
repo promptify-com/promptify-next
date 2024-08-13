@@ -5,7 +5,13 @@ import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setInitialChat, setSelectedChat, initialState as initialChatState } from "@/core/store/chatSlice";
+import {
+  setInitialChat,
+  setSelectedChat,
+  initialState as initialChatState,
+  setChats,
+  setSesstionFirstMessage,
+} from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
@@ -22,8 +28,29 @@ function ChatsHistory({ onClose }: Props) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { chats, selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
+  const { chats, selectedChat, sessionFirstMessage } = useAppSelector(state => state.chat ?? initialChatState);
   const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
+  const [localChat, setLocalChat] = useState<IChat | null>(null);
+
+  useEffect(() => {
+    if (sessionFirstMessage && localChat) {
+      const createChatFromApi = async () => {
+        const newChat = await createChat({
+          data: { title: sessionFirstMessage },
+          // toast: true,
+        });
+        if (newChat) {
+          const updatedChats = chats.map(chat => (chat.id === localChat.id ? newChat : chat));
+          dispatch(setChats(updatedChats));
+          dispatch(setSelectedChat(newChat));
+          dispatch(setInitialChat(true)); //TODO: this needs to be true to handle a watcher case in chats index page to prevent resetting states
+          dispatch(setSesstionFirstMessage(null));
+        }
+      };
+
+      createChatFromApi();
+    }
+  }, [sessionFirstMessage, localChat]);
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -42,16 +69,26 @@ function ChatsHistory({ onClose }: Props) {
 
   const { createChat } = useChatsManager();
 
-  const handleNewChat = async () => {
+  const handleNewChat = () => {
     if (!currentUser?.id) {
       return router.push("/signin");
     }
 
-    const newChat = await createChat({ toast: true });
-    if (newChat) {
-      handleClickChat(newChat);
-      dispatch(setInitialChat(false));
-    }
+    dispatch(setSesstionFirstMessage(null));
+
+    const newLocalChat: IChat = {
+      id: Date.now(),
+      title: "New Chat",
+      created_at: new Date().toISOString(),
+      thumbnail: "",
+      updated_at: new Date().toISOString(),
+    };
+
+    const updatedChats = [newLocalChat, ...(chats || [])];
+    dispatch(setChats(updatedChats));
+    setLocalChat(newLocalChat);
+    handleClickChat(newLocalChat);
+    dispatch(setInitialChat(false));
   };
 
   const handleClickChat = (chat: IChat) => {
