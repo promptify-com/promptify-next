@@ -45,6 +45,7 @@ export const chatsApi = baseApi.injectEndpoints({
             title: data.title,
             thumbnail: data.thumbnail,
           },
+          invalidatesTags: ["Chats"],
         }),
       }),
       deleteChat: builder.mutation({

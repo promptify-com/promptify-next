@@ -21,18 +21,19 @@ import {
   setSelectedTemplate,
   setChoiceSelected,
   initialState as initialChatState,
-  setSesstionFirstMessage,
+  setChats,
 } from "@/core/store/chatSlice";
+import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
 import useSaveChatInteractions from "@/components/Chat/Hooks/useSaveChatInteractions";
-import { setRepeatedExecution } from "@/core/store/executionsSlice";
+import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
+import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
-import useChatWorkflow from "@/components/Chat/Hooks/useChatWorkflow";
-import useChatsManager from "./useChatsManager";
+import type { IChat } from "@/core/api/dto/chats";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -54,7 +55,7 @@ const useMessageManager = () => {
     currentExecutionDetails = { id: null, isFavorite: false },
     selectedChatOption = null,
     choiceSelected,
-    sessionFirstMessage,
+    chats,
   } = useAppSelector(state => state.chat ?? initialChatState);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const repeatedExecution = useAppSelector(state => state.executions?.repeatedExecution ?? null);
@@ -100,12 +101,6 @@ const useMessageManager = () => {
     });
     setMessages(updatedMessages);
   }, [currentExecutionDetails]);
-
-  useEffect(() => {
-    if (messages.length > 0 && messages[0]?.text && !isValidatingAnswer) {
-      dispatch(setSesstionFirstMessage(messages[0].text));
-    }
-  }, [messages, dispatch]);
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
     dispatch(setChatMode("messages"));
@@ -228,15 +223,16 @@ const useMessageManager = () => {
 
     let chatId = selectedChat?.id;
 
-    if (!chatId) {
+    if (!chatId || selectedChat?.title === "New Chat") {
       const newChat = await createNewChat(input);
       chatId = newChat?.id;
+      const _chats = [newChat, ...chats.filter(chat => chat.title !== "New Chat")];
+      dispatch(setChats(_chats));
     }
     const userMessage = createMessage({ type: "text", fromUser: true, text: input });
 
     if (chatId) {
       saveTextMessage(userMessage, chatId);
-
       setMessages(prevMessages => prevMessages.concat(userMessage));
       setIsValidatingAnswer(true);
 

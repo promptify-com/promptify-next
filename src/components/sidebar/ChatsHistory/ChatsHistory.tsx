@@ -28,29 +28,9 @@ function ChatsHistory({ onClose }: Props) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { chats, selectedChat, sessionFirstMessage } = useAppSelector(state => state.chat ?? initialChatState);
+  const { chats, selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
   const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
   const [localChat, setLocalChat] = useState<IChat | null>(null);
-
-  useEffect(() => {
-    if (sessionFirstMessage && localChat) {
-      const createChatFromApi = async () => {
-        const newChat = await createChat({
-          data: { title: sessionFirstMessage },
-          // toast: true,
-        });
-        if (newChat) {
-          const updatedChats = chats.map(chat => (chat.id === localChat.id ? newChat : chat));
-          dispatch(setChats(updatedChats));
-          dispatch(setSelectedChat(newChat));
-          dispatch(setInitialChat(true)); //TODO: this needs to be true to handle a watcher case in chats index page to prevent resetting states
-          dispatch(setSesstionFirstMessage(null));
-        }
-      };
-
-      createChatFromApi();
-    }
-  }, [sessionFirstMessage, localChat]);
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -67,8 +47,6 @@ function ChatsHistory({ onClose }: Props) {
     );
   }, [chats]);
 
-  const { createChat } = useChatsManager();
-
   const handleNewChat = () => {
     if (!currentUser?.id) {
       return router.push("/signin");
@@ -83,6 +61,8 @@ function ChatsHistory({ onClose }: Props) {
       thumbnail: "",
       updated_at: new Date().toISOString(),
     };
+
+    console.log(newLocalChat);
 
     const updatedChats = [newLocalChat, ...(chats || [])];
     dispatch(setChats(updatedChats));
@@ -172,7 +152,7 @@ function ChatsHistory({ onClose }: Props) {
             hasMore={hasMore}
             placeholder={CardsPlaceholder}
           >
-            {filteredChats.map(chat => (
+            {filteredChats.map((chat, index) => (
               <ChatCard
                 key={chat.id}
                 chat={chat}
