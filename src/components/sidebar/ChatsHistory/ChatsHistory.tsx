@@ -5,13 +5,7 @@ import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import {
-  setInitialChat,
-  setSelectedChat,
-  initialState as initialChatState,
-  setChats,
-  setSesstionFirstMessage,
-} from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat, initialState as initialChatState, setChats } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
@@ -49,8 +43,6 @@ function ChatsHistory({ onClose }: Props) {
     if (!currentUser?.id) {
       return router.push("/signin");
     }
-
-    dispatch(setSesstionFirstMessage(null));
 
     const newLocalChat: IChat = {
       id: Date.now(),
