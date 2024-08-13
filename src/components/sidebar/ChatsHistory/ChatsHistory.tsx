@@ -17,7 +17,6 @@ import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlacehold
 import { useRouter } from "next/router";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { useChatsPaginator } from "@/components/Chat/Hooks/useChatsPaginator";
-import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   onClose?: () => void;
@@ -30,7 +29,6 @@ function ChatsHistory({ onClose }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { chats, selectedChat } = useAppSelector(state => state.chat ?? initialChatState);
   const { isChatsLoading, isChatsFetching, handleNextPage, hasMore } = useChatsPaginator();
-  const [localChat, setLocalChat] = useState<IChat | null>(null);
 
   const loadedChats = useMemo(() => {
     if (!chats?.length) {
@@ -56,19 +54,14 @@ function ChatsHistory({ onClose }: Props) {
 
     const newLocalChat: IChat = {
       id: Date.now(),
-      title: "New Chat",
+      title: "Welcome",
       created_at: new Date().toISOString(),
       thumbnail: "",
       updated_at: new Date().toISOString(),
     };
-
-    console.log(newLocalChat);
-
     const updatedChats = [newLocalChat, ...(chats || [])];
     dispatch(setChats(updatedChats));
-    setLocalChat(newLocalChat);
     handleClickChat(newLocalChat);
-    dispatch(setInitialChat(false));
   };
 
   const handleClickChat = (chat: IChat) => {

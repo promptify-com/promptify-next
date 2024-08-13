@@ -223,10 +223,10 @@ const useMessageManager = () => {
 
     let chatId = selectedChat?.id;
 
-    if (!chatId || selectedChat?.title === "New Chat") {
+    if (!chatId || selectedChat?.title === "Welcome") {
       const newChat = await createNewChat(input);
       chatId = newChat?.id;
-      const _chats = [newChat, ...chats.filter(chat => chat.title !== "New Chat")];
+      const _chats = [newChat, ...chats.filter(chat => chat.title !== "Welcome")];
       dispatch(setChats(_chats));
     }
     const userMessage = createMessage({ type: "text", fromUser: true, text: input });
