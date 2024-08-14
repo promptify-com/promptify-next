@@ -94,6 +94,7 @@ export interface ITemplateWorkflow {
     crontab: IWorkflowSchedule;
   };
   enabled: boolean;
+  execution_count: number;
 }
 
 export interface UserWorkflowsResponse {

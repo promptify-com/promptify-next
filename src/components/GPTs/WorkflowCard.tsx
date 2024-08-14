@@ -222,7 +222,7 @@ function WorkflowCard({
                   size="12"
                   color="#ffffff"
                 />
-                {templateWorkflow?.activities?.favorites_count ?? 0}
+                {templateWorkflow?.execution_count ?? 0}
               </Stack>
             </Stack>
           </Box>
