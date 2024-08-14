@@ -3,7 +3,6 @@ import lazy from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import { Layout } from "@/layout";
 import { useGetWorkflowByCategoryQuery, useGetUserWorkflowsQuery, useGetWorkflowsQuery } from "@/core/api/workflows";
 import { useAppSelector } from "@/hooks/useStore";
@@ -12,7 +11,6 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
-import GPTbanner from "@/components/GPTs/GPTbanner";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
   ssr: false,
@@ -47,7 +45,6 @@ function GPTsPage() {
     newGPTsCarouselObserver: useIntersectionObserver(newGPTsCarouselRef, { threshold: 0.5 }),
   };
 
-  const showBanner = observers.bannerObserver?.isIntersecting;
   const showHistoricalCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showNewGPTsCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showGPTCategoriesCarousel = observers.GPTCategoriesCarouselObserver?.isIntersecting;
@@ -73,14 +70,6 @@ function GPTsPage() {
   const latestCreatedWorkflows = allWorkflows
     ?.slice()
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-  const recentlyUserdWorkflows = userWorkflows?.data
-    ?.filter(workflow => workflow.last_executed)
-    .sort((a, b) => {
-      const dateA = a.last_executed ? new Date(a.last_executed).getTime() : 0;
-      const dateB = b.last_executed ? new Date(b.last_executed).getTime() : 0;
-      return dateB - dateA;
-    });
 
   return (
     <Layout>
@@ -137,26 +126,13 @@ function GPTsPage() {
                 isGPTScheduled
               />
 
-              <Stack
-                ref={bannerRef}
-                px={{ xs: "24px", md: "80px" }}
-              >
-                {showBanner && (
-                  <GPTbanner
-                    title="Summarize your daily inbox"
-                    description="A summary of your Gmail inbox"
-                    href="/apps/summarize-your-daily-inbox"
-                  />
-                )}
-              </Stack>
-
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
                   <GPTsSection
-                    header="Recently Used AI Apps"
-                    subheader="Quickly access and reuse the Promptify AI Apps you've recently employed to ensure continuity and efficiency in your ongoing tasks."
-                    workflows={recentlyUserdWorkflows}
-                    isLoading={isLoadingUserWorkflows}
+                    header="Most popular AI apps"
+                    subheader="Discover top AI tools that boost productivity and creativity across industries."
+                    workflows={allWorkflows?.slice(0, 3)}
+                    isLoading={isLoadingAllWorkflows}
                   />
                 )}
               </Stack>
