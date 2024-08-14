@@ -98,7 +98,7 @@ function WorkflowCard({
   };
 
   const handleEdit = () => {
-    router.push(`/gpts/${templateWorkflow?.slug}`);
+    router.push(`/apps/${templateWorkflow?.slug}`);
     handleCloseModal();
   };
 
@@ -160,7 +160,7 @@ function WorkflowCard({
   return (
     <>
       <Link
-        href={`/gpts/${templateWorkflow?.slug}`}
+        href={`/apps/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
       >
         <Stack

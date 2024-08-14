@@ -145,7 +145,7 @@ function GPTsPage() {
                   <GPTbanner
                     title="Summarize your daily inbox"
                     description="A summary of your Gmail inbox"
-                    href="/gpts/summarize-your-daily-inbox"
+                    href="/apps/summarize-your-daily-inbox"
                   />
                 )}
               </Stack>
