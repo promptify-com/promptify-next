@@ -40,6 +40,8 @@ function CarouselSectionAuto({ items }: Props) {
               key={index}
               sx={{
                 flex: "0 0 100%",
+                display: "flex",
+                justifyContent: "center",
               }}
             >
               <GPTbanner
