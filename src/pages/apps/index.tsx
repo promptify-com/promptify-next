@@ -11,6 +11,8 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
+import GPTbanner from "@/components/GPTs/GPTbanner";
+import CarouselSectionAuto from "@/components/GPTs/Sections/CarouselSectionAuto";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
   ssr: false,
@@ -45,6 +47,7 @@ function GPTsPage() {
     newGPTsCarouselObserver: useIntersectionObserver(newGPTsCarouselRef, { threshold: 0.5 }),
   };
 
+  const showBanner = observers.bannerObserver?.isIntersecting;
   const showHistoricalCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showNewGPTsCarousel = observers.historicalCarouselObserver?.isIntersecting;
   const showGPTCategoriesCarousel = observers.GPTCategoriesCarouselObserver?.isIntersecting;
@@ -121,6 +124,13 @@ function GPTsPage() {
                 isLoading={isLoadingUserWorkflows}
                 isGPTScheduled
               />
+
+              <Stack
+                ref={bannerRef}
+                px={"10px"}
+              >
+                {showBanner && <CarouselSectionAuto items={allWorkflows?.slice(0, 3)} />}
+              </Stack>
 
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (

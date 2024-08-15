@@ -2,17 +2,18 @@ import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowRightRounded from "@mui/icons-material/KeyboardArrowRightRounded";
-
+import Image from "next/image";
 import GmailSvg from "@/components/GPTs/Icons/GmailSvg";
 import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   href: string;
+  image?: string;
 }
 
-function GPTbanner({ title, description, href }: Props) {
+function GPTbanner({ title, description, href, image }: Props) {
   const { isMobile } = useBrowser();
   return (
     <Stack
@@ -61,10 +62,14 @@ function GPTbanner({ title, description, href }: Props) {
           right={"-10px"}
           zIndex={4444}
         >
-          <GmailSvg
-            width={isMobile ? "140" : "265"}
-            height={isMobile ? "130" : "193"}
-          />
+          {image && (
+            <Image
+              src={image}
+              alt={title}
+              width={isMobile ? "140" : "265"}
+              height={isMobile ? "130" : "193"}
+            />
+          )}
         </Stack>
         <Link href={href}>
           <Stack
