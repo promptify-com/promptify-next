@@ -9,7 +9,6 @@ interface Props {
 }
 
 function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
-  console.log(workflowCategories, "wsad");
   if (isLoading) {
     return <WorkflowCardPlaceholder />;
   }
