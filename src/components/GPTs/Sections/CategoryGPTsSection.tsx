@@ -2,6 +2,7 @@ import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCardPlaceholder";
 import GPTsSection from "@/components/GPTs/Sections/GPTsSection";
 import type { IWorkflowCategory } from "@/components/Automation/types";
 import Stack from "@mui/material/Stack";
+import { useRouter } from "next/router";
 
 interface Props {
   workflowCategories?: IWorkflowCategory[];
@@ -9,9 +10,12 @@ interface Props {
 }
 
 function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
+  const router = useRouter();
+
   if (isLoading) {
     return <WorkflowCardPlaceholder />;
   }
+
   return (
     <Stack gap={"48px"}>
       {workflowCategories?.map((workflows, index) => (
@@ -23,6 +27,9 @@ function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
           subheader={
             workflows.description || "Enhance your daily routines and professional output with AI-driven solutions."
           }
+          onClick={() => {
+            router.push(`/apps/category/${workflows.name}`);
+          }}
         />
       ))}
     </Stack>

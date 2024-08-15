@@ -11,9 +11,10 @@ interface Props {
   header: string;
   subheader?: string;
   isGPTScheduled?: boolean;
+  onClick?: () => void;
 }
 
-const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled }: Props) => {
+const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled, onClick }: Props) => {
   if (isLoading) {
     return <WorkflowCardPlaceholder />;
   }
@@ -26,6 +27,7 @@ const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled }
     <CarouselSection
       header={header}
       subheader={subheader}
+      onClick={onClick}
     >
       {workflows?.map(workflow => (
         <Stack

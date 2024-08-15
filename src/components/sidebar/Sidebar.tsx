@@ -90,7 +90,7 @@ function Sidebar() {
     },
     {
       name: "AI Apps",
-      href: "/gpts",
+      href: "/apps",
       icon: <ElectricBoltIcon />,
       active: isAutomationPage,
       external: false,
