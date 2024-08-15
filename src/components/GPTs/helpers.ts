@@ -60,40 +60,56 @@ function buildNextConnectedData({
   connections,
   relations,
   workflow,
+  visited = new Set<string>(),
 }: {
   nodeName: string;
   connections: Record<string, INodeConnection>;
   relations: Map<string, IRelation>;
   workflow: ITemplateWorkflow;
+  visited?: Set<string>;
 }) {
-  if (!connections[nodeName]?.main[0].length) return;
+  if (!connections[nodeName]?.main.length || visited.has(nodeName)) return;
 
-  if (connections[nodeName].main[0][0].node) {
-    const nodeType = getNodeByName(workflow.data.nodes, nodeName).type;
-    const nodeInfo = (nodesData as NodesFileData)[nodeType];
+  visited.add(nodeName);
 
-    const promptifyNode = workflow.data.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+  const nodeType = getNodeByName(workflow.data.nodes, nodeName).type;
+  let nodeConnectionsOrdered = connections[nodeName].main;
 
-    const relationData: IRelation = {
-      nextNode: connections[nodeName].main[0][0].node,
-      type: nodeType,
-      iconUrl: nodeInfo.iconUrl ? `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${nodeInfo.iconUrl}` : "",
-      description: nodeInfo.description ?? "",
-    };
-
-    if (promptifyNode?.name.includes("Promptify") && nodeType === PROMPTIFY_NODE_TYPE) {
-      relationData.templateId = promptifyNode.parameters.template;
-    }
-
-    relations.set(nodeName, relationData);
-
-    buildNextConnectedData({
-      nodeName: connections[nodeName].main[0][0].node,
-      connections,
-      workflow,
-      relations,
-    });
+  // In a LoopOverItems node, prioritize the second connection "loop" over the first "done"
+  if (nodeType === "n8n-nodes-base.splitInBatches") {
+    nodeConnectionsOrdered = [nodeConnectionsOrdered[1], nodeConnectionsOrdered[0]];
   }
+
+  nodeConnectionsOrdered.forEach(nodeConnections => {
+    nodeConnections.forEach(connection => {
+      if (connection.node) {
+        const nodeInfo = (nodesData as NodesFileData)[nodeType];
+
+        const promptifyNode = workflow.data.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+
+        const relationData: IRelation = {
+          nextNode: connection.node,
+          type: nodeType,
+          iconUrl: nodeInfo.iconUrl ? `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${nodeInfo.iconUrl}` : "",
+          description: nodeInfo.description ?? "",
+        };
+
+        if (promptifyNode?.name.includes("Promptify") && nodeType === PROMPTIFY_NODE_TYPE) {
+          relationData.templateId = promptifyNode.parameters.template;
+        }
+
+        relations.set(nodeName, relationData);
+
+        buildNextConnectedData({
+          nodeName: connection.node,
+          connections,
+          workflow,
+          relations,
+          visited,
+        });
+      }
+    });
+  });
 }
 
 const unwantedDataFlowNodes = [
@@ -105,6 +121,9 @@ const unwantedDataFlowNodes = [
   "n8n-nodes-base.merge",
   "n8n-nodes-base.function",
   "n8n-nodes-base.splitInBatches",
+  "n8n-nodes-base.if",
+  "n8n-nodes-base.itemLists",
+  "n8n-nodes-base.markdown",
 ];
 export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   const webhookNodeName = workflow.data.nodes.find(node => node.type === "n8n-nodes-base.webhook")?.name;
@@ -114,7 +133,6 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   }
 
   const relations = new Map<string, IRelation>();
-  const relationsSet = new Set<string>();
 
   buildNextConnectedData({
     nodeName: webhookNodeName,
@@ -124,14 +142,7 @@ export function getWorkflowDataFlow(workflow: ITemplateWorkflow) {
   });
 
   return Array.from(relations).filter(([_, { type }]) => {
-    if (unwantedDataFlowNodes.includes(type)) {
-      return false;
-    }
-
-    const seen = relationsSet.has(type);
-    relationsSet.add(type);
-
-    return !seen;
+    return !unwantedDataFlowNodes.includes(type);
   });
 }
 
