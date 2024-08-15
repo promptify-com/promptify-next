@@ -104,7 +104,6 @@ function Chat() {
     if (!selectedChat?.id) {
       return;
     }
-
     setLoadingInitialMessages(true);
     try {
       const messagesData = await getMessages({ chat: selectedChat.id }).unwrap();
@@ -112,7 +111,7 @@ function Chat() {
       const _nextCursor = messagesData.next ? messagesData.next.split("cursor=")[1] : null;
 
       setNextCursor(_nextCursor);
-      setMessages(prevMessages => newMappedMessages.concat(prevMessages));
+      setMessages(newMappedMessages);
     } catch (error) {
       console.error("Error loading initial messages:", error);
     } finally {
@@ -214,17 +213,6 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    setStopScrollingToBottom(false);
-
-    if (!initialChat) {
-      resetStates();
-      loadInitialMessages();
-    }
-    // TODO: eslint warning blocked a commit
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat]);
-
-  useEffect(() => {
     if (selectedChat && selectedTemplate?.title) {
       handleTitleChat();
     } else {
@@ -235,6 +223,17 @@ function Chat() {
     // TODO: eslint warning blocked a commit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTemplate]);
+
+  useEffect(() => {
+    setStopScrollingToBottom(false);
+
+    if (!initialChat) {
+      resetStates();
+      loadInitialMessages();
+    }
+    // TODO: eslint warning blocked a commit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat]);
 
   useEffect(() => {
     if (!queueSavedMessages.length) {
