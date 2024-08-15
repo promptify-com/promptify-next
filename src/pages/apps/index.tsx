@@ -11,6 +11,7 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
+import CategoriesSection from "@/components/GPTs/Sections/CategoriesSection";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
   ssr: false,
@@ -66,10 +67,6 @@ function GPTsPage() {
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
-
-  const latestCreatedWorkflows = allWorkflows
-    ?.slice()
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
     <Layout>
@@ -139,12 +136,10 @@ function GPTsPage() {
 
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
-                  <GPTsSection
-                    header="Latest AI Apps"
-                    subheader="Discover the latest Promptify AI Apps to amplify your productivity. Stay ahead, keep things fresh,
-                     and make daily tasks a breeze with cutting-edge Generative AI."
-                    workflows={latestCreatedWorkflows}
-                    isLoading={isLoadingAllWorkflows}
+                  <CategoriesSection
+                    header="AI Apps Categories"
+                    categories={workflowsByCategory}
+                    isLoading={isLoadingWorkflowsByCategory}
                   />
                 )}
               </Stack>
