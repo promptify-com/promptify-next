@@ -11,7 +11,6 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
-import CategoriesSection from "@/components/GPTs/Sections/CategoriesSection";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
   ssr: false,
@@ -130,16 +129,6 @@ function GPTsPage() {
                     subheader="Discover top AI tools that boost productivity and creativity across industries."
                     workflows={allWorkflows?.slice(0, 3)}
                     isLoading={isLoadingAllWorkflows}
-                  />
-                )}
-              </Stack>
-
-              <Stack ref={newGPTsCarouselRef}>
-                {showNewGPTsCarousel && (
-                  <CategoriesSection
-                    header="AI Apps Categories"
-                    categories={workflowsByCategory}
-                    isLoading={isLoadingWorkflowsByCategory}
                   />
                 )}
               </Stack>

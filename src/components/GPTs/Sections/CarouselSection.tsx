@@ -9,9 +9,10 @@ interface Props {
   header: string;
   subheader?: string;
   children: ReactNode;
+  onClick?: () => void;
 }
 
-function CarouselSection({ header, subheader, children }: Props) {
+function CarouselSection({ header, subheader, children, onClick }: Props) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel({ autoplay: false });
 
   return (
@@ -32,6 +33,10 @@ function CarouselSection({ header, subheader, children }: Props) {
             fontWeight={500}
             color={"#000"}
             lineHeight={"120%"}
+            onClick={onClick}
+            sx={{
+              cursor: onClick ? "pointer" : "default",
+            }}
           >
             {header}
           </Typography>
