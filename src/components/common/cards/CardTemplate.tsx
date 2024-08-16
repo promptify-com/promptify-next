@@ -270,7 +270,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                             e.preventDefault();
                             template.type === "template"
                               ? handleClickTag(tag)
-                              : router.push(`/apps/category/${template?.category_name.toLowerCase()}`);
+                              : router.push(`/apps/category/${template?.category_name?.toLowerCase()}`);
                           }}
                           label={tag.name}
                           size="small"
