@@ -38,6 +38,7 @@ interface Props {
   userWorkflowId?: string;
   lastExecuted: string | null;
   isGPTScheduled?: boolean;
+  category?: string;
 }
 
 function WorkflowCard({
@@ -46,6 +47,7 @@ function WorkflowCard({
   userWorkflowId,
   lastExecuted,
   isGPTScheduled = false,
+  category,
 }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -308,8 +310,8 @@ function WorkflowCard({
               </Stack>
             ) : (
               <Chip
-                label={"Productivity"}
-                size="small"
+                label={templateWorkflow?.category?.name ?? category}
+                size={"small"}
                 sx={{
                   fontSize: "11px",
                   fontWeight: 500,

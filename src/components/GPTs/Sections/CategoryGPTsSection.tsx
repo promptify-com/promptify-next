@@ -23,6 +23,7 @@ function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
           key={`${workflows.name}-${index}`}
           workflows={workflows.templates}
           isLoading={isLoading}
+          category={workflows.name}
           header={workflows.name || ""}
           subheader={
             workflows.description || "Enhance your daily routines and professional output with AI-driven solutions."

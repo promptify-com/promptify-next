@@ -12,9 +12,10 @@ interface Props {
   subheader?: string;
   isGPTScheduled?: boolean;
   onClick?: () => void;
+  category?: string;
 }
 
-const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled, onClick }: Props) => {
+const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled, onClick, category }: Props) => {
   if (isLoading) {
     return <WorkflowCardPlaceholder />;
   }
@@ -45,6 +46,7 @@ const GPTsSection = ({ workflows, isLoading, header, subheader, isGPTScheduled, 
             userWorkflowId={"template_workflow" in workflow ? workflow.id : ""}
             lastExecuted={"template_workflow" in workflow ? workflow.last_executed : null}
             isGPTScheduled={isGPTScheduled}
+            category={category}
           />
         </Stack>
       ))}

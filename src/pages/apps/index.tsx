@@ -11,7 +11,6 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
-import GPTbanner from "@/components/GPTs/GPTbanner";
 import CarouselSectionAuto from "@/components/GPTs/Sections/CarouselSectionAuto";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
@@ -59,9 +58,8 @@ function GPTsPage() {
 
   const isFiltering = filter.length > 0;
 
-  const userFavoriteeWorkflows = workflowsByCategory?.flatMap(category =>
-    category.templates.filter(workflow => workflow.is_liked),
-  );
+  const userFavoriteeWorkflows = userWorkflows?.data?.filter(workflow => workflow.template_workflow?.is_liked);
+
   const scheduleGPTs = userWorkflows?.data?.filter(
     workflow => workflow?.template_workflow?.is_schedulable && workflow?.periodic_task,
   );
@@ -149,6 +147,7 @@ function GPTsPage() {
                     header="User Favorites"
                     subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                     workflows={userFavoriteeWorkflows}
+                    category=""
                     isLoading={isLoadingUserWorkflows}
                   />
                 )}
