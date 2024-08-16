@@ -37,7 +37,6 @@ function CardTemplate({ template }: CardTemplateProps) {
   const remainingTags = template.tags.slice(2);
   const remainingTagsCount = template.tags.length - displayedTags.length;
 
-  console.log(template.href);
   return (
     <Link
       href={template.href}
@@ -239,7 +238,6 @@ function CardTemplate({ template }: CardTemplateProps) {
                       <Chip
                         onClick={e => {
                           e.preventDefault();
-                          console.log("tag", tag);
                           handleClickTag(tag);
                         }}
                         label={tag.name}
@@ -268,7 +266,6 @@ function CardTemplate({ template }: CardTemplateProps) {
                         <Chip
                           onClick={e => {
                             e.preventDefault();
-                            console.log("tag", tag);
                             handleClickTag(tag);
                           }}
                           label={tag.name}
