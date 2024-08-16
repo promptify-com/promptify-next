@@ -7,15 +7,12 @@ import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
 import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
-import type { Category, ICardTemplate } from "@/core/api/dto/templates";
-import { useEffect, useRef, useState } from "react";
+import type { Category } from "@/core/api/dto/templates";
+import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
-  const [templates, setTemplates] = useState<ICardTemplate[]>([]);
-  const [workflows, setWorkflows] = useState<ICardTemplate[]>([]);
-
   const { data: suggestedTemplates, isFetching } = useGetTemplatesSuggestedQuery(undefined);
   const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(false);
 
@@ -33,42 +30,22 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
   const showLearn = observers.learnObserver?.isIntersecting;
   const showTestimonials = observers.learnObserver?.isIntersecting;
 
-  useEffect(() => {
-    if (suggestedTemplates) {
-      const tempTemplates = suggestedTemplates.map(template => ({
-        image: template.thumbnail,
-        title: template.title,
-        href: `/prompt/${template.slug}`,
-        executionsCount: template.executions_count,
-        tags: template.tags,
-        description: template.description,
-        slug: template.slug,
-        likes: template.likes,
-        created_by: template.created_by,
-        type: "template",
-      }));
-      setTemplates(tempTemplates);
-    }
-  }, [suggestedTemplates]);
+  const templates = (suggestedTemplates ?? []).map(template => ({
+    ...template,
+    image: template.thumbnail,
+    href: `/prompt/${template.slug}`,
+    type: "template",
+  }));
 
-  useEffect(() => {
-    if (allWorkflows) {
-      const tempWorkflows = allWorkflows.map(workflow => ({
-        image: workflow.image ?? "",
-        title: workflow.name,
-        href: `/apps/${workflow.slug}`,
-        executionsCount: workflow.execution_count,
-        tags: [{ id: 1, name: workflow.category.name }],
-        description: workflow.description ?? "",
-        slug: workflow.slug,
-        likes: workflow.likes,
-        created_by: workflow.created_by,
-        type: "workflow",
-        category_name: workflow.category.name,
-      }));
-      setWorkflows(tempWorkflows);
-    }
-  }, [allWorkflows]);
+  const workflows = (allWorkflows ?? []).map(workflow => ({
+    ...workflow,
+    title: workflow.name,
+    href: `/apps/${workflow.slug}`,
+    tags: [{ id: 1, name: workflow.category.name }],
+    category_name: workflow.category.name,
+    executions_count: workflow.execution_count,
+    type: "workflow",
+  }));
 
   return (
     <ClientOnly>
@@ -86,7 +63,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         <Stack minHeight={"300px"}>
           <HomepageTemplates
             title="You may like these AI Apps:"
-            templates={workflows || []}
+            templates={workflows}
             templatesLoading={isLoadingAllWorkflows}
             showAdsBox
           />
@@ -95,7 +72,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         <Stack minHeight={"300px"}>
           <HomepageTemplates
             title="You may like these prompts:"
-            templates={templates || []}
+            templates={templates}
             templatesLoading={isFetching}
           />
         </Stack>

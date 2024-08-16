@@ -54,7 +54,6 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
 function PromptsList({ username, firstName, lastName }: { username: string; firstName: string; lastName: string }) {
   const [offset, setOffset] = useState(0);
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
-  const [preparedTemplates, setPreparedTemplates] = useState<ICardTemplate[]>([]);
 
   const {
     data: templates,
@@ -82,24 +81,6 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
     // TODO: eslint warning blocked a commit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templates?.results]);
-
-  useEffect(() => {
-    if (allTemplates) {
-      const tempTemplates = allTemplates.map(template => ({
-        image: template.thumbnail,
-        title: template.title,
-        href: `/prompt/${template.slug}`,
-        executionsCount: template.executions_count,
-        tags: template.tags,
-        description: template.description,
-        slug: template.slug,
-        likes: template.likes ?? 0,
-        created_by: template.created_by,
-        type: "template",
-      }));
-      setPreparedTemplates(tempTemplates);
-    }
-  }, [allTemplates]);
 
   const handleNextPage = () => {
     if (templates?.next) {
@@ -175,7 +156,7 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                 spacing={1}
                 px={{ xs: "16px", md: 0 }}
               >
-                {preparedTemplates?.map((template, index) => (
+                {allTemplates.map((template, index) => (
                   <Grid
                     key={index}
                     item
@@ -184,7 +165,15 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                     md={5}
                     lg={3}
                   >
-                    <CardTemplate template={template} />
+                    <CardTemplate
+                      template={{
+                        ...template,
+                        image: template.thumbnail,
+                        href: `/prompt/${template.slug}`,
+                        created_by: template.created_by,
+                        type: "template",
+                      }}
+                    />
                   </Grid>
                 ))}
               </Grid>

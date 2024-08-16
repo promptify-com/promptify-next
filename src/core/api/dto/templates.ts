@@ -316,14 +316,14 @@ export interface AIAppsWithPagination {
 }
 
 export interface ICardTemplate {
-  image: string;
+  image?: string;
   title: string;
   href: string;
-  executionsCount: number;
+  executions_count: number;
   tags: Tag[];
-  description: string;
+  description?: string;
   slug: string;
-  likes: number;
+  likes?: number;
   created_by: User | UserPartial;
   type: string;
   category_name?: string;

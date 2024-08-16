@@ -147,7 +147,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                   className="icon-text-style"
                 >
                   <Bolt />
-                  {template.executionsCount}
+                  {template.executions_count}
                 </Stack>
               )}
             </Box>

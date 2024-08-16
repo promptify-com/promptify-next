@@ -83,26 +83,6 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
   },
   ref,
 ) {
-  const [preparedTemplates, setPreparedTemplates] = useState<ICardTemplate[]>([]);
-
-  useEffect(() => {
-    if (templates) {
-      const tempTemplates = templates.map(template => ({
-        image: template.thumbnail,
-        title: template.title,
-        href: `/prompt/${template.slug}`,
-        executionsCount: template.executions_count,
-        tags: template.tags,
-        description: template.description,
-        slug: template.slug,
-        likes: template.likes ?? 0,
-        created_by: template.created_by,
-        type: "template",
-      }));
-      setPreparedTemplates(tempTemplates);
-    }
-  }, [templates]);
-
   const isNotLoading = !isLoading && !templateLoading;
 
   if (isNotLoading && !templates?.length) {
@@ -150,8 +130,8 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
               }}
               width={"99%"}
             >
-              {!!preparedTemplates?.length &&
-                preparedTemplates.map((template, index) => {
+              {!!templates?.length &&
+                templates.map((template, index) => {
                   return (
                     <Grid
                       key={index}
@@ -161,7 +141,15 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                       md={5}
                       lg={3}
                     >
-                      <CardTemplate template={template} />
+                      <CardTemplate
+                        template={{
+                          ...template,
+                          image: template.thumbnail,
+                          href: `/prompt/${template.slug}`,
+                          created_by: template.created_by,
+                          type: "template",
+                        }}
+                      />
                     </Grid>
                   );
                 })}

@@ -78,25 +78,6 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
-  const [preparedTemplates, setPreparedTemplates] = useState<ICardTemplate[]>([]);
-
-  useEffect(() => {
-    if (templates) {
-      const tempTemplates = templates.map(template => ({
-        image: template.thumbnail,
-        title: template.title,
-        href: `/prompt/${template.slug}`,
-        executionsCount: template.executions_count,
-        tags: template.tags,
-        description: template.description,
-        slug: template.slug,
-        likes: template.likes ?? 0,
-        created_by: template.created_by,
-        type: "template",
-      }));
-      setPreparedTemplates(tempTemplates);
-    }
-  }, [templates]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -251,7 +232,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                       WebkitOverflowScrolling: { xs: "touch", md: "initial" },
                     }}
                   >
-                    {preparedTemplates.map((template, index) => (
+                    {templates.map((template, index) => (
                       <Grid
                         item
                         xs={4}
@@ -260,7 +241,15 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                         lg={3}
                         key={`${template.title}_${index}`}
                       >
-                        <CardTemplate template={template} />
+                        <CardTemplate
+                          template={{
+                            ...template,
+                            image: template.thumbnail,
+                            href: `/prompt/${template.slug}`,
+                            created_by: template.created_by,
+                            type: "template",
+                          }}
+                        />
                       </Grid>
                     ))}
                   </Grid>
