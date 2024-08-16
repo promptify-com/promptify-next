@@ -1,19 +1,19 @@
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
-import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import type { Templates } from "@/core/api/dto/templates";
+import { ITemplateWorkflow } from "../Automation/types";
+import CardAITemplate from "../common/cards/CardAITemplate";
 
 interface Props {
   title: string;
-  templates: Templates[];
+  templates: ITemplateWorkflow[];
   templatesLoading: boolean;
+  showAdsBox?: boolean;
 }
 
-function HomepageTemplates({ title, templates, templatesLoading }: Props) {
+function HomepageAITemplates({ title, templates, templatesLoading, showAdsBox }: Props) {
   if (!templates.length && !templatesLoading) {
     return null;
   }
@@ -34,6 +34,20 @@ function HomepageTemplates({ title, templates, templatesLoading }: Props) {
         ml={{ md: -2 }}
         spacing={1}
       >
+        {showAdsBox && (
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={8}
+            lg={6}
+            xl={4}
+            mb={{ xs: 2, md: 0 }}
+          >
+            <AdsBox />
+          </Grid>
+        )}
+
         {templatesLoading ? (
           Array.from({ length: 6 }).map((_, idx) => (
             <Grid
@@ -73,7 +87,7 @@ function HomepageTemplates({ title, templates, templatesLoading }: Props) {
                 lg={3}
                 xl={2}
               >
-                <CardTemplate template={template} />
+                <CardAITemplate template={template} />
               </Grid>
             ))}
           </>
@@ -83,4 +97,4 @@ function HomepageTemplates({ title, templates, templatesLoading }: Props) {
   );
 }
 
-export default HomepageTemplates;
+export default HomepageAITemplates;
