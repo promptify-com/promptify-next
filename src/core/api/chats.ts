@@ -9,6 +9,7 @@ import {
   ISaveChatInput,
   ISaveChatSuggestions,
   ISaveChatTemplate,
+  ISuggestion,
 } from "./dto/chats";
 
 const getSearchParams = (params: IPaginateParams) => {
@@ -44,6 +45,7 @@ export const chatsApi = baseApi.injectEndpoints({
             title: data.title,
             thumbnail: data.thumbnail,
           },
+          invalidatesTags: ["Chats"],
         }),
       }),
       deleteChat: builder.mutation({
@@ -128,6 +130,12 @@ export const chatsApi = baseApi.injectEndpoints({
           method: "GET",
         }),
       }),
+      getSuggestions: builder.query<ISuggestion[], void>({
+        query: () => ({
+          url: "/api/chat/suggestions-queries",
+          method: "GET",
+        }),
+      }),
     };
   },
 });
@@ -145,4 +153,5 @@ export const {
   useSaveChatTemplateMutation,
   useBatchingMessagesMutation,
   useGetChatMessagesQuery,
+  useGetSuggestionsQuery,
 } = chatsApi;

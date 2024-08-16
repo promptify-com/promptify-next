@@ -89,12 +89,13 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "GPTs",
-      href: "/gpts",
+      name: "AI Apps",
+      href: "/apps",
       icon: <ElectricBoltIcon />,
       active: isAutomationPage,
       external: false,
       reload: false,
+      sx: { whiteSpace: "nowrap" },
     },
     {
       name: "Chrome Extension",

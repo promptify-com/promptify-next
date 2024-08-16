@@ -38,6 +38,7 @@ interface Props {
   userWorkflowId?: string;
   lastExecuted: string | null;
   isGPTScheduled?: boolean;
+  category?: string;
 }
 
 function WorkflowCard({
@@ -46,6 +47,7 @@ function WorkflowCard({
   userWorkflowId,
   lastExecuted,
   isGPTScheduled = false,
+  category,
 }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -98,7 +100,7 @@ function WorkflowCard({
   };
 
   const handleEdit = () => {
-    router.push(`/gpts/${templateWorkflow?.slug}`);
+    router.push(`/apps/${templateWorkflow?.slug}`);
     handleCloseModal();
   };
 
@@ -160,7 +162,7 @@ function WorkflowCard({
   return (
     <>
       <Link
-        href={`/gpts/${templateWorkflow?.slug}`}
+        href={`/apps/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
       >
         <Stack
@@ -222,7 +224,7 @@ function WorkflowCard({
                   size="12"
                   color="#ffffff"
                 />
-                {templateWorkflow?.activities?.favorites_count ?? 0}
+                {templateWorkflow?.execution_count ?? 0}
               </Stack>
             </Stack>
           </Box>
@@ -308,8 +310,8 @@ function WorkflowCard({
               </Stack>
             ) : (
               <Chip
-                label={"Productivity"}
-                size="small"
+                label={templateWorkflow?.category?.name ?? category}
+                size={"small"}
                 sx={{
                   fontSize: "11px",
                   fontWeight: 500,

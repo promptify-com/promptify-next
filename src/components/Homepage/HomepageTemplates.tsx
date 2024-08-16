@@ -5,11 +5,11 @@ import Typography from "@mui/material/Typography";
 import AdsBox from "@/components/Homepage/GuestUserLayout/AdsBox";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import type { Templates } from "@/core/api/dto/templates";
+import type { ICardTemplate } from "@/core/api/dto/templates";
 
 interface Props {
   title: string;
-  templates: Templates[];
+  templates: ICardTemplate[];
   templatesLoading: boolean;
   showAdsBox?: boolean;
 }

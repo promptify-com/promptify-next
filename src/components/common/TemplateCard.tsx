@@ -338,7 +338,7 @@ function TemplateCard({ template, onScrollToBottom, manageActions, isEditor, dis
               sx={btnStyle}
               onClick={handleRunPrompt}
             >
-              Run prompt
+              Try this prompt
             </Button>
             <TemplateActions
               template={template}

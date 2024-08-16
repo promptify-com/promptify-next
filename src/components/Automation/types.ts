@@ -63,6 +63,13 @@ interface IData {
   connections: Record<string, INodeConnection>;
 }
 
+interface Category {
+  name: string;
+  description: string;
+  slug: null | string;
+  is_visible: boolean;
+}
+
 export interface ITemplateWorkflow {
   slug: string;
   id: number;
@@ -75,6 +82,7 @@ export interface ITemplateWorkflow {
   is_schedulable: boolean;
   is_liked: boolean;
   likes: number;
+  category: Category;
   activities?: {
     likes_count: number;
     favorites_count: number;
@@ -86,6 +94,7 @@ export interface ITemplateWorkflow {
     crontab: IWorkflowSchedule;
   };
   enabled: boolean;
+  execution_count: number;
 }
 
 export interface UserWorkflowsResponse {
@@ -225,7 +234,8 @@ export interface IAvailableCredentials {
 }
 
 export interface IWorkflowCategory {
-  category: string;
+  name: string;
+  description: string;
   templates: ITemplateWorkflow[];
 }
 
@@ -246,10 +256,28 @@ export interface IGPTDocumentResponse {
       id: number;
       name: string;
       description: string;
+      image: string;
+      nodes: INode[];
     };
   };
   title: string;
   output: string;
   created_at: string;
   user: number;
+  sent_to: string[];
 }
+
+export type AIApps = {
+  id: number;
+  workflow_id: string;
+  created_at: string;
+  updated_at: string;
+  template_workflow: {
+    id: number;
+    name: string;
+    description: string;
+    category: string | null;
+    image: string | null;
+  };
+  self_executions_count: number;
+};

@@ -87,10 +87,10 @@ function Navigations({ onCloseDrawer }: Props) {
       external: isValidUser,
     },
     {
-      label: "GPTs",
+      label: "AI Apps",
       icon: <ElectricBolt />,
-      href: "/gpts",
-      active: pathname === "/gpts",
+      href: "/apps",
+      active: pathname === "/apps",
       external: false,
     },
     {

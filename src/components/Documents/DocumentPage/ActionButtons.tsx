@@ -56,6 +56,16 @@ function ActionButtons({ document, onFavorite }: Props) {
       gap={{ xs: 1, md: 2 }}
       alignItems={{ xs: "flex-start", md: "center" }}
     >
+      {!isMobile && (
+        <Button
+          variant="text"
+          sx={btnStyle}
+          startIcon={showPreviews ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+          onClick={() => dispatch(toggleShowPreviews())}
+        >
+          Disclose Prompts
+        </Button>
+      )}
       {isMobile && (
         <Button
           variant="text"

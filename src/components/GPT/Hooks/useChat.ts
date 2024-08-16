@@ -20,6 +20,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useDebounce from "@/hooks/useDebounce";
+import { formatDateWithOrdinal } from "@/common/helpers/dateWithSuffix";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -84,7 +85,7 @@ const useChat = ({ workflow }: Props) => {
 
       const credentialsMessage = createMessage({
         type: "credentials",
-        text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(",")}:`,
+        text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
       });
       initMessages.push(credentialsMessage);
     }
@@ -115,7 +116,7 @@ const useChat = ({ workflow }: Props) => {
     });
     const providersMessage = createMessage({
       type: "schedule_providers",
-      text: "Where should we send your scheduled GPT?",
+      text: "Where should we send your scheduled AI App?",
     });
 
     availableSteps.push(schedulesMessage, providersMessage);
@@ -180,7 +181,7 @@ const useChat = ({ workflow }: Props) => {
   const insertFrequencyMessage = () => {
     const frequencyMessage = createMessage({
       type: "schedule_frequency",
-      text: "How often do you want to repeat this GPT?",
+      text: "How often do you want to repeat this AI App?",
     });
     setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
   };
@@ -188,7 +189,7 @@ const useChat = ({ workflow }: Props) => {
   const insertProvidersMessages = (scheduleData: IWorkflowSchedule) => {
     if (!messages.find(msg => msg.type === "schedule_providers")) {
       const hour = scheduleData.hour ? ` at ${TIMES[scheduleData.hour]}` : "";
-      const message = `Awesome, We’ll run this GPT for you here ${scheduleData.frequency}${hour}, do you want to receive them in your favorite platforms?`;
+      const message = `Awesome, We’ll run this AI App for you here ${scheduleData.frequency}${hour}, do you want to receive them in your favorite platforms?`;
       const confirmMessage = createMessage({
         type: "text",
         text: message,
@@ -196,7 +197,7 @@ const useChat = ({ workflow }: Props) => {
       });
       const providersMessage = createMessage({
         type: "schedule_providers",
-        text: "Where should we send your scheduled GPT?",
+        text: "Where should we send your scheduled AI App?",
       });
       setMessages(prev => prev.concat([confirmMessage, providersMessage]));
     }
@@ -353,7 +354,7 @@ const useChat = ({ workflow }: Props) => {
     try {
       await saveAsGPTDocument({
         output: content,
-        title: executionWorkflow.name,
+        title: executionWorkflow.name + ", " + formatDateWithOrdinal(new Date().toISOString()),
         workflow_id: executionWorkflow.id,
       });
 
@@ -368,7 +369,7 @@ const useChat = ({ workflow }: Props) => {
   const failedExecutionHandler = () => {
     const failMessage = createMessage({
       type: "text",
-      text: "Running your GPT failed, please try again.",
+      text: "Running your AI App failed, please try again.",
     });
     setMessages(prev => prev.concat(failMessage));
   };

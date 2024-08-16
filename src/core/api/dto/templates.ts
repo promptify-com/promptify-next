@@ -1,6 +1,7 @@
 import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
+import { IGPTDocumentResponse } from "@/components/Automation/types";
 
 export interface ExecutionWithTemplate extends TemplatesExecutions {
   template?: TemplateExecutionsDisplay;
@@ -21,6 +22,7 @@ export interface FilterParams {
   isInternal?: boolean;
   template?: number;
   include?: string;
+  workflow_id?: string;
 }
 
 export type EngineType = { id: number; label: string };
@@ -298,4 +300,31 @@ export interface IPromptExecution {
   };
   executed_by?: number;
   errors?: string;
+}
+
+export type AIAppsParams = {
+  offset: number;
+  limit: number;
+  workflow_id?: string;
+};
+
+export interface AIAppsWithPagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: IGPTDocumentResponse[];
+}
+
+export interface ICardTemplate {
+  image?: string;
+  title: string;
+  href: string;
+  executions_count: number;
+  tags: Tag[];
+  description?: string;
+  slug: string;
+  likes?: number;
+  created_by: User | UserPartial;
+  type: string;
+  category_name?: string;
 }

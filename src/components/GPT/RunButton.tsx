@@ -14,7 +14,7 @@ interface Props {
   sx?: SxProps;
 }
 
-function RunButton({ onClick, text = "Run GPT", disabled, loading, showIcon, sx = {} }: Props) {
+function RunButton({ onClick, text = "Run AI App", disabled, loading, showIcon, sx = {} }: Props) {
   const icon = loading ? (
     <CircularProgress
       size={12}

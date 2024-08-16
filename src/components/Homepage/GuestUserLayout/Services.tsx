@@ -39,7 +39,7 @@ const ServicesList: IServiceCard[] = [
     },
   },
   {
-    title: "GPTs",
+    title: "AI Apps",
     icon: <ElectricBoltIcon />,
     description:
       "Seamlessly integrate our services into your applications. Plus, use our Chrome extension for AI-powered writing on",

@@ -3,7 +3,6 @@ import lazy from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import { Layout } from "@/layout";
 import { useGetWorkflowByCategoryQuery, useGetUserWorkflowsQuery, useGetWorkflowsQuery } from "@/core/api/workflows";
 import { useAppSelector } from "@/hooks/useStore";
@@ -12,7 +11,7 @@ import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
-import GPTbanner from "@/components/GPTs/GPTbanner";
+import CarouselSectionAuto from "@/components/GPTs/Sections/CarouselSectionAuto";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
   ssr: false,
@@ -59,9 +58,8 @@ function GPTsPage() {
 
   const isFiltering = filter.length > 0;
 
-  const userFavoriteeWorkflows = workflowsByCategory?.flatMap(category =>
-    category.templates.filter(workflow => workflow.is_liked),
-  );
+  const userFavoriteeWorkflows = userWorkflows?.data?.filter(workflow => workflow.template_workflow?.is_liked);
+
   const scheduleGPTs = userWorkflows?.data?.filter(
     workflow => workflow?.template_workflow?.is_schedulable && workflow?.periodic_task,
   );
@@ -69,18 +67,6 @@ function GPTsPage() {
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
-
-  const latestCreatedWorkflows = allWorkflows
-    ?.slice()
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-  const recentlyUserdWorkflows = userWorkflows?.data
-    ?.filter(workflow => workflow.last_executed)
-    .sort((a, b) => {
-      const dateA = a.last_executed ? new Date(a.last_executed).getTime() : 0;
-      const dateB = b.last_executed ? new Date(b.last_executed).getTime() : 0;
-      return dateB - dateA;
-    });
 
   return (
     <Layout>
@@ -129,8 +115,8 @@ function GPTsPage() {
           ) : (
             <Fragment>
               <GPTsSection
-                header="Scheduled GPTs"
-                subheader="Easily view, pause, or tweak your scheduled Promptify GPTs. 
+                header="Scheduled AI Apps"
+                subheader="Easily view, pause, or tweak your scheduled Promptify AI Apps. 
                 Stay on top of your tasks and keep your workflow smooth and flexible."
                 workflows={scheduleGPTs}
                 isLoading={isLoadingUserWorkflows}
@@ -139,35 +125,17 @@ function GPTsPage() {
 
               <Stack
                 ref={bannerRef}
-                px={{ xs: "24px", md: "80px" }}
+                px={"10px"}
               >
-                {showBanner && (
-                  <GPTbanner
-                    title="Summarize your daily inbox"
-                    description="A summary of your Gmail inbox"
-                    href="/gpts/summarize-your-daily-inbox"
-                  />
-                )}
+                {showBanner && <CarouselSectionAuto items={allWorkflows?.slice(0, 3)} />}
               </Stack>
 
               <Stack ref={newGPTsCarouselRef}>
                 {showNewGPTsCarousel && (
                   <GPTsSection
-                    header="Recently Used GPTs"
-                    subheader="Quickly access and reuse the Promptify GPTs you've recently employed to ensure continuity and efficiency in your ongoing tasks."
-                    workflows={recentlyUserdWorkflows}
-                    isLoading={isLoadingUserWorkflows}
-                  />
-                )}
-              </Stack>
-
-              <Stack ref={newGPTsCarouselRef}>
-                {showNewGPTsCarousel && (
-                  <GPTsSection
-                    header="Latest GPTs"
-                    subheader="Discover the latest Promptify GPTs to amplify your productivity. Stay ahead, keep things fresh,
-                     and make daily tasks a breeze with cutting-edge Generative AI."
-                    workflows={latestCreatedWorkflows}
+                    header="Most popular AI apps"
+                    subheader="Discover top AI tools that boost productivity and creativity across industries."
+                    workflows={allWorkflows?.slice(0, 3)}
                     isLoading={isLoadingAllWorkflows}
                   />
                 )}
@@ -179,6 +147,7 @@ function GPTsPage() {
                     header="User Favorites"
                     subheader="Lorem ipsum dolor sit amet consectetur adipisicing elit volantis."
                     workflows={userFavoriteeWorkflows}
+                    category=""
                     isLoading={isLoadingUserWorkflows}
                   />
                 )}
@@ -203,7 +172,7 @@ function GPTsPage() {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "GPTs",
+      title: "AI Apps",
       description: AUTOMATION_DESCRIPTION,
     },
   };

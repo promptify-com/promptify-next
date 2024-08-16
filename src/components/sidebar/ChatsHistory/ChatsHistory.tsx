@@ -5,13 +5,12 @@ import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setInitialChat, setSelectedChat, initialState as initialChatState } from "@/core/store/chatSlice";
+import { setInitialChat, setSelectedChat, initialState as initialChatState, setChats } from "@/core/store/chatSlice";
 import { IChat } from "@/core/api/dto/chats";
 import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 import { useRouter } from "next/router";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { useChatsPaginator } from "@/components/Chat/Hooks/useChatsPaginator";
-import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   onClose?: () => void;
@@ -40,18 +39,21 @@ function ChatsHistory({ onClose }: Props) {
     );
   }, [chats]);
 
-  const { createChat } = useChatsManager();
-
-  const handleNewChat = async () => {
+  const handleNewChat = () => {
     if (!currentUser?.id) {
       return router.push("/signin");
     }
 
-    const newChat = await createChat({ toast: true });
-    if (newChat) {
-      handleClickChat(newChat);
-      dispatch(setInitialChat(false));
-    }
+    const newLocalChat: IChat = {
+      id: Date.now(),
+      title: "Welcome",
+      created_at: new Date().toISOString(),
+      thumbnail: "",
+      updated_at: new Date().toISOString(),
+    };
+    const updatedChats = [newLocalChat, ...(chats || [])];
+    dispatch(setChats(updatedChats));
+    handleClickChat(newLocalChat);
   };
 
   const handleClickChat = (chat: IChat) => {
@@ -83,6 +85,7 @@ function ChatsHistory({ onClose }: Props) {
   const filteredChats = useMemo(() => {
     return search.length >= 2 ? chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1) : chats;
   }, [search, chats]);
+
   const emptyChats = filteredChats?.length === 0;
   const CardsPlaceholder = <ChatCardPlaceholder count={6} />;
 
@@ -123,7 +126,7 @@ function ChatsHistory({ onClose }: Props) {
           fontWeight={500}
           color={"onSurface"}
         >
-          Recent:
+          Last 30 days:
         </Typography>
         {isChatsLoading ? (
           CardsPlaceholder
@@ -134,7 +137,7 @@ function ChatsHistory({ onClose }: Props) {
             hasMore={hasMore}
             placeholder={CardsPlaceholder}
           >
-            {filteredChats.map(chat => (
+            {filteredChats.map((chat, index) => (
               <ChatCard
                 key={chat.id}
                 chat={chat}

@@ -5,10 +5,8 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { theme } from "@/theme";
-import Edit from "@mui/icons-material/Edit";
 import { usePrepareExecutionInputs } from "@/components/Documents/Hooks/usePrepareExecutionInputs";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -16,6 +14,7 @@ import { useRouter } from "next/router";
 import { repeatExecution } from "@/components/Prompt/Utils";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import { setDocumentTitle, setFavorites } from "@/core/store/documentsSlice";
+import { InputsItem } from "./InputsItem";
 
 interface Props {
   document: ExecutionWithTemplate;
@@ -44,7 +43,7 @@ function InstructionsAccordion({ document }: Props) {
       defaultExpanded={!isMobile}
       sx={{
         boxShadow: "none",
-        px: "8px",
+        p: "8px",
         borderRadius: "24px !important",
         bgcolor: "surfaceContainerLow",
         m: "0 !important",
@@ -59,21 +58,16 @@ function InstructionsAccordion({ document }: Props) {
         ".MuiAccordionDetails-root": { p: 0 },
       }}
     >
-      <AccordionSummary expandIcon={<ExpandMore />}>Prompt instruction:</AccordionSummary>
+      <AccordionSummary expandIcon={<ExpandMore />}>Prompt Inputs:</AccordionSummary>
       <AccordionDetails>
         <Stack gap={1}>
           <Box sx={inputsContainer}>
             {inputs.length > 0 ? (
               inputs.map(input => (
-                <Typography
+                <InputsItem
                   key={input[0]}
-                  fontSize={14}
-                  fontWeight={500}
-                  color={"secondary.main"}
-                  sx={inputStyle}
-                >
-                  {input[0]}: <span className="val">{input[1] || "none"}</span>
-                </Typography>
+                  input={input}
+                />
               ))
             ) : (
               <Typography
@@ -102,22 +96,6 @@ function InstructionsAccordion({ document }: Props) {
               ))}
             </Box>
           )}
-          <Button
-            onClick={handleRepeatExecution}
-            endIcon={<Edit />}
-            variant="contained"
-            sx={{
-              my: "8px",
-              p: "8px 16px",
-              fontSize: 14,
-              fontWeight: 500,
-              svg: {
-                fonSize: 24,
-              },
-            }}
-          >
-            Edit
-          </Button>
         </Stack>
       </AccordionDetails>
     </Accordion>

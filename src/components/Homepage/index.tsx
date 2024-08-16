@@ -10,9 +10,11 @@ import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
 import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useGetWorkflowsQuery } from "@/core/api/workflows";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
   const { data: suggestedTemplates, isFetching } = useGetTemplatesSuggestedQuery(undefined);
+  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(false);
 
   const carouselContainerRef = useRef<HTMLDivElement | null>(document.createElement("div"));
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
@@ -28,6 +30,23 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
   const showLearn = observers.learnObserver?.isIntersecting;
   const showTestimonials = observers.learnObserver?.isIntersecting;
 
+  const templates = (suggestedTemplates ?? []).map(template => ({
+    ...template,
+    image: template.thumbnail,
+    href: `/prompt/${template.slug}`,
+    type: "template",
+  }));
+
+  const workflows = (allWorkflows ?? []).map(workflow => ({
+    ...workflow,
+    title: workflow.name,
+    href: `/apps/${workflow.slug}`,
+    tags: [{ id: 1, name: workflow.category.name }],
+    category_name: workflow.category.name,
+    executions_count: workflow.execution_count,
+    type: "workflow",
+  }));
+
   return (
     <ClientOnly>
       <Grid
@@ -40,12 +59,21 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         data-cy="logged-in-main-container"
       >
         <SuggestionsSection />
+
+        <Stack minHeight={"300px"}>
+          <HomepageTemplates
+            title="You may like these AI Apps:"
+            templates={workflows}
+            templatesLoading={isLoadingAllWorkflows}
+            showAdsBox
+          />
+        </Stack>
+
         <Stack minHeight={"300px"}>
           <HomepageTemplates
             title="You may like these prompts:"
-            templates={suggestedTemplates || []}
+            templates={templates}
             templatesLoading={isFetching}
-            showAdsBox
           />
         </Stack>
 

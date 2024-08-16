@@ -19,7 +19,6 @@ import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { createMessage } from "@/components/Chat/helper";
 import { isAdminFn } from "@/core/store/userSlice";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
-import useScrollToBottom from "../Prompt/Hooks/useScrollToBottom";
 
 interface Props {
   workflow: ITemplateWorkflow;

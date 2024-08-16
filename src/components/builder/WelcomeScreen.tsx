@@ -17,7 +17,7 @@ const createPageLinks = [
     type: "NEW",
   },
   {
-    label: "New GPT",
+    label: "New AI App",
     href: "#",
     type: "GPT",
   },

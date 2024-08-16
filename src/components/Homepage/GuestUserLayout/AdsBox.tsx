@@ -14,7 +14,7 @@ function AdsBox() {
         borderRadius: "24px",
         overflow: "hidden",
         width: { xs: "100%", md: "94%" },
-        height: "275px",
+        height: "100%",
         ml: { xs: 0, md: 2 },
       }}
     >
@@ -34,11 +34,11 @@ function AdsBox() {
         gap={2}
       >
         <Typography
-          fontSize={38}
+          fontSize={36}
           color={"onPrimary"}
           lineHeight={"50.4px"}
         >
-          Try GPT’s
+          Try AI Apps
         </Typography>
 
         <Typography
@@ -51,7 +51,7 @@ function AdsBox() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.push("/gpts")}
+          onClick={() => router.push("/apps")}
           sx={{
             bgcolor: "inverseSurface",
             borderColor: "inverseSurface",

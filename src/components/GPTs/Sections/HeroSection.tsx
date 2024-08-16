@@ -59,7 +59,7 @@ function HeroSection({ onFilter }: Props) {
           fontWeight={500}
           lineHeight={"120%"}
         >
-          GPTs
+          AI Apps
         </Typography>
         <Typography
           fontSize={14}
@@ -82,7 +82,7 @@ function HeroSection({ onFilter }: Props) {
           maxWidth={"80%"}
         >
           <InputBase
-            placeholder="Search for GPTs"
+            placeholder="Search for AI Apps"
             fullWidth
             onChange={event => onFilter(event.target.value)}
             sx={{

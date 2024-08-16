@@ -7,6 +7,9 @@ import Header from "./Header";
 import { IGPTDocumentResponse } from "@/components/Automation/types";
 import { MessageContentWithHTML } from "@/components/GPT/Message";
 
+import { useGetWorkflowByIdQuery } from "@/core/api/workflows";
+import Details from "./Details";
+
 interface Props {
   gpt: IGPTDocumentResponse;
   onUpdate: (title: string, gptKey: string) => void;
@@ -17,6 +20,10 @@ interface Modal extends Props {
 }
 
 function GPTDocumentPage({ gpt, onUpdate }: Props) {
+  const { data, isLoading } = useGetWorkflowByIdQuery(gpt.workflow.template_workflow.id, {
+    skip: !gpt,
+  });
+
   return (
     <Box
       sx={{
@@ -52,7 +59,7 @@ function GPTDocumentPage({ gpt, onUpdate }: Props) {
         <Box
           sx={{
             order: { md: 0 },
-            flex: 1,
+            flex: 3,
             p: "48px",
             height: "100%",
             bgcolor: "surfaceContainerLowest",
@@ -65,6 +72,12 @@ function GPTDocumentPage({ gpt, onUpdate }: Props) {
         >
           <MessageContentWithHTML content={gpt.output} />
         </Box>
+
+        <Details
+          gpt={gpt}
+          workflow={data}
+          isLoading={isLoading}
+        />
       </Stack>
       <Box
         flex={2}
