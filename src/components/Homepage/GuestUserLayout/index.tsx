@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Landing from "@/components/Homepage/GuestUserLayout/Landing";
@@ -11,7 +10,7 @@ import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
-import HomepageAITemplates from "../HomepageAITemplates";
+import HomepageAITemplates from "@/components/Homepage/HomepageAITemplates";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
 import { useSearchParams } from "next/navigation";
 
