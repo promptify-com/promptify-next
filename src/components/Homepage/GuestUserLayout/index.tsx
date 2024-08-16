@@ -11,12 +11,21 @@ import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
 import type { Category } from "@/core/api/dto/templates";
+import HomepageAITemplates from "../HomepageAITemplates";
+import { useGetWorkflowsQuery } from "@/core/api/workflows";
+import { useSearchParams } from "next/navigation";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const searchParams = useSearchParams();
+
+  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(
+    searchParams.get("enable") === "true",
+  );
 
   const observers = {
     templatesObserver: useIntersectionObserver(templateContainerRef, {}),
@@ -62,6 +71,16 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       </Box>
 
       <Services />
+
+      <Stack minHeight={"300px"}>
+        <HomepageAITemplates
+          title="You may like these AI Apps:"
+          templates={allWorkflows || []}
+          templatesLoading={isLoadingAllWorkflows}
+          showAdsBox
+        />
+      </Stack>
+
       <Stack
         ref={templateContainerRef}
         py={{ xs: "30px", md: "48px" }}
