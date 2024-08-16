@@ -16,7 +16,7 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 import PaginatedList from "@/components/PaginatedList";
 import UserInformation from "@/components/profile/UserInformation";
 import Footer from "@/components/Footer";
-import type { Templates } from "@/core/api/dto/templates";
+import type { ICardTemplate, Templates } from "@/core/api/dto/templates";
 
 const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
 const PAGINATION_LIMIT = 12;
@@ -54,6 +54,8 @@ function ProfilePage({ user = initialUser }: { user: UserProfile }) {
 function PromptsList({ username, firstName, lastName }: { username: string; firstName: string; lastName: string }) {
   const [offset, setOffset] = useState(0);
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
+  const [preparedTemplates, setPreparedTemplates] = useState<ICardTemplate[]>([]);
+
   const {
     data: templates,
     isLoading: templatesLoading,
@@ -80,6 +82,23 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
     // TODO: eslint warning blocked a commit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templates?.results]);
+
+  useEffect(() => {
+    if (allTemplates) {
+      const tempTemplates = allTemplates.map(template => ({
+        image: template.thumbnail,
+        title: template.title,
+        href: `/prompt/${template.slug}`,
+        executionsCount: template.executions_count,
+        tags: template.tags,
+        description: template.description,
+        slug: template.slug,
+        likes: template.likes ?? 0,
+        created_by: template.created_by,
+      }));
+      setPreparedTemplates(tempTemplates);
+    }
+  }, [allTemplates]);
 
   const handleNextPage = () => {
     if (templates?.next) {
@@ -155,9 +174,9 @@ function PromptsList({ username, firstName, lastName }: { username: string; firs
                 spacing={1}
                 px={{ xs: "16px", md: 0 }}
               >
-                {allTemplates?.map(template => (
+                {preparedTemplates?.map((template, index) => (
                   <Grid
-                    key={template.id}
+                    key={index}
                     item
                     xs={6}
                     sm={6}

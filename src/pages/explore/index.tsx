@@ -22,7 +22,13 @@ import Footer from "@/components/Footer";
 import PaginatedList from "@/components/PaginatedList";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import type { Category, TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
+import type {
+  Category,
+  ICardTemplate,
+  TemplateExecutionsDisplay,
+  Templates,
+  TemplatesWithPagination,
+} from "@/core/api/dto/templates";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { authClient } from "@/common/axios";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
@@ -72,6 +78,24 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
+  const [preparedTemplates, setPreparedTemplates] = useState<ICardTemplate[]>([]);
+
+  useEffect(() => {
+    if (templates) {
+      const tempTemplates = templates.map(template => ({
+        image: template.thumbnail,
+        title: template.title,
+        href: `/prompt/${template.slug}`,
+        executionsCount: template.executions_count,
+        tags: template.tags,
+        description: template.description,
+        slug: template.slug,
+        likes: template.likes ?? 0,
+        created_by: template.created_by,
+      }));
+      setPreparedTemplates(tempTemplates);
+    }
+  }, [templates]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -226,16 +250,16 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
                       WebkitOverflowScrolling: { xs: "touch", md: "initial" },
                     }}
                   >
-                    {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
+                    {preparedTemplates.map((template, index) => (
                       <Grid
                         item
                         xs={4}
                         sm={6}
                         md={isPromptsFiltersSticky ? 5 : 4}
                         lg={3}
-                        key={`${template.id}_${index}`}
+                        key={`${template.title}_${index}`}
                       >
-                        <CardTemplate template={template as Templates} />
+                        <CardTemplate template={template} />
                       </Grid>
                     ))}
                   </Grid>

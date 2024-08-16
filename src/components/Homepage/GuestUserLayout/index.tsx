@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
@@ -9,22 +9,19 @@ import Services from "@/components/Homepage/GuestUserLayout/Services";
 import Learn from "@/components/Homepage/GuestUserLayout/Learn";
 import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
-import type { Category } from "@/core/api/dto/templates";
-import HomepageAITemplates from "@/components/Homepage/HomepageAITemplates";
+import type { Category, ICardTemplate } from "@/core/api/dto/templates";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
-import { useSearchParams } from "next/navigation";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
+  const [templates, setTemplates] = useState<ICardTemplate[]>([]);
+  const [workflows, setWorkflows] = useState<ICardTemplate[]>([]);
+
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
   const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
   const carouselContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const searchParams = useSearchParams();
-
-  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(
-    searchParams.get("enable") === "true",
-  );
+  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(false);
 
   const observers = {
     templatesObserver: useIntersectionObserver(templateContainerRef, {}),
@@ -52,6 +49,40 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   const showTestimonials = observers.learnObserver?.isIntersecting;
   const showCarousel = observers.carouselObserver?.isIntersecting;
 
+  useEffect(() => {
+    if (popularTemplates) {
+      const tempTemplates = popularTemplates?.results.map(template => ({
+        image: template.thumbnail,
+        title: template.title,
+        href: `/prompt/${template.slug}`,
+        executionsCount: template.executions_count,
+        tags: template.tags,
+        description: template.description,
+        slug: template.slug,
+        likes: template.likes,
+        created_by: template.created_by,
+      }));
+      setTemplates(tempTemplates);
+    }
+  }, [popularTemplates]);
+
+  useEffect(() => {
+    if (allWorkflows) {
+      const tempWorkflows = allWorkflows.map(workflow => ({
+        image: workflow.image ?? "",
+        title: workflow.name,
+        href: `/apps/${workflow.slug}`,
+        executionsCount: workflow.execution_count,
+        tags: [{ id: 1, name: workflow.category.name }],
+        description: workflow.description ?? "",
+        slug: workflow.slug,
+        likes: workflow.likes,
+        created_by: workflow.created_by,
+      }));
+      setWorkflows(tempWorkflows);
+    }
+  }, [allWorkflows]);
+
   return (
     <Stack
       mx={{ md: "50px" }}
@@ -72,9 +103,9 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       <Services />
 
       <Stack minHeight={"300px"}>
-        <HomepageAITemplates
+        <HomepageTemplates
           title="You may like these AI Apps:"
-          templates={allWorkflows || []}
+          templates={templates || []}
           templatesLoading={isLoadingAllWorkflows}
           showAdsBox
         />
@@ -87,7 +118,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       >
         <HomepageTemplates
           title="Most popular:"
-          templates={popularTemplates?.results || []}
+          templates={workflows || []}
           templatesLoading={isLoading}
         />
       </Stack>

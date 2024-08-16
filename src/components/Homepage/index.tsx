@@ -7,20 +7,17 @@ import Testimonials from "@/components/Homepage/GuestUserLayout/Testimonials";
 import SuggestionsSection from "@/components/Homepage/SuggestionsSection";
 import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import HomepageTemplates from "@/components/Homepage/HomepageTemplates";
-import type { Category } from "@/core/api/dto/templates";
-import { useRef } from "react";
+import type { Category, ICardTemplate } from "@/core/api/dto/templates";
+import { useEffect, useRef, useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
-import { useSearchParams } from "next/navigation";
-import HomepageAITemplates from "./HomepageAITemplates";
 
 function HomepageLayout({ categories }: { categories: Category[] }) {
-  const searchParams = useSearchParams();
+  const [templates, setTemplates] = useState<ICardTemplate[]>([]);
+  const [workflows, setWorkflows] = useState<ICardTemplate[]>([]);
 
   const { data: suggestedTemplates, isFetching } = useGetTemplatesSuggestedQuery(undefined);
-  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(
-    searchParams.get("enable") === "true",
-  );
+  const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(false);
 
   const carouselContainerRef = useRef<HTMLDivElement | null>(document.createElement("div"));
   const learnContainerRef = useRef<HTMLDivElement | null>(null);
@@ -36,6 +33,40 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
   const showLearn = observers.learnObserver?.isIntersecting;
   const showTestimonials = observers.learnObserver?.isIntersecting;
 
+  useEffect(() => {
+    if (suggestedTemplates) {
+      const tempTemplates = suggestedTemplates.map(template => ({
+        image: template.thumbnail,
+        title: template.title,
+        href: `/prompt/${template.slug}`,
+        executionsCount: template.executions_count,
+        tags: template.tags,
+        description: template.description,
+        slug: template.slug,
+        likes: template.likes,
+        created_by: template.created_by,
+      }));
+      setTemplates(tempTemplates);
+    }
+  }, [suggestedTemplates]);
+
+  useEffect(() => {
+    if (allWorkflows) {
+      const tempWorkflows = allWorkflows.map(workflow => ({
+        image: workflow.image ?? "",
+        title: workflow.name,
+        href: `/apps/${workflow.slug}`,
+        executionsCount: workflow.execution_count,
+        tags: [{ id: 1, name: workflow.category.name }],
+        description: workflow.description ?? "",
+        slug: workflow.slug,
+        likes: workflow.likes,
+        created_by: workflow.created_by,
+      }));
+      setWorkflows(tempWorkflows);
+    }
+  }, [allWorkflows]);
+
   return (
     <ClientOnly>
       <Grid
@@ -50,9 +81,9 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         <SuggestionsSection />
 
         <Stack minHeight={"300px"}>
-          <HomepageAITemplates
+          <HomepageTemplates
             title="You may like these AI Apps:"
-            templates={allWorkflows || []}
+            templates={workflows || []}
             templatesLoading={isLoadingAllWorkflows}
             showAdsBox
           />
@@ -61,7 +92,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         <Stack minHeight={"300px"}>
           <HomepageTemplates
             title="You may like these prompts:"
-            templates={suggestedTemplates || []}
+            templates={templates || []}
             templatesLoading={isFetching}
           />
         </Stack>
