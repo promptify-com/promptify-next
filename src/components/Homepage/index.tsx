@@ -45,6 +45,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         slug: template.slug,
         likes: template.likes,
         created_by: template.created_by,
+        type: "template",
       }));
       setTemplates(tempTemplates);
     }
@@ -62,6 +63,8 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         slug: workflow.slug,
         likes: workflow.likes,
         created_by: workflow.created_by,
+        type: "workflow",
+        category_name: workflow.category.name,
       }));
       setWorkflows(tempWorkflows);
     }

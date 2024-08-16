@@ -97,6 +97,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
         slug: template.slug,
         likes: template.likes ?? 0,
         created_by: template.created_by,
+        type: "template",
       }));
       setPreparedTemplates(tempTemplates);
     }

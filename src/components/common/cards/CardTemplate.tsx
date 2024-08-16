@@ -238,7 +238,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                       <Chip
                         onClick={e => {
                           e.preventDefault();
-                          handleClickTag(tag);
+                          template.type === "template"
+                            ? handleClickTag(tag)
+                            : router.push(`/apps/category/${template?.category_name?.toLowerCase()}`);
                         }}
                         label={tag.name}
                         size="small"
@@ -266,7 +268,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                         <Chip
                           onClick={e => {
                             e.preventDefault();
-                            handleClickTag(tag);
+                            template.type === "template"
+                              ? handleClickTag(tag)
+                              : router.push(`/apps/category/${template?.category_name.toLowerCase()}`);
                           }}
                           label={tag.name}
                           size="small"

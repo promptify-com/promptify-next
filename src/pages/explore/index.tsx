@@ -92,6 +92,7 @@ export default function ExplorePage({ categories = [], popularTemplates = null }
         slug: template.slug,
         likes: template.likes ?? 0,
         created_by: template.created_by,
+        type: "template",
       }));
       setPreparedTemplates(tempTemplates);
     }

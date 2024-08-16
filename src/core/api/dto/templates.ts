@@ -325,4 +325,6 @@ export interface ICardTemplate {
   slug: string;
   likes: number;
   created_by: User | UserPartial;
+  type: string;
+  category_name?: string;
 }
