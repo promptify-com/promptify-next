@@ -103,6 +103,7 @@ export default function Category() {
                 <WorkflowCard
                   templateWorkflow={workflow}
                   lastExecuted={null}
+                  category={categoryName}
                 />
               </Grid>
             ))
