@@ -35,7 +35,7 @@ function CardTemplate({ template }: CardTemplateProps) {
 
   return (
     <Link
-      href={`/prompt/${template.slug}`}
+      href={`/apps/${template.slug}`}
       style={{
         flex: !isMobile ? 1 : "none",
         width: !isMobile ? "auto" : "100%",
