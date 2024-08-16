@@ -314,3 +314,17 @@ export interface AIAppsWithPagination {
   previous: string | null;
   results: IGPTDocumentResponse[];
 }
+
+export interface ICardTemplate {
+  image?: string;
+  title: string;
+  href: string;
+  executions_count: number;
+  tags: Tag[];
+  description?: string;
+  slug: string;
+  likes?: number;
+  created_by: User | UserPartial;
+  type: string;
+  category_name?: string;
+}

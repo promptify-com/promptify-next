@@ -14,7 +14,7 @@ function AdsBox() {
         borderRadius: "24px",
         overflow: "hidden",
         width: { xs: "100%", md: "94%" },
-        height: "275px",
+        height: "100%",
         ml: { xs: 0, md: 2 },
       }}
     >

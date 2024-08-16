@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -11,7 +11,7 @@ import CardTemplate from "@/components/common/cards/CardTemplate";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { TemplatesFilter } from "@/components/explorer/TemplatesFilter";
-import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import type { ICardTemplate, TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -131,10 +131,10 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
               width={"99%"}
             >
               {!!templates?.length &&
-                templates.map((template: TemplateExecutionsDisplay | Templates) => {
+                templates.map((template, index) => {
                   return (
                     <Grid
-                      key={template.id}
+                      key={index}
                       item
                       xs={6}
                       sm={6}
@@ -142,8 +142,13 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                       lg={3}
                     >
                       <CardTemplate
-                        key={template.id}
-                        template={template as Templates}
+                        template={{
+                          ...template,
+                          image: template.thumbnail,
+                          href: `/prompt/${template.slug}`,
+                          created_by: template.created_by,
+                          type: "template",
+                        }}
                       />
                     </Grid>
                   );

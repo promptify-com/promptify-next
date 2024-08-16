@@ -10,16 +10,16 @@ import { theme } from "@/theme";
 import useTruncate from "@/hooks/useTruncate";
 import { stripTags } from "@/common/helpers";
 import Image from "@/components/design-system/Image";
-import type { Templates } from "@/core/api/dto/templates";
 import { Fragment, useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Box from "@mui/material/Box";
 import useBrowser from "@/hooks/useBrowser";
 import { useRouter } from "next/router";
 import usePromptsFilter from "@/components/explorer/Hooks/usePromptsFilter";
+import { ICardTemplate } from "@/core/api/dto/templates";
 
 type CardTemplateProps = {
-  template: Templates;
+  template: ICardTemplate;
 };
 
 function CardTemplate({ template }: CardTemplateProps) {
@@ -32,15 +32,14 @@ function CardTemplate({ template }: CardTemplateProps) {
   const pathname = router.pathname;
   const isUserPage = pathname === "/users/[username]";
 
-  const { tags } = template;
   const imgPriority = observer?.isIntersecting;
-  const displayedTags = tags.slice(0, 2);
-  const remainingTags = tags.slice(2);
-  const remainingTagsCount = tags.length - displayedTags.length;
+  const displayedTags = template.tags.slice(0, 2);
+  const remainingTags = template.tags.slice(2);
+  const remainingTagsCount = template.tags.length - displayedTags.length;
 
   return (
     <Link
-      href={`/prompt/${template.slug}`}
+      href={template.href}
       style={{
         flex: !isMobile ? 1 : "none",
         width: !isMobile ? "auto" : "100%",
@@ -96,7 +95,7 @@ function CardTemplate({ template }: CardTemplateProps) {
             className="card-effect"
           >
             <Image
-              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              src={template.image ?? require("@/assets/images/default-thumbnail.jpg")}
               alt={template.title}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
               sizes="(max-width: 600px) 176px, (max-width: 900px) 216px, 216px"
@@ -148,7 +147,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                   className="icon-text-style"
                 >
                   <Bolt />
-                  {template.executions_count || 0}
+                  {template.executions_count}
                 </Stack>
               )}
             </Box>
@@ -176,7 +175,7 @@ function CardTemplate({ template }: CardTemplateProps) {
               >
                 {template.title}
               </Typography>
-              {!isMobile && (
+              {!isMobile && template?.description && (
                 <Typography
                   sx={{
                     fontSize: 11,
@@ -185,7 +184,7 @@ function CardTemplate({ template }: CardTemplateProps) {
                     textAlign: "left",
                   }}
                 >
-                  {truncate(stripTags(template.description), { length: 67 })}
+                  {truncate(stripTags(template?.description), { length: 67 })}
                 </Typography>
               )}
             </Stack>
@@ -227,7 +226,7 @@ function CardTemplate({ template }: CardTemplateProps) {
               )}
             </Box>
 
-            {tags.length > 0 && !isMobile && (
+            {template.tags.length > 0 && !isMobile && (
               <Box
                 display="flex"
                 gap="8px"
@@ -239,7 +238,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                       <Chip
                         onClick={e => {
                           e.preventDefault();
-                          handleClickTag(tag);
+                          template.type === "template"
+                            ? handleClickTag(tag)
+                            : router.push(`/apps/category/${template?.category_name?.toLowerCase()}`);
                         }}
                         label={tag.name}
                         size="small"
@@ -267,7 +268,9 @@ function CardTemplate({ template }: CardTemplateProps) {
                         <Chip
                           onClick={e => {
                             e.preventDefault();
-                            handleClickTag(tag);
+                            template.type === "template"
+                              ? handleClickTag(tag)
+                              : router.push(`/apps/category/${template?.category_name?.toLowerCase()}`);
                           }}
                           label={tag.name}
                           size="small"
