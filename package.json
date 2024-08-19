@@ -60,7 +60,7 @@
     "rete-connection-plugin": "2.0.0-beta.11",
     "rete-react-render-plugin": "2.0.0-beta.12",
     "rete-render-utils": "2.0.0-beta.9",
-    "sharp": "^0.33.4",
+    "sharp": "^0.33.5",
     "styled-components": "^6.0.1",
     "typescript": "5.5.4",
     "web-worker": "^1.2.0",
