@@ -58,10 +58,10 @@ function Navigations({ onCloseDrawer }: Props) {
       external: false,
     },
     {
-      label: "Prompts",
-      icon: <StickyNote2 />,
-      href: "/explore",
-      active: pathname == "/explore",
+      label: "AI Apps",
+      icon: <ElectricBolt />,
+      href: "/apps",
+      active: pathname === "/apps",
       external: false,
     },
     {
@@ -72,26 +72,25 @@ function Navigations({ onCloseDrawer }: Props) {
       external: false,
     },
     {
+      label: "Prompts",
+      icon: <StickyNote2 />,
+      href: "/explore",
+      active: pathname == "/explore",
+      external: false,
+    },
+    {
       label: "Documents",
       icon: <FolderSpecial />,
       href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",
       external: false,
     },
-
     {
       label: "Editor",
       href: isValidUser ? `/prompt-builder/create` : "/signin",
       icon: <EditorIcon />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,
-    },
-    {
-      label: "AI Apps",
-      icon: <ElectricBolt />,
-      href: "/apps",
-      active: pathname === "/apps",
-      external: false,
     },
     {
       label: "Chrome Extension",
