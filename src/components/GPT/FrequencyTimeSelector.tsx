@@ -17,6 +17,8 @@ interface Props {
 }
 
 export default function FrequencyTimeSelector({ message, onSelect }: Props) {
+  const [selectedFrequency, setSelectedFrequency] = useState("");
+
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const scheduledData = clonedWorkflow?.periodic_task?.crontab;
 
@@ -27,7 +29,10 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
     time: scheduledData?.hour ?? 0,
   });
   const localScheduleData = clonedWorkflow?.schedule;
-  const selectedFrequency = localScheduleData?.frequency ?? scheduledData?.frequency ?? "";
+
+  useEffect(() => {
+    setSelectedFrequency(localScheduleData?.frequency ?? scheduledData?.frequency ?? "");
+  }, [localScheduleData, scheduledData]);
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);

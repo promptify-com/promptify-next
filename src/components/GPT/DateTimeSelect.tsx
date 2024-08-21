@@ -15,9 +15,7 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
   const [selectedItem, setSelectedItem] = useState(defaultValue);
 
   useEffect(() => {
-    if (selectedItem !== defaultValue) {
-      onChange?.(selectedItem);
-    }
+    onChange?.(selectedItem);
   }, [selectedItem]);
 
   const items = type === "date" ? DAYS : type === "time" ? TIMES : Array.from({ length: 27 }).map((_, i) => i + 1);
