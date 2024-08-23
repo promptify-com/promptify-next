@@ -37,18 +37,20 @@ function useMessageManager({ initialMessageTitle }: Props) {
 
     const initialMessages: IMessage[] = [welcomeMessage];
 
-    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
-    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
+    if (credentialsInput.length) {
+      const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
+      const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type]);
 
-    let areAllCredentialsStored = true;
-    if (requiresAuthentication || requiresOauth) {
-      areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-    }
-    dispatch(setAreCredentialsStored(areAllCredentialsStored));
+      let areAllCredentialsStored = true;
+      if (requiresAuthentication || requiresOauth) {
+        areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+      }
+      dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    if (requiresAuthentication || requiresOauth) {
-      const credMessage = createMessage({ type: "credentials", noHeader: true });
-      initialMessages.push(credMessage);
+      if (requiresAuthentication || requiresOauth) {
+        const credMessage = createMessage({ type: "credentials", noHeader: true });
+        initialMessages.push(credMessage);
+      }
     }
 
     setMessages(initialMessages);

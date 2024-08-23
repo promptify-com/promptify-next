@@ -155,6 +155,13 @@ function Credentials({ input }: Props) {
         data[key] = values[key];
       }
     }
+    const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+
+    if (!areAllCredentialsStored) {
+      dispatch(setAreCredentialsStored(false));
+    } else {
+      dispatch(setAreCredentialsStored(true));
+    }
 
     const payload = {
       name: `${credential.displayName} Credentials`,

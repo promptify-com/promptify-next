@@ -9,10 +9,9 @@ import { initialState } from "@/core/store/chatSlice";
 
 interface Props {
   onRun(): void;
-  allowActivateButton?: boolean;
 }
 
-export default function runWorkflowMessage({ onRun, allowActivateButton }: Props) {
+export default function runWorkflowMessage({ onRun }: Props) {
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialState.gptGenerationStatus,
   );

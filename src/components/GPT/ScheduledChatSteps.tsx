@@ -45,7 +45,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   });
 
   const isAdmin = useAppSelector(isAdminFn);
-  const { clonedWorkflow, inputs } = useAppSelector(store => store.chat ?? initialChatState);
+  const { clonedWorkflow, inputs, areCredentialsStored } = useAppSelector(store => store.chat ?? initialChatState);
   const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
   const isGenerating = useAppSelector(state => state.templates?.isGenerating ?? null);
 
@@ -139,6 +139,12 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const showInputsForm = !!inputs.length && !generatedExecution;
 
+  const showRunButton =
+    !isGenerating &&
+    allowActivateButton &&
+    areCredentialsStored &&
+    Boolean(messages.find(msg => msg.type === "schedule_providers"));
+
   return (
     <Stack
       flex={1}
@@ -221,14 +227,13 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   />
                 </Box>
               )}
-              {!isGenerating && (
+              {showRunButton && (
                 <div id="run-message">
                   <RunWorkflowMessage
                     onRun={() => {
                       runWorkflow();
                       scrollToBottom();
                     }}
-                    allowActivateButton={allowActivateButton}
                   />
                 </div>
               )}
