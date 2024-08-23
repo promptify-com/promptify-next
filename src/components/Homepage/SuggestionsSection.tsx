@@ -35,7 +35,7 @@ function SuggestionsSection() {
             lineHeight={"38.4px"}
             letterSpacing={"0.17px"}
           >
-            Welcome, {currentUser?.username}
+            Welcome, {currentUser?.first_name ?? currentUser?.username}
           </Typography>
           <Typography
             fontSize={16}
