@@ -85,8 +85,6 @@ function buildNextConnectedData({
       if (connection.node) {
         const nodeInfo = (nodesData as NodesFileData)[nodeType];
 
-        const promptifyNode = workflow.data.nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
-
         const relationData: IRelation = {
           nextNode: connection.node,
           type: nodeType,
@@ -94,8 +92,9 @@ function buildNextConnectedData({
           description: nodeInfo.description ?? "",
         };
 
-        if (promptifyNode?.name.includes("Promptify") && nodeType === PROMPTIFY_NODE_TYPE) {
-          relationData.templateId = promptifyNode.parameters.template;
+        if (nodeType === PROMPTIFY_NODE_TYPE) {
+          const promptifyNode = workflow.data.nodes.find(node => node.name === nodeName);
+          relationData.templateId = promptifyNode?.parameters.template;
         }
 
         relations.set(nodeName, relationData);

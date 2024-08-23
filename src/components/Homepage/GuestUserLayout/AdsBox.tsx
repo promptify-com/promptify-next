@@ -16,14 +16,18 @@ function AdsBox() {
         width: { xs: "100%", md: "94%" },
         height: "100%",
         ml: { xs: 0, md: 2 },
+        bgcolor: "#8cd0b3",
       }}
     >
       <Image
-        src={"/assets/images/Homepage/TryGPT.webp"}
+        src={"/assets/images/Homepage/TryGPT1.webp"}
         alt={"Promptify"}
         fill
         sizes="(max-width: 600px) 344px, (max-width: 900px) 437px, 437px"
         priority={true}
+        style={{
+          objectFit: "contain",
+        }}
       />
       <Stack
         direction={"column"}

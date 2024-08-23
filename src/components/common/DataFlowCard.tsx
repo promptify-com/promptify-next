@@ -35,15 +35,18 @@ function DataFlowCard({
 }: Props) {
   const router = useRouter();
   const isAdmin = useAppSelector(isAdminFn);
-  const { data: templates } = useGetTemplateByIdQuery(templateId! as unknown as number, {
+  const { data: template } = useGetTemplateByIdQuery(templateId! as unknown as number, {
     skip: !templateId,
   });
 
+  const isPromptifyNode = isAdmin && template;
+
   const handleCardClick = () => {
-    if (isAdmin && title.includes("Promptify") && templates) {
-      router.push(`/prompt-builder/${templates.slug}`);
+    if (isPromptifyNode) {
+      router.push(`/prompt-builder/${template.slug}`);
     }
   };
+
   return (
     <Card
       onClick={handleCardClick}
@@ -60,7 +63,7 @@ function DataFlowCard({
         position: "relative",
         overflow: "visible",
         boxShadow: "none",
-        cursor: isAdmin && title.includes("Promptify") ? "pointer" : "default",
+        cursor: isPromptifyNode ? "pointer" : "default",
       }}
     >
       <Box

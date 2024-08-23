@@ -58,7 +58,7 @@ function Profile() {
                   letterSpacing={"0.17px"}
                   color={"onSurface"}
                 >
-                  Welcome, {currentUser?.username}
+                  Welcome, {currentUser?.first_name ?? currentUser?.username}
                 </Typography>
 
                 {isMobile && (
