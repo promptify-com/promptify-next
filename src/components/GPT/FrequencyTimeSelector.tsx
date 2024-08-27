@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { useAppSelector } from "@/hooks/useStore";
-import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { useAppSelector } from "@/hooks/useStore";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 import DateTimeSelect from "./DateTimeSelect";
 
 interface FrequencyTime {
@@ -17,28 +17,43 @@ interface Props {
 }
 
 export default function FrequencyTimeSelector({ message, onSelect }: Props) {
-  const [selectedFrequency, setSelectedFrequency] = useState("");
-
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const scheduledData = clonedWorkflow?.periodic_task?.crontab;
-
-  const scheduleDay =
-    (scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month) ?? 0;
-  const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day: ["*", "1,15"].includes(scheduleDay.toString()) ? 0 : scheduleDay,
-    time: scheduledData?.hour ?? 0,
-  });
   const localScheduleData = clonedWorkflow?.schedule;
 
+  const _scheduleData = localScheduleData ?? scheduledData;
+
+  // Priority selection
+  const selectedFrequency = _scheduleData?.frequency ?? "";
+
+  const getDefaultDay = (): number => {
+    if (selectedFrequency === "weekly") {
+      return _scheduleData?.day_of_week === "*" ? 1 : (_scheduleData?.day_of_week as number) ?? 1; // Default to Monday
+    }
+    if (selectedFrequency === "monthly") {
+      return _scheduleData?.day_of_month === "*" ? 1 : (_scheduleData?.day_of_month as number) ?? 1; // Default to 1st day of the month
+    }
+    return 1;
+  };
+
+  const getInitialTime = () => localScheduleData?.hour ?? _scheduleData?.hour ?? 0; // 12:00 AM
+
+  const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
+    day: getDefaultDay(),
+    time: getInitialTime(),
+  });
+
+  // Update state when priorities change
   useEffect(() => {
-    setSelectedFrequency(localScheduleData?.frequency ?? scheduledData?.frequency ?? "");
-  }, [localScheduleData, scheduledData]);
+    setScheduleTime({
+      day: getDefaultDay(),
+      time: getInitialTime(),
+    });
+  }, [localScheduleData, _scheduleData, selectedFrequency]);
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);
-    if (scheduledData) {
-      onSelect(data);
-    }
+    onSelect(data);
   };
 
   return (
