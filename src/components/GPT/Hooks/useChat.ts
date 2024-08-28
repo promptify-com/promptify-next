@@ -227,8 +227,24 @@ const useChat = ({ workflow }: Props) => {
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
 
-    const isHourly = frequency === "hourly";
+    // If the frequency is 'none', remove frequency-related messages
+    if (frequency === "none") {
+      setSchedulingData(prev => ({
+        ...prev,
+        frequency,
+      }));
 
+      // Filter out the frequency messages
+      setMessages(prev =>
+        prev
+          .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+          .concat(createMessage({ type: "readyMessage" })),
+      );
+      return; // Exit early since we don't need to insert any messages for 'none' frequency
+    }
+
+    // Existing logic for other frequencies
+    const isHourly = frequency === "hourly";
     let _messages = messages;
     if (isHourly) {
       updateScheduleMode.current = true;
@@ -251,7 +267,6 @@ const useChat = ({ workflow }: Props) => {
       insertProvidersMessages(scheduleData);
     }
   };
-
   const setScheduleTime = (frequencyTime: { day?: number; time: number }) => {
     updateScheduleMode.current = true;
 

@@ -114,14 +114,14 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
-export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly";
+export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly" | "none";
 
 export interface IWorkflowSchedule {
   frequency: FrequencyType;
   hour: number;
   minute: number;
-  day_of_week: number;
-  day_of_month: number;
+  day_of_week: number | string;
+  day_of_month: number | string;
   timezone: string;
   // month: number,
   workflow_data: {};
