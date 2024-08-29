@@ -258,10 +258,6 @@ const useChat = ({ workflow }: Props) => {
 
     const isWeekly = schedulingData?.frequency === "weekly";
     const isMonthly = schedulingData?.frequency === "monthly";
-    /* 
-      Separate day of weeks than day of month. 
-      To prevent days conflict in dropdown select
-    */
     const day_of_week = frequencyTime.day_of_week ?? 0;
     const day_of_month = frequencyTime.day_of_month ?? 0;
     const frequencyDay = isWeekly ? { day_of_week } : isMonthly ? { day_of_month } : {};
