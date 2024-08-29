@@ -21,10 +21,6 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   // const scheduleDay =
   //   (scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month) ?? 0;
 
-  /* 
-    Separate day of weeks than day of month. 
-    To prevent days conflict in dropdown select
-  */
   const scheduleDayOfWeek = scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : 0;
   const scheduleDayOfMonth = scheduledData?.frequency === "monthly" ? scheduledData?.day_of_month : 1;
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
