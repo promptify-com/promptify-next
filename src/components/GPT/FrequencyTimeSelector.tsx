@@ -5,11 +5,7 @@ import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import DateTimeSelect from "./DateTimeSelect";
-
-interface FrequencyTime {
-  day?: number;
-  time: number;
-}
+import type { FrequencyTime } from "../Automation/types";
 
 interface Props {
   message: string;
@@ -22,10 +18,15 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const scheduledData = clonedWorkflow?.periodic_task?.crontab;
 
-  const scheduleDay =
-    (scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month) ?? 0;
+  // const scheduleDay =
+  //   (scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : scheduledData?.day_of_month) ?? 0;
+
+  const scheduleDayOfWeek = scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : 0;
+  const scheduleDayOfMonth = scheduledData?.frequency === "monthly" ? scheduledData?.day_of_month : 1;
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day: ["*", "1,15"].includes(scheduleDay.toString()) ? 0 : scheduleDay,
+    // day: ["*", "1,15"].includes(scheduleDay.toString()) ? 0 : scheduleDay,
+    day_of_week: scheduleDayOfWeek,
+    day_of_month: scheduleDayOfMonth,
     time: scheduledData?.hour ?? 0,
   });
   const localScheduleData = clonedWorkflow?.schedule;
@@ -63,15 +64,15 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
           {selectedFrequency === "weekly" && (
             <DateTimeSelect
               type="date"
-              onChange={day => handleChangeScheduleTime({ ...scheduleTime, day })}
-              defaultValue={scheduleTime.day}
+              onChange={day_of_week => handleChangeScheduleTime({ ...scheduleTime, day_of_week })}
+              defaultValue={scheduleTime.day_of_week}
             />
           )}
           {selectedFrequency === "monthly" && (
             <DateTimeSelect
               type="month_date"
-              onChange={day => handleChangeScheduleTime({ ...scheduleTime, day })}
-              defaultValue={scheduleTime.day}
+              onChange={day_of_month => handleChangeScheduleTime({ ...scheduleTime, day_of_month })}
+              defaultValue={scheduleTime.day_of_month}
             />
           )}
           <DateTimeSelect

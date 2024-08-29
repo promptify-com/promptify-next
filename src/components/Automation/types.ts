@@ -115,7 +115,11 @@ export interface UserWorkflowExecutionsResponse {
 }
 
 export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly";
-
+export interface FrequencyTime {
+  day_of_week?: number;
+  day_of_month?: number;
+  time: number;
+}
 export interface IWorkflowSchedule {
   frequency: FrequencyType;
   hour: number;

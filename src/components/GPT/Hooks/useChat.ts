@@ -11,6 +11,7 @@ import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpe
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type {
+  FrequencyTime,
   FrequencyType,
   ITemplateWorkflow,
   IWorkflowCreateResponse,
@@ -252,12 +253,14 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const setScheduleTime = (frequencyTime: { day?: number; time: number }) => {
+  const setScheduleTime = (frequencyTime: FrequencyTime) => {
     updateScheduleMode.current = true;
 
     const isWeekly = schedulingData?.frequency === "weekly";
-    const day = frequencyTime.day ?? 0;
-    const frequencyDay = isWeekly ? { day_of_week: day } : { day_of_month: day };
+    const isMonthly = schedulingData?.frequency === "monthly";
+    const day_of_week = frequencyTime.day_of_week ?? 0;
+    const day_of_month = frequencyTime.day_of_month ?? 0;
+    const frequencyDay = isWeekly ? { day_of_week } : isMonthly ? { day_of_month } : {};
 
     const scheduleData = {
       ...schedulingData,
