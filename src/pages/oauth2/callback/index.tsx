@@ -4,6 +4,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import * as Sentry from "@sentry/react";
+
+interface IPostMessageParams {
+  message: string,
+  status: "success" | "error",
+  action: string,
+}
 
 export default function Callback() {
   const params = useSearchParams();
@@ -11,7 +18,7 @@ export default function Callback() {
   const code = params.get("code");
   const state = params.get("state");
 
-  const postMessage = (params:any) => {
+  const postMessage = (params:IPostMessageParams) => {
     return window?.opener?.postMessage?.(params, window.opener?.location?.origin);
   }
 
@@ -41,6 +48,7 @@ export default function Callback() {
           },
         );
         setMessage("Something wrong, you can close this window and retry again.");
+        Sentry.captureException(error);
       });
   }, [code, state]);
   return (
