@@ -56,7 +56,7 @@
     "remark-html": "^15.0.2",
     "rete": "2.0.0-beta.6",
     "rete-area-plugin": "2.0.0-beta.9",
-    "rete-auto-arrange-plugin": "^2.0.0-beta.6",
+    "rete-auto-arrange-plugin": "^2.0.2",
     "rete-connection-plugin": "2.0.0-beta.11",
     "rete-react-render-plugin": "2.0.0-beta.12",
     "rete-render-utils": "2.0.0-beta.9",
