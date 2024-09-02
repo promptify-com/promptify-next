@@ -168,12 +168,9 @@ export async function createEditor(
 
       if (context.data.target.length > 3) {
         const node = editor.getNode(context.data.target);
-        target = node.temp_id ? node.temp_id : node.id;
-      }
-
-      if (context.data.source.length > 3) {
-        const node = editor.getNode(context.data.source);
-        source = node.temp_id ? node.temp_id : node.id;
+        if (node) {
+          target = node?.temp_id ? node.temp_id : node?.id;
+        }
       }
 
       // if self connection ?
