@@ -6065,10 +6065,10 @@ rete-area-plugin@2.0.0-beta.9:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-rete-auto-arrange-plugin@^2.0.0-beta.6:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/rete-auto-arrange-plugin/-/rete-auto-arrange-plugin-2.0.1.tgz#07d4d169c09a1989c15d99f14bdc9499a0f0225e"
-  integrity sha512-vHxsrI+l3wxZzxPxG7hcgUbacXQfEc1ZEE28r08O1kEy0kUyNkJR5OeCiSizZ4VucsDmu21WUtFVa1rl5h+e1A==
+rete-auto-arrange-plugin@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/rete-auto-arrange-plugin/-/rete-auto-arrange-plugin-2.0.2.tgz#e22c967359f8e5853f474a4c6564f194d7268e29"
+  integrity sha512-VLTnVb9tqHfQKkFMZzpYgYxDWcIa+nXHRC+Po0k+gUh2zJqegkx8bFSA1n6VkMv+wPYa9EnWsTMfUDD3k1QEzg==
   dependencies:
     "@babel/runtime" "^7.21.0"
 
