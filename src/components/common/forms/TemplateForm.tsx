@@ -36,9 +36,17 @@ interface Props {
   onSaved?: (template?: Templates) => void;
   onClose?: () => void;
   darkMode?: boolean;
+  showCloseButton?: boolean;
 }
 
-function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
+function TemplateForm({
+  type = "create",
+  templateData,
+  onSaved,
+  onClose,
+  darkMode = false,
+  showCloseButton = true,
+}: Props) {
   const token = useToken();
 
   const { data: fetchedTags } = useGetTagsQuery();
@@ -87,15 +95,17 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
 
   return (
     <Box sx={{ color, width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          cursor: "pointer",
-        }}
-      >
-        <Close onClick={onClose} />
-      </Box>
+      {showCloseButton && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            cursor: "pointer",
+          }}
+        >
+          <Close onClick={onClose} />
+        </Box>
+      )}
       <Stack sx={boxStyle}>
         <TextField
           fullWidth

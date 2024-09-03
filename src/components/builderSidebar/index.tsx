@@ -1,9 +1,10 @@
-import { type Dispatch, type SetStateAction, ReactNode, useState } from "react";
+import { type Dispatch, type SetStateAction, ReactNode, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import Icon from "@mui/material/Icon";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
@@ -25,8 +26,16 @@ import Api from "@/components/builder/Assets/Api";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import { initialState as initialBuilderState } from "@/core/store/builderSlice";
+import TemplateForm from "../common/forms/TemplateForm";
+import { Templates } from "@/core/api/dto/templates";
+import { FormType } from "@/common/types/template";
 
 const LINKS: Link[] = [
+  {
+    key: "info",
+    name: "Template details",
+    icon: <InfoOutlinedIcon />,
+  },
   {
     key: "list",
     name: "Prompt sequence",
@@ -49,7 +58,7 @@ const LINKS: Link[] = [
   },
 ];
 
-type LinkName = "list" | "test_log" | "help" | "api";
+type LinkName = "info" | "list" | "test_log" | "help" | "api";
 
 interface Link {
   key: LinkName;
@@ -60,9 +69,24 @@ interface Link {
 interface Props {
   prompts: IEditPrompts[];
   setPrompts: Dispatch<SetStateAction<IEditPrompts[]>>;
+  createMode: FormType;
+  handleSaveTemplate: (newTemplate?: Templates) => Promise<void>;
+  templateData: Templates | undefined;
+  isNewTemplate: boolean;
+  templateDrawerOpen?: boolean;
+  renderingKey?: number;
 }
 
-export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
+export const BuilderSidebar = ({
+  renderingKey,
+  prompts,
+  setPrompts,
+  createMode,
+  handleSaveTemplate,
+  templateData,
+  isNewTemplate,
+  templateDrawerOpen,
+}: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { template, engines } = useAppSelector(state => state.builder ?? initialBuilderState);
@@ -86,7 +110,13 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
   const deleteAllExecutions = async () => {
     if (templateId) await deletePrompt(templateId);
   };
-
+  useEffect(() => {
+    if (templateDrawerOpen) {
+      const link = LINKS.find(link => link.key === "info");
+      if (!link) return;
+      handleOpenSidebar(link);
+    }
+  }, [templateDrawerOpen, renderingKey]);
   const renderIcon = (item: Link) => {
     const iconColor = item.key === activeLink?.key ? theme.palette.primary.main : "#1C1B1F";
 
@@ -245,6 +275,21 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
             <Close />
           </IconButton>
         </Box>
+        {activeLink?.key === "info" && (
+          <Box
+            sx={{
+              padding: "var(--2, 16px) var(--3, 24px)",
+            }}
+          >
+            <TemplateForm
+              type={createMode}
+              templateData={templateData}
+              darkMode
+              onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
+              showCloseButton={false}
+            />
+          </Box>
+        )}
         {activeLink?.key === "list" && (
           <PromptSequence
             prompts={prompts}

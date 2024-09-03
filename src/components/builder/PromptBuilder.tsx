@@ -52,6 +52,7 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const [templateData, setTemplateData] = useState<Templates | undefined>(
     isNewTemplate ? ({ title: "new_template_12345" } as Templates) : undefined,
   );
+  const [builderSidebarRenderKey, setBuilderSidebarRenderKey] = useState(0); // to force re-rendering of BuilderSidebar component
 
   useEffect(() => {
     if (!store) {
@@ -260,6 +261,12 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
         >
           <Sidebar />
           <BuilderSidebar
+            renderingKey={builderSidebarRenderKey}
+            createMode={createMode}
+            templateData={templateData}
+            handleSaveTemplate={handleSaveTemplate}
+            isNewTemplate
+            templateDrawerOpen={templateDrawerOpen}
             prompts={prompts}
             setPrompts={setPrompts}
           />
@@ -276,7 +283,10 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
               templateSlug={templateData?.slug}
               onPublish={handlePublishTemplate}
               onSave={handleSaveTemplate}
-              onEditTemplate={() => setTemplateDrawerOpen(true)}
+              onEditTemplate={() => {
+                setTemplateDrawerOpen(true);
+                setBuilderSidebarRenderKey(builderSidebarRenderKey + 1);
+              }}
               type={BUILDER_TYPE.USER}
             />
 
@@ -308,36 +318,6 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
                 </DndProvider>
               </Box>
             </Box>
-
-            {!!templateData && templateDrawerOpen && (
-              <SwipeableDrawer
-                anchor={"left"}
-                open={templateDrawerOpen}
-                onClose={() => setTemplateDrawerOpen(false)}
-                onOpen={() => setTemplateDrawerOpen(true)}
-                PaperProps={{
-                  sx: {
-                    width: "430px",
-                    minWidth: "30svw",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#FDFBFF",
-                    p: "24px 32px",
-                  }}
-                >
-                  <TemplateForm
-                    type={createMode}
-                    templateData={templateData}
-                    darkMode
-                    onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
-                    onClose={() => setTemplateDrawerOpen(false)}
-                  />
-                </Box>
-              </SwipeableDrawer>
-            )}
           </Box>
         </Box>
       ) : (
