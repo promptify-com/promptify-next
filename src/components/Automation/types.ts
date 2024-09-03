@@ -122,7 +122,6 @@ export interface FrequencyTime {
   time: number;
 }
 
-
 export interface IWorkflowSchedule {
   frequency: FrequencyType;
   hour: number;
@@ -164,16 +163,18 @@ export interface IWorkflowCreateResponse {
     [key: string]: INodeConnection;
   };
   schedule?: IWorkflowSchedule;
-  periodic_task: null | {
-    task: string;
-    name: string;
-    enabled: boolean;
-    crontab: IWorkflowSchedule;
-    kwargs?: string;
-    frequency: FrequencyType;
-  };
+  periodic_task: null | IPeriodicTask;
   template_workflow: ITemplateWorkflow;
   last_executed: string | null;
+}
+
+export interface IPeriodicTask {
+  task: string;
+  name: string;
+  enabled: boolean;
+  crontab: IWorkflowSchedule;
+  kwargs?: string;
+  frequency: FrequencyType;
 }
 
 export interface IAuthenticateBase {
