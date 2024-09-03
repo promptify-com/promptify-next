@@ -169,6 +169,7 @@ export interface IWorkflowCreateResponse {
     enabled: boolean;
     crontab: IWorkflowSchedule;
     kwargs?: string;
+    frequency: FrequencyType;
   };
   template_workflow: ITemplateWorkflow;
   last_executed: string | null;

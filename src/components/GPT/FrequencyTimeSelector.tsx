@@ -25,11 +25,10 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
     day_of_month: scheduleDayOfMonth,
     time: scheduledData?.hour ?? 0,
   });
-  const localScheduleData = clonedWorkflow?.schedule;
 
   useEffect(() => {
-    setSelectedFrequency(localScheduleData?.frequency ?? scheduledData?.frequency ?? "");
-  }, [localScheduleData, scheduledData]);
+    setSelectedFrequency(clonedWorkflow?.periodic_task?.frequency ?? "");
+  }, [clonedWorkflow]);
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);

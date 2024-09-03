@@ -100,12 +100,30 @@ const useChat = ({ workflow }: Props) => {
 
     if (updateScheduleMode.current) {
       insertFrequencyMessage();
-      showAllSteps();
     }
   };
 
+  useEffect(() => {
+    if (clonedWorkflow && schedulingData.frequency !== "none") {
+      if (updateScheduleMode.current) {
+        showAllSteps();
+      }
+    } else if (schedulingData.frequency === "none") {
+      // Optionally, handle the case when frequency is 'none' if needed
+      setMessages(prev =>
+        prev
+          .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+          .concat(createMessage({ type: "readyMessage" })),
+      );
+    }
+  }, [clonedWorkflow]);
+
   const loadWorkflowScheduleData = () => {
-    setSchedulingData({ ...schedulingData, ...clonedWorkflow?.periodic_task?.crontab });
+    setSchedulingData({
+      ...schedulingData,
+      ...clonedWorkflow?.periodic_task?.crontab,
+      frequency: clonedWorkflow?.periodic_task?.frequency!,
+    });
   };
 
   const showAllSteps = () => {
@@ -118,10 +136,12 @@ const useChat = ({ workflow }: Props) => {
       type: "schedule_providers",
       text: "Where should we send your scheduled AI App?",
     });
-
     availableSteps.push(schedulesMessage, providersMessage);
-
-    setMessages(prev => prev.concat(availableSteps));
+    setMessages(prev =>
+      prev
+        .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+        .concat(availableSteps),
+    );
   };
 
   // Handle the case of catching the oauth credential successfully connected
