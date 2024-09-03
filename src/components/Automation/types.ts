@@ -122,6 +122,7 @@ export interface FrequencyTime {
   time: number;
 }
 
+
 export interface IWorkflowSchedule {
   frequency: FrequencyType;
   hour: number;

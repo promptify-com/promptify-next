@@ -161,9 +161,15 @@ export const isNodeProvider = (node: INode): boolean => {
   return !!providerPattern.exec(node.name);
 };
 
-const findAdjacentNode = (nodes: INode[], connections: Record<string, INodeConnection>, targetNodeName: string) => {
-  return nodes.find(node =>
-    connections[node.name]?.[MAIN_CONNECTION_KEY][0].some(node => node.node === targetNodeName),
+const findAdjacentNodes = (
+  nodes: INode[],
+  connections: Record<string, INodeConnection>,
+  targetNodeName: string,
+): INode[] => {
+  return nodes.filter(node =>
+    connections[node.name]?.[MAIN_CONNECTION_KEY]?.some(connectionArray =>
+      connectionArray.some(connection => connection.node === targetNodeName),
+    ),
   );
 };
 
@@ -219,10 +225,11 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
       type: MAIN_CONNECTION_KEY,
       index: 0,
     }));
-  const adjacentNode = findAdjacentNode(nodes, connections, respondToWebhookNode.name);
 
-  if (!adjacentNode) {
-    throw new NodeNotFoundError(`Could not find the adjacent node`);
+  const adjacentNodes = findAdjacentNodes(nodes, connections, respondToWebhookNode.name);
+
+  if (adjacentNodes.length === 0) {
+    throw new NodeNotFoundError(`Could not find any adjacent nodes`);
   }
 
   const responseBody = respondToWebhookNode.parameters.responseBody ?? "";
@@ -290,16 +297,17 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
       index: 0,
     });
   }
-
-  connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      connectionProviders.concat({
-        node: respondToWebhookNode.name,
-        type: MAIN_CONNECTION_KEY,
-        index: 0,
-      }),
-    ],
-  };
+  adjacentNodes.forEach(adjacentNode => {
+    connections[adjacentNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        connectionProviders.concat({
+          node: respondToWebhookNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        }),
+      ],
+    };
+  });
 
   return enableWorkflowPromptifyStream({
     ...clonedWorkflow,
@@ -320,13 +328,13 @@ export const removeProviderNode = (
     return workflow;
   }
 
-  const adjacentNode = findAdjacentNode(
+  const adjacentNodes = findAdjacentNodes(
     nodes,
     connections,
     providerName.toLowerCase().includes("gmail") ? MARKDOWN_NODE_NAME : providerName,
   );
 
-  if (!adjacentNode) {
+  if (!adjacentNodes) {
     return workflow;
   }
 
@@ -363,15 +371,17 @@ export const removeProviderNode = (
     }
   }
 
-  connections[adjacentNode.name] = {
-    [MAIN_CONNECTION_KEY]: [
-      connectionProviders.concat({
-        node: respondToWebhookNode.name,
-        type: MAIN_CONNECTION_KEY,
-        index: 0,
-      }),
-    ],
-  };
+  adjacentNodes.forEach(adjacentNode => {
+    connections[adjacentNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        connectionProviders.concat({
+          node: respondToWebhookNode.name,
+          type: MAIN_CONNECTION_KEY,
+          index: 0,
+        }),
+      ],
+    };
+  });
 
   return enableWorkflowPromptifyStream({ ...workflow, nodes, connections });
 };
