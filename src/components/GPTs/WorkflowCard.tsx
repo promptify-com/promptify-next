@@ -29,7 +29,7 @@ import type { ITemplateWorkflow, IPeriodicTask } from "../Automation/types";
 
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
-  periodic_task?: IPeriodicTask;
+  periodic_task?: IPeriodicTask | null;
   userWorkflowId?: string;
   lastExecuted: string | null;
   isGPTScheduled?: boolean;

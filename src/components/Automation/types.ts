@@ -87,12 +87,7 @@ export interface ITemplateWorkflow {
     likes_count: number;
     favorites_count: number;
   };
-  periodic_task?: null | {
-    task: string;
-    name: string;
-    enabled: boolean;
-    crontab: IWorkflowSchedule;
-  };
+  periodic_task?: null | IPeriodicTask;
   enabled: boolean;
   execution_count: number;
 }
