@@ -52,7 +52,6 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
   const [templateData, setTemplateData] = useState<Templates | undefined>(
     isNewTemplate ? ({ title: "new_template_12345" } as Templates) : undefined,
   );
-  const [builderSidebarRenderKey, setBuilderSidebarRenderKey] = useState(0); // to force re-rendering of BuilderSidebar component
 
   useEffect(() => {
     if (!store) {
@@ -261,12 +260,12 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
         >
           <Sidebar />
           <BuilderSidebar
-            renderingKey={builderSidebarRenderKey}
             createMode={createMode}
             templateData={templateData}
             handleSaveTemplate={handleSaveTemplate}
-            isNewTemplate
+            isNewTemplate={isNewTemplate}
             templateDrawerOpen={templateDrawerOpen}
+            setTemplateDrawerOpen={setTemplateDrawerOpen}
             prompts={prompts}
             setPrompts={setPrompts}
           />
@@ -285,7 +284,6 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
               onSave={handleSaveTemplate}
               onEditTemplate={() => {
                 setTemplateDrawerOpen(true);
-                setBuilderSidebarRenderKey(builderSidebarRenderKey + 1);
               }}
               type={BUILDER_TYPE.USER}
             />

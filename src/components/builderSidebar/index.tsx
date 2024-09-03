@@ -14,7 +14,6 @@ import ClearAll from "@mui/icons-material/ClearAll";
 import Tooltip from "@mui/material/Tooltip";
 import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "@/components/builderSidebar/PromptSequence";
@@ -27,8 +26,8 @@ import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "
 import type { IEditPrompts } from "@/common/types/builder";
 import { initialState as initialBuilderState } from "@/core/store/builderSlice";
 import TemplateForm from "../common/forms/TemplateForm";
-import { Templates } from "@/core/api/dto/templates";
-import { FormType } from "@/common/types/template";
+import type { Templates } from "@/core/api/dto/templates";
+import type { FormType } from "@/common/types/template";
 
 const LINKS: Link[] = [
   {
@@ -74,11 +73,10 @@ interface Props {
   templateData: Templates | undefined;
   isNewTemplate: boolean;
   templateDrawerOpen?: boolean;
-  renderingKey?: number;
+  setTemplateDrawerOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const BuilderSidebar = ({
-  renderingKey,
   prompts,
   setPrompts,
   createMode,
@@ -86,6 +84,7 @@ export const BuilderSidebar = ({
   templateData,
   isNewTemplate,
   templateDrawerOpen,
+  setTemplateDrawerOpen,
 }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
@@ -105,18 +104,23 @@ export const BuilderSidebar = ({
   const handleCloseSidebar = () => {
     setOpen(false);
     dispatch(setOpenBuilderSidebar(false));
+    if (activeLink?.key === 'info' && setTemplateDrawerOpen) {
+      setTemplateDrawerOpen(false)
+    }
   };
 
   const deleteAllExecutions = async () => {
     if (templateId) await deletePrompt(templateId);
   };
+  
   useEffect(() => {
     if (templateDrawerOpen) {
       const link = LINKS.find(link => link.key === "info");
       if (!link) return;
       handleOpenSidebar(link);
     }
-  }, [templateDrawerOpen, renderingKey]);
+  }, [templateDrawerOpen]);
+
   const renderIcon = (item: Link) => {
     const iconColor = item.key === activeLink?.key ? theme.palette.primary.main : "#1C1B1F";
 
@@ -278,7 +282,7 @@ export const BuilderSidebar = ({
         {activeLink?.key === "info" && (
           <Box
             sx={{
-              padding: "var(--2, 16px) var(--3, 24px)",
+              padding: "16px 24px",
             }}
           >
             <TemplateForm
@@ -286,7 +290,6 @@ export const BuilderSidebar = ({
               templateData={templateData}
               darkMode
               onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
-              showCloseButton={false}
             />
           </Box>
         )}

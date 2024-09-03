@@ -28,6 +28,7 @@ import { getLanguageFromCode } from "@/common/helpers";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { FormType } from "@/common/types/template";
 import useTemplateForm from "@/hooks/useTemplateForm";
+import { usePathname } from "next/navigation";
 
 interface Props {
   type?: FormType;
@@ -36,7 +37,6 @@ interface Props {
   onSaved?: (template?: Templates) => void;
   onClose?: () => void;
   darkMode?: boolean;
-  showCloseButton?: boolean;
 }
 
 function TemplateForm({
@@ -45,10 +45,9 @@ function TemplateForm({
   onSaved,
   onClose,
   darkMode = false,
-  showCloseButton = true,
 }: Props) {
   const token = useToken();
-
+  const pathname = usePathname()
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -58,6 +57,8 @@ function TemplateForm({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
+  
+  const showCloseButton = pathname !== '/prompt-builder/create'
 
   const { formik, loading, handleSubmit } = useTemplateForm({
     type,
@@ -65,6 +66,7 @@ function TemplateForm({
     uploadedFile: selectedFile,
     onSaved: onSaved,
   });
+
 
   const getExecutions = async () => {
     if (!templateData) return null;
