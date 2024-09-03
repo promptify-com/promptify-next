@@ -107,7 +107,7 @@ const useChat = ({ workflow }: Props) => {
   useEffect(() => {
     if (clonedWorkflow && schedulingData.frequency !== "none") {
       if (updateScheduleMode.current) {
-        showAllSteps();
+        handleShowAllSteps();
       }
     } else if (schedulingData.frequency === "none") {
       // Optionally, handle the case when frequency is 'none' if needed
@@ -127,17 +127,26 @@ const useChat = ({ workflow }: Props) => {
     });
   };
 
-  const showAllSteps = () => {
+  const handleShowAllSteps = () => {
     const availableSteps: IMessage[] = [];
-    const schedulesMessage = createMessage({
-      type: "schedule_time",
-      text: "At what time?",
-    });
+
+    // Check if frequency is not hourly before adding schedule_time message
+    if (schedulingData.frequency !== "hourly") {
+      const schedulesMessage = createMessage({
+        type: "schedule_time",
+        text: "At what time?",
+      });
+      availableSteps.push(schedulesMessage);
+    }
+
+    // Always add the schedule_providers message
     const providersMessage = createMessage({
       type: "schedule_providers",
       text: "Where should we send your scheduled AI App?",
     });
-    availableSteps.push(schedulesMessage, providersMessage);
+    availableSteps.push(providersMessage);
+
+    // Update the state with new messages
     setMessages(prev =>
       prev
         .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
