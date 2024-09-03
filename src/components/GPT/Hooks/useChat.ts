@@ -101,28 +101,57 @@ const useChat = ({ workflow }: Props) => {
 
     if (updateScheduleMode.current) {
       insertFrequencyMessage();
-      showAllSteps();
     }
   };
 
+  useEffect(() => {
+    if (clonedWorkflow && schedulingData.frequency !== "none") {
+      if (updateScheduleMode.current) {
+        handleShowAllSteps();
+      }
+    } else if (schedulingData.frequency === "none") {
+      // Optionally, handle the case when frequency is 'none' if needed
+      setMessages(prev =>
+        prev
+          .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+          .concat(createMessage({ type: "readyMessage" })),
+      );
+    }
+  }, [clonedWorkflow]);
+
   const loadWorkflowScheduleData = () => {
-    setSchedulingData({ ...schedulingData, ...clonedWorkflow?.periodic_task?.crontab });
+    setSchedulingData({
+      ...schedulingData,
+      ...clonedWorkflow?.periodic_task?.crontab,
+      frequency: clonedWorkflow?.periodic_task?.frequency!,
+    });
   };
 
-  const showAllSteps = () => {
+  const handleShowAllSteps = () => {
     const availableSteps: IMessage[] = [];
-    const schedulesMessage = createMessage({
-      type: "schedule_time",
-      text: "At what time?",
-    });
+
+    // Check if frequency is not hourly before adding schedule_time message
+    if (schedulingData.frequency !== "hourly") {
+      const schedulesMessage = createMessage({
+        type: "schedule_time",
+        text: "At what time?",
+      });
+      availableSteps.push(schedulesMessage);
+    }
+
+    // Always add the schedule_providers message
     const providersMessage = createMessage({
       type: "schedule_providers",
       text: "Where should we send your scheduled AI App?",
     });
+    availableSteps.push(providersMessage);
 
-    availableSteps.push(schedulesMessage, providersMessage);
-
-    setMessages(prev => prev.concat(availableSteps));
+    // Update the state with new messages
+    setMessages(prev =>
+      prev
+        .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+        .concat(availableSteps),
+    );
   };
 
   // Handle the case of catching the oauth credential successfully connected
@@ -228,8 +257,24 @@ const useChat = ({ workflow }: Props) => {
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
 
-    const isHourly = frequency === "hourly";
+    // If the frequency is 'none', remove frequency-related messages
+    if (frequency === "none") {
+      setSchedulingData(prev => ({
+        ...prev,
+        frequency,
+      }));
 
+      // Filter out the frequency messages
+      setMessages(prev =>
+        prev
+          .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+          .concat(createMessage({ type: "readyMessage" })),
+      );
+      return; // Exit early since we don't need to insert any messages for 'none' frequency
+    }
+
+    // Existing logic for other frequencies
+    const isHourly = frequency === "hourly";
     let _messages = messages;
     if (isHourly) {
       updateScheduleMode.current = true;

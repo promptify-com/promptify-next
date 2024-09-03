@@ -25,16 +25,11 @@ import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import { capitalizeString, formatDate } from "@/common/helpers";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import WorkflowActionsModal from "./WorkflowActionsModal";
-import type { ITemplateWorkflow, IWorkflowSchedule } from "../Automation/types";
+import type { ITemplateWorkflow, IPeriodicTask } from "../Automation/types";
 
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
-  periodic_task?: null | {
-    task: string;
-    name: string;
-    enabled: boolean;
-    crontab: IWorkflowSchedule;
-  };
+  periodic_task?: IPeriodicTask | null;
   userWorkflowId?: string;
   lastExecuted: string | null;
   isGPTScheduled?: boolean;
@@ -65,7 +60,7 @@ function WorkflowCard({
   const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
 
-  const frequency = capitalizeString(periodic_task?.crontab.frequency ?? "");
+  const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
 
   const handleOpenModal = (e: React.MouseEvent) => {

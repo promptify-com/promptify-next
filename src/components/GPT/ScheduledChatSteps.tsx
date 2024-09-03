@@ -139,11 +139,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const showInputsForm = !!inputs.length && !generatedExecution;
 
+  const isNone = clonedWorkflow?.periodic_task?.frequency === "none";
+
+  const hasScheduleProvidersMessage = Boolean(messages.find(msg => msg.type === "schedule_providers"));
+  const hasReadyMessage = Boolean(messages.find(msg => msg.type === "readyMessage"));
+  const canShowRunButton = !isGenerating && allowActivateButton && areCredentialsStored;
+
   const showRunButton =
-    !isGenerating &&
-    allowActivateButton &&
-    areCredentialsStored &&
-    Boolean(messages.find(msg => msg.type === "schedule_providers"));
+    (canShowRunButton && hasScheduleProvidersMessage) || (isNone && hasReadyMessage && areCredentialsStored);
 
   return (
     <Stack
@@ -188,7 +191,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     message={message.text}
                     items={FREQUENCIES}
                     onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
-                    defaultValue={clonedWorkflow?.periodic_task?.crontab.frequency ?? ""}
+                    defaultValue={clonedWorkflow?.periodic_task?.frequency ?? ""}
                   />
                 )}
                 {message.type === "schedule_time" && (

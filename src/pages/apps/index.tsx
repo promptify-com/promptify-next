@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import lazy from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import Stack from "@mui/material/Stack";
@@ -24,8 +24,13 @@ function GPTsPage() {
   const searchParams = useSearchParams();
 
   const currentUser = useAppSelector(state => state.user.currentUser ?? null);
+  const clonedWorkflow = useAppSelector(state => state?.chat?.clonedWorkflow);
 
-  const { data: userWorkflows, isLoading: isLoadingUserWorkflows } = useGetUserWorkflowsQuery(undefined, {
+  const {
+    data: userWorkflows,
+    isLoading: isLoadingUserWorkflows,
+    refetch,
+  } = useGetUserWorkflowsQuery(undefined, {
     skip: !currentUser?.id,
   });
   const { data: allWorkflows, isLoading: isLoadingAllWorkflows } = useGetWorkflowsQuery(
@@ -67,6 +72,12 @@ function GPTsPage() {
   const filteredAllWorkflows = isFiltering
     ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
     : [];
+
+  useEffect(() => {
+    if (clonedWorkflow) {
+      refetch();
+    }
+  }, [clonedWorkflow]);
 
   return (
     <Layout>
