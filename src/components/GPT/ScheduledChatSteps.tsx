@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -139,14 +139,15 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const showInputsForm = !!inputs.length && !generatedExecution;
 
-  const isNone = clonedWorkflow?.periodic_task?.frequency === "none";
+  const isNone = clonedWorkflow?.schedule?.frequency === "none";
 
   const hasScheduleProvidersMessage = Boolean(messages.find(msg => msg.type === "schedule_providers"));
   const hasReadyMessage = Boolean(messages.find(msg => msg.type === "readyMessage"));
   const canShowRunButton = !isGenerating && allowActivateButton && areCredentialsStored;
 
   const showRunButton =
-    (canShowRunButton && hasScheduleProvidersMessage) || (isNone && hasReadyMessage && areCredentialsStored);
+    (canShowRunButton && hasScheduleProvidersMessage) ||
+    (!isGenerating && isNone && hasReadyMessage && areCredentialsStored);
 
   return (
     <Stack
@@ -161,14 +162,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
         <>
           {messages.map(message => {
             return (
-              <Box
-                key={message.id}
-                sx={{
-                  ...(message.noHeader && {
-                    mt: "-34px",
-                  }),
-                }}
-              >
+              <Fragment key={message.id}>
                 {message.type === "text" && <Message message={message} />}
                 {message.type === "workflowExecution" && (
                   <Message
@@ -194,13 +188,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     defaultValue={clonedWorkflow?.periodic_task?.frequency ?? ""}
                   />
                 )}
-                {message.type === "schedule_time" && (
+
+                {message.type === "schedule_time" && !isNone && (
                   <FrequencyTimeSelector
                     message={message.text}
                     onSelect={setScheduleTime}
                   />
                 )}
-                {message.type === "schedule_providers" && (
+                {message.type === "schedule_providers" && !isNone && (
                   <Stack gap={8}>
                     <ResponseProvidersContainer
                       message={message.text}
@@ -210,7 +205,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     />
                   </Stack>
                 )}
-              </Box>
+              </Fragment>
             );
           })}
           {generatedExecution && (
@@ -231,14 +226,14 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                 </Box>
               )}
               {showRunButton && (
-                <div id="run-message">
+                <Stack id="run-message">
                   <RunWorkflowMessage
                     onRun={() => {
                       runWorkflow();
                       scrollToBottom();
                     }}
                   />
-                </div>
+                </Stack>
               )}
             </>
           )}

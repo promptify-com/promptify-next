@@ -110,7 +110,14 @@ export default function Message({
   };
 
   return (
-    <Stack sx={{ gap: "24px" }}>
+    <Stack
+      sx={{
+        gap: "24px",
+        ...(message.noHeader && {
+          mt: "-34px",
+        }),
+      }}
+    >
       {type === "workflowExecution" && inputs.length > 0 && (
         <MessageInputs
           message={createMessage({ type: "form", noHeader: true })}

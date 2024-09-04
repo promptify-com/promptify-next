@@ -101,23 +101,9 @@ const useChat = ({ workflow }: Props) => {
 
     if (updateScheduleMode.current) {
       insertFrequencyMessage();
+      handleShowAllSteps();
     }
   };
-
-  useEffect(() => {
-    if (clonedWorkflow && schedulingData.frequency !== "none") {
-      if (updateScheduleMode.current) {
-        handleShowAllSteps();
-      }
-    } else if (schedulingData.frequency === "none") {
-      // Optionally, handle the case when frequency is 'none' if needed
-      setMessages(prev =>
-        prev
-          .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
-          .concat(createMessage({ type: "readyMessage" })),
-      );
-    }
-  }, [clonedWorkflow]);
 
   const loadWorkflowScheduleData = () => {
     setSchedulingData({
@@ -131,13 +117,11 @@ const useChat = ({ workflow }: Props) => {
     const availableSteps: IMessage[] = [];
 
     // Check if frequency is not hourly before adding schedule_time message
-    if (schedulingData.frequency !== "hourly") {
-      const schedulesMessage = createMessage({
-        type: "schedule_time",
-        text: "At what time?",
-      });
-      availableSteps.push(schedulesMessage);
-    }
+    const schedulesMessage = createMessage({
+      type: "schedule_time",
+      text: "At what time?",
+    });
+    availableSteps.push(schedulesMessage);
 
     // Always add the schedule_providers message
     const providersMessage = createMessage({
@@ -147,11 +131,7 @@ const useChat = ({ workflow }: Props) => {
     availableSteps.push(providersMessage);
 
     // Update the state with new messages
-    setMessages(prev =>
-      prev
-        .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
-        .concat(availableSteps),
-    );
+    setMessages(prev => prev.concat(availableSteps));
   };
 
   // Handle the case of catching the oauth credential successfully connected
@@ -166,7 +146,6 @@ const useChat = ({ workflow }: Props) => {
     if (clonedWorkflow) {
       dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
 
-      // Workflow updates auto save
       if (updateScheduleMode.current) {
         handleUpdateWorkflow({
           ...clonedWorkflow,
@@ -257,24 +236,24 @@ const useChat = ({ workflow }: Props) => {
   const setScheduleFrequency = (frequency: FrequencyType) => {
     if (schedulingData.frequency === frequency) return;
 
-    // If the frequency is 'none', remove frequency-related messages
-    if (frequency === "none") {
-      setSchedulingData(prev => ({
-        ...prev,
-        frequency,
-      }));
+    const scheduleData = { ...schedulingData, frequency };
 
-      // Filter out the frequency messages
-      setMessages(prev =>
-        prev
-          .filter(msg => !["schedule_time", "schedule_providers", "readyMessage"].includes(msg.type))
+    const isHourly = frequency === "hourly";
+    const isNone = frequency === "none";
+
+    // If the frequency is 'none', remove frequency-related messages
+    if (isNone) {
+      updateScheduleMode.current = true;
+      setSchedulingData(scheduleData);
+      setMessages(prevMessages =>
+        prevMessages
+          .filter(msg => msg.type !== "readyMessage" && !msg.isHighlight)
           .concat(createMessage({ type: "readyMessage" })),
       );
-      return; // Exit early since we don't need to insert any messages for 'none' frequency
+
+      return;
     }
 
-    // Existing logic for other frequencies
-    const isHourly = frequency === "hourly";
     let _messages = messages;
     if (isHourly) {
       updateScheduleMode.current = true;
@@ -289,7 +268,6 @@ const useChat = ({ workflow }: Props) => {
       }
     }
 
-    const scheduleData = { ...schedulingData, frequency };
     setSchedulingData(scheduleData);
     setMessages(_messages);
 
