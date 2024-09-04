@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { useAppSelector } from "@/hooks/useStore";
-import { initialState as initialChatState } from "@/core/store/chatSlice";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { useAppSelector } from "@/hooks/useStore";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 import DateTimeSelect from "./DateTimeSelect";
 import type { FrequencyTime } from "@/components/Automation/types";
 
@@ -13,14 +13,17 @@ interface Props {
 }
 
 export default function FrequencyTimeSelector({ message, onSelect }: Props) {
+  const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+
   const [selectedFrequency, setSelectedFrequency] = useState("");
 
-  const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const scheduledData = useMemo(() => {
     return clonedWorkflow?.schedule ?? clonedWorkflow?.periodic_task?.crontab;
   }, [clonedWorkflow]);
+
   const scheduleDayOfWeek = scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : 0;
   const scheduleDayOfMonth = scheduledData?.frequency === "monthly" ? scheduledData?.day_of_month : 1;
+
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
     day_of_week: scheduleDayOfWeek,
     day_of_month: scheduleDayOfMonth,
@@ -28,7 +31,7 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   });
 
   useEffect(() => {
-    setSelectedFrequency(clonedWorkflow?.periodic_task?.frequency ?? "");
+    setSelectedFrequency(scheduledData?.frequency ?? "");
   }, [clonedWorkflow]);
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
@@ -77,7 +80,7 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
             defaultValue={scheduleTime.time}
           />
         </Stack>
-        {!scheduledData && (
+        {!clonedWorkflow?.periodic_task && (
           <Button
             onClick={() => onSelect(scheduleTime)}
             variant="contained"
