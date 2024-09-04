@@ -28,6 +28,7 @@ import { getLanguageFromCode } from "@/common/helpers";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { FormType } from "@/common/types/template";
 import useTemplateForm from "@/hooks/useTemplateForm";
+import { usePathname } from "next/navigation";
 
 interface Props {
   type?: FormType;
@@ -38,9 +39,15 @@ interface Props {
   darkMode?: boolean;
 }
 
-function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
+function TemplateForm({
+  type = "create",
+  templateData,
+  onSaved,
+  onClose,
+  darkMode = false,
+}: Props) {
   const token = useToken();
-
+  const pathname = usePathname()
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -50,6 +57,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
+  
+  const showCloseButton = pathname !== '/prompt-builder/create'
 
   const { formik, loading, handleSubmit } = useTemplateForm({
     type,
@@ -57,6 +66,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
     uploadedFile: selectedFile,
     onSaved: onSaved,
   });
+
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -87,15 +97,17 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
 
   return (
     <Box sx={{ color, width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          cursor: "pointer",
-        }}
-      >
-        <Close onClick={onClose} />
-      </Box>
+      {showCloseButton && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            cursor: "pointer",
+          }}
+        >
+          <Close onClick={onClose} />
+        </Box>
+      )}
       <Stack sx={boxStyle}>
         <TextField
           fullWidth

@@ -260,6 +260,12 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
         >
           <Sidebar />
           <BuilderSidebar
+            createMode={createMode}
+            templateData={templateData}
+            handleSaveTemplate={handleSaveTemplate}
+            isNewTemplate={isNewTemplate}
+            templateDrawerOpen={templateDrawerOpen}
+            setTemplateDrawerOpen={setTemplateDrawerOpen}
             prompts={prompts}
             setPrompts={setPrompts}
           />
@@ -276,7 +282,9 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
               templateSlug={templateData?.slug}
               onPublish={handlePublishTemplate}
               onSave={handleSaveTemplate}
-              onEditTemplate={() => setTemplateDrawerOpen(true)}
+              onEditTemplate={() => {
+                setTemplateDrawerOpen(true);
+              }}
               type={BUILDER_TYPE.USER}
             />
 
@@ -308,36 +316,6 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
                 </DndProvider>
               </Box>
             </Box>
-
-            {!!templateData && templateDrawerOpen && (
-              <SwipeableDrawer
-                anchor={"left"}
-                open={templateDrawerOpen}
-                onClose={() => setTemplateDrawerOpen(false)}
-                onOpen={() => setTemplateDrawerOpen(true)}
-                PaperProps={{
-                  sx: {
-                    width: "430px",
-                    minWidth: "30svw",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#FDFBFF",
-                    p: "24px 32px",
-                  }}
-                >
-                  <TemplateForm
-                    type={createMode}
-                    templateData={templateData}
-                    darkMode
-                    onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
-                    onClose={() => setTemplateDrawerOpen(false)}
-                  />
-                </Box>
-              </SwipeableDrawer>
-            )}
           </Box>
         </Box>
       ) : (
