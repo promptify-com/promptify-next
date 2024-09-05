@@ -16,7 +16,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   sx?: SxProps;
-  estimatedExecutionTime: string | null;
+  estimatedExecutionTime?: string | null;
 }
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
@@ -104,7 +104,7 @@ export function RunButtonWithProgressBar({
   estimatedExecutionTime,
 }: Props) {
   if (loading) {
-    return <LinearWithValueLabel estimatedExecutionTime={estimatedExecutionTime} />;
+    return <LinearWithValueLabel estimatedExecutionTime={estimatedExecutionTime ?? null} />;
   }
 
   return (
