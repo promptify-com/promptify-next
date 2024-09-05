@@ -1,8 +1,23 @@
 import type { ReactNode } from "react";
 import type { InputType } from "./prompt";
 
+interface ScoreDescription {
+  score: number;
+  description: string;
+}
+
+export interface Parameter {
+  category: number;
+  code: string;
+  id: number;
+  name: string;
+  score_descriptions: ScoreDescription[];
+  type: string;
+}
+
 export interface IPromptParams {
   parameter_id: number;
+  parameter?: Parameter;
   score: number;
   name?: string;
   is_visible: boolean;

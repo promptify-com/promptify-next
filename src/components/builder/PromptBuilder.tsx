@@ -198,7 +198,10 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
         content: prompt.content,
         engine: (prompt.engine as unknown as { id: number }).id,
         dependencies: prompt.dependencies,
-        parameters: prompt.parameters,
+        parameters: prompt.parameters.map(parameter => ({
+          ...parameter,
+          parameter_id: parameter.parameter_id || parameter.parameter?.id,
+        })),
         order: prompt.order,
         output_format: prompt.output_format,
         model_parameters: prompt.model_parameters,

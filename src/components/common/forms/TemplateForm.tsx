@@ -13,7 +13,6 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import Close from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { useGetTagsQuery } from "@/core/api/tags";
@@ -28,7 +27,6 @@ import { getLanguageFromCode } from "@/common/helpers";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { FormType } from "@/common/types/template";
 import useTemplateForm from "@/hooks/useTemplateForm";
-import { usePathname } from "next/navigation";
 
 interface Props {
   type?: FormType;
@@ -41,7 +39,6 @@ interface Props {
 
 function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
   const token = useToken();
-  const pathname = usePathname();
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -51,8 +48,6 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
-
-  const showCloseButton = pathname !== "/prompt-builder/create";
 
   const { formik, loading, handleSubmit } = useTemplateForm({
     type,
