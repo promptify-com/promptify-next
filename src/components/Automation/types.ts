@@ -81,6 +81,7 @@ export interface ITemplateWorkflow {
   created_at: string;
   is_schedulable: boolean;
   has_output_notification: boolean;
+  estimated_execution_time: string | null;
   is_liked: boolean;
   likes: number;
   category: Category;

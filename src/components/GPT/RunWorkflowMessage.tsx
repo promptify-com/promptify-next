@@ -1,17 +1,17 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import RunButton from "./RunButton";
 import { useAppSelector } from "@/hooks/useStore";
 import MessageContainer from "./MessageContainer";
 import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
-import { Box } from "@mui/material";
 import { initialState } from "@/core/store/chatSlice";
-
+import type { ITemplateWorkflow } from "../Automation/types";
+1;
 interface Props {
   onRun(): void;
+  estimatedExecutionTime: string | null;
 }
 
-export default function runWorkflowMessage({ onRun }: Props) {
+export default function runWorkflowMessage({ onRun, estimatedExecutionTime }: Props) {
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialState.gptGenerationStatus,
   );
@@ -44,6 +44,7 @@ export default function runWorkflowMessage({ onRun }: Props) {
           Ready to test this AI App
         </Typography>
         <RunButtonWithProgressBar
+          estimatedExecutionTime={estimatedExecutionTime}
           onClick={onRun}
           text="Run"
           sx={{ p: "8px 24px" }}
