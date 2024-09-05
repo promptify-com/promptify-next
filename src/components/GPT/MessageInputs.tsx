@@ -92,7 +92,6 @@ function MessageInputs({
         {allowGenerate ? (
           progressBarButton ? (
             <RunButtonWithProgressBar
-              estimatedExecutionTime={null}
               loading={isExecuting}
               onClick={() => onGenerate?.()}
               disabled={disableGenerateBtn}
