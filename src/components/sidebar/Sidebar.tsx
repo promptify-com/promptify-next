@@ -43,7 +43,7 @@ function Sidebar() {
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isDocumentsPage = pathname.split("/")[1] === "sparks";
   const isChatPage = pathname.split("/")[1] === "chat";
-  const isAutomationPage = pathname.split("/")[1] === "automation";
+  const isAutomationPage = pathname.split("/")[1] === "apps";
   const isPromptsReview = pathname.split("/")[2] === "prompts-review";
   const isLearnPage = ["learn", "terms-of-use", "privacy-policy"].includes(pathname.split("/")[1]);
   const isValidUser = useAppSelector(isValidUserFn);
