@@ -9,6 +9,7 @@ import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import MenuItem from "@mui/material/MenuItem";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -491,6 +492,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             />
           </Stack>
 
+
           {type === "edit" && (
             <Stack sx={boxStyle}>
               <Autocomplete
@@ -512,6 +514,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               />
             </Stack>
           )}
+
 
           <FormControlLabel
             control={<Switch color="primary" />}
