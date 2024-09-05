@@ -54,8 +54,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const bottomRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
 
-  console.log(workflow);
-
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, []);
