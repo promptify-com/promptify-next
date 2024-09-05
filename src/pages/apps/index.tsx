@@ -77,7 +77,7 @@ function GPTsPage() {
     if (clonedWorkflow) {
       refetch();
     }
-  }, [clonedWorkflow]);
+  }, [clonedWorkflow, refetch]);
 
   return (
     <Layout>
