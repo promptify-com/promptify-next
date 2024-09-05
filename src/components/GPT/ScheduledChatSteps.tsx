@@ -141,7 +141,10 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
 
   const isNone = clonedWorkflow?.schedule?.frequency === "none";
 
-  const hasScheduleProvidersMessage = Boolean(messages.find(msg => msg.type === "schedule_providers"));
+  const hasScheduleProvidersMessage = workflow.has_output_notification
+    ? Boolean(messages.find(msg => msg.type === "schedule_providers"))
+    : true;
+
   const hasReadyMessage = Boolean(messages.find(msg => msg.type === "readyMessage"));
   const canShowRunButton = !isGenerating && allowActivateButton && areCredentialsStored;
 

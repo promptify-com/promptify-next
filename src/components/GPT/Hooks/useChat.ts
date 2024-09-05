@@ -124,11 +124,13 @@ const useChat = ({ workflow }: Props) => {
       availableSteps.push(schedulesMessage);
     }
 
-    const providersMessage = createMessage({
-      type: "schedule_providers",
-      text: "Where should we send your scheduled AI App?",
-    });
-    availableSteps.push(providersMessage);
+    if (workflow.has_output_notification) {
+      const providersMessage = createMessage({
+        type: "schedule_providers",
+        text: "Where should we send your scheduled AI App?",
+      });
+      availableSteps.push(providersMessage);
+    }
 
     // Update the state with new messages
     setMessages(prev => prev.concat(availableSteps));
@@ -270,7 +272,7 @@ const useChat = ({ workflow }: Props) => {
     setSchedulingData(scheduleData);
     setMessages(_messages);
 
-    if (isHourly) {
+    if (workflow.has_output_notification && isHourly) {
       insertProvidersMessages(scheduleData);
     }
   };
@@ -290,8 +292,9 @@ const useChat = ({ workflow }: Props) => {
       hour: frequencyTime.time,
     };
     setSchedulingData(scheduleData);
-
-    insertProvidersMessages(scheduleData);
+    if (workflow.has_output_notification) {
+      insertProvidersMessages(scheduleData);
+    }
   };
 
   const injectProvider = async (providerType: ProviderType, generatedWorkflow: IWorkflowCreateResponse) => {

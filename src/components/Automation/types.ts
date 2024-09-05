@@ -80,6 +80,7 @@ export interface ITemplateWorkflow {
   data: IData;
   created_at: string;
   is_schedulable: boolean;
+  has_output_notification: boolean;
   is_liked: boolean;
   likes: number;
   category: Category;
