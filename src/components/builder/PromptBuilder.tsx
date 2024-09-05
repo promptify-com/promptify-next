@@ -22,7 +22,6 @@ import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import { Layout } from "@/layout";
 import Header from "@/components/builder/Header";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
-import TemplateForm from "@/components/common/forms/TemplateForm";
 import { BuilderSidebar } from "@/components/builderSidebar";
 import Sidebar from "@/components/sidebar/Sidebar";
 import type { IEditTemplate } from "@/common/types/editTemplate";
@@ -262,12 +261,13 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
           <BuilderSidebar
             createMode={createMode}
             templateData={templateData}
+            isTemplateLoading={isTemplateLoading}
             handleSaveTemplate={handleSaveTemplate}
             isNewTemplate={isNewTemplate}
-            templateDrawerOpen={templateDrawerOpen}
-            setTemplateDrawerOpen={setTemplateDrawerOpen}
             prompts={prompts}
             setPrompts={setPrompts}
+            templateDrawerOpen={templateDrawerOpen}
+            setTemplateDrawerOpen={setTemplateDrawerOpen}
           />
 
           <Box

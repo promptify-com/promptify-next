@@ -116,14 +116,14 @@ const useChat = ({ workflow }: Props) => {
   const handleShowAllSteps = () => {
     const availableSteps: IMessage[] = [];
 
-    // Check if frequency is not hourly before adding schedule_time message
-    const schedulesMessage = createMessage({
-      type: "schedule_time",
-      text: "At what time?",
-    });
-    availableSteps.push(schedulesMessage);
+    if (clonedWorkflow?.periodic_task?.frequency !== "hourly") {
+      const schedulesMessage = createMessage({
+        type: "schedule_time",
+        text: "At what time?",
+      });
+      availableSteps.push(schedulesMessage);
+    }
 
-    // Always add the schedule_providers message
     const providersMessage = createMessage({
       type: "schedule_providers",
       text: "Where should we send your scheduled AI App?",
@@ -241,7 +241,6 @@ const useChat = ({ workflow }: Props) => {
     const isHourly = frequency === "hourly";
     const isNone = frequency === "none";
 
-    // If the frequency is 'none', remove frequency-related messages
     if (isNone) {
       updateScheduleMode.current = true;
       setSchedulingData(scheduleData);

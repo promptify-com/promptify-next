@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function FrequencyTimeSelector({ message, onSelect }: Props) {
-  const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
 
   const [selectedFrequency, setSelectedFrequency] = useState("");
 

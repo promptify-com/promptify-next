@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, ReactNode, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import ListItem from "@mui/material/ListItem";
@@ -23,15 +23,15 @@ import Support from "@/components/builder/Assets/Support";
 import Contact from "@/components/builder/Assets/Contact";
 import Api from "@/components/builder/Assets/Api";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
-import type { IEditPrompts } from "@/common/types/builder";
+import type { IEditPrompts, ISidebarLink } from "@/common/types/builder";
 import { initialState as initialBuilderState } from "@/core/store/builderSlice";
 import TemplateForm from "../common/forms/TemplateForm";
 import type { Templates } from "@/core/api/dto/templates";
 import type { FormType } from "@/common/types/template";
 
-const LINKS: Link[] = [
+const LINKS: ISidebarLink[] = [
   {
-    key: "info",
+    key: "templateForm",
     name: "Template details",
     icon: <InfoOutlinedIcon />,
   },
@@ -57,17 +57,10 @@ const LINKS: Link[] = [
   },
 ];
 
-type LinkName = "info" | "list" | "test_log" | "help" | "api";
-
-interface Link {
-  key: LinkName;
-  name: string;
-  icon: ReactNode;
-}
-
 interface Props {
   prompts: IEditPrompts[];
   setPrompts: Dispatch<SetStateAction<IEditPrompts[]>>;
+  isTemplateLoading?: boolean;
   createMode: FormType;
   handleSaveTemplate: (newTemplate?: Templates) => Promise<void>;
   templateData: Templates | undefined;
@@ -83,6 +76,7 @@ export const BuilderSidebar = ({
   handleSaveTemplate,
   templateData,
   isNewTemplate,
+  isTemplateLoading,
   templateDrawerOpen,
   setTemplateDrawerOpen,
 }: Props) => {
@@ -91,11 +85,11 @@ export const BuilderSidebar = ({
   const { template, engines } = useAppSelector(state => state.builder ?? initialBuilderState);
   const templateId = template?.id;
   const [open, setOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState<Link>();
+  const [activeLink, setActiveLink] = useState<ISidebarLink>();
   const { data: executions } = useGetPromptExecutionsQuery(templateId!, { skip: activeLink?.key !== "test_log" });
   const [deletePrompt] = useDeletePromptExecutionsMutation();
 
-  const handleOpenSidebar = (link: Link) => {
+  const handleOpenSidebar = (link: ISidebarLink) => {
     setOpen(true);
     setActiveLink(link);
     dispatch(setOpenBuilderSidebar(true));
@@ -104,24 +98,27 @@ export const BuilderSidebar = ({
   const handleCloseSidebar = () => {
     setOpen(false);
     dispatch(setOpenBuilderSidebar(false));
-    if (activeLink?.key === 'info' && setTemplateDrawerOpen) {
-      setTemplateDrawerOpen(false)
+    if (activeLink?.key === "templateForm" && templateDrawerOpen) {
+      setTemplateDrawerOpen?.(false);
     }
   };
 
   const deleteAllExecutions = async () => {
     if (templateId) await deletePrompt(templateId);
   };
-  
+
   useEffect(() => {
+    if (isTemplateLoading && !template) {
+      return;
+    }
     if (templateDrawerOpen) {
-      const link = LINKS.find(link => link.key === "info");
+      const link = LINKS.find(link => link.key === "templateForm");
       if (!link) return;
       handleOpenSidebar(link);
     }
-  }, [templateDrawerOpen]);
+  }, [template, isTemplateLoading, templateDrawerOpen]);
 
-  const renderIcon = (item: Link) => {
+  const renderIcon = (item: ISidebarLink) => {
     const iconColor = item.key === activeLink?.key ? theme.palette.primary.main : "#1C1B1F";
 
     switch (item.key) {
@@ -279,7 +276,7 @@ export const BuilderSidebar = ({
             <Close />
           </IconButton>
         </Box>
-        {activeLink?.key === "info" && (
+        {activeLink?.key === "templateForm" && (
           <Box
             sx={{
               padding: "16px 24px",
@@ -290,6 +287,7 @@ export const BuilderSidebar = ({
               templateData={templateData}
               darkMode
               onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
+              onClose={handleCloseSidebar}
             />
           </Box>
         )}

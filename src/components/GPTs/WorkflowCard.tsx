@@ -282,7 +282,7 @@ function WorkflowCard({
                   lineHeight={"150%"}
                   color={"#000"}
                 >
-                  Scheduled: {frequency} @ {time}
+                  Scheduled: {frequency} {periodic_task?.frequency !== "hourly" ? "@" : ""} {time}
                 </Typography>
 
                 <Box

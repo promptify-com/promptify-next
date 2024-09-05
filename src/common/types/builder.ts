@@ -1,4 +1,5 @@
-import { InputType } from "./prompt";
+import type { ReactNode } from "react";
+import type { InputType } from "./prompt";
 
 export interface IPromptParams {
   parameter_id: number;
@@ -65,4 +66,12 @@ export interface IHandlePreset {
   type: PresetType | null;
   label: string;
   firstAppend?: boolean;
+}
+
+export type LinkName = "templateForm" | "list" | "test_log" | "help" | "api";
+
+export interface ISidebarLink {
+  key: LinkName;
+  name: string;
+  icon: ReactNode;
 }

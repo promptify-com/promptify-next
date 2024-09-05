@@ -39,15 +39,9 @@ interface Props {
   darkMode?: boolean;
 }
 
-function TemplateForm({
-  type = "create",
-  templateData,
-  onSaved,
-  onClose,
-  darkMode = false,
-}: Props) {
+function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
   const token = useToken();
-  const pathname = usePathname()
+  const pathname = usePathname();
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -57,8 +51,8 @@ function TemplateForm({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
-  
-  const showCloseButton = pathname !== '/prompt-builder/create'
+
+  const showCloseButton = pathname !== "/prompt-builder/create";
 
   const { formik, loading, handleSubmit } = useTemplateForm({
     type,
@@ -66,7 +60,6 @@ function TemplateForm({
     uploadedFile: selectedFile,
     onSaved: onSaved,
   });
-
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -97,17 +90,6 @@ function TemplateForm({
 
   return (
     <Box sx={{ color, width: "100%" }}>
-      {showCloseButton && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            cursor: "pointer",
-          }}
-        >
-          <Close onClick={onClose} />
-        </Box>
-      )}
       <Stack sx={boxStyle}>
         <TextField
           fullWidth
