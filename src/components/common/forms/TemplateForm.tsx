@@ -4,12 +4,11 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import Autocomplete from "@mui/material/Autocomplete";
 import MenuItem from "@mui/material/MenuItem";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -486,30 +485,33 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               )}
             />
           </Stack>
+
           {type === "edit" && (
             <Stack sx={boxStyle}>
-              <FormControl variant="standard">
-                <InputLabel id="execution-label">Execution Example</InputLabel>
-                <Select
-                  disabled={loading}
-                  labelId="execution-label"
-                  value={formik.values.example_execution}
-                  onChange={event => {
-                    formik.setFieldValue("example_execution", event.target.value);
-                  }}
-                >
-                  {executions?.map(execution => (
-                    <MenuItem
-                      key={execution.id}
-                      value={execution.id}
-                    >
-                      {`#${execution.id} - ${execution.title}`}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                disabled={loading}
+                value={
+                  formik.values.example_execution && executions
+                    ? executions.find(execution => execution.id === formik.values.example_execution)
+                    : null
+                }
+                onChange={(event, newValue) => {
+                  formik.setFieldValue("example_execution", newValue?.id);
+                }}
+                options={executions || []}
+                renderInput={params => {
+                  return (
+                    <TextField
+                      {...params}
+                      label="Execution"
+                    />
+                  );
+                }}
+                getOptionLabel={option => `#${option.id} - ${option.title}`}
+              />
             </Stack>
           )}
+
           <FormControlLabel
             control={<Switch color="primary" />}
             label="Is Internal?"
