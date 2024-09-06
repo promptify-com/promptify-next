@@ -44,14 +44,14 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
     setSelectedFrequency(scheduledData?.frequency ?? "");
   }, [clonedWorkflow]);
 
-  useEffect(() => {
-    setScheduleTime({
-      ...scheduleTime,
-      day_of_month: scheduleDayOfMonth,
-      day_of_week: scheduleDayOfWeek,
-      time: scheduleHour
-    });
-  }, [scheduledData?.frequency]); // to sync the changes with scheduleTime state
+  // useEffect(() => {
+  //   setScheduleTime({
+  //     ...scheduleTime,
+  //     day_of_month: scheduleDayOfMonth,
+  //     day_of_week: scheduleDayOfWeek,
+  //     time: scheduleHour
+  //   });
+  // }, [scheduledData?.frequency]); // to sync the changes with scheduleTime state
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);
