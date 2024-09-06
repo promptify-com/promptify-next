@@ -22,6 +22,12 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
         frequency: clonedWorkflow?.periodic_task?.frequency,
       }
     );
+    return (
+      clonedWorkflow?.schedule ?? {
+        ...clonedWorkflow?.periodic_task?.crontab,
+        frequency: clonedWorkflow?.periodic_task?.frequency,
+      }
+    );
   }, [clonedWorkflow]);
 
   const scheduleDayOfWeek =

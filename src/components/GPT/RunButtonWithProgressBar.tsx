@@ -17,6 +17,7 @@ interface Props {
   loading?: boolean;
   sx?: SxProps;
   estimatedExecutionTime?: string | null;
+  estimatedExecutionTime?: string | null;
 }
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
