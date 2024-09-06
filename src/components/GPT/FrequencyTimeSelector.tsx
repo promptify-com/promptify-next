@@ -23,19 +23,24 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
       }
     );
   }, [clonedWorkflow]);
+
   const scheduleDayOfWeek =
     scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
       ? scheduledData?.day_of_week
       : 0;
+
   const scheduleDayOfMonth =
     scheduledData?.frequency === "monthly" && !(["1,15", "*"].includes(scheduledData.day_of_month?.toString() || ""))
       ? scheduledData?.day_of_month
       : 1;
 
+  const scheduleHour = scheduledData?.hour && parseInt(scheduledData?.hour?.toString() || "") !== 0 ? scheduledData?.hour : 9
+  // default for 9AM
+
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
     day_of_week: scheduleDayOfWeek || 0, // default of monday
     day_of_month: scheduleDayOfMonth || 1, // default of the first month
-    time: scheduledData?.hour ?? 0,
+    time: scheduleHour,
   });
 
   useEffect(() => {
@@ -47,6 +52,7 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
       ...scheduleTime,
       day_of_month: scheduleDayOfMonth,
       day_of_week: scheduleDayOfWeek,
+      time: scheduleHour
     });
   }, [scheduledData?.frequency]); // to sync the changes with scheduleTime state
 
