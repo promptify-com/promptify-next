@@ -93,7 +93,7 @@ const useWorkflow = (workflow: ITemplateWorkflow) => {
     return createdWorkflow;
   };
 
-  async function sendMessageAPI(webhook?: string, givenAnswers?: IAnswer[]): Promise<any> {
+  async function sendMessageAPI(webhook?: string, givenAnswers?: IAnswer[], frequency?: string): Promise<any> {
     const inputsData: Record<string, string> = {};
 
     inputs.forEach(input => {
@@ -101,7 +101,10 @@ const useWorkflow = (workflow: ITemplateWorkflow) => {
       inputsData[input.name] = answer?.answer as string;
     });
 
-    const response = await ApiClient.post(`/webhook/${webhook ?? webhookPathRef.current}`, inputsData);
+    const response = await ApiClient.post(
+      `/webhook/${webhook ?? webhookPathRef.current}${frequency ? `?frequency=${frequency}` : ""}`,
+      inputsData,
+    );
     return response.data;
   }
 
