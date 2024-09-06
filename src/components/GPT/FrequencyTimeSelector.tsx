@@ -17,10 +17,8 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
   const [selectedFrequency, setSelectedFrequency] = useState("");
   const scheduledData = useMemo(() => {
     return (
-      clonedWorkflow?.schedule ?? {
-        ...clonedWorkflow?.periodic_task?.crontab,
-        frequency: clonedWorkflow?.periodic_task?.frequency,
-      }
+      clonedWorkflow?.schedule ??  clonedWorkflow?.periodic_task?.crontab
+      
     );
   }, [clonedWorkflow]);
 
@@ -34,12 +32,12 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
       ? scheduledData?.day_of_month
       : 1;
 
-  const scheduleHour = scheduledData?.hour && parseInt(scheduledData?.hour?.toString() || "") !== 0 ? scheduledData?.hour : 9
+  const scheduleHour = scheduledData?.hour && !(["0","*"].includes(scheduledData?.hour?.toString() || "")) ? scheduledData?.hour : 9
   // default for 9AM
 
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day_of_week: scheduleDayOfWeek || 0, // default of monday
-    day_of_month: scheduleDayOfMonth || 1, // default of the first month
+    day_of_week: scheduleDayOfWeek, // default of monday
+    day_of_month: scheduleDayOfMonth, // default of the first month
     time: scheduleHour,
   });
 
