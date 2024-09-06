@@ -323,7 +323,9 @@ const useChat = ({ workflow }: Props) => {
       dispatch(setGptGenerationStatus("started"));
 
       const webhook = extractWebhookPath(clonedWorkflow.nodes);
-      const response = await sendMessageAPI(webhook);
+      const frequency = schedulingData?.frequency !== "none" ? schedulingData?.frequency : undefined;
+
+      const response = await sendMessageAPI(webhook, [], frequency);
 
       dispatch(setGptGenerationStatus("generated"));
 
