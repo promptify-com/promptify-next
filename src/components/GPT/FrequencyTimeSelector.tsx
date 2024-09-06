@@ -25,6 +25,7 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
     scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
       ? scheduledData?.day_of_week
       : 0;
+
   const scheduleDayOfMonth =
     scheduledData?.frequency === "monthly" && !(["1,15", "*"].includes(scheduledData.day_of_month?.toString() || ""))
       ? scheduledData?.day_of_month
