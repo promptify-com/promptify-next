@@ -8,17 +8,12 @@ interface Props {
   message?: string;
   items: string[];
   onSelect(item: string): void;
-  defaultValue?: string;
+  selectedValue: string
 }
 
-export default function Choices({ message, items, onSelect, defaultValue = "" }: Props) {
-  const [selectedItem, setSelectedItem] = useState(defaultValue);
+export default function Choices({ message, items, onSelect, selectedValue }: Props) {
 
-  const handleSelectItem = (item: string) => {
-    setSelectedItem(item);
-    onSelect(item);
-  };
-
+  
   return (
     <Stack gap={4}>
       {message && (
@@ -36,11 +31,11 @@ export default function Choices({ message, items, onSelect, defaultValue = "" }:
         gap={{ xs: 1, md: 2 }}
       >
         {items.map(item => {
-          const selected = selectedItem === item;
+          const selected = selectedValue === item;
           return (
             <Button
               key={item}
-              onClick={() => handleSelectItem(item)}
+              onClick={() => onSelect(item)}
               {...(selected && { endIcon: <Check /> })}
               sx={{
                 bgcolor: selected ? "#6E45E9" : "#F7F5FC",

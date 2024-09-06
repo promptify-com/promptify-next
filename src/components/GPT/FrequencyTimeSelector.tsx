@@ -10,15 +10,14 @@ import type { FrequencyTime } from "@/components/Automation/types";
 interface Props {
   message: string;
   onSelect(frequencyTime: FrequencyTime): void;
+  selectedFrequency?: string
 }
 
-export default function FrequencyTimeSelector({ message, onSelect }: Props) {
+export default function FrequencyTimeSelector({ message, onSelect, selectedFrequency }: Props) {
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
-  const [selectedFrequency, setSelectedFrequency] = useState("");
   const scheduledData = useMemo(() => {
     return (
       clonedWorkflow?.schedule ??  clonedWorkflow?.periodic_task?.crontab
-      
     );
   }, [clonedWorkflow]);
 
@@ -40,27 +39,6 @@ export default function FrequencyTimeSelector({ message, onSelect }: Props) {
     time: scheduleHour,
   });
 
-  useEffect(() => {
-    setSelectedFrequency(scheduledData?.frequency ?? "");
-  }, [clonedWorkflow]);
-
-  // useEffect(() => {
-  //   setScheduleTime({
-  //     ...scheduleTime,
-  //     day_of_month: scheduleDayOfMonth,
-  //     day_of_week: scheduleDayOfWeek,
-  //     time: scheduleHour
-  //   });
-  // }, [scheduledData?.frequency]); // to sync the changes with scheduleTime state
-
-  useEffect(() => {
-    setScheduleTime({
-      ...scheduleTime,
-      day_of_month: scheduleDayOfMonth,
-      day_of_week: scheduleDayOfWeek,
-      time: scheduleHour
-    });
-  }, [scheduledData?.frequency]); // to sync the changes with scheduleTime state
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);
