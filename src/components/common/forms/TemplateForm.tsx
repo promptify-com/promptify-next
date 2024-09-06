@@ -82,6 +82,11 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
 
   const color = !darkMode ? "common.white" : "common.black";
 
+  const ExecutionExampleValue =
+    formik.values.example_execution && executions
+      ? executions.find(execution => execution.id === formik.values.example_execution)
+      : null;
+
   return (
     <Box sx={{ color, width: "100%" }}>
       <Stack sx={boxStyle}>
@@ -490,12 +495,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             <Stack sx={boxStyle}>
               <Autocomplete
                 disabled={loading}
-                value={
-                  formik.values.example_execution && executions
-                    ? executions.find(execution => execution.id === formik.values.example_execution)
-                    : null
-                }
-                onChange={(event, newValue) => {
+                value={ExecutionExampleValue}
+                onChange={(_, newValue) => {
                   formik.setFieldValue("example_execution", newValue?.id);
                 }}
                 options={executions || []}
