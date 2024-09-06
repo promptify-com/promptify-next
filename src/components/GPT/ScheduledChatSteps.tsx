@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -53,6 +53,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const alreadyScheduled = useRef(workflowScheduled);
   const bottomRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
+
+  const [selectedFrequency,setSelectedFrequency] = useState<FrequencyType | undefined>(clonedWorkflow?.periodic_task?.frequency)
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -187,8 +189,11 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   <Choices
                     message={message.text}
                     items={FREQUENCIES}
-                    onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
-                    defaultValue={clonedWorkflow?.periodic_task?.frequency ?? ""}
+                    onSelect={frequency => {
+                      setScheduleFrequency(frequency as FrequencyType);
+                      setSelectedFrequency(frequency as FrequencyType)
+                    }}
+                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency || ""}
                   />
                 )}
 
@@ -196,6 +201,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   <FrequencyTimeSelector
                     message={message.text}
                     onSelect={setScheduleTime}
+                    selectedFrequency={selectedFrequency}
                   />
                 )}
                 {message.type === "schedule_providers" && !isNone && (
