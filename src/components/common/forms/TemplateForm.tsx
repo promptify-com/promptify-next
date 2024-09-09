@@ -85,10 +85,6 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
       ? executions.find(execution => execution.id === formik.values.example_execution)
       : null;
 
-  const ExecutionExampleValue =
-    formik.values.example_execution && executions
-      ? executions.find(execution => execution.id === formik.values.example_execution)
-      : null;
 
   return (
     <Box sx={{ color, width: "100%" }}>
