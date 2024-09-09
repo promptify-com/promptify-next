@@ -504,7 +504,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
                   return (
                     <TextField
                       {...params}
-                      label="Execution"
+                      label="Execution Example"
                     />
                   );
                 }}
