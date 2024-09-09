@@ -1,18 +1,17 @@
-import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Check from "@mui/icons-material/Check";
+import { FrequencyType } from "../Automation/types";
 
 interface Props {
   message?: string;
   items: string[];
   onSelect(item: string): void;
-  selectedValue: string
+  selectedValue: FrequencyType | undefined
 }
 
 export default function Choices({ message, items, onSelect, selectedValue }: Props) {
-
   
   return (
     <Stack gap={4}>

@@ -5,12 +5,12 @@ import Stack from "@mui/material/Stack";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import DateTimeSelect from "./DateTimeSelect";
-import type { FrequencyTime } from "@/components/Automation/types";
+import type { FrequencyTime, FrequencyType } from "@/components/Automation/types";
 
 interface Props {
   message: string;
   onSelect(frequencyTime: FrequencyTime): void;
-  selectedFrequency?: string
+  selectedFrequency?: FrequencyType
 }
 
 export default function FrequencyTimeSelector({ message, onSelect, selectedFrequency }: Props) {
