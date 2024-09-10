@@ -18,9 +18,7 @@ function ResumeWorkflow({ workflow_id, setOpen, setIsPaused }: Props) {
   const dispatch = useAppDispatch();
   const [resumeWorkflow] = useResumeWorkflowMutation();
   ///
-  const handleResume = async (e: MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleResume = async () => {
     try {
       await resumeWorkflow(workflow_id);
       setOpen(false);

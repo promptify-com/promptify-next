@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { GearIcon } from "@/assets/icons/GearIcon";
 // Modals
 import WorkflowActionsModal from "./WorkflowActionsModal";
+import DeleteDialog from "@/modals/layouts/remove_dialog";
 //
 import type { ITemplateWorkflow } from "../../Automation/types";
 
@@ -19,9 +20,7 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused }
   const [open, setOpen] = useState<boolean>();
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
   //
-  const handleOpenModal = (e: MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleOpenModal = () => {
     setOpen(!open);
   };
 
@@ -31,6 +30,9 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused }
         ref={actionsAnchorRef}
         onClick={handleOpenModal}
         sx={{
+          position: "absolute",
+          right: 10,
+          bottom: 10,
           display: "flex",
           width: "32px",
           height: "32px",
@@ -55,6 +57,7 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused }
           setIsPaused={setIsPaused}
         />
       )}
+      <DeleteDialog />
     </>
   );
 }
