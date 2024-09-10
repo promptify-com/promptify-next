@@ -45,7 +45,7 @@ function WorkflowCard({
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
   // Query
-  const { data, isLoading } = useGetWorkflowByIdQuery(templateWorkflow?.id);
+  const { data, isLoading } = useGetWorkflowByIdQuery(templateWorkflow?.id ?? 0);
   //
   const handleLikeDislike = async (e: React.MouseEvent) => {
     e.preventDefault();
