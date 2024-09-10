@@ -229,6 +229,7 @@ function WorkflowCard({
           isPaused={isPaused}
           setIsPaused={setIsPaused}
           userWorkflowId={userWorkflowId}
+          sx={{ position: "absolute", right: 10, bottom: 10 }}
         />
       )}
     </Stack>
