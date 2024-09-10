@@ -7,9 +7,7 @@ import TextField from "@mui/material/TextField";
 import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
 import Autocomplete from "@mui/material/Autocomplete";
-import MenuItem from "@mui/material/MenuItem";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -86,6 +84,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
     formik.values.example_execution && executions
       ? executions.find(execution => execution.id === formik.values.example_execution)
       : null;
+
 
   return (
     <Box sx={{ color, width: "100%" }}>
@@ -491,6 +490,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             />
           </Stack>
 
+
           {type === "edit" && (
             <Stack sx={boxStyle}>
               <Autocomplete
@@ -504,7 +504,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
                   return (
                     <TextField
                       {...params}
-                      label="Execution"
+                      label="Execution Example"
                     />
                   );
                 }}
@@ -512,6 +512,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               />
             </Stack>
           )}
+
 
           <FormControlLabel
             control={<Switch color="primary" />}
