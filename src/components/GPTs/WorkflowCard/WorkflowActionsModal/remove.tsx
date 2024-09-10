@@ -1,4 +1,5 @@
 import { Dispatch, useState } from "react";
+import { useRouter } from "next/router";
 // Mui
 import { MenuItem } from "@mui/material";
 // Redux
@@ -17,12 +18,15 @@ function RemoveWorkflow({ workflow_id, setOpen }: Props) {
   // Store
   const dispatch = useAppDispatch();
   const [deleteWorkflow] = useDeleteWorkflowMutation();
+  // Route
+  const router = useRouter();
   ///
   const handleRemove = async () => {
     try {
       await deleteWorkflow(workflow_id);
       setOpen(false);
       dispatch(handleClose());
+      if (router.pathname === "/apps/[slug]") router.push(`/apps`);
       dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
     } catch (err) {
       console.error("Failed to pause workflow", err);
@@ -38,7 +42,6 @@ function RemoveWorkflow({ workflow_id, setOpen }: Props) {
         onSubmit: handleRemove,
       }),
     );
-    console.log("clicked");
   };
 
   return (
