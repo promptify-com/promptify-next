@@ -1,31 +1,23 @@
-import { useRef, useState } from "react";
-import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined";
-import Chip from "@mui/material/Chip";
-
+// Mui
+import { Stack, Box, Typography, Chip } from "@mui/material";
+import { FavoriteBorderOutlined } from "@mui/icons-material";
+import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
+// Store
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
-import {
-  useDeleteWorkflowMutation,
-  useDislikeWorkflowMutation,
-  useLikeWorkflowMutation,
-  usePauseWorkflowMutation,
-  useResumeWorkflowMutation,
-} from "@/core/api/workflows";
+import { useDislikeWorkflowMutation, useGetWorkflowByIdQuery, useLikeWorkflowMutation } from "@/core/api/workflows";
+//
 import { TIMES } from "@/components/GPT/Constants";
-import { GearIcon } from "@/assets/icons/GearIcon";
+import StatusChip from "@/components/GPTs/StatusChip";
 import useTruncate from "@/hooks/useTruncate";
 import Image from "@/components/design-system/Image";
-import StatusChip from "@/components/GPTs/StatusChip";
-import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 import { capitalizeString, formatDate } from "@/common/helpers";
-import { DeleteDialog } from "../dialog/DeleteDialog";
-import WorkflowActionsModal from "./WorkflowActionsModal";
-import type { ITemplateWorkflow, IPeriodicTask } from "../Automation/types";
+import type { ITemplateWorkflow, IPeriodicTask } from "../../Automation/types";
+// Components
+import WorkflowCardActions from "./WorkflowCardActions";
+import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCard/skeleton";
 
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
@@ -45,96 +37,18 @@ function WorkflowCard({
   category,
 }: Props) {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const { truncate } = useTruncate();
-
-  const [deleteWorkflow] = useDeleteWorkflowMutation();
+  //
   const [likeWorklow] = useLikeWorkflowMutation();
   const [dislikeWorkflow] = useDislikeWorkflowMutation();
-
-  const [pauseWorkflow] = usePauseWorkflowMutation();
-  const [resumeWorkflow] = useResumeWorkflowMutation();
-  const [selectedWorkflow, setSelectedWorkflow] = useState<ITemplateWorkflow>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
-  const actionsAnchorRef = useRef<HTMLButtonElement>(null);
-
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
-
-  const handleOpenModal = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (isModalOpen) {
-      setSelectedWorkflow(undefined);
-      setIsModalOpen(false);
-      return;
-    }
-    setSelectedWorkflow(templateWorkflow);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleDelete = async () => {
-    if (!userWorkflowId) {
-    }
-    try {
-      await deleteWorkflow(String(userWorkflowId));
-      setSelectedWorkflow(undefined);
-      setOpenDeleteDialog(false);
-
-      dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
-    } catch (err) {
-      console.error("Failed to delete workflow", err);
-      dispatch(setToast({ message: "Failed to delete workflow. Please try again.", severity: "error" }));
-    }
-  };
-
-  const handleEdit = () => {
-    router.push(`/apps/${templateWorkflow?.slug}`);
-    handleCloseModal();
-  };
-
-  const handlePause = async () => {
-    if (!userWorkflowId) return;
-
-    try {
-      await pauseWorkflow(userWorkflowId);
-      setIsPaused(true);
-      dispatch(setToast({ message: "Workflow paused successfully", severity: "success" }));
-    } catch (err) {
-      console.error("Failed to pause workflow", err);
-      dispatch(setToast({ message: "Failed to pause workflow. Please try again.", severity: "error" }));
-    }
-    handleCloseModal();
-  };
-
-  const handleResume = async () => {
-    if (!userWorkflowId) return;
-
-    try {
-      await resumeWorkflow(userWorkflowId);
-      setIsPaused(false);
-      dispatch(setToast({ message: "Workflow resumed successfully", severity: "success" }));
-    } catch (err) {
-      console.error("Failed to resume workflow", err);
-      dispatch(setToast({ message: "Failed to resume workflow. Please try again.", severity: "error" }));
-    }
-    handleCloseModal();
-  };
-
-  const handleRemove = () => {
-    setOpenDeleteDialog(true);
-    handleCloseModal();
-  };
-
+  // Query
+  const { data, isLoading } = useGetWorkflowByIdQuery(templateWorkflow?.id);
+  //
   const handleLikeDislike = async (e: React.MouseEvent) => {
     e.preventDefault();
-
     if (!templateWorkflow?.id) {
       return;
     }
@@ -153,6 +67,8 @@ function WorkflowCard({
       dispatch(setToast({ message: "Something went wrong, please try again later!", severity: "error" }));
     }
   };
+  //
+  if (isLoading) return <WorkflowCardPlaceholder />;
 
   return (
     <>
@@ -285,23 +201,12 @@ function WorkflowCard({
                   Scheduled: {frequency} {periodic_task?.frequency !== "hourly" ? "@" : ""} {time}
                 </Typography>
 
-                <Box
-                  ref={actionsAnchorRef}
-                  onClick={handleOpenModal}
-                  sx={{
-                    display: "flex",
-                    width: "32px",
-                    height: "32px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "6px",
-                    borderRadius: "100px",
-                    border: "1px solid rgba(0, 0, 0, 0.10)",
-                    background: "#FFF",
-                  }}
-                >
-                  <GearIcon />
-                </Box>
+                <WorkflowCardActions
+                  workflow={data}
+                  isPaused={isPaused}
+                  setIsPaused={setIsPaused}
+                  userWorkflowId={userWorkflowId}
+                />
               </Stack>
             ) : (
               <Chip
@@ -325,28 +230,6 @@ function WorkflowCard({
           </Stack>
         </Stack>
       </Link>
-
-      {isModalOpen && (
-        <WorkflowActionsModal
-          open={isModalOpen}
-          workflow={selectedWorkflow}
-          onClose={handleCloseModal}
-          onEdit={handleEdit}
-          onPause={handlePause}
-          onResume={handleResume}
-          onRemove={handleRemove}
-          anchorEl={actionsAnchorRef.current}
-          isPaused={isPaused}
-        />
-      )}
-      {openDeleteDialog && (
-        <DeleteDialog
-          open={true}
-          dialogContentText={`Are you sure you want to remove the "${selectedWorkflow?.name}"?`}
-          onClose={() => setOpenDeleteDialog(false)}
-          onSubmit={handleDelete}
-        />
-      )}
     </>
   );
 }

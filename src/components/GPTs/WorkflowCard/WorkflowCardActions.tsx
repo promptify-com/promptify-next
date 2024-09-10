@@ -1,0 +1,62 @@
+import { Dispatch, useRef, useState } from "react";
+// Mui
+import { Box } from "@mui/material";
+import { GearIcon } from "@/assets/icons/GearIcon";
+// Modals
+import WorkflowActionsModal from "./WorkflowActionsModal";
+//
+import type { ITemplateWorkflow } from "../../Automation/types";
+
+interface Props {
+  workflow?: ITemplateWorkflow;
+  userWorkflowId?: string;
+  isPaused: boolean;
+  setIsPaused: Dispatch<boolean>;
+}
+
+function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused }: Props) {
+  // Stats
+  const [open, setOpen] = useState<boolean>();
+  const actionsAnchorRef = useRef<HTMLButtonElement>(null);
+  //
+  const handleOpenModal = (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setOpen(!open);
+  };
+
+  return (
+    <>
+      <Box
+        ref={actionsAnchorRef}
+        onClick={handleOpenModal}
+        sx={{
+          display: "flex",
+          width: "32px",
+          height: "32px",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "6px",
+          borderRadius: "100px",
+          border: "1px solid rgba(0, 0, 0, 0.10)",
+          background: "#FFF",
+        }}
+      >
+        <GearIcon />
+      </Box>
+      {open && (
+        <WorkflowActionsModal
+          workflow={workflow}
+          anchorEl={actionsAnchorRef.current}
+          setOpen={setOpen}
+          open={open}
+          userWorkflowId={userWorkflowId}
+          isPaused={isPaused}
+          setIsPaused={setIsPaused}
+        />
+      )}
+    </>
+  );
+}
+
+export default WorkflowCardActions;
