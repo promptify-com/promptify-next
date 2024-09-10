@@ -5,16 +5,25 @@ import MessageContainer from "./MessageContainer";
 import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
 import { initialState } from "@/core/store/chatSlice";
 import type { ITemplateWorkflow } from "../Automation/types";
+import { useMemo } from "react";
 1;
 interface Props {
   onRun(): void;
   estimatedExecutionTime: string | null;
+  runInstantly?: boolean;
 }
 
-export default function runWorkflowMessage({ onRun, estimatedExecutionTime }: Props) {
+export default function runWorkflowMessage({ onRun, estimatedExecutionTime, runInstantly = false }: Props) {
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialState.gptGenerationStatus,
   );
+
+  const runWorkflow = useMemo(() => {
+    if (!runInstantly) {
+      return;
+    }
+    onRun();
+  }, [runInstantly]);
 
   return (
     <MessageContainer>
@@ -45,7 +54,9 @@ export default function runWorkflowMessage({ onRun, estimatedExecutionTime }: Pr
         </Typography>
         <RunButtonWithProgressBar
           estimatedExecutionTime={estimatedExecutionTime}
-          onClick={onRun}
+          onClick={() => {
+            runInstantly ? runWorkflow : onRun();
+          }}
           text="Run"
           sx={{ p: "8px 24px" }}
           loading={gptGenerationStatus === "started"}

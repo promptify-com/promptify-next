@@ -133,11 +133,11 @@ export default function Message({
           sx={{
             p: "16px 20px",
             borderRadius: fromUser
-              ? "100px 100px 100px 0px"
+              ? "100px 0px 100px 100px"
               : isInitialMessage
                 ? "0px 100px 100px 100px"
                 : "0px 16px 16px 16px",
-            bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
+            bgcolor: fromUser ? "#9aedd3" : isHighlight ? "#DFDAFF" : "#F8F7FF",
           }}
         >
           {["workflowExecution", "html"].includes(type) ? (

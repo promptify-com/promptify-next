@@ -13,14 +13,14 @@ import Header from "@/components/GPT/Header";
 import store from "@/core/store";
 import Workflow from "@/components/GPTs/FlowData";
 import useMessageManager from "@/components/GPT/Hooks/useMessageManager";
-import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import { isValidUserFn } from "@/core/store/userSlice";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
 import templatesSlice from "@/core/store/templatesSlice";
+import ChatInput from "@/components/Chat/ChatInput";
+import ChatInterface from "@/components/GPT/Chat/ChatInterface";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -32,10 +32,12 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   const router = useRouter();
   const isValidUser = useAppSelector(isValidUserFn);
 
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
   const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded } = useWorkflow(workflow);
   const { extractCredentialsInputFromNodes } = useCredentials();
 
-  const { prepareAndQueueMessages, showGenerateButton } = useMessageManager({
+  const { prepareAndQueueMessages } = useMessageManager({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
@@ -122,7 +124,8 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
             direction={{ xs: "column-reverse", md: "row" }}
             justifyContent={"space-between"}
           >
-            <Stack flex={1}></Stack>
+            <ChatInterface workflow={selectedWorkflow} />
+
             <Workflow workflow={selectedWorkflow} />
           </Stack>
         </Stack>
