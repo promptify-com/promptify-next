@@ -2,12 +2,9 @@ import { useState } from "react";
 import Link from "next/link";
 // Mui
 import { Stack, Box, Typography, Chip } from "@mui/material";
-import { FavoriteBorderOutlined } from "@mui/icons-material";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
 // Store
-import { setToast } from "@/core/store/toastSlice";
-import { useAppDispatch } from "@/hooks/useStore";
-import { useDislikeWorkflowMutation, useGetWorkflowByIdQuery, useLikeWorkflowMutation } from "@/core/api/workflows";
+import { useGetWorkflowQuery } from "@/core/api/workflows";
 //
 import { TIMES } from "@/components/GPT/Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
@@ -17,12 +14,13 @@ import { capitalizeString, formatDate } from "@/common/helpers";
 import type { ITemplateWorkflow, IPeriodicTask } from "../../Automation/types";
 // Components
 import WorkflowCardActions from "./WorkflowCardActions";
-import WorkflowCardPlaceholder from "@/components/GPTs/WorkflowCard/skeleton";
+import WorkflowCardLike from "./LikeAction";
+import WorkflowCardPlaceholder from "./skeleton";
 
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
   periodic_task?: IPeriodicTask | null;
-  userWorkflowId?: string;
+  userWorkflowId: string | number;
   lastExecuted: string | null;
   isGPTScheduled?: boolean;
   category?: string;
@@ -36,39 +34,15 @@ function WorkflowCard({
   isGPTScheduled = false,
   category,
 }: Props) {
-  const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   //
-  const [likeWorklow] = useLikeWorkflowMutation();
-  const [dislikeWorkflow] = useDislikeWorkflowMutation();
   const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
   // Query
-  const { data, isLoading } = useGetWorkflowByIdQuery(templateWorkflow?.id ?? 0);
+  const { data: userWorkflow, isLoading } = useGetWorkflowQuery(String(userWorkflowId));
   //
-  const handleLikeDislike = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!templateWorkflow?.id) {
-      return;
-    }
-
-    const _id = templateWorkflow.id;
-
-    try {
-      if (templateWorkflow?.is_liked) {
-        await dislikeWorkflow(_id);
-        dispatch(setToast({ message: `You unlike ${templateWorkflow.name}`, severity: "success" }));
-        return;
-      }
-      await likeWorklow(_id);
-      dispatch(setToast({ message: `You liked ${templateWorkflow?.name}`, severity: "success" }));
-    } catch (error) {
-      dispatch(setToast({ message: "Something went wrong, please try again later!", severity: "error" }));
-    }
-  };
-  //
-  if (isLoading) return <WorkflowCardPlaceholder />;
+  if (isLoading || !userWorkflow) return <WorkflowCardPlaceholder />;
 
   return (
     <Stack sx={{ position: "relative" }}>
@@ -106,24 +80,7 @@ function WorkflowCard({
               bottom={7}
               right={10}
             >
-              <Stack
-                onClick={handleLikeDislike}
-                direction={"row"}
-                alignItems={"center"}
-                gap={0.5}
-                sx={{
-                  ...iconTextStyle,
-                  bgcolor: templateWorkflow?.is_liked ? "red" : "rgba(0, 0, 0, 0.8)",
-                  transition: "background-color 0.3s ease",
-                  "&:hover": {
-                    bgcolor: templateWorkflow?.is_liked ? "rgba(0, 0, 0, 0.8)" : "red",
-                  },
-                }}
-                className="icon-text-style"
-              >
-                <FavoriteBorderOutlined sx={{ fontSize: 12 }} />
-                {templateWorkflow?.likes ?? 0}
-              </Stack>
+              <WorkflowCardLike workflow={templateWorkflow!} />
               <Stack
                 direction={"row"}
                 alignItems={"center"}
@@ -225,7 +182,7 @@ function WorkflowCard({
       </Link>
       {isGPTScheduled && (
         <WorkflowCardActions
-          workflow={data}
+          workflow={userWorkflow}
           isPaused={isPaused}
           setIsPaused={setIsPaused}
           userWorkflowId={userWorkflowId}
