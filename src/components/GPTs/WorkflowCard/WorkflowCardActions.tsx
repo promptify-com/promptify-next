@@ -13,7 +13,7 @@ interface Props {
   userWorkflowId?: string;
   isPaused: boolean;
   setIsPaused: Dispatch<boolean>;
-  sx: object;
+  sx?: object;
 }
 
 function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, sx }: Props) {
