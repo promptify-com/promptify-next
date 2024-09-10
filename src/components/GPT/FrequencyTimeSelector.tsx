@@ -41,6 +41,15 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
   });
 
 
+  useEffect(() => {
+    setScheduleTime({
+      ...scheduleTime,
+      day_of_week: scheduleDayOfWeek, 
+      day_of_month: scheduleDayOfMonth,
+      time: scheduleHour,
+    });
+  }, [scheduledData]);
+
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);
     if (scheduledData) {
