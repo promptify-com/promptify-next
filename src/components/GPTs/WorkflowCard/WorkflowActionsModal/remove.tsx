@@ -1,8 +1,9 @@
-import { Dispatch } from "react";
+import { Dispatch, useState } from "react";
 // Mui
 import { MenuItem } from "@mui/material";
 // Redux
 import { useAppDispatch } from "@/hooks/useStore";
+import { handleClose, handleOpen } from "@/core/store/layout/RemoveDialogSlice";
 import { setToast } from "@/core/store/toastSlice";
 // Queries
 import { useDeleteWorkflowMutation } from "@/core/api/workflows";
@@ -17,26 +18,38 @@ function RemoveWorkflow({ workflow_id, setOpen }: Props) {
   const dispatch = useAppDispatch();
   const [deleteWorkflow] = useDeleteWorkflowMutation();
   ///
-  const handleRemove = async (e: MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleRemove = async () => {
     try {
       await deleteWorkflow(workflow_id);
       setOpen(false);
+      dispatch(handleClose());
       dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
     } catch (err) {
       console.error("Failed to pause workflow", err);
       dispatch(setToast({ message: "Failed to delete workflow. Please try again.", severity: "error" }));
     }
   };
+  const handleOpenModal = () => {
+    setOpen(false);
+    dispatch(
+      handleOpen({
+        title: "Remove AI App",
+        content: "Are you sure you want to remove this AI App?",
+        onSubmit: handleRemove,
+      }),
+    );
+    console.log("clicked");
+  };
 
   return (
-    <MenuItem
-      sx={menuItemStyle}
-      onClick={handleRemove}
-    >
-      Remove AI App
-    </MenuItem>
+    <>
+      <MenuItem
+        sx={menuItemStyle}
+        onClick={handleOpenModal}
+      >
+        Remove AI App
+      </MenuItem>
+    </>
   );
 }
 

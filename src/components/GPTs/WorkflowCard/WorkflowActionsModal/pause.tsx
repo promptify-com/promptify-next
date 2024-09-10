@@ -18,9 +18,7 @@ function PauseWorkflow({ workflow_id, setOpen, setIsPaused }: Props) {
   const dispatch = useAppDispatch();
   const [pauseWorkflow] = usePauseWorkflowMutation();
   ///
-  const handlePause = async (e: MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handlePause = async () => {
     try {
       await pauseWorkflow(workflow_id);
       setOpen(false);

@@ -20,10 +20,6 @@ interface Props {
 }
 
 function WorkflowActionsModal({ open, setOpen, workflow, anchorEl, userWorkflowId, isPaused, setIsPaused }: Props) {
-  console.log("workflow", workflow);
-  console.log("isPaused", isPaused);
-
-  console.log(workflow);
   return (
     <Popper
       sx={{ zIndex: 1200 }}
