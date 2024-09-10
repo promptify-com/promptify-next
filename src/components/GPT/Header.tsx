@@ -14,6 +14,7 @@ import { DAYS, TIMES } from "./Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
 // Components
 import WorkflowCardActions from "@/components/GPTs/WorkflowCard/WorkflowCardActions";
+import { useState } from "react";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
@@ -25,16 +26,16 @@ export default function Header({ workflow }: Props) {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const periodicTask = clonedWorkflow?.periodic_task;
   const scheduleData = clonedWorkflow?.periodic_task?.crontab;
-
   const frequency = capitalizeString(periodicTask?.frequency ?? "");
   const isWeekly = scheduleData?.frequency === "weekly";
   const scheduleDay = isWeekly ? scheduleData?.day_of_week : scheduleData?.day_of_month;
   const day =
     (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay as number] : scheduleDay)) || null;
   const time = TIMES[scheduleData?.hour ?? 0];
+  //
+  const [isPause, setIsPause] = useState(!periodicTask?.enabled);
 
   const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";
-  const isActive = periodicTask?.enabled;
 
   return (
     <Stack
@@ -131,13 +132,13 @@ export default function Header({ workflow }: Props) {
                 }}
               >
                 Status:
-                <StatusChip status={isActive ? "active" : "paused"} />
+                <StatusChip status={!isPause ? "active" : "paused"} />
                 <Stack sx={{ position: "relative" }}>
                   <WorkflowCardActions
                     workflow={workflow}
-                    isPaused={!isActive}
-                    setIsPaused={() => console.log("paused")}
-                    userWorkflowId={workflow?.id}
+                    isPaused={isPause}
+                    setIsPaused={setIsPause}
+                    userWorkflowId={clonedWorkflow?.id}
                   />
                 </Stack>
               </Stack>

@@ -24,6 +24,7 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, 
   const handleOpenModal = () => {
     setOpen(!open);
   };
+  console.log(workflow);
 
   return (
     <>
