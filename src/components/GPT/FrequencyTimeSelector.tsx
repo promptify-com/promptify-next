@@ -10,36 +10,43 @@ import type { FrequencyTime, FrequencyType } from "@/components/Automation/types
 interface Props {
   message: string;
   onSelect(frequencyTime: FrequencyTime): void;
-  selectedFrequency?: FrequencyType
+  selectedFrequency?: FrequencyType;
 }
 
 export default function FrequencyTimeSelector({ message, onSelect, selectedFrequency }: Props) {
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
   const scheduledData = useMemo(() => {
-    return (
-      clonedWorkflow?.schedule ??  clonedWorkflow?.periodic_task?.crontab
-    );
+    return clonedWorkflow?.schedule ?? clonedWorkflow?.periodic_task?.crontab;
   }, [clonedWorkflow]);
 
   const scheduleDayOfWeek =
-    scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
+    scheduledData?.frequency === "weekly" && !["0-6", "*"].includes(scheduledData.day_of_week?.toString() || "")
       ? scheduledData?.day_of_week
       : 0;
 
   const scheduleDayOfMonth =
-    scheduledData?.frequency === "monthly" && !(["1,15", "*"].includes(scheduledData.day_of_month?.toString() || ""))
+    scheduledData?.frequency === "monthly" && !["1,15", "*"].includes(scheduledData.day_of_month?.toString() || "")
       ? scheduledData?.day_of_month
       : 1;
 
-  const scheduleHour = scheduledData?.hour && !(["0", "*"].includes(scheduledData.hour?.toString() || "")) ? scheduledData?.hour : 9
+  const scheduleHour =
+    scheduledData?.hour && !["0", "*"].includes(scheduledData.hour?.toString() || "") ? scheduledData?.hour : 9;
   // default for 9AM
 
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
     day_of_week: scheduleDayOfWeek, // default of monday
-    day_of_month: scheduleDayOfMonth,// default of the first month
+    day_of_month: scheduleDayOfMonth, // default of the first month
     time: scheduleHour,
   });
 
+  useEffect(() => {
+    setScheduleTime({
+      ...scheduleTime,
+      day_of_week: scheduleDayOfWeek, 
+      day_of_month: scheduleDayOfMonth,
+      time: scheduleHour,
+    });
+  }, [scheduledData]);
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);
