@@ -1,14 +1,13 @@
 import { useState } from "react";
 // Mui
-import {
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-} from "@mui/material";
+// Mui
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 import { red } from "@mui/material/colors/";
 // Redux
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -18,31 +17,31 @@ function DeleteDialog() {
   const [isLoading, setIsLoading] = useState(false);
   /// Store
   const dispatch = useAppDispatch();
-  const { open, content, title, onSubmit } = useAppSelector(({ layout }) => layout.remove_dialog);
+  const dialog = useAppSelector(({ layout }) => layout?.remove_dialog);
 
   //
   const handleSubmit = () => {
-    onSubmit();
+    dialog?.onSubmit();
     setIsLoading(true);
   };
-  const handleCloseDialog = (e: MouseEvent) => {
+  const handleCloseDialog = () => {
     dispatch(handleClose());
   };
 
   return (
     <Dialog
-      open={open}
+      open={dialog?.open ?? false}
       disableScrollLock={true}
-      onClose={() => handleCloseDialog()}
+      onClose={handleCloseDialog}
     >
-      <DialogTitle fontSize={26}>{title}</DialogTitle>
+      <DialogTitle fontSize={26}>{dialog?.title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{content}</DialogContentText>
+        <DialogContentText>{dialog?.content}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           sx={{ "&:hover": { background: "#5a58cb24" } }}
-          onClick={() => handleCloseDialog()}
+          onClick={handleCloseDialog}
         >
           Cancel
         </Button>
