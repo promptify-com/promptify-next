@@ -6106,10 +6106,10 @@ restore-cursor@^4.0.0:
     onetime "^5.1.0"
     signal-exit "^3.0.2"
 
-rete-area-plugin@2.0.0-beta.9:
-  version "2.0.0-beta.9"
-  resolved "https://registry.yarnpkg.com/rete-area-plugin/-/rete-area-plugin-2.0.0-beta.9.tgz#bfb609a4bcd3aca9cba1b95ffa707203b6be6feb"
-  integrity sha512-evIhD0kQ/TGHXmR8v/R+kRBBncwgentqd87FAwA6yhfVdK4Ik/eYgFStI6Ag2yZrY/AFAEwU3ylDnc05GTgaTQ==
+rete-area-plugin@2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/rete-area-plugin/-/rete-area-plugin-2.1.1.tgz#cedb333f26831f4da615446b34b3945fd7f724b0"
+  integrity sha512-vxvq1R0S6WK3B6h9gjjYRbolwJmtb2x9bWcnGPdNueEq5DqVSsDRfYIDgaqnXEdrcOiMX7yzSd3N4h+XvMmiBA==
   dependencies:
     "@babel/runtime" "^7.21.0"
 
