@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 // Mui
 import { Stack, Box, Typography, Chip } from "@mui/material";
@@ -71,7 +71,7 @@ function WorkflowCard({
   if (isLoading) return <WorkflowCardPlaceholder />;
 
   return (
-    <>
+    <Stack sx={{ position: "relative" }}>
       <Link
         href={`/apps/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
@@ -200,13 +200,6 @@ function WorkflowCard({
                 >
                   Scheduled: {frequency} {periodic_task?.frequency !== "hourly" ? "@" : ""} {time}
                 </Typography>
-
-                <WorkflowCardActions
-                  workflow={data}
-                  isPaused={isPaused}
-                  setIsPaused={setIsPaused}
-                  userWorkflowId={userWorkflowId}
-                />
               </Stack>
             ) : (
               <Chip
@@ -230,7 +223,15 @@ function WorkflowCard({
           </Stack>
         </Stack>
       </Link>
-    </>
+      {isGPTScheduled && (
+        <WorkflowCardActions
+          workflow={data}
+          isPaused={isPaused}
+          setIsPaused={setIsPaused}
+          userWorkflowId={userWorkflowId}
+        />
+      )}
+    </Stack>
   );
 }
 

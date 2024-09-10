@@ -12,9 +12,7 @@ interface Props {
 function EditWorkflow({ template_slug, setOpen }: Props) {
   const router = useRouter();
   ///
-  const handleEdit = (e: MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleEdit = () => {
     router.push(`/apps/${template_slug}`);
     setOpen(false);
   };
