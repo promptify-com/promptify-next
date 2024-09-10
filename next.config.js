@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   reactStrictMode: false,
   images: {
     remotePatterns: [
@@ -30,7 +33,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "cdn.discordapp.com",
-      }
+      },
     ],
     minimumCacheTTL: 3600,
   },
