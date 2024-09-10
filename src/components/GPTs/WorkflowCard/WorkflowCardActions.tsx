@@ -13,9 +13,10 @@ interface Props {
   userWorkflowId?: string;
   isPaused: boolean;
   setIsPaused: Dispatch<boolean>;
+  sx: object;
 }
 
-function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused }: Props) {
+function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, sx }: Props) {
   // Stats
   const [open, setOpen] = useState<boolean>();
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
@@ -30,9 +31,7 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused }
         ref={actionsAnchorRef}
         onClick={handleOpenModal}
         sx={{
-          position: "absolute",
-          right: 10,
-          bottom: 10,
+          ...sx,
           display: "flex",
           width: "32px",
           height: "32px",

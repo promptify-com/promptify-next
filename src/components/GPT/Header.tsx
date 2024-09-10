@@ -12,6 +12,8 @@ import { initialState } from "@/core/store/chatSlice";
 import { capitalizeString } from "@/common/helpers";
 import { DAYS, TIMES } from "./Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
+// Components
+import WorkflowCardActions from "@/components/GPTs/WorkflowCard/WorkflowCardActions";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
@@ -130,6 +132,14 @@ export default function Header({ workflow }: Props) {
               >
                 Status:
                 <StatusChip status={isActive ? "active" : "paused"} />
+                <Stack sx={{ position: "relative" }}>
+                  <WorkflowCardActions
+                    workflow={workflow}
+                    isPaused={!isActive}
+                    setIsPaused={() => console.log("paused")}
+                    userWorkflowId={workflow?.id}
+                  />
+                </Stack>
               </Stack>
               <Stack
                 direction={"row"}
@@ -142,9 +152,6 @@ export default function Header({ workflow }: Props) {
                 }}
               >
                 Scheduled: {frequency} {formattedDay} @ {time}
-                {/* <IconButton>
-                  <SettingsOutlined />
-                </IconButton> */}
               </Stack>
             </>
           )}
