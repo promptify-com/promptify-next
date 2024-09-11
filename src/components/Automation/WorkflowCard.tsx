@@ -5,20 +5,16 @@ import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Image from "@/components/design-system/Image";
 import { stripTags } from "@/common/helpers";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { initialState as initialChatState, setSelectedWorkflow } from "@/core/store/chatSlice";
+import { useAppSelector } from "@/hooks/useStore";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
-import useChatsManager from "@/components/Chat/Hooks/useChatsManager";
 
 interface Props {
   workflow: ITemplateWorkflow;
   onScrollToBottom?: () => void;
 }
 
-function WorkflowCard({ workflow, onScrollToBottom }: Props) {
-  const dispatch = useAppDispatch();
-
-  const { updateChat } = useChatsManager();
+function WorkflowCard({ workflow }: Props) {
 
   const selectedChat = useAppSelector(state => state.chat?.selectedChat ?? initialChatState.selectedChat);
 
@@ -28,10 +24,7 @@ function WorkflowCard({ workflow, onScrollToBottom }: Props) {
     if (!selectedChat) {
       return;
     }
-
-    updateChat(selectedChat.id, { title: name, thumbnail: image });
-    dispatch(setSelectedWorkflow(workflow));
-    onScrollToBottom?.();
+    window.open(`/apps/chat/${workflow.slug}`, '_blank')
   };
 
   return (
