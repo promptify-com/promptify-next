@@ -39,3 +39,8 @@ export const makeStore = (): AppStoreWithReducers => {
 
 // Infer the type of makeStore
 export const store = makeStore();
+
+// Get the type of our store variable
+export type AppStore = typeof store;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = AppStore["dispatch"];
