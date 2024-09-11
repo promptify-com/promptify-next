@@ -1,26 +1,26 @@
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-
 import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
-
-import { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import useChat from "../Hooks/useChat2";
-import { isAdminFn, isValidUserFn } from "@/core/store/userSlice";
+import useChat from "@/components/GPT/Hooks/useChatAIApp";
+import { isAdminFn } from "@/core/store/userSlice";
 import { getWorkflowInputsValues } from "@/components/GPTs/helpers";
-import { FREQUENCY_ITEMS } from "../Constants";
-import CredentialsContainer from "../CredentialsContainer";
-import Choices from "../Choices";
-import FrequencyTimeSelector from "../FrequencyTimeSelector";
-import ResponseProvidersContainer from "../ResponseProvidersContainer";
-import Message from "../Message";
+import { FREQUENCY_ITEMS } from "@/components/GPT/Constants";
+import CredentialsContainer from "@/components/GPT/CredentialsContainer";
+import Choices from "@/components/GPT/Choices";
+import FrequencyTimeSelector from "@/components/GPT/FrequencyTimeSelector";
+import ResponseProvidersContainer from "@/components/GPT/ResponseProvidersContainer";
+import Message from "@/components/GPT/Message";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import ChatInput from "@/components/Chat/ChatInput";
-import { useRouter } from "next/router";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import RunWorkflowMessage from "../RunWorkflowMessage";
-import SuggestionChoices from "./SuggestionChoices";
+import RunWorkflowMessage from "@/components/GPT/RunWorkflowMessage";
+import SuggestionChoices from "@/components/GPT/Chat/SuggestionChoices";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
+import MessageInputs from "@/components/GPT/MessageInputs";
+import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -35,7 +35,6 @@ const ChatInterface = ({ workflow }: Props) => {
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const workflowLoaded = useRef(false);
-  const [isUserScrollingUp, setIsUserScrollingUp] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState<FrequencyType | undefined>(
     clonedWorkflow?.periodic_task?.frequency,
   );
@@ -57,36 +56,36 @@ const ChatInterface = ({ workflow }: Props) => {
     workflow,
   });
 
+  const { extractCredentialsInputFromNodes } = useCredentials();
+
+  const { scrollToBottom } = useScrollToBottom({
+    ref: messagesContainerRef,
+    content: messages,
+    skipScroll: false,
+  });
+
+  const getCredentials = async () => {
+    if (!clonedWorkflow) {
+      return;
+    }
+    const { nodes } = clonedWorkflow;
+
+    const credentialsInput = await extractCredentialsInputFromNodes(nodes);
+    console.log(nodes, credentialsInput);
+  };
+
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
       initialMessages();
       initializeCredentials();
+      getCredentials();
+
       workflowLoaded.current = true;
 
       const answers = getWorkflowInputsValues(clonedWorkflow);
       dispatch(setAnswers(answers));
     }
   }, [clonedWorkflow, dispatch]);
-
-  useEffect(() => {
-    const chatContainer = messagesContainerRef.current;
-
-    const handleScroll = () => {
-      if (chatContainer) {
-        if (chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.clientHeight) {
-          setIsUserScrollingUp(true);
-        } else {
-          setIsUserScrollingUp(false);
-        }
-      }
-    };
-
-    chatContainer?.addEventListener("scroll", handleScroll);
-
-    return () => {
-      chatContainer?.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
     if (data) {
@@ -124,7 +123,7 @@ const ChatInterface = ({ workflow }: Props) => {
           sx={{
             overflowY: "auto",
             overflowX: "hidden",
-            pt: "40px",
+            py: "40px",
             overscrollBehavior: "contain",
             scrollBehavior: "smooth",
             "&::-webkit-scrollbar": {
@@ -144,7 +143,12 @@ const ChatInterface = ({ workflow }: Props) => {
           >
             {messages.map(message => (
               <Fragment key={message.id}>
-                {message.type === "text" && <Message message={message} />}
+                {message.type === "text" && (
+                  <Message
+                    message={message}
+                    scrollToBottom={scrollToBottom}
+                  />
+                )}
                 {message.type === "workflowExecution" && (
                   <Message
                     message={message}
@@ -190,6 +194,7 @@ const ChatInterface = ({ workflow }: Props) => {
                     />
                   </Stack>
                 )}
+                {message.type === "form" && <MessageInputs allowGenerate={false} />}
                 {message.type === "readyMessage" && !isNone && (
                   <Stack gap={8}>
                     <Stack id="run-message">
@@ -207,35 +212,34 @@ const ChatInterface = ({ workflow }: Props) => {
               </Fragment>
             ))}
           </Stack>
-
-          <Stack>
-            {currentUser?.id ? (
-              <>
-                {!validatingQuery && (
-                  <SuggestionChoices
-                    workflow={workflow}
-                    onSubmit={handleSubmit}
-                  />
-                )}
-                <ChatInput
+        </Stack>
+        <Stack>
+          {currentUser?.id ? (
+            <>
+              {!validatingQuery && (
+                <SuggestionChoices
+                  workflow={workflow}
                   onSubmit={handleSubmit}
-                  disabled={false}
-                  isValidating={validatingQuery}
                 />
-              </>
-            ) : (
-              <Stack
-                direction={"column"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                gap={1}
-                width={{ md: "100%" }}
-                p={{ md: "16px 8px 16px 16px" }}
-              >
-                <SigninButton onClick={() => router.push("/signin")} />
-              </Stack>
-            )}
-          </Stack>
+              )}
+              <ChatInput
+                onSubmit={handleSubmit}
+                disabled={false}
+                isValidating={validatingQuery}
+              />
+            </>
+          ) : (
+            <Stack
+              direction={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={1}
+              width={{ md: "100%" }}
+              p={{ md: "16px 8px 16px 16px" }}
+            >
+              <SigninButton onClick={() => router.push("/signin")} />
+            </Stack>
+          )}
         </Stack>
       </Stack>
     </Stack>

@@ -37,7 +37,9 @@ type WorkflowData = {
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { answers, areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput } = useAppSelector(
+    state => state.chat ?? initialChatState,
+  );
   const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
 
   const [validatingQuery, setValidatingQuery] = useState(false);
@@ -61,7 +63,6 @@ const useChat = ({ workflow }: Props) => {
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
   const { streamExecutionHandler } = useGenerateExecution({});
-
   const [updateWorkflowHandler] = useUpdateWorkflowMutation();
   const [saveAsGPTDocument] = useSaveGPTDocumentMutation();
 
@@ -120,37 +121,6 @@ const useChat = ({ workflow }: Props) => {
     });
   };
 
-  const handleShowAllSteps = () => {
-    const availableSteps: IMessage[] = [];
-
-    if (clonedWorkflow?.periodic_task?.frequency !== "hourly") {
-      const schedulesMessage = createMessage({
-        type: "schedule_time",
-        text: "At what time?",
-      });
-      availableSteps.push(schedulesMessage);
-    }
-
-    if (workflow.has_output_notification) {
-      const providersMessage = createMessage({
-        type: "schedule_providers",
-        text: "Where should we send your scheduled AI App?",
-      });
-      availableSteps.push(providersMessage);
-    }
-
-    // Update the state with new messages
-    setMessages(prev => prev.concat(availableSteps));
-  };
-
-  //   // Handle the case of catching the oauth credential successfully connected
-  //   useEffect(() => {
-  //     if (areCredentialsStored && updateScheduleMode.current === false) {
-  //       insertFrequencyMessage();
-  //     }
-  //   }, [areCredentialsStored]);
-
-  // ClonedWorkflow always in sync with schedulingData
   useEffect(() => {
     if (clonedWorkflow) {
       dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
@@ -446,10 +416,23 @@ const useChat = ({ workflow }: Props) => {
     return _clonedWorkflow;
   };
 
+  function allRequiredInputsAnswered(): boolean {
+    const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
+
+    if (!requiredQuestionNames.length) {
+      return true;
+    }
+
+    const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
+
+    return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
+  }
+
   const renderMessage = async (message: string) => {
     switch (message) {
       case "Configure":
-        const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
+        const configMessages: IMessage[] = [];
+        await extractCredentialsInputFromNodes(workflow.data.nodes);
         let areAllCredentialsStored = true;
         if (credentialsInput.length) {
           areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
@@ -458,16 +441,32 @@ const useChat = ({ workflow }: Props) => {
             type: "credentials",
             text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
           });
-          setMessages(prevMessages => prevMessages.concat(credentialsMessage));
+          dispatch(setAreCredentialsStored(areAllCredentialsStored));
+          configMessages.push(credentialsMessage);
+        } else if (inputs.length > 0) {
+          const inputsMessage = createMessage({
+            type: "form",
+            text: ``,
+          });
+          configMessages.push(inputsMessage);
         }
-        dispatch(setAreCredentialsStored(areAllCredentialsStored));
+        setMessages(prevMessages => prevMessages.concat(configMessages));
         return;
       case "Schedule":
         insertScheduleMessages();
         return;
 
       case "Run Now":
-        setMessages(prevMessages => prevMessages.concat(createMessage({ type: "readyMessage", text: "" })));
+        if (
+          (inputs.length > 0 && allRequiredInputsAnswered()) ||
+          (credentialsInput.length > 0 && areCredentialsStored)
+        ) {
+          setMessages(prevMessages => prevMessages.concat(createMessage({ type: "readyMessage", text: "" })));
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
+          );
+        }
 
         return;
       default:

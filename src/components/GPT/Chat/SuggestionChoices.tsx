@@ -30,7 +30,7 @@ const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
         display: "flex",
         gap: "8px",
         flexWrap: "wrap",
-        mb: "10px",
+        my: "10px",
       }}
     >
       {chipOptions

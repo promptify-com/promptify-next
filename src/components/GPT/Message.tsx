@@ -29,6 +29,7 @@ interface Props {
   retryExecution?(): void;
   showInputs?(): void;
   saveAsDocument?(): Promise<boolean>;
+  scrollToBottom?(): void;
 }
 
 interface MessageContentProps {
@@ -80,6 +81,7 @@ export default function Message({
   retryExecution,
   showInputs,
   saveAsDocument,
+  scrollToBottom,
 }: Props) {
   const { fromUser, isHighlight, type, text } = message;
   const dispatch = useAppDispatch();
@@ -153,6 +155,7 @@ export default function Message({
             <MessageContent
               content={text}
               shouldStream={!fromUser}
+              onStreamingFinished={scrollToBottom}
             />
           )}
         </Typography>
