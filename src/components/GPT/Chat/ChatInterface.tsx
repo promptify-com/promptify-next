@@ -210,10 +210,12 @@ const ChatInterface = ({ workflow }: Props) => {
           <Stack>
             {currentUser?.id ? (
               <>
-                <SuggestionChoices
-                  workflow={workflow}
-                  onSubmit={handleSubmit}
-                />
+                {!validatingQuery && (
+                  <SuggestionChoices
+                    workflow={workflow}
+                    onSubmit={handleSubmit}
+                  />
+                )}
                 <ChatInput
                   onSubmit={handleSubmit}
                   disabled={false}
