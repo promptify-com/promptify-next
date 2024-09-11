@@ -32,13 +32,11 @@ export default function Header({ workflow }: Props) {
   const day =
     (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay as number] : scheduleDay)) || null;
   const time = TIMES[scheduleData?.hour ?? 0];
-  //
-  const [isPause, setIsPause] = useState(!periodicTask?.enabled);
-
   const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";
+  const [isPause, setIsPause] = useState(false);
 
   useEffect(() => {
-    setIsPause(!periodicTask?.enabled);
+    setIsPause(!!periodicTask ? !periodicTask?.enabled : false);
   }, [periodicTask]);
 
   return (
