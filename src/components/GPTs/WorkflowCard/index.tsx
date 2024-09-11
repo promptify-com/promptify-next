@@ -3,8 +3,6 @@ import Link from "next/link";
 // Mui
 import { Stack, Box, Typography, Chip } from "@mui/material";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
-// Store
-import { useGetWorkflowQuery } from "@/core/api/workflows";
 //
 import { TIMES } from "@/components/GPT/Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
@@ -15,7 +13,6 @@ import type { ITemplateWorkflow, IPeriodicTask } from "../../Automation/types";
 // Components
 import WorkflowCardActions from "./WorkflowCardActions";
 import WorkflowCardLike from "./LikeAction";
-import WorkflowCardPlaceholder from "./skeleton";
 
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
@@ -39,10 +36,6 @@ function WorkflowCard({
   const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
-  // Query
-  const { data: userWorkflow, isLoading } = useGetWorkflowQuery(String(userWorkflowId));
-  //
-  if (isLoading || !userWorkflow) return <WorkflowCardPlaceholder />;
 
   return (
     <Stack sx={{ position: "relative" }}>
@@ -182,10 +175,10 @@ function WorkflowCard({
       </Link>
       {isGPTScheduled && (
         <WorkflowCardActions
-          workflow={userWorkflow}
+          workflow={templateWorkflow}
           isPaused={isPaused}
           setIsPaused={setIsPaused}
-          userWorkflowId={userWorkflowId}
+          userWorkflowId={String(userWorkflowId)}
           sx={{ position: "absolute", right: 10, bottom: 10 }}
         />
       )}
