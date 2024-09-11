@@ -399,12 +399,10 @@ function Chat() {
                 </Stack>
               )}
               <Stack
-                sx={
-                  {
-                    // px: { md: isChatHistorySticky ? "80px" : "300px" },
-                    // pb: { md: showChatInput ? "24px" : 0 },
-                  }
-                }
+                sx={{
+                  px: { md: isChatHistorySticky ? "80px" : "300px" },
+                  pb: { md: showChatInput ? "24px" : 0 },
+                }}
               >
                 {currentUser?.id ? (
                   <>

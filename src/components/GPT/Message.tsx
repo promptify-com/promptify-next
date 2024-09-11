@@ -111,6 +111,8 @@ export default function Message({
 
   return (
     <Stack
+      width={!fromUser && type !== "html" ? "fit-content" : "100%"}
+      alignItems={fromUser ? "end" : "start"}
       sx={{
         gap: "24px",
         ...(message.noHeader && {
