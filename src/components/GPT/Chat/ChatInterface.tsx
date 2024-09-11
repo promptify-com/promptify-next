@@ -20,6 +20,7 @@ import ChatInput from "@/components/Chat/ChatInput";
 import { useRouter } from "next/router";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import RunWorkflowMessage from "../RunWorkflowMessage";
+import SuggestionChoices from "./SuggestionChoices";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -209,6 +210,10 @@ const ChatInterface = ({ workflow }: Props) => {
           <Stack>
             {currentUser?.id ? (
               <>
+                <SuggestionChoices
+                  workflow={workflow}
+                  onSubmit={handleSubmit}
+                />
                 <ChatInput
                   onSubmit={handleSubmit}
                   disabled={false}
