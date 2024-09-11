@@ -86,7 +86,7 @@ export function LinearWithValueLabel({ estimatedExecutionTime }: { estimatedExec
   }, [estimatedExecutionTime, gptGenerationStatus]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "300px" }}>
       <LinearProgressWithLabel
         value={progress}
         color="success"

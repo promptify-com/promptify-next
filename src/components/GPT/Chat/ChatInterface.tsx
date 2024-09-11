@@ -29,15 +29,18 @@ interface Props {
 const ChatInterface = ({ workflow }: Props) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
-
-  const workflowLoaded = useRef(false);
-
-  const isValidUser = useAppSelector(isValidUserFn);
-
+  const isAdmin = useAppSelector(isAdminFn);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const workflowLoaded = useRef(false);
+  const [isUserScrollingUp, setIsUserScrollingUp] = useState(false);
+  const [selectedFrequency, setSelectedFrequency] = useState<FrequencyType | undefined>(
+    clonedWorkflow?.periodic_task?.frequency,
+  );
+
+  const { initializeCredentials } = useCredentials();
   const {
     messages,
     initialMessages,
@@ -54,8 +57,6 @@ const ChatInterface = ({ workflow }: Props) => {
     workflow,
   });
 
-  const { initializeCredentials } = useCredentials();
-
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
       initialMessages();
@@ -66,8 +67,6 @@ const ChatInterface = ({ workflow }: Props) => {
       dispatch(setAnswers(answers));
     }
   }, [clonedWorkflow, dispatch]);
-
-  const [isUserScrollingUp, setIsUserScrollingUp] = useState(false);
 
   useEffect(() => {
     const chatContainer = messagesContainerRef.current;
@@ -89,8 +88,6 @@ const ChatInterface = ({ workflow }: Props) => {
     };
   }, []);
 
-  const isAdmin = useAppSelector(isAdminFn);
-
   const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
     if (data) {
       dispatch(setAnswers(getWorkflowInputsValues(data)));
@@ -99,8 +96,8 @@ const ChatInterface = ({ workflow }: Props) => {
   };
 
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
-
   const isNone = clonedWorkflow?.schedule?.frequency === "none";
+
   return (
     <Stack
       sx={{
@@ -168,8 +165,11 @@ const ChatInterface = ({ workflow }: Props) => {
                   <Choices
                     message={message.text}
                     items={FREQUENCIES}
-                    onSelect={frequency => setScheduleFrequency(frequency as FrequencyType)}
-                    defaultValue={clonedWorkflow?.periodic_task?.frequency ?? ""}
+                    onSelect={frequency => {
+                      setScheduleFrequency(frequency as FrequencyType);
+                      setSelectedFrequency(frequency as FrequencyType);
+                    }}
+                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
                 )}
 
@@ -177,6 +177,7 @@ const ChatInterface = ({ workflow }: Props) => {
                   <FrequencyTimeSelector
                     message={message.text}
                     onSelect={setScheduleTime}
+                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
                 )}
                 {message.type === "schedule_providers" && !isNone && (
