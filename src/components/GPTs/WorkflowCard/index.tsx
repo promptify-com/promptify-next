@@ -17,8 +17,8 @@ import WorkflowCardLike from "./LikeAction";
 interface Props {
   templateWorkflow?: ITemplateWorkflow;
   periodic_task?: IPeriodicTask | null;
-  userWorkflowId: string | number;
-  lastExecuted: string | null;
+  userWorkflowId?: string | number;
+  lastExecuted?: string | null;
   isGPTScheduled?: boolean;
   category?: string;
 }
