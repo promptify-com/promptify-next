@@ -162,7 +162,7 @@ export const workflowsApi = baseApi.injectEndpoints({
         query: workflowId => ({
           url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/pause`,
           method: "put",
-          invalidatesTags: ["Workflow"],
+          invalidatesTags: ["Workflow", "UserWorkflows"],
         }),
       }),
       resumeWorkflow: builder.mutation<void, string>({

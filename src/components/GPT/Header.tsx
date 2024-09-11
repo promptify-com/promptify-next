@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
@@ -14,7 +15,6 @@ import { DAYS, TIMES } from "./Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
 // Components
 import WorkflowCardActions from "@/components/GPTs/WorkflowCard/WorkflowCardActions";
-import { useState } from "react";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
@@ -36,6 +36,10 @@ export default function Header({ workflow }: Props) {
   const [isPause, setIsPause] = useState(!periodicTask?.enabled);
 
   const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";
+
+  useEffect(() => {
+    setIsPause(!periodicTask?.enabled);
+  }, [periodicTask]);
 
   return (
     <Stack
