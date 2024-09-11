@@ -17,6 +17,7 @@ interface Props {
   disabled?: boolean;
   progressBarButton?: boolean;
   disableGenerateBtn?: boolean;
+  estimationTime?: string | null;
 }
 
 function MessageInputs({
@@ -28,6 +29,7 @@ function MessageInputs({
   disabled,
   progressBarButton,
   disableGenerateBtn,
+  estimationTime,
 }: Props) {
   const inputs = useAppSelector(state => state.chat?.inputs ?? initialChatState.inputs);
 
@@ -92,6 +94,7 @@ function MessageInputs({
         {allowGenerate ? (
           progressBarButton ? (
             <RunButtonWithProgressBar
+              estimatedExecutionTime={estimationTime}
               loading={isExecuting}
               onClick={() => onGenerate?.()}
               disabled={disableGenerateBtn}
