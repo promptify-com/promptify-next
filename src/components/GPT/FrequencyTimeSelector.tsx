@@ -5,34 +5,51 @@ import Stack from "@mui/material/Stack";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import DateTimeSelect from "./DateTimeSelect";
-import type { FrequencyTime } from "@/components/Automation/types";
+import type { FrequencyTime, FrequencyType } from "@/components/Automation/types";
 
 interface Props {
   message: string;
   onSelect(frequencyTime: FrequencyTime): void;
+  selectedFrequency?: FrequencyType
 }
 
-export default function FrequencyTimeSelector({ message, onSelect }: Props) {
+export default function FrequencyTimeSelector({ message, onSelect, selectedFrequency }: Props) {
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
 
-  const [selectedFrequency, setSelectedFrequency] = useState("");
-
   const scheduledData = useMemo(() => {
-    return clonedWorkflow?.schedule ?? clonedWorkflow?.periodic_task?.crontab;
+    return (
+      clonedWorkflow?.schedule ??  clonedWorkflow?.periodic_task?.crontab
+    );
   }, [clonedWorkflow]);
 
-  const scheduleDayOfWeek = scheduledData?.frequency === "weekly" ? scheduledData.day_of_week : 0;
-  const scheduleDayOfMonth = scheduledData?.frequency === "monthly" ? scheduledData?.day_of_month : 1;
+  const scheduleDayOfWeek =
+    scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
+      ? scheduledData?.day_of_week
+      : 0;
+
+  const scheduleDayOfMonth =
+    scheduledData?.frequency === "monthly" && !(["1,15", "*"].includes(scheduledData.day_of_month?.toString() || ""))
+      ? scheduledData?.day_of_month
+      : 1;
+
+  const scheduleHour = scheduledData?.hour && !(["0", "*"].includes(scheduledData.hour?.toString() || "")) ? scheduledData?.hour : 9
+  // default for 9AM
 
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day_of_week: scheduleDayOfWeek,
-    day_of_month: scheduleDayOfMonth,
-    time: scheduledData?.hour ?? 0,
+    day_of_week: scheduleDayOfWeek, // default of monday
+    day_of_month: scheduleDayOfMonth,// default of the first month
+    time: scheduleHour,
   });
 
+
   useEffect(() => {
-    setSelectedFrequency(scheduledData?.frequency ?? "");
-  }, [clonedWorkflow]);
+    setScheduleTime({
+      ...scheduleTime,
+      day_of_week: scheduleDayOfWeek, 
+      day_of_month: scheduleDayOfMonth,
+      time: scheduleHour,
+    });
+  }, [scheduledData]);
 
   const handleChangeScheduleTime = (data: FrequencyTime) => {
     setScheduleTime(data);
