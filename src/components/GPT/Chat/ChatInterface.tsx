@@ -132,6 +132,11 @@ const ChatInterface = ({ workflow }: Props) => {
             "&::-webkit-scrollbar": {
               width: "0px",
             },
+            justifyContent: "space-between",
+            height: {
+              xs: "calc(100% - 90.5px)",
+              md: "100%",
+            },
           }}
         >
           <Stack
