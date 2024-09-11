@@ -1,24 +1,18 @@
-import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Check from "@mui/icons-material/Check";
+import { FrequencyType } from "../Automation/types";
 
 interface Props {
   message?: string;
   items: string[];
   onSelect(item: string): void;
-  defaultValue?: string;
+  selectedValue: FrequencyType | undefined
 }
 
-export default function Choices({ message, items, onSelect, defaultValue = "" }: Props) {
-  const [selectedItem, setSelectedItem] = useState(defaultValue);
-
-  const handleSelectItem = (item: string) => {
-    setSelectedItem(item);
-    onSelect(item);
-  };
-
+export default function Choices({ message, items, onSelect, selectedValue }: Props) {
+  
   return (
     <Stack gap={4}>
       {message && (
@@ -36,11 +30,11 @@ export default function Choices({ message, items, onSelect, defaultValue = "" }:
         gap={{ xs: 1, md: 2 }}
       >
         {items.map(item => {
-          const selected = selectedItem === item;
+          const selected = selectedValue === item;
           return (
             <Button
               key={item}
-              onClick={() => handleSelectItem(item)}
+              onClick={() => onSelect(item)}
               {...(selected && { endIcon: <Check /> })}
               sx={{
                 bgcolor: selected ? "#6E45E9" : "#F7F5FC",
