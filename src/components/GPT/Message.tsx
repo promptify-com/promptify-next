@@ -22,6 +22,9 @@ import type { IWorkflowCreateResponse } from "../Automation/types";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
 import { setToast } from "@/core/store/toastSlice";
+import { ShareOutlined } from "@mui/icons-material";
+import { ExportPopupChat } from "./Chat/ExportPopupChat";
+import { useRouter } from "next/router";
 
 interface Props {
   message: IMessage;
@@ -87,6 +90,9 @@ export default function Message({
   const dispatch = useAppDispatch();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const [documentSaved, setSaveDocument] = useState(false);
+  const [openExportPopup, setOpenExportPopup] = useState(false);
+  const router = useRouter();
+  const isChatApp = router.pathname.includes("/apps/chat");
 
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialChatState.gptGenerationStatus,
@@ -201,6 +207,27 @@ export default function Message({
                   <CreateNewFolderOutlined />
                 </IconButton>
               </CustomTooltip>
+
+              {isChatApp && (
+                <CustomTooltip title={"Share"}>
+                  <>
+                    <IconButton
+                      onClick={() => setOpenExportPopup(true)}
+                      disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                      sx={iconBtnStyle}
+                    >
+                      <ShareOutlined />
+                    </IconButton>
+
+                    {openExportPopup && (
+                      <ExportPopupChat
+                        onClose={() => setOpenExportPopup(false)}
+                        content={text}
+                      />
+                    )}
+                  </>
+                </CustomTooltip>
+              )}
             </Stack>
             <Button
               onClick={() => copyToClipboard(message.text)}
