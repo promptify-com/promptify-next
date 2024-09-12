@@ -3,7 +3,6 @@ import Chip from "@mui/material/Chip";
 import { ITemplateWorkflow } from "@/components/Automation/types";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
-import useCredentials from "@/components/Automation/Hooks/useCredentials";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -13,15 +12,14 @@ interface Props {
 const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
   const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
   const { is_schedulable } = workflow;
-  const { credentialsInput } = useCredentials();
 
   const chipOptions = [
     { label: "Configure", show: true },
     { label: "Schedule", show: is_schedulable },
     { label: "Run Now", show: true },
     { label: "Get API", show: true },
-    { label: "Pause", show: clonedWorkflow?.periodic_task },
-    { label: "Resume", show: !clonedWorkflow?.periodic_task },
+    { label: "Pause", show: clonedWorkflow?.periodic_task?.enabled },
+    { label: "Resume", show: !clonedWorkflow?.periodic_task?.enabled },
   ];
 
   return (

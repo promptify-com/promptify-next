@@ -6,7 +6,12 @@ import { setAreCredentialsStored, setClonedWorkflow, setGptGenerationStatus } fr
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
-import { useSaveGPTDocumentMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
+import {
+  usePauseWorkflowMutation,
+  useResumeWorkflowMutation,
+  useSaveGPTDocumentMutation,
+  useUpdateWorkflowMutation,
+} from "@/core/api/workflows";
 import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
@@ -25,6 +30,7 @@ import { formatDateWithOrdinal } from "@/common/helpers/dateWithSuffix";
 import useToken from "@/hooks/useToken";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
+import useChatActions from "./useChatActions";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -36,16 +42,15 @@ type WorkflowData = {
 
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
+  const token = useToken();
+
+  const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput } = useAppSelector(
     state => state.chat ?? initialChatState,
   );
-  const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
 
   const [validatingQuery, setValidatingQuery] = useState(false);
-
-  const token = useToken();
-
   const [messages, setMessages] = useState<IMessage[]>([]);
   const updateScheduleMode = useRef<boolean | null>(null);
   const selectedProviderType = useRef<ProviderType | null>(null);
@@ -62,6 +67,7 @@ const useChat = ({ workflow }: Props) => {
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
+  const { handlePause, handleResume } = useChatActions({ setMessages });
   const { streamExecutionHandler } = useGenerateExecution({});
   const [updateWorkflowHandler] = useUpdateWorkflowMutation();
   const [saveAsGPTDocument] = useSaveGPTDocumentMutation();
@@ -468,6 +474,14 @@ const useChat = ({ workflow }: Props) => {
           );
         }
 
+        return;
+
+      case "Pause":
+        await handlePause();
+        return;
+
+      case "Resume":
+        await handleResume();
         return;
       default:
         setMessages(prevMessages => prevMessages.concat(createMessage({ type: "text", text: message })));
