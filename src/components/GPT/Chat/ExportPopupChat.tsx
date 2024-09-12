@@ -14,22 +14,19 @@ import ShareIcon from "@/assets/icons/ShareIcon";
 
 interface ExportPopupChatProps {
   onClose: () => void;
-  activeExecution?: TemplatesExecutions | null;
   content: string;
 }
 
-export const ExportPopupChat = ({ activeExecution, onClose, content }: ExportPopupChatProps) => {
+export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? undefined);
   const [exporting, setExporting] = useState({ pdf: false, word: false });
 
   const appTitle = clonedWorkflow?.name;
   const currentDate = format(new Date(), "MM-dd-yyyy");
   const title = `${appTitle} - ${currentDate}`;
-  // if (!activeExecution) {
+  // if (!content) {
   //     throw new Error("Provided activeExecution is not a valid one!");
   // }
-
-  // const sharedUrl = `${getBaseUrl}/prompt/${activeExecution.template?.slug}/?hash=${activeExecution.hash}`;
 
   // const [exportExecution] = executionsApi.endpoints.exportExecution.useLazyQuery();
 
