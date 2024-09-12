@@ -14,6 +14,10 @@ export default function SearchInput() {
   // Get Dialog Redux Data
   const { search } = useAppSelector(({ layout }) => layout.search);
 
+  //
+  const handleChange = e => {
+    dispatch(setSearch(e.target.value));
+  };
   return (
     <Stack
       spacing={1}
@@ -22,8 +26,9 @@ export default function SearchInput() {
     >
       <SearchIcon />
       <InputBase
+        onChange={e => dispatch(setSearch())}
         sx={{ flex: 1 }}
-        placeholder="Search Google Maps"
+        placeholder="What templates are you looking for?"
       />
       <IconButton
         sx={{ background: theme => theme.palette.grey[100], borderRadius: 2 }}

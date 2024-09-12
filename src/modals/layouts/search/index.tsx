@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "@/_redux";
 import { handleClose } from "@reducers/layout/search";
 // Components
 import SearchInput from "./searchInput";
+import SearchResult from "./search_result";
 
 export default function SearchModal() {
   // Redux Dispatch hooks
@@ -24,7 +25,7 @@ export default function SearchModal() {
     >
       <SearchInput />
       <Divider />
-      Lorem ipsum dolor sit amet.
+      <SearchResult />
     </Dialog>
   );
 }
