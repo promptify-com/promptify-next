@@ -10,25 +10,14 @@ import Typography from "@mui/material/Typography";
 import LanguageSelect from "./LanguageSelect";
 import CopyButton from "./copyButton";
 import Snippet from "./snippet";
+//
+import { INode } from "@/components/Automation/types";
 
-interface Input {
-  name: string;
-  fullName: string;
-  type: string;
-  required: boolean;
-  parameters: {
-    assignments: {
-      assignments: { name: string }[];
-    };
-    path?: string;
-  };
-}
-
-const parsed_data = (nodes: Input[]): { inputs: Record<string, string>; url?: string } => {
+const parsed_data = (nodes: INode[]): { inputs: Record<string, string>; url?: string } => {
   const inputs = nodes
     .filter(node => node.type === "n8n-nodes-base.set")
-    .reduce((acc: Record<string, string>, node: Input) => {
-      node.parameters.assignments.assignments.forEach(assignment => {
+    .reduce((acc: Record<string, string>, node: INode) => {
+      node.parameters?.assignments?.assignments?.forEach(assignment => {
         acc[assignment.name] = assignment.name;
       });
       return acc;
@@ -52,7 +41,7 @@ export default function ApiAccess() {
 
   useEffect(() => {
     if (clonedWorkflow?.nodes) {
-      const { url, inputs } = parsed_data(clonedWorkflow.nodes as Input[]);
+      const { url, inputs } = parsed_data(clonedWorkflow.nodes);
       setData(inputs);
       setUrl(url ?? `${n8nApiUrl}/webhooks/`);
     }
