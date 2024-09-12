@@ -42,7 +42,7 @@ const parsed_data = (nodes: Input[]): { inputs: Record<string, string>; url?: st
 
 export default function ApiAccess() {
   // Store
-  const chat = useAppSelector(state => state.chat?.clonedWorkflow);
+  const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow);
   //
   const [data, setData] = useState<Record<string, string>>({});
   const [url, setUrl] = useState(`${n8nApiUrl}/webhooks/`);
@@ -51,12 +51,12 @@ export default function ApiAccess() {
   const [exicution_snippet, setExicutionSnippet] = useState<string>("");
 
   useEffect(() => {
-    if (chat?.nodes) {
-      const { url, inputs } = parsed_data(chat.nodes as Input[]);
+    if (clonedWorkflow?.nodes) {
+      const { url, inputs } = parsed_data(clonedWorkflow.nodes as Input[]);
       setData(inputs);
       setUrl(url ?? `${n8nApiUrl}/webhooks/`);
     }
-  }, [chat]);
+  }, [clonedWorkflow]);
 
   return (
     <Stack
