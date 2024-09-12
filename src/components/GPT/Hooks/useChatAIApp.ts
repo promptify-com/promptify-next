@@ -117,8 +117,6 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [debouncedSchedulingData]);
 
-  console.log(messages);
-
   //   // Pass run workflow generated execution as a new message after all prompts completed
   //   useEffect(() => {
   //     if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {

@@ -70,8 +70,7 @@ const ChatInterface = ({ workflow }: Props) => {
     }
     const { nodes } = clonedWorkflow;
 
-    const credentialsInput = await extractCredentialsInputFromNodes(nodes);
-    console.log(nodes, credentialsInput);
+    extractCredentialsInputFromNodes(nodes);
   };
 
   useEffect(() => {
