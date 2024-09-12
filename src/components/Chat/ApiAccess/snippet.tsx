@@ -81,6 +81,14 @@ export default function Snippet({ onSnippetChange, method, lang, data, url }: Pr
       boxSizing={"border-box"}
     >
       <SyntaxHighlighter
+        customStyle={{
+          borderRadius: "16px",
+          background: "#1B1B1F",
+          color: "white",
+          margin: 0,
+          padding: "16px 16px 16px 24px",
+          overflow: "auto",
+        }}
         language={lang}
         style={docco}
         showLineNumbers={true}
