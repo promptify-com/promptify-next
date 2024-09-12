@@ -2,16 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { createMessage } from "@/components/Chat/helper";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { setAreCredentialsStored, setClonedWorkflow, setGptGenerationStatus } from "@/core/store/chatSlice";
+import { setClonedWorkflow, setGptGenerationStatus } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
-import {
-  usePauseWorkflowMutation,
-  useResumeWorkflowMutation,
-  useSaveGPTDocumentMutation,
-  useUpdateWorkflowMutation,
-} from "@/core/api/workflows";
+import { useSaveGPTDocumentMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { cleanCredentialName, removeProviderNode } from "@/components/GPTs/helpers";
 import type { ProviderType } from "@/components/GPT/Types";
 import type { IMessage } from "@/components/Prompt/Types/chat";
@@ -31,6 +26,7 @@ import useToken from "@/hooks/useToken";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import useChatActions from "./useChatActions";
+import { allRequiredInputsAnswered } from "@/common/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -46,9 +42,8 @@ const useChat = ({ workflow }: Props) => {
 
   const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput } = useAppSelector(
-    state => state.chat ?? initialChatState,
-  );
+  const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput, requireCredentials } =
+    useAppSelector(state => state.chat ?? initialChatState);
 
   const [validatingQuery, setValidatingQuery] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -117,39 +112,37 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [debouncedSchedulingData]);
 
-  //   // Pass run workflow generated execution as a new message after all prompts completed
-  //   useEffect(() => {
-  //     if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
-  //       const title = generatedExecution.temp_title;
-  //       const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
-  //       const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
-  //       const executionMessage = createMessage({
-  //         type: "workflowExecution",
-  //         text: output,
-  //         data: clonedWorkflow,
-  //       });
-  //       setMessages(prev => prev.concat(executionMessage));
-  //       dispatch(setGeneratedExecution(null));
-  //     }
-  //   }, [generatedExecution]);
+  // Pass run workflow generated execution as a new message after all prompts completed
+  useEffect(() => {
+    if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
+      const title = generatedExecution.temp_title;
+      const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
+      const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
+      const executionMessage = createMessage({
+        type: "workflowExecution",
+        text: output,
+        data: clonedWorkflow,
+      });
+      setMessages(prev => prev.concat(executionMessage));
+      dispatch(setGeneratedExecution(null));
+    }
+  }, [generatedExecution]);
 
-  //   // Keep track of workflow data changes coming from answers state
-  //   useEffect(() => {
-  //     const workflowData: WorkflowData = { ...schedulingData.workflow_data };
+  // Keep track of workflow data changes coming from answers state
+  useEffect(() => {
+    const workflowData: WorkflowData = { ...schedulingData.workflow_data };
 
-  //     answers.forEach(answer => {
-  //       if (answer.required && answer.answer) {
-  //         workflowData[answer.inputName] = answer.answer;
-  //       }
-  //     });
+    answers.forEach(answer => {
+      if (answer.required && answer.answer) {
+        workflowData[answer.inputName] = answer.answer;
+      }
+    });
 
-  //     setSchedulingData(prev => ({
-  //       ...prev,
-  //       workflow_data: workflowData,
-  //     }));
-  //   }, [answers]);
-
-  // ClonedWorkflow always in sync with schedulingData
+    setSchedulingData(prev => ({
+      ...prev,
+      workflow_data: workflowData,
+    }));
+  }, [answers]);
 
   const insertScheduleMessages = () => {
     const scheduleMessages: IMessage[] = [];
@@ -349,6 +342,11 @@ const useChat = ({ workflow }: Props) => {
 
     if (updatedWorkflow) {
       runWorkflow();
+      setMessages(prevMessages =>
+        prevMessages
+          .filter(msg => msg.type !== "readyMessage")
+          .concat(createMessage({ type: "readyMessage", text: "" })),
+      );
       if (!noInputsChange) {
         updateWorkflow(structuredClone(clonedWorkflow));
       }
@@ -395,32 +393,15 @@ const useChat = ({ workflow }: Props) => {
     return _clonedWorkflow;
   };
 
-  function allRequiredInputsAnswered(): boolean {
-    const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
-
-    if (!requiredQuestionNames.length) {
-      return true;
-    }
-
-    const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
-
-    return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
-  }
-
   const renderMessage = async (message: string) => {
     switch (message) {
-      case "Configure":
+      case "configure_workflow":
         const configMessages: IMessage[] = [];
-        const _credentialInputs = await extractCredentialsInputFromNodes(workflow.data.nodes);
-        let areAllCredentialsStored = true;
-        if (_credentialInputs.length) {
-          areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-
+        if (credentialsInput.length) {
           const credentialsMessage = createMessage({
             type: "credentials",
             text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
           });
-          dispatch(setAreCredentialsStored(areAllCredentialsStored));
           configMessages.push(credentialsMessage);
         } else if (inputs.length > 0) {
           const inputsMessage = createMessage({
@@ -431,29 +412,43 @@ const useChat = ({ workflow }: Props) => {
         }
         setMessages(prevMessages => prevMessages.concat(configMessages));
         return;
-      case "Schedule":
+      case "schedule_workflow":
         insertScheduleMessages();
         return;
 
-      case "Run Now":
+      case "run_workflow":
         if (
-          (inputs.length > 0 && allRequiredInputsAnswered()) ||
-          (credentialsInput.length > 0 && areCredentialsStored)
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
+          (requireCredentials && credentialsInput.length > 0 && areCredentialsStored)
         ) {
-          setMessages(prevMessages => prevMessages.concat(createMessage({ type: "readyMessage", text: "" })));
+          setMessages(prevMessages =>
+            prevMessages
+              .filter(msg => msg.type !== "readyMessage")
+              .concat(createMessage({ type: "readyMessage", text: "" })),
+          );
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
+          );
+        }
+        return;
+      case "api_instructions":
+        if (
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
+          (requireCredentials && credentialsInput.length > 0 && areCredentialsStored)
+        ) {
+          setMessages(prevMessages => prevMessages.concat(createMessage({ type: "API_instructions", text: "" })));
         } else {
           setMessages(prevMessages =>
             prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
           );
         }
 
-        return;
-
-      case "Pause":
+      case "pause_workflow":
         await handlePause();
         return;
 
-      case "Resume":
+      case "resume_workflow":
         await handleResume();
         return;
       default:

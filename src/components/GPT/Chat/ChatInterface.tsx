@@ -3,7 +3,13 @@ import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
+import {
+  initialState as initialChatState,
+  setAnswers,
+  setAreCredentialsStored,
+  setCredentialsInput,
+  setRequireCredentials,
+} from "@/core/store/chatSlice";
 import useChat from "@/components/GPT/Hooks/useChatAIApp";
 import { isAdminFn } from "@/core/store/userSlice";
 import { getWorkflowInputsValues } from "@/components/GPTs/helpers";
@@ -20,6 +26,7 @@ import RunWorkflowMessage from "@/components/GPT/RunWorkflowMessage";
 import SuggestionChoices from "@/components/GPT/Chat/SuggestionChoices";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import MessageInputs from "@/components/GPT/MessageInputs";
+import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 
 interface Props {
@@ -64,20 +71,10 @@ const ChatInterface = ({ workflow }: Props) => {
     skipScroll: false,
   });
 
-  const getCredentials = async () => {
-    if (!clonedWorkflow) {
-      return;
-    }
-    const { nodes } = clonedWorkflow;
-
-    extractCredentialsInputFromNodes(nodes);
-  };
-
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
       initialMessages();
       initializeCredentials();
-      getCredentials();
 
       workflowLoaded.current = true;
 
@@ -92,6 +89,40 @@ const ChatInterface = ({ workflow }: Props) => {
     }
     // scrollToInputsForm();
   };
+
+  const prepareData = async () => {
+    if (!workflow.data) {
+      return;
+    }
+
+    const { nodes } = workflow.data;
+    const nodesRequiringAuthentication = nodes.filter(
+      node => node.parameters?.authentication || oAuthTypeMapping[node.type],
+    );
+    const areAllCredentialsAttached = clonedWorkflow?.nodes
+      .filter(node => {
+        return node.parameters.authentication || oAuthTypeMapping[node.type];
+      })
+      .every(node => node.credentials);
+
+    if (nodesRequiringAuthentication?.length && areAllCredentialsAttached) {
+      dispatch(setRequireCredentials(true));
+      dispatch(setAreCredentialsStored(true));
+    } else {
+      dispatch(setRequireCredentials(false));
+      dispatch(setAreCredentialsStored(false));
+    }
+
+    const _inputs = await extractCredentialsInputFromNodes(nodes);
+    dispatch(setCredentialsInput(_inputs));
+  };
+
+  useEffect(() => {
+    if (!clonedWorkflow || !workflow) {
+      return;
+    }
+    prepareData();
+  }, [workflow, clonedWorkflow]);
 
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
   const isNone = clonedWorkflow?.schedule?.frequency === "none";
@@ -172,7 +203,7 @@ const ChatInterface = ({ workflow }: Props) => {
                       setScheduleFrequency(frequency as FrequencyType);
                       setSelectedFrequency(frequency as FrequencyType);
                     }}
-                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.crontab.frequency}
+                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
                 )}
 
@@ -180,7 +211,7 @@ const ChatInterface = ({ workflow }: Props) => {
                   <FrequencyTimeSelector
                     message={message.text}
                     onSelect={setScheduleTime}
-                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.crontab.frequency}
+                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
                 )}
                 {message.type === "schedule_providers" && !isNone && (

@@ -3,6 +3,7 @@ import Chip from "@mui/material/Chip";
 import { ITemplateWorkflow } from "@/components/Automation/types";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
+import { allRequiredInputsAnswered } from "@/common/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -10,16 +11,33 @@ interface Props {
 }
 
 const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
-  const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const { clonedWorkflow, inputs, requireCredentials, credentialsInput, areCredentialsStored, answers } =
+    useAppSelector(state => state.chat ?? initialChatState);
   const { is_schedulable } = workflow;
 
   const chipOptions = [
     { label: "Configure", show: true },
     { label: "Schedule", show: is_schedulable },
-    { label: "Run Now", show: true },
-    { label: "Get API", show: true },
-    { label: "Pause", show: workflow.is_schedulable && clonedWorkflow?.periodic_task?.enabled },
-    { label: "Resume", show: workflow.is_schedulable && !clonedWorkflow?.periodic_task?.enabled },
+    {
+      label: "Run Now",
+      show:
+        (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
+        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
+    },
+    {
+      label: "Get API",
+      show:
+        (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
+        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
+    },
+    {
+      label: "Pause",
+      show: workflow.is_schedulable && !!clonedWorkflow?.periodic_task && clonedWorkflow?.periodic_task?.enabled,
+    },
+    {
+      label: "Resume",
+      show: workflow.is_schedulable && !!clonedWorkflow?.periodic_task && !clonedWorkflow?.periodic_task?.enabled,
+    },
   ];
 
   return (

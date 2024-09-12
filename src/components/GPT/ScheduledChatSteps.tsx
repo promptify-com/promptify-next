@@ -194,7 +194,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                       setScheduleFrequency(frequency as FrequencyType);
                       setSelectedFrequency(frequency as FrequencyType);
                     }}
-                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.crontab.frequency}
+                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
                 )}
 
@@ -202,7 +202,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                   <FrequencyTimeSelector
                     message={message.text}
                     onSelect={setScheduleTime}
-                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.crontab.frequency}
+                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
                 )}
                 {message.type === "schedule_providers" && !isNone && (
