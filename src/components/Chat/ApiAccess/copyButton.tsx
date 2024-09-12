@@ -1,5 +1,8 @@
 import React from "react";
 //
+import { useAppDispatch } from "@/hooks/useStore";
+import { setToast } from "@/core/store/toastSlice";
+//
 import Button from "@mui/material/Button";
 
 interface Props {
@@ -7,8 +10,17 @@ interface Props {
 }
 
 export default function CopyButton({ data }: Props) {
+  const dispatch = useAppDispatch();
+  //
   const handleCopy = async () => {
     await navigator.clipboard.writeText(data);
+    dispatch(
+      setToast({
+        message: "Copied to clipboard!",
+        severity: "success",
+        position: { vertical: "bottom", horizontal: "right" },
+      }),
+    );
   };
 
   return (
@@ -18,9 +30,7 @@ export default function CopyButton({ data }: Props) {
         color: "onSurface",
         fontSize: 14,
         fontWeight: 500,
-        ":hover": {
-          bgcolor: "action.hover",
-        },
+        ":hover": { bgcolor: "action.hover" },
       }}
       onClick={handleCopy}
     >
