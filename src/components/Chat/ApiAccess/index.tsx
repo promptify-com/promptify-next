@@ -1,50 +1,40 @@
 import React, { useEffect, useState } from "react";
-const n8nApiUrl = process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL;
-//
-import { useAppSelector } from "@/hooks/useStore";
-//
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-//
+
+import { useAppSelector } from "@/hooks/useStore";
 import LanguageSelect from "./LanguageSelect";
 import CopyButton from "./copyButton";
 import Snippet from "./snippet";
-//
-import { INode } from "@/components/Automation/types";
-
-const parsed_data = (nodes: INode[]): { inputs: Record<string, string>; url?: string } => {
-  const inputs = nodes
-    .filter(node => node.type === "n8n-nodes-base.set")
-    .reduce((acc: Record<string, string>, node: INode) => {
-      node.parameters?.assignments?.assignments?.forEach(assignment => {
-        acc[assignment.name] = assignment.name;
-      });
-      return acc;
-    }, {});
-
-  const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
-  const url = `${n8nApiUrl}/webhooks/${webhookNode?.parameters?.path ?? ""}`;
-
-  return { inputs, url };
-};
+import { initialState } from "@/core/store/chatSlice";
+import { extractWebhookPath } from "@/components/Automation/helpers";
 
 export default function ApiAccess() {
-  // Store
-  const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow);
-  //
+  const { clonedWorkflow, inputs } = useAppSelector(state => state.chat ?? initialState);
   const [data, setData] = useState<Record<string, string>>({});
-  const [url, setUrl] = useState(`${n8nApiUrl}/webhooks/`);
+  const [url, setUrl] = useState("");
   const [lang, setLang] = useState("shell");
   const [api_snippet, setApiSnippet] = useState<string>("");
-  const [exicution_snippet, setExicutionSnippet] = useState<string>("");
+  // const [exicution_snippet, setExicutionSnippet] = useState<string>("");
 
   useEffect(() => {
-    if (clonedWorkflow?.nodes) {
-      const { url, inputs } = parsed_data(clonedWorkflow.nodes);
-      setData(inputs);
-      setUrl(url ?? `${n8nApiUrl}/webhooks/`);
-    }
+    const prepareData = async () => {
+      const n8nApiUrl = process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL;
+
+      if (clonedWorkflow?.nodes) {
+        const inputsData: Record<string, string> = {};
+        const webhookPath = await extractWebhookPath(clonedWorkflow.nodes);
+        const url = `${n8nApiUrl}/webhooks/${webhookPath ?? ""}`;
+        inputs.forEach(input => {
+          inputsData[input.name] = "[put_your_input_here]";
+        });
+
+        setData(inputsData);
+        setUrl(url);
+      }
+    };
+    prepareData();
   }, [clonedWorkflow]);
 
   return (
@@ -88,7 +78,7 @@ export default function ApiAccess() {
         />
       </Box>
 
-      <Box>
+      {/* <Box>
         <Stack
           direction={"row"}
           justifyContent={"space-between"}
@@ -121,7 +111,7 @@ export default function ApiAccess() {
           url={`${n8nApiUrl}/api/meta/template-executions/__template_execution_id__/`}
           onSnippetChange={setExicutionSnippet}
         />
-      </Box>
+      </Box> */}
     </Stack>
   );
 }
