@@ -173,7 +173,7 @@ const ChatInterface = ({ workflow }: Props) => {
                       setScheduleFrequency(frequency as FrequencyType);
                       setSelectedFrequency(frequency as FrequencyType);
                     }}
-                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
+                    selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.crontab.frequency}
                   />
                 )}
 
@@ -181,7 +181,7 @@ const ChatInterface = ({ workflow }: Props) => {
                   <FrequencyTimeSelector
                     message={message.text}
                     onSelect={setScheduleTime}
-                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
+                    selectedFrequency={selectedFrequency || clonedWorkflow?.periodic_task?.crontab.frequency}
                   />
                 )}
                 {message.type === "schedule_providers" && !isNone && (

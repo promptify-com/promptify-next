@@ -93,30 +93,7 @@ const useChat = ({ workflow }: Props) => {
 
     let initMessages = [welcomeMessage];
 
-    // const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
-    // let areAllCredentialsStored = true;
-    // if (credentialsInput.length) {
-    //   areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-
-    //   const credentialsMessage = createMessage({
-    //     type: "credentials",
-    //     text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
-    //   });
-    //   initMessages.push(credentialsMessage);
-    // }
-    // dispatch(setAreCredentialsStored(areAllCredentialsStored));
     setMessages(initMessages);
-
-    // if (areAllCredentialsStored) {
-    //   insertFrequencyMessage();
-    // }
-
-    // updateScheduleMode.current = !!clonedWorkflow?.periodic_task;
-
-    // if (updateScheduleMode.current) {
-    //   insertFrequencyMessage();
-    //   handleShowAllSteps();
-    // }
   };
 
   const loadWorkflowScheduleData = () => {
@@ -139,6 +116,8 @@ const useChat = ({ workflow }: Props) => {
       }
     }
   }, [debouncedSchedulingData]);
+
+  console.log(messages);
 
   //   // Pass run workflow generated execution as a new message after all prompts completed
   //   useEffect(() => {
@@ -172,32 +151,41 @@ const useChat = ({ workflow }: Props) => {
   //     }));
   //   }, [answers]);
 
+  // ClonedWorkflow always in sync with schedulingData
+
   const insertScheduleMessages = () => {
     const scheduleMessages: IMessage[] = [];
-    const frequencyMessage = createMessage({
-      type: "schedule_frequency",
-      text: "How often do you want to repeat this AI App?",
-    });
 
-    scheduleMessages.push(frequencyMessage);
-
-    const isHourly = clonedWorkflow?.schedule?.frequency === "hourly";
-
-    if (!isHourly) {
-      const scheduleTimeMessage = createMessage({
-        type: "schedule_time",
+    if (workflow.is_schedulable) {
+      const frequencyMessage = createMessage({
+        type: "schedule_frequency",
         text: "How often do you want to repeat this AI App?",
       });
 
-      scheduleMessages.push(scheduleTimeMessage);
-    }
+      scheduleMessages.push(frequencyMessage);
 
-    if (workflow.has_output_notification) {
-      const scheduleProvidersMessage = createMessage({
-        type: "schedule_providers",
-        text: "How often do you want to repeat this AI App?",
-      });
-      scheduleMessages.push(scheduleProvidersMessage);
+      const isHourly = clonedWorkflow?.schedule?.frequency === "hourly";
+
+      if (!isHourly) {
+        const scheduleTimeMessage = createMessage({
+          type: "schedule_time",
+          text: "How often do you want to repeat this AI App?",
+        });
+
+        scheduleMessages.push(scheduleTimeMessage);
+      }
+
+      if (workflow.has_output_notification) {
+        const scheduleProvidersMessage = createMessage({
+          type: "schedule_providers",
+          text: "How often do you want to repeat this AI App?",
+        });
+        scheduleMessages.push(scheduleProvidersMessage);
+      }
+    } else {
+      scheduleMessages.push(
+        createMessage({ type: "text", text: "The AI app you are using is not eligible for scheduling!" }),
+      );
     }
 
     setMessages(prev => prev.concat(scheduleMessages));
@@ -242,24 +230,11 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const setScheduleFrequency = (frequency: FrequencyType) => {
-    if (schedulingData.frequency === frequency) return;
+    // if (schedulingData.frequency === frequency) return;
 
     const scheduleData = { ...schedulingData, frequency };
 
     const isHourly = frequency === "hourly";
-    const isNone = frequency === "none";
-
-    if (isNone) {
-      updateScheduleMode.current = true;
-      setSchedulingData(scheduleData);
-      setMessages(prevMessages =>
-        prevMessages
-          .filter(msg => msg.type !== "readyMessage" && !msg.isHighlight)
-          .concat(createMessage({ type: "readyMessage" })),
-      );
-
-      return;
-    }
 
     let _messages = messages;
     if (isHourly) {
@@ -438,9 +413,9 @@ const useChat = ({ workflow }: Props) => {
     switch (message) {
       case "Configure":
         const configMessages: IMessage[] = [];
-        await extractCredentialsInputFromNodes(workflow.data.nodes);
+        const _credentialInputs = await extractCredentialsInputFromNodes(workflow.data.nodes);
         let areAllCredentialsStored = true;
-        if (credentialsInput.length) {
+        if (_credentialInputs.length) {
           areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
 
           const credentialsMessage = createMessage({

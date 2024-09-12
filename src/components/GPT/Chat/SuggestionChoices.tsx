@@ -18,8 +18,8 @@ const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
     { label: "Schedule", show: is_schedulable },
     { label: "Run Now", show: true },
     { label: "Get API", show: true },
-    { label: "Pause", show: clonedWorkflow?.periodic_task?.enabled },
-    { label: "Resume", show: !clonedWorkflow?.periodic_task?.enabled },
+    { label: "Pause", show: workflow.is_schedulable && clonedWorkflow?.periodic_task?.enabled },
+    { label: "Resume", show: workflow.is_schedulable && !clonedWorkflow?.periodic_task?.enabled },
   ];
 
   return (
