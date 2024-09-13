@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { createMessage } from "@/components/Chat/helper";
-import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { setClonedWorkflow, setGptGenerationStatus } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
@@ -60,7 +59,6 @@ const useChat = ({ workflow }: Props) => {
   });
   const debouncedSchedulingData = useDebounce(schedulingData, 1000);
 
-  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
   const { handlePause, handleResume } = useChatActions({ setMessages });
   const { streamExecutionHandler } = useGenerateExecution({});
@@ -297,7 +295,7 @@ const useChat = ({ workflow }: Props) => {
       const webhook = extractWebhookPath(clonedWorkflow.nodes);
       const frequency = schedulingData?.frequency !== "none" ? schedulingData?.frequency : undefined;
 
-      const response = await sendMessageAPI(webhook, [], frequency);
+      const response = await sendMessageAPI(webhook, answers, frequency);
 
       dispatch(setGptGenerationStatus("generated"));
 
