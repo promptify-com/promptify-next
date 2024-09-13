@@ -28,6 +28,7 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import MessageInputs from "@/components/GPT/MessageInputs";
 import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import ApiAccessMessage from "@/components/Chat/ApiAccess";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -225,6 +226,7 @@ const ChatInterface = ({ workflow }: Props) => {
                   </Stack>
                 )}
                 {message.type === "form" && <MessageInputs allowGenerate={false} />}
+                {message.type === "API_instructions" && <ApiAccessMessage />}
                 {message.type === "readyMessage" && !isNone && (
                   <Stack gap={8}>
                     <Stack id="run-message">
