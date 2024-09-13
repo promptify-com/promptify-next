@@ -36,10 +36,7 @@ export default function ApiAccess() {
   }, [clonedWorkflow]);
 
   return (
-    <Stack
-      spacing={2}
-      sx={{ p: { xs: 2, md: 6 } }}
-    >
+    <Stack spacing={2}>
       <Box>
         <Stack
           direction={"row"}
