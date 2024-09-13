@@ -6,11 +6,12 @@ import PdfIcon from "@/assets/icons/PdfIcon";
 import WordIcon from "@/assets/icons/WordIcon";
 import { getBaseUrl } from "@/common/helpers";
 import { downloadBlobObject } from "@/common/helpers/handleExecutionExport";
-import { executionsApi } from "@/core/api/executions";
+import { workflowsApi } from "@/core/api/workflows";
 import { useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { format } from "date-fns";
 import ShareIcon from "@/assets/icons/ShareIcon";
+import { useExportWorkflowMutation } from "@/core/api/workflows";
 
 interface ExportPopupChatProps {
   onClose: () => void;
@@ -24,38 +25,21 @@ export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
   const appTitle = clonedWorkflow?.name;
   const currentDate = format(new Date(), "MM-dd-yyyy");
   const title = `${appTitle} - ${currentDate}`;
-  // if (!content) {
-  //     throw new Error("Provided activeExecution is not a valid one!");
-  // }
 
-  // const [exportExecution] = executionsApi.endpoints.exportExecution.useLazyQuery();
+  const [exportWorkflow] = useExportWorkflowMutation();
 
-  // const handleClickCopy = () => {
-  //     copyToClipboard(sharedUrl);
-  // };
-
-  // const ENCODED_URL = encodeURIComponent(sharedUrl);
-
-  // const generateTitle = () => {
-  //     if (activeExecution?.template?.title) {
-  //         const hasNotitle = activeExecution.title.toLowerCase() === "untitled";
-  //         return encodeURIComponent(hasNotitle ? activeExecution?.template.title : activeExecution?.title);
-  //     } else {
-  //         return encodeURIComponent(activeExecution?.title);
-  //     }
-  // };
-
-  // const handleExportExecution = async (fileType: "word" | "pdf") => {
-  //     setExporting({ ...exporting, [fileType]: true });
-  //     try {
-  //         const response = await exportExecution({ id: activeExecution?.id, fileType }).unwrap();
-  //         downloadBlobObject(response, fileType, title.replace(/[\s,:]+/g, "-").trim());
-  //     } catch (error) {
-  //         console.error("Export failed", error);
-  //     } finally {
-  //         setExporting({ ...exporting, [fileType]: false });
-  //     }
-  // };
+  const handleExportExecution = async (fileType: "word" | "pdf") => {
+    if (!content) return;
+    setExporting({ ...exporting, [fileType]: true });
+    try {
+      const response = await exportWorkflow({ content, fileType }).unwrap();
+      downloadBlobObject(response, fileType, title.replace(/[\s,:]+/g, "-").trim());
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setExporting({ ...exporting, [fileType]: false });
+    }
+  };
 
   const handleSendEmail = () => {
     const subject = title ? title.replace(/-+/g, "-").trim() : "No title available for this AI App";
@@ -139,8 +123,7 @@ export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
               <CircularProgress size={24} />
             ) : (
               <IconButton
-                // onClick={() => handleExportExecution("pdf")}
-                onClick={() => console.log("Export as PDF")}
+                onClick={() => handleExportExecution("pdf")}
                 sx={{ border: "none", opacity: 0.6 }}
               >
                 <GetAppRounded />
@@ -203,8 +186,7 @@ export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
               <CircularProgress size={20} />
             ) : (
               <IconButton
-                // onClick={() => handleExportExecution("word")}
-                onClick={() => console.log("Export as Word Document")}
+                onClick={() => handleExportExecution("word")}
                 sx={{ border: "none", opacity: 0.6 }}
               >
                 <GetAppRounded />
