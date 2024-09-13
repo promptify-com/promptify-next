@@ -11,9 +11,10 @@ interface Props {
   message: string;
   workflow: ITemplateWorkflow;
   isScheduled?: boolean;
+  scrollToBottom?: () => void;
 }
 
-function CredentialsContainer({ message, workflow, isScheduled }: Props) {
+function CredentialsContainer({ message, workflow, scrollToBottom }: Props) {
   const [localInputs, setLocalInputs] = useState<ICredentialInput[]>([]);
 
   const { extractCredentialsInputFromNodes, checkCredentialInserted } = useCredentials();
@@ -26,10 +27,14 @@ function CredentialsContainer({ message, workflow, isScheduled }: Props) {
 
   useEffect(() => {
     prepareCredential();
+    scrollToBottom?.();
   }, [workflow]);
 
   return (
-    <Stack gap={4}>
+    <Stack
+      gap={4}
+      minHeight={"200px"}
+    >
       {message && (
         <Typography
           fontSize={16}

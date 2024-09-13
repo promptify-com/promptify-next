@@ -88,7 +88,6 @@ const ChatInterface = ({ workflow }: Props) => {
     if (data) {
       dispatch(setAnswers(getWorkflowInputsValues(data)));
     }
-    // scrollToInputsForm();
   };
 
   const prepareData = async () => {
@@ -117,6 +116,15 @@ const ChatInterface = ({ workflow }: Props) => {
     const _inputs = await extractCredentialsInputFromNodes(nodes);
     dispatch(setCredentialsInput(_inputs));
   };
+
+  useEffect(() => {
+    const executionMessage = messages.find(msg => msg.type === "workflowExecution");
+    if (executionMessage) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 600);
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (!clonedWorkflow || !workflow) {
@@ -186,6 +194,7 @@ const ChatInterface = ({ workflow }: Props) => {
                     retryExecution={() => retryRunWorkflow(message.data as IWorkflowCreateResponse)}
                     showInputs={() => cloneExecutionInputs(message.data as IWorkflowCreateResponse)}
                     saveAsDocument={() => saveGPTDocument(message.data as IWorkflowCreateResponse, message.text)}
+                    scrollToBottom={scrollToBottom}
                   />
                 )}
 
@@ -194,6 +203,7 @@ const ChatInterface = ({ workflow }: Props) => {
                     message={message.text}
                     workflow={workflow}
                     isScheduled
+                    scrollToBottom={scrollToBottom}
                   />
                 )}
                 {message.type === "schedule_frequency" && (

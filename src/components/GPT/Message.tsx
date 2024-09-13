@@ -24,7 +24,6 @@ import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined
 import { setToast } from "@/core/store/toastSlice";
 import { ShareOutlined } from "@mui/icons-material";
 import { ExportPopupChat } from "./Chat/ExportPopupChat";
-import { useRouter } from "next/router";
 
 interface Props {
   message: IMessage;
@@ -41,24 +40,27 @@ interface MessageContentProps {
   onStreamingFinished?: () => void;
 }
 
-export const MessageContentWithHTML = memo(({ content }: { content: string }) => {
-  const [html, setHtml] = useState("");
+export const MessageContentWithHTML = memo(
+  ({ content, scrollToBottom }: { content: string; scrollToBottom?: () => void }) => {
+    const [html, setHtml] = useState("");
 
-  useEffect(() => {
-    if (!content) {
-      return;
-    }
+    useEffect(() => {
+      if (!content) {
+        return;
+      }
 
-    const generateFinalHtml = async () => {
-      const _html = await markdownToHTML(content);
-      setHtml(_html);
-    };
+      const generateFinalHtml = async () => {
+        const _html = await markdownToHTML(content);
+        setHtml(_html);
+      };
 
-    generateFinalHtml();
-  }, [content]);
+      generateFinalHtml();
+      scrollToBottom?.();
+    }, [content]);
 
-  return <ExecutionContent content={sanitizeHTML(html)} />;
-});
+    return <ExecutionContent content={sanitizeHTML(html)} />;
+  },
+);
 
 const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: MessageContentProps) => {
   const dispatch = useAppDispatch();
@@ -91,7 +93,6 @@ export default function Message({
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const [documentSaved, setSaveDocument] = useState(false);
   const [openExportPopup, setOpenExportPopup] = useState(false);
-  const router = useRouter();
 
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialChatState.gptGenerationStatus,
@@ -154,7 +155,10 @@ export default function Message({
               width={"100%"}
               minHeight={"40px"}
             >
-              <MessageContentWithHTML content={text} />
+              <MessageContentWithHTML
+                content={text}
+                scrollToBottom={scrollToBottom}
+              />
             </Stack>
           ) : (
             <MessageContent
