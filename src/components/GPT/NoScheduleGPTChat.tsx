@@ -235,6 +235,7 @@ function NoScheduleGPTChat({ messages, showGenerate, workflow, messageWorkflowEx
                 isExecuting={gptGenerationStatus === "started"}
                 disableGenerateBtn={gptGenerationStatus !== "pending"}
                 progressBarButton
+                estimationTime={workflow.estimated_execution_time}
               />
             </Box>
           )}
