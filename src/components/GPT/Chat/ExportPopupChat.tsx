@@ -58,7 +58,7 @@ export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
   // };
 
   const handleSendEmail = () => {
-    const subject = content ? content.replace(/-+/g, "-").trim() : "No title available for this AI App";
+    const subject = title ? title.replace(/-+/g, "-").trim() : "No title available for this AI App";
 
     const body = content ? encodeURIComponent(content) : encodeURIComponent("No text available for this AI App");
 
