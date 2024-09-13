@@ -19,7 +19,9 @@ export default function MessageContainer({ message, children }: Props) {
     <Stack
       direction={fromUser ? "row-reverse" : "row"}
       alignItems={"flex-start"}
+      sx={{ float: "right" }}
       gap={{ xs: 1, md: 2 }}
+      width={"fit-content"}
     >
       <CardMedia
         sx={{

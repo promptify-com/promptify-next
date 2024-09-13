@@ -22,6 +22,9 @@ import type { IWorkflowCreateResponse } from "../Automation/types";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
 import { setToast } from "@/core/store/toastSlice";
+import { ShareOutlined } from "@mui/icons-material";
+import { ExportPopupChat } from "./Chat/ExportPopupChat";
+import { useRouter } from "next/router";
 
 interface Props {
   message: IMessage;
@@ -29,6 +32,7 @@ interface Props {
   retryExecution?(): void;
   showInputs?(): void;
   saveAsDocument?(): Promise<boolean>;
+  scrollToBottom?(): void;
 }
 
 interface MessageContentProps {
@@ -80,11 +84,14 @@ export default function Message({
   retryExecution,
   showInputs,
   saveAsDocument,
+  scrollToBottom,
 }: Props) {
   const { fromUser, isHighlight, type, text } = message;
   const dispatch = useAppDispatch();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const [documentSaved, setSaveDocument] = useState(false);
+  const [openExportPopup, setOpenExportPopup] = useState(false);
+  const router = useRouter();
 
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialChatState.gptGenerationStatus,
@@ -111,6 +118,8 @@ export default function Message({
 
   return (
     <Stack
+      width={!fromUser && type !== "html" ? "fit-content" : "100%"}
+      alignItems={fromUser ? "end" : "start"}
       sx={{
         gap: "24px",
         ...(message.noHeader && {
@@ -133,11 +142,11 @@ export default function Message({
           sx={{
             p: "16px 20px",
             borderRadius: fromUser
-              ? "100px 100px 100px 0px"
+              ? "100px 0px 100px 100px"
               : isInitialMessage
                 ? "0px 100px 100px 100px"
                 : "0px 16px 16px 16px",
-            bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
+            bgcolor: fromUser ? "#9aedd3" : isHighlight ? "#DFDAFF" : "#F8F7FF",
           }}
         >
           {["workflowExecution", "html"].includes(type) ? (
@@ -151,6 +160,7 @@ export default function Message({
             <MessageContent
               content={text}
               shouldStream={!fromUser}
+              onStreamingFinished={scrollToBottom}
             />
           )}
         </Typography>
@@ -195,6 +205,25 @@ export default function Message({
                 >
                   <CreateNewFolderOutlined />
                 </IconButton>
+              </CustomTooltip>
+
+              <CustomTooltip title={"Share"}>
+                <>
+                  <IconButton
+                    onClick={() => setOpenExportPopup(true)}
+                    disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                    sx={iconBtnStyle}
+                  >
+                    <ShareOutlined />
+                  </IconButton>
+
+                  {openExportPopup && (
+                    <ExportPopupChat
+                      onClose={() => setOpenExportPopup(false)}
+                      content={text}
+                    />
+                  )}
+                </>
               </CustomTooltip>
             </Stack>
             <Button

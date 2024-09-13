@@ -26,6 +26,7 @@ export type MessageType =
   | "schedule_time"
   | "schedule_providers"
   | "input"
+  | "API_instructions"
   | InputType;
 
 type MessageDataType = Templates[] | ITemplateWorkflow[] | IWorkflowCreateResponse | IAnswer[];
