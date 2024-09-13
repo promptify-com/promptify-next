@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -11,17 +11,16 @@ import { initialState } from "@/core/store/chatSlice";
 import { extractWebhookPath } from "@/components/Automation/helpers";
 
 export default function ApiAccess() {
+  const n8nApiUrl = process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL;
   const { clonedWorkflow, inputs } = useAppSelector(state => state.chat ?? initialState);
   const [data, setData] = useState<Record<string, string>>({});
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(`${n8nApiUrl}/workflow`);
   const [lang, setLang] = useState("shell");
   const [api_snippet, setApiSnippet] = useState<string>("");
   // const [exicution_snippet, setExicutionSnippet] = useState<string>("");
 
   useEffect(() => {
     const prepareData = async () => {
-      const n8nApiUrl = process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL;
-
       if (clonedWorkflow?.nodes) {
         const inputsData: Record<string, string> = {};
         const webhookPath = await extractWebhookPath(clonedWorkflow.nodes);
@@ -29,7 +28,6 @@ export default function ApiAccess() {
         inputs.forEach(input => {
           inputsData[input.name] = "[put_your_input_here]";
         });
-
         setData(inputsData);
         setUrl(url);
       }

@@ -378,7 +378,7 @@ const useChat = ({ workflow }: Props) => {
       type: "text",
       text: "Running your AI App failed, please try again.",
     });
-    setMessages(prev => prev.concat(failMessage));
+    setMessages(prev => prev.filter(msg => msg.type !== "readyMessage").concat(failMessage));
   };
 
   const removeProvider = (providerName: string, shouldUpdate = true) => {
@@ -443,7 +443,7 @@ const useChat = ({ workflow }: Props) => {
             prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
           );
         }
-
+        return;
       case "pause_workflow":
         await handlePause();
         return;

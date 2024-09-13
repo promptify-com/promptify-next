@@ -8,6 +8,7 @@ import { stripTags } from "@/common/helpers";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
+import { useRouter } from "next/router";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 function WorkflowCard({ workflow }: Props) {
+  const router = useRouter();
 
   const selectedChat = useAppSelector(state => state.chat?.selectedChat ?? initialChatState.selectedChat);
 
@@ -24,7 +26,7 @@ function WorkflowCard({ workflow }: Props) {
     if (!selectedChat) {
       return;
     }
-    window.open(`/apps/chat/${workflow.slug}`, '_blank')
+    router.push(`/apps/chat/${workflow.slug}`);
   };
 
   return (
