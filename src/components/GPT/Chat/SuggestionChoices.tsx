@@ -16,17 +16,19 @@ const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
   const { is_schedulable } = workflow;
 
   const chipOptions = [
-    { label: "Configure", show: true },
+    { label: "Configure", show: !!inputs.length || requireCredentials },
     { label: "Schedule", show: is_schedulable },
     {
       label: "Run Now",
       show:
+        (!inputs.length && !requireCredentials) ||
         (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
         (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
     },
     {
       label: "Get API",
       show:
+        (!inputs.length && !requireCredentials) ||
         (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
         (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
     },

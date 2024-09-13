@@ -394,6 +394,13 @@ const useChat = ({ workflow }: Props) => {
   const renderMessage = async (message: string) => {
     switch (message) {
       case "configure_workflow":
+        if (!inputs.length || !requireCredentials) {
+          setMessages(prevMessages =>
+            prevMessages.concat(
+              createMessage({ text: "Your AI app does not require any configuration!", type: "text" }),
+            ),
+          );
+        }
         const configMessages: IMessage[] = [];
         if (credentialsInput.length) {
           const credentialsMessage = createMessage({
@@ -408,6 +415,7 @@ const useChat = ({ workflow }: Props) => {
           });
           configMessages.push(inputsMessage);
         }
+
         setMessages(prevMessages => prevMessages.concat(configMessages));
         return;
       case "schedule_workflow":
@@ -416,6 +424,7 @@ const useChat = ({ workflow }: Props) => {
 
       case "run_workflow":
         if (
+          (!inputs.length && !requireCredentials) ||
           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
           (requireCredentials && credentialsInput.length > 0 && areCredentialsStored)
         ) {
@@ -432,6 +441,7 @@ const useChat = ({ workflow }: Props) => {
         return;
       case "api_instructions":
         if (
+          (!inputs.length && !requireCredentials) ||
           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
           (requireCredentials && credentialsInput.length > 0 && areCredentialsStored)
         ) {
