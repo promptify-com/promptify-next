@@ -34,7 +34,7 @@
     "draft-js": "^0.11.7",
     "elkjs": "^0.8.2",
     "embla-carousel-auto-height": "^8.2.1",
-    "embla-carousel-autoplay": "^8.2.1",
+    "embla-carousel-autoplay": "^8.3.0",
     "embla-carousel-react": "^8.2.1",
     "formik": "^2.4.2",
     "httpsnippet": "2.0.0",
