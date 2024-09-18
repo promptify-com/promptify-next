@@ -10,7 +10,7 @@ interface Props {
   onSubmit: (value: string) => void;
   messageType?: string;
 }
-
+// SuggestionChoices component
 const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
   const { clonedWorkflow, inputs, requireCredentials, credentialsInput, areCredentialsStored, answers } =
     useAppSelector(state => state.chat ?? initialChatState);
