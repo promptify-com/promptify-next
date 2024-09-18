@@ -42,7 +42,6 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
       show: workflow.is_schedulable && !!clonedWorkflow?.periodic_task && !clonedWorkflow?.periodic_task?.enabled,
     },
   ];
-
   return (
     <Box
       sx={{
@@ -51,7 +50,9 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
         flexWrap: "wrap",
         mb: "10px",
         mt: messageType === "credentials" ? "-100px" : "-50px",
-        ...(messageType !== "credentials" && messageType !== "schedule_time" ? { ml: "60px" } : {}),
+        ...(messageType !== "credentials" && messageType !== "schedule_time" && messageType !== "API_instructions"
+          ? { ml: "60px" }
+          : {}),
       }}
     >
       {chipOptions
