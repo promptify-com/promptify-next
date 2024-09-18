@@ -135,7 +135,7 @@ const ChatInterface = ({ workflow }: Props) => {
 
   const FREQUENCIES = isAdmin ? FREQUENCY_ITEMS : FREQUENCY_ITEMS.slice(1);
   const isNone = clonedWorkflow?.schedule?.frequency === "none";
-  console.log({ messages });
+
   return (
     <Stack
       sx={{
