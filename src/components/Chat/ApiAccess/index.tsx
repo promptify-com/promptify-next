@@ -24,7 +24,7 @@ export default function ApiAccess() {
       if (clonedWorkflow?.nodes) {
         const inputsData: Record<string, string> = {};
         const webhookPath = await extractWebhookPath(clonedWorkflow.nodes);
-        const url = `${n8nApiUrl}/webhooks/${webhookPath ?? ""}`;
+        const url = `${n8nApiUrl}/webhook/${webhookPath ?? ""}`;
         inputs.forEach(input => {
           inputsData[input.name] = "[put_your_input_here]";
         });
