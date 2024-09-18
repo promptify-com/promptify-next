@@ -82,7 +82,7 @@ function ActionButtons({ document, onFavorite }: Props) {
         sx={btnStyle}
         onClick={saveExecution}
       >
-        {isFavorite ? "Delete from documents" : "Save as document"}
+        {isFavorite ? "Delete from workspace" : "Save to workspace"}
       </Button>
       <Button
         variant="text"

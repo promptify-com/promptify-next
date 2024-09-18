@@ -201,7 +201,7 @@ export default function Message({
                   </IconButton>
                 </CustomTooltip>
               )}
-              <CustomTooltip title={documentSaved ? "Document saved" : "Save as document"}>
+              <CustomTooltip title={documentSaved ? "Document saved" : "Save to workspace"}>
                 <IconButton
                   onClick={saveDocument}
                   disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
