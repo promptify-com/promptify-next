@@ -8,9 +8,10 @@ import { allRequiredInputsAnswered } from "@/common/helpers";
 interface Props {
   workflow: ITemplateWorkflow;
   onSubmit: (value: string) => void;
+  messageType?: string;
 }
 
-const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
+const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
   const { clonedWorkflow, inputs, requireCredentials, credentialsInput, areCredentialsStored, answers } =
     useAppSelector(state => state.chat ?? initialChatState);
   const { is_schedulable } = workflow;
@@ -48,7 +49,9 @@ const SuggestionChoices = ({ workflow, onSubmit }: Props) => {
         display: "flex",
         gap: "8px",
         flexWrap: "wrap",
-        my: "10px",
+        mb: "10px",
+        mt: messageType === "credentials" ? "-100px" : "-50px",
+        ...(messageType !== "credentials" && messageType !== "schedule_time" ? { ml: "60px" } : {}),
       }}
     >
       {chipOptions
