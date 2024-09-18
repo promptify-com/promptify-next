@@ -159,6 +159,78 @@ export default function Message({
                 content={text}
                 scrollToBottom={scrollToBottom}
               />
+              {type === "workflowExecution" && (
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  gap={2}
+                >
+                  <Stack
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    gap={2}
+                  >
+                    <CustomTooltip title={"Repeat"}>
+                      <IconButton
+                        onClick={retryExecution}
+                        disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                        sx={iconBtnStyle}
+                      >
+                        <Replay />
+                      </IconButton>
+                    </CustomTooltip>
+                    {!!inputs.length && (
+                      <CustomTooltip title={"Edit"}>
+                        <IconButton
+                          onClick={showInputs}
+                          disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                          sx={iconBtnStyle}
+                        >
+                          <EditOutlined />
+                        </IconButton>
+                      </CustomTooltip>
+                    )}
+                    <CustomTooltip title={documentSaved ? "Document saved" : "Save to workspace"}>
+                      <IconButton
+                        onClick={saveDocument}
+                        disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
+                        sx={iconBtnStyle}
+                      >
+                        <CreateNewFolderOutlined />
+                      </IconButton>
+                    </CustomTooltip>
+
+                    <CustomTooltip title={"Share"}>
+                      <>
+                        <IconButton
+                          onClick={() => setOpenExportPopup(true)}
+                          disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                          sx={iconBtnStyle}
+                        >
+                          <ShareOutlined />
+                        </IconButton>
+
+                        {openExportPopup && (
+                          <ExportPopupChat
+                            onClose={() => setOpenExportPopup(false)}
+                            content={text}
+                          />
+                        )}
+                      </>
+                    </CustomTooltip>
+                  </Stack>
+                  <Button
+                    onClick={() => copyToClipboard(message.text)}
+                    startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
+                    variant="text"
+                    sx={btnStyle}
+                  >
+                    Copy
+                  </Button>
+                </Stack>
+              )}
             </Stack>
           ) : (
             <MessageContent
@@ -168,78 +240,6 @@ export default function Message({
             />
           )}
         </Typography>
-        {type === "workflowExecution" && (
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            gap={2}
-          >
-            <Stack
-              direction={"row"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              gap={2}
-            >
-              <CustomTooltip title={"Repeat"}>
-                <IconButton
-                  onClick={retryExecution}
-                  disabled={["started", "streaming"].includes(gptGenerationStatus)}
-                  sx={iconBtnStyle}
-                >
-                  <Replay />
-                </IconButton>
-              </CustomTooltip>
-              {!!inputs.length && (
-                <CustomTooltip title={"Edit"}>
-                  <IconButton
-                    onClick={showInputs}
-                    disabled={["started", "streaming"].includes(gptGenerationStatus)}
-                    sx={iconBtnStyle}
-                  >
-                    <EditOutlined />
-                  </IconButton>
-                </CustomTooltip>
-              )}
-              <CustomTooltip title={documentSaved ? "Document saved" : "Save as document"}>
-                <IconButton
-                  onClick={saveDocument}
-                  disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
-                  sx={iconBtnStyle}
-                >
-                  <CreateNewFolderOutlined />
-                </IconButton>
-              </CustomTooltip>
-
-              <CustomTooltip title={"Share"}>
-                <>
-                  <IconButton
-                    onClick={() => setOpenExportPopup(true)}
-                    disabled={["started", "streaming"].includes(gptGenerationStatus)}
-                    sx={iconBtnStyle}
-                  >
-                    <ShareOutlined />
-                  </IconButton>
-
-                  {openExportPopup && (
-                    <ExportPopupChat
-                      onClose={() => setOpenExportPopup(false)}
-                      content={text}
-                    />
-                  )}
-                </>
-              </CustomTooltip>
-            </Stack>
-            <Button
-              onClick={() => copyToClipboard(message.text)}
-              startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
-              variant="text"
-              sx={btnStyle}
-            >
-              Copy
-            </Button>
-          </Stack>
-        )}
       </MessageContainer>
     </Stack>
   );
