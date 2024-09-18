@@ -180,7 +180,7 @@ const ChatInterface = ({ workflow }: Props) => {
             gap={8}
             justifyContent={"space-between"}
           >
-            {messages.map(message => (
+            {messages.map((message, index) => (
               <Fragment key={message.id}>
                 {message.type === "text" && (
                   <Message
@@ -251,25 +251,27 @@ const ChatInterface = ({ workflow }: Props) => {
                     </Stack>
                   </Stack>
                 )}
+                {index === messages.length - 1 &&
+                  !validatingQuery &&
+                  !message.fromUser &&
+                  message.type !== "readyMessage" && (
+                    <SuggestionChoices
+                      workflow={workflow}
+                      onSubmit={handleSubmit}
+                      messageType={message.type}
+                    />
+                  )}
               </Fragment>
             ))}
           </Stack>
         </Stack>
         <Stack>
           {currentUser?.id ? (
-            <>
-              {!validatingQuery && (
-                <SuggestionChoices
-                  workflow={workflow}
-                  onSubmit={handleSubmit}
-                />
-              )}
-              <ChatInput
-                onSubmit={handleSubmit}
-                disabled={false}
-                isValidating={validatingQuery}
-              />
-            </>
+            <ChatInput
+              onSubmit={handleSubmit}
+              disabled={false}
+              isValidating={validatingQuery}
+            />
           ) : (
             <Stack
               direction={"column"}
