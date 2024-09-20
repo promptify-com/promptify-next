@@ -123,25 +123,29 @@ const PromptCardAccordion = ({
 
   const handleOpenTest = async () => {
     if (template) {
-      promptData.template = template.id;
-      const savedPrompt = await createPrompt(promptData).unwrap();
-
-      if (savedPrompt) {
-        const _savedPromptData: IEditPrompts = {
-          content: savedPrompt.content,
-          dependencies: savedPrompt.dependencies,
-          engine: savedPrompt.engine,
-          id: savedPrompt.id,
-          is_visible: savedPrompt.is_visible,
-          model_parameters: savedPrompt.model_parameters,
-          order: savedPrompt.order,
-          output_format: savedPrompt.output_format,
-          parameters: promptData.parameters,
-          prompt_output_variable: savedPrompt.prompt_output_variable,
-          show_output: savedPrompt.show_output,
-          title: savedPrompt.title,
-        };
-        setPromptData(_savedPromptData);
+      if (!promptData?.id) {
+        promptData.template = template.id;
+        const savedPrompt = await createPrompt(promptData).unwrap();
+        //
+        if (savedPrompt) {
+          const _savedPromptData: IEditPrompts = {
+            content: savedPrompt.content,
+            dependencies: savedPrompt.dependencies,
+            engine: savedPrompt.engine,
+            id: savedPrompt.id,
+            is_visible: savedPrompt.is_visible,
+            model_parameters: savedPrompt.model_parameters,
+            order: savedPrompt.order,
+            output_format: savedPrompt.output_format,
+            parameters: promptData.parameters,
+            prompt_output_variable: savedPrompt.prompt_output_variable,
+            show_output: savedPrompt.show_output,
+            title: savedPrompt.title,
+          };
+          setPromptData(_savedPromptData);
+          setShowTest(true);
+        }
+      } else {
         setShowTest(true);
       }
     }
