@@ -15,15 +15,13 @@ interface Props {
 
 export default function FrequencyTimeSelector({ message, onSelect, selectedFrequency }: Props) {
   const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
-
   const scheduledData = useMemo(() => {
     return (
       clonedWorkflow?.schedule ??  clonedWorkflow?.periodic_task?.crontab
     );
   }, [clonedWorkflow]);
-
   const scheduleDayOfWeek =
-    scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
+  scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
       ? scheduledData?.day_of_week
       : 0;
 
@@ -32,12 +30,11 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
       ? scheduledData?.day_of_month
       : 1;
 
-  const scheduleHour = scheduledData?.hour && !(["0", "*"].includes(scheduledData.hour?.toString() || "")) ? scheduledData?.hour : 9
-  // default for 9AM
-
+  const scheduleHour =
+    scheduledData?.hour !== undefined && !(["*"].includes(scheduledData.hour?.toString() || "")) ? scheduledData?.hour : 9;
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
-    day_of_week: scheduleDayOfWeek, // default of monday
-    day_of_month: scheduleDayOfMonth,// default of the first month
+    day_of_week: scheduleDayOfWeek,
+    day_of_month: scheduleDayOfMonth,
     time: scheduleHour,
   });
 
@@ -45,8 +42,8 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
   useEffect(() => {
     setScheduleTime({
       ...scheduleTime,
-      day_of_week: scheduleDayOfWeek, 
-      day_of_month: scheduleDayOfMonth,
+      day_of_week: scheduleDayOfWeek || 0,
+      day_of_month: scheduleDayOfMonth || 1,
       time: scheduleHour,
     });
   }, [scheduledData]);
