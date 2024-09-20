@@ -132,10 +132,10 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
             textOverflow: "ellipsis",
           }}
         >
-          Max Length: {prompt.model_parameters?.maximumLength || 0}, Temperature:{" "}
-          {prompt.model_parameters?.temperature || 0}, Top P: {prompt.model_parameters?.topP || 0}, Frequency Penalty:{" "}
-          {prompt.model_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
-          {prompt.model_parameters?.presencePenalty || 0}
+          Max Length: {prompt.default_parameters?.maximumLength || 0}, Temperature:{" "}
+          {prompt.default_parameters?.temperature || 0}, Top P: {prompt.default_parameters?.topP || 0}, Frequency
+          Penalty: {prompt.default_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
+          {prompt.default_parameters?.presencePenalty || 0}
         </Typography>
         <Stack
           direction={"row"}
@@ -221,12 +221,13 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
         }}
       >
         <EngineParamsSlider
-          engineParams={prompt.model_parameters}
+          engineParams={prompt.default_parameters}
           onSave={params => {
-            setPrompt({ ...prompt, model_parameters: params });
+            setPrompt({ ...prompt, default_parameters: params });
             closeSettingsModal();
           }}
           onCancel={closeSettingsModal}
+          engineDefaultParams={promptEngine?.default_parameters}
         />
       </Popover>
     </>

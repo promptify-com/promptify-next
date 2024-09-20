@@ -1,6 +1,7 @@
 import type { Engine, Templates } from "@/core/api/dto/templates";
 
 export const handleInitPrompt = (template: Templates, engines: Engine[]) => {
+  console.log({ template, engines });
   if (template?.prompts) {
     const textEngine = engines.find(engine => engine.output_type === "TEXT");
     const _prompts = template.prompts.map((prompt, index) => {
@@ -26,6 +27,7 @@ export const handleInitPrompt = (template: Templates, engines: Engine[]) => {
         is_visible: prompt.is_visible,
         show_output: prompt.show_output,
         prompt_output_variable: prompt.prompt_output_variable,
+        default_parameters: prompt.engine?.default_parameters || {},
       };
     });
 
