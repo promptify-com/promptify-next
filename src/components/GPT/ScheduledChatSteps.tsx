@@ -54,9 +54,7 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
   const bottomRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
 
-  const [selectedFrequency, setSelectedFrequency] = useState<FrequencyType | undefined>(
-    clonedWorkflow?.periodic_task?.frequency,
-  );
+  const [selectedFrequency,setSelectedFrequency] = useState<FrequencyType | undefined>(clonedWorkflow?.periodic_task?.frequency)
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, []);
@@ -192,7 +190,6 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     items={FREQUENCIES}
                     onSelect={frequency => {
                       setScheduleFrequency(frequency as FrequencyType);
-                      setSelectedFrequency(frequency as FrequencyType);
                     }}
                     selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />
