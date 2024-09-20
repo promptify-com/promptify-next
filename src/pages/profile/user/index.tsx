@@ -98,6 +98,7 @@ function ProfilePrompts() {
       username: currentUser?.username ?? "",
       gender: currentUser?.gender ?? "",
       bio: currentUser?.bio ?? "",
+      linkedin_url: currentUser?.linkedin_url ?? "",
     },
     enableReinitialize: true,
     onSubmit,
@@ -221,6 +222,17 @@ function ProfilePrompts() {
                   error={!!formik.touched.username && Boolean(formik.errors.username)}
                   onChange={formik.handleChange}
                   onClear={() => formik.setFieldValue("username", "")}
+                />
+                <StackedInput
+                  name="linkedin_url"
+                  label="Linkedin"
+                  required
+                  placeholder="https://linkedin.com/in/yourname"
+                  value={formik.values.linkedin_url}
+                  helperText={formik.touched.linkedin_url && formik.errors.linkedin_url}
+                  error={!!formik.touched.linkedin_url && Boolean(formik.errors.linkedin_url)}
+                  onChange={formik.handleChange}
+                  onClear={() => formik.setFieldValue("linkedin_url", "")}
                 />
               </SectionWrapper>
               <Typography
