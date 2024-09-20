@@ -37,7 +37,7 @@ interface Props {
 const ChatInterface = ({ workflow }: Props) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
+  const { clonedWorkflow, runInstantly } = useAppSelector(state => state.chat ?? initialChatState);
   const isAdmin = useAppSelector(isAdminFn);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -242,7 +242,7 @@ const ChatInterface = ({ workflow }: Props) => {
                     <Stack id="run-message">
                       <RunWorkflowMessage
                         estimatedExecutionTime={workflow.estimated_execution_time}
-                        runInstantly
+                        runInstantly={runInstantly}
                         onRun={() => {
                           runWorkflow();
                           // scrollToBottom();

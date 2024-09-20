@@ -31,6 +31,7 @@ export interface IEngineParams {
   temperature?: number;
   maximumLength?: number;
   topP?: number;
+  topK?: number;
   presencePenalty?: number;
   frequencyPenalty?: number;
 }
@@ -52,6 +53,7 @@ export interface IEditPrompts extends IPromptOptions {
   parameters: IPromptParams[];
   order: number;
   template?: number;
+  default_parameters?: IEngineParams;
 }
 
 export interface HighlightWithinTextareaRef {

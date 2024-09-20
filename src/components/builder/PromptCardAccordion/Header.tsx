@@ -38,7 +38,6 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
   };
 
   const promptEngine = engines?.find(engine => engine.id === prompt.engine);
-
   return (
     <>
       <Stack
@@ -132,10 +131,10 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
             textOverflow: "ellipsis",
           }}
         >
-          Max Length: {prompt.model_parameters?.maximumLength || 0}, Temperature:{" "}
-          {prompt.model_parameters?.temperature || 0}, Top P: {prompt.model_parameters?.topP || 0}, Frequency Penalty:{" "}
-          {prompt.model_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
-          {prompt.model_parameters?.presencePenalty || 0}
+          Max Length: {promptEngine?.default_parameters?.maximumLength || 0}, Temperature:{" "}
+          {promptEngine?.default_parameters?.temperature || 0}, Top P: {promptEngine?.default_parameters?.topP || 0},
+          Frequency Penalty: {promptEngine?.default_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
+          {promptEngine?.default_parameters?.presencePenalty || 0}
         </Typography>
         <Stack
           direction={"row"}
@@ -227,6 +226,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
             closeSettingsModal();
           }}
           onCancel={closeSettingsModal}
+          engineDefaultParams={promptEngine?.default_parameters}
         />
       </Popover>
     </>

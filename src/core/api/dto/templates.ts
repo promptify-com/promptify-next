@@ -50,6 +50,16 @@ export interface TemplateIds {
 }
 
 export type EngineOutput = "TEXT" | "IMAGE" | "VIDEO" | "AUDIO";
+
+interface IEngineDefaultParameters {
+  topP?: number;
+  topK?: number;
+  stopSequence?: [];
+  presencePenalty?: number;
+  frequencyPenalty?: number;
+  temperature?: number;
+  maximumLength: number;
+}
 export interface Engine {
   icon: string;
   id: number;
@@ -58,6 +68,7 @@ export interface Engine {
   output_type: EngineOutput;
   provider: string;
   type?: string;
+  default_parameters?: IEngineDefaultParameters;
 }
 export interface Tag {
   id: number;

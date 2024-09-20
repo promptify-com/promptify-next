@@ -7,16 +7,41 @@ interface Props {
   engineParams: IEngineParams | null | undefined;
   onSave: (params: IEngineParams) => void;
   onCancel: () => void;
+  engineDefaultParams?: IEngineParams;
 }
 
-function EngineParamsSlider({ engineParams, onSave, onCancel }: Props) {
+function EngineParamsSlider({ engineParams, onSave, engineDefaultParams, onCancel }: Props) {
   const [params, setParams] = useState<IEngineParams>({
-    temperature: engineParams?.temperature || 0,
-    maximumLength: engineParams?.maximumLength || 0,
-    topP: engineParams?.topP || 0,
-    presencePenalty: engineParams?.presencePenalty || 0,
-    frequencyPenalty: engineParams?.frequencyPenalty || 0,
+    temperature: engineParams?.temperature ?? 0,
+    maximumLength: engineParams?.maximumLength ?? 1000,
+    topP: engineParams?.topP ?? 0,
+    presencePenalty: engineParams?.presencePenalty ?? 0,
+    frequencyPenalty: engineParams?.frequencyPenalty ?? 0,
   });
+
+  const maxParams: { [key in keyof IEngineParams]: number } = {
+    temperature: engineDefaultParams?.temperature ?? 0,
+    maximumLength: engineDefaultParams?.maximumLength ?? 1000,
+    topP: engineDefaultParams?.topP ?? 0,
+    presencePenalty: engineDefaultParams?.presencePenalty ?? 0,
+    frequencyPenalty: engineDefaultParams?.frequencyPenalty ?? 0,
+  };
+
+  const stepParams: { [key in keyof IEngineParams]: number } = {
+    temperature: 0.1,
+    maximumLength: 1,
+    topP: 0.01,
+    presencePenalty: 0.01,
+    frequencyPenalty: 0.01,
+  };
+
+  const paramLabels: { [key in keyof IEngineParams]: string } = {
+    temperature: "Temperature",
+    maximumLength: "Maximum Length",
+    topP: "Top P",
+    presencePenalty: "Presence Penalty",
+    frequencyPenalty: "Frequency Penalty",
+  };
 
   return (
     <Stack height={"100%"}>
@@ -31,15 +56,17 @@ function EngineParamsSlider({ engineParams, onSave, onCancel }: Props) {
           direction={"row"}
           flexWrap={"wrap"}
         >
-          {Object.entries(params).map((param, i) => (
+          {(Object.keys(params) as Array<keyof IEngineParams>).map(key => (
             <Box
-              key={i}
-              width={"50%"}
+              key={key}
+              width="50%"
             >
               <ParamSliderInline
-                label={param[0]}
-                value={param[1]}
-                onChange={val => setParams(prevParams => ({ ...prevParams, [param[0]]: val }))}
+                label={paramLabels[key]}
+                value={params[key]}
+                max={maxParams[key]}
+                step={stepParams[key]}
+                onChange={val => setParams(prev => ({ ...prev, [key]: val }))}
               />
             </Box>
           ))}

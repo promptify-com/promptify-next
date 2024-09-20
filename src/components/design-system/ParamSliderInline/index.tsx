@@ -18,12 +18,15 @@ const getParamLabel = (name: string) => {
 };
 
 interface Props {
-  label: string;
-  value: number;
+  label?: string;
+  value?: number;
+  max?: number;
+  step?: number;
   onChange: (value: number) => void;
 }
 
-export const ParamSliderInline = ({ label, value, onChange }: Props) => {
+export const ParamSliderInline = ({ label, value, max, step, onChange }: Props) => {
+  console.log({ label, value });
   return (
     <Box p={"8px 24px"}>
       <Stack
@@ -39,7 +42,7 @@ export const ParamSliderInline = ({ label, value, onChange }: Props) => {
             color: "onSurface",
           }}
         >
-          {getParamLabel(label)}
+          {getParamLabel(label!)}
         </Typography>
         <Typography
           sx={{
@@ -53,9 +56,9 @@ export const ParamSliderInline = ({ label, value, onChange }: Props) => {
       </Stack>
       <Slider
         sx={{ color: "onSurface" }}
-        step={1}
+        step={step}
         min={0}
-        max={100}
+        max={max}
         size="small"
         value={value}
         onChange={(e, val) => onChange(Number(val))}
