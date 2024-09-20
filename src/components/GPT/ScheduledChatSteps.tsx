@@ -116,7 +116,13 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
     }
   }, [clonedWorkflow, dispatch]);
 
+  useEffect(() => {
+    setScheduleFrequency(selectedFrequency as FrequencyType);
+  },[selectedFrequency])
+
+
   const cloneExecutionInputs = (data: IWorkflowCreateResponse) => {
+
     if (data) {
       dispatch(setAnswers(getWorkflowInputsValues(data)));
     }
@@ -189,7 +195,8 @@ export default function ScheduledChatSteps({ workflow, allowActivateButton }: Pr
                     message={message.text}
                     items={FREQUENCIES}
                     onSelect={frequency => {
-                      setScheduleFrequency(frequency as FrequencyType);
+                      setSelectedFrequency(frequency as FrequencyType);
+                      
                     }}
                     selectedValue={selectedFrequency || clonedWorkflow?.periodic_task?.frequency}
                   />

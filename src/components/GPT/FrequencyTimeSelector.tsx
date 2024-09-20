@@ -21,17 +21,19 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
     );
   }, [clonedWorkflow]);
   const scheduleDayOfWeek =
-  scheduledData?.frequency === "weekly" && !(["0-6", "*"].includes(scheduledData.day_of_week?.toString() || ""))
+    selectedFrequency === "weekly" && !(["0-6", "*"].includes(scheduledData?.day_of_week?.toString() || ""))
       ? scheduledData?.day_of_week
       : 0;
 
+
   const scheduleDayOfMonth =
-    scheduledData?.frequency === "monthly" && !(["1,15", "*"].includes(scheduledData.day_of_month?.toString() || ""))
+    selectedFrequency === "monthly" && !(["1,15", "*"].includes(scheduledData?.day_of_month?.toString() || ""))
       ? scheduledData?.day_of_month
       : 1;
 
   const scheduleHour =
     scheduledData?.hour !== undefined && !(["*"].includes(scheduledData.hour?.toString() || "")) ? scheduledData?.hour : 9;
+
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
     day_of_week: scheduleDayOfWeek,
     day_of_month: scheduleDayOfMonth,
