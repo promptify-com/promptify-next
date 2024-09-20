@@ -126,7 +126,6 @@ const PromptCardAccordion = ({
       if (!promptData?.id) {
         promptData.template = template.id;
         const savedPrompt = await createPrompt(promptData).unwrap();
-        //
         if (savedPrompt) {
           const _savedPromptData: IEditPrompts = {
             content: savedPrompt.content,
