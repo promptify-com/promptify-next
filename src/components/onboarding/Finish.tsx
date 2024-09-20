@@ -43,6 +43,7 @@ const Finish = () => {
       first_name: currentUser?.first_name || "",
       last_name: currentUser?.last_name || "",
       username: currentUser?.username || "",
+      linkedin_url: currentUser?.linkedin_url || "",
       avatar: null,
     },
     enableReinitialize: true,
@@ -169,6 +170,22 @@ const Finish = () => {
                   onChange={formik.handleChange}
                   helperText={formik.touched.username && formik.errors.username}
                   error={!!formik.touched.username && Boolean(formik.errors.username)}
+                  sx={listItemStyle.listInputStyle}
+                />
+              </Box>
+            </ListItem>
+            <Divider component="li" />
+            <ListItem sx={listItemStyle.listItem}>
+              <Box sx={listItemStyle.wrapper}>
+                <Typography sx={listItemStyle.listLabelStyle}>Linkedin</Typography>
+                <TextField
+                  id="outlined-required"
+                  variant="standard"
+                  name="linkedin_url"
+                  value={formik.values.linkedin_url}
+                  onChange={formik.handleChange}
+                  helperText={formik.touched.linkedin_url && formik.errors.linkedin_url}
+                  error={!!formik.touched.linkedin_url && Boolean(formik.errors.linkedin_url)}
                   sx={listItemStyle.listInputStyle}
                 />
               </Box>

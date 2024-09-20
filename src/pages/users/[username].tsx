@@ -18,7 +18,15 @@ import UserInformation from "@/components/profile/UserInformation";
 import Footer from "@/components/Footer";
 import type { ICardTemplate, Templates } from "@/core/api/dto/templates";
 
-const initialUser = { username: "loading", first_name: "loading", last_name: "loading", avatar: "", bio: "", id: 0 };
+const initialUser = {
+  username: "loading",
+  first_name: "loading",
+  last_name: "loading",
+  linkedin_url: "loading",
+  avatar: "",
+  bio: "",
+  id: 0,
+};
 const PAGINATION_LIMIT = 12;
 
 function ProfilePage({ user = initialUser }: { user: UserProfile }) {
