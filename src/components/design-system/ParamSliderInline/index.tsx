@@ -42,7 +42,7 @@ export const ParamSliderInline = ({ label, value, max, step, onChange }: Props) 
             color: "onSurface",
           }}
         >
-          {getParamLabel(label)}
+          {getParamLabel(label!)}
         </Typography>
         <Typography
           sx={{

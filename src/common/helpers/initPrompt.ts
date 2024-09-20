@@ -27,7 +27,6 @@ export const handleInitPrompt = (template: Templates, engines: Engine[]) => {
         is_visible: prompt.is_visible,
         show_output: prompt.show_output,
         prompt_output_variable: prompt.prompt_output_variable,
-        default_parameters: prompt.engine?.default_parameters || {},
       };
     });
 

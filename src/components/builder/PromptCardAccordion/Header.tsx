@@ -38,7 +38,6 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
   };
 
   const promptEngine = engines?.find(engine => engine.id === prompt.engine);
-
   return (
     <>
       <Stack
@@ -132,10 +131,10 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
             textOverflow: "ellipsis",
           }}
         >
-          Max Length: {prompt.default_parameters?.maximumLength || 0}, Temperature:{" "}
-          {prompt.default_parameters?.temperature || 0}, Top P: {prompt.default_parameters?.topP || 0}, Frequency
-          Penalty: {prompt.default_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
-          {prompt.default_parameters?.presencePenalty || 0}
+          Max Length: {promptEngine?.default_parameters?.maximumLength || 0}, Temperature:{" "}
+          {promptEngine?.default_parameters?.temperature || 0}, Top P: {promptEngine?.default_parameters?.topP || 0},
+          Frequency Penalty: {promptEngine?.default_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
+          {promptEngine?.default_parameters?.presencePenalty || 0}
         </Typography>
         <Stack
           direction={"row"}
@@ -221,9 +220,9 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
         }}
       >
         <EngineParamsSlider
-          engineParams={prompt.default_parameters}
+          engineParams={prompt.model_parameters}
           onSave={params => {
-            setPrompt({ ...prompt, default_parameters: params });
+            setPrompt({ ...prompt, model_parameters: params });
             closeSettingsModal();
           }}
           onCancel={closeSettingsModal}
