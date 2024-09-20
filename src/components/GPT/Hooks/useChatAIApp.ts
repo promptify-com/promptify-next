@@ -424,7 +424,9 @@ const useChat = ({ workflow }: Props) => {
         return;
 
       case "run_workflow":
-        console.log(!inputs.length && !requireCredentials);
+        if (!runInstantly) {
+          dispatch(setRunInstantly(true));
+        }
         if (
           (!inputs.length && !requireCredentials) ||
           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||

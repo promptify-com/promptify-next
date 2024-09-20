@@ -31,7 +31,7 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
       : 1;
 
   const scheduleHour =
-    scheduledData?.hour && !["0", "*"].includes(scheduledData.hour?.toString() || "") ? scheduledData?.hour : 9;
+    scheduledData?.hour && !["*"].includes(scheduledData.hour?.toString() || "") ? scheduledData?.hour : 9;
 
   const [scheduleTime, setScheduleTime] = useState<FrequencyTime>({
     day_of_week: scheduleDayOfWeek, // default of monday
