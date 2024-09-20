@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { createMessage } from "@/components/Chat/helper";
-import { setClonedWorkflow, setGptGenerationStatus } from "@/core/store/chatSlice";
+import { setClonedWorkflow, setGptGenerationStatus, setRunInstantly } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
@@ -41,7 +41,7 @@ const useChat = ({ workflow }: Props) => {
 
   const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput, requireCredentials } =
+  const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput, requireCredentials, runInstantly } =
     useAppSelector(state => state.chat ?? initialChatState);
 
   const [validatingQuery, setValidatingQuery] = useState(false);
@@ -337,7 +337,7 @@ const useChat = ({ workflow }: Props) => {
     const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
 
     const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
-
+    dispatch(setRunInstantly(false));
     if (updatedWorkflow) {
       runWorkflow();
       setMessages(prevMessages =>

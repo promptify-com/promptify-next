@@ -4,7 +4,6 @@ import { useAppSelector } from "@/hooks/useStore";
 import MessageContainer from "./MessageContainer";
 import RunButtonWithProgressBar from "./RunButtonWithProgressBar";
 import { initialState } from "@/core/store/chatSlice";
-import type { ITemplateWorkflow } from "../Automation/types";
 import { useMemo } from "react";
 1;
 interface Props {
