@@ -1,7 +1,5 @@
-import { Dispatch } from "react";
-// Mui
+import type { Dispatch } from "react";
 import { MenuItem } from "@mui/material";
-//
 import { useRouter } from "next/router";
 
 interface Props {
@@ -11,7 +9,6 @@ interface Props {
 
 function EditWorkflow({ template_slug, setOpen }: Props) {
   const router = useRouter();
-  ///
   const handleEdit = () => {
     router.push(`/apps/${template_slug}`);
     setOpen(false);

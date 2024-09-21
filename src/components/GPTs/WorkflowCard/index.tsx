@@ -1,16 +1,13 @@
 import { useState } from "react";
 import Link from "next/link";
-// Mui
 import { Stack, Box, Typography, Chip } from "@mui/material";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
-//
 import { TIMES } from "@/components/GPT/Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
 import useTruncate from "@/hooks/useTruncate";
 import Image from "@/components/design-system/Image";
 import { capitalizeString, formatDate } from "@/common/helpers";
 import type { ITemplateWorkflow, IPeriodicTask } from "../../Automation/types";
-// Components
 import WorkflowCardActions from "./WorkflowCardActions";
 import WorkflowCardLike from "./LikeAction";
 
@@ -32,7 +29,6 @@ function WorkflowCard({
   category,
 }: Props) {
   const { truncate } = useTruncate();
-  //
   const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];

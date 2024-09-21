@@ -1,9 +1,6 @@
 import { Dispatch } from "react";
-// Mui
 import { Stack, Popper, Fade, ClickAwayListener, Paper, Box } from "@mui/material";
-//
 import { ITemplateWorkflow } from "../../../Automation/types";
-// Components
 import EditWorkflow from "./edit";
 import PauseWorkflow from "./pause";
 import ResumeWorkflow from "./resume";

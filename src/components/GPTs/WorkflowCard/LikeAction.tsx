@@ -1,14 +1,10 @@
-// Mui
 import { Stack } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { FavoriteBorderOutlined } from "@mui/icons-material";
-// Store
 import { setToast } from "@/core/store/toastSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 import { useDislikeWorkflowMutation, useLikeWorkflowMutation } from "@/core/api/workflows";
-//
 import type { ITemplateWorkflow } from "../../Automation/types";
-// Components
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -16,15 +12,10 @@ interface Props {
 
 function WorkflowCardLike({ workflow }: Props) {
   const dispatch = useAppDispatch();
-  // Destuctions
-  const _id = workflow.id;
-  const is_liked = workflow.is_liked;
-  const name = workflow.name;
-  //
+  const { id: _id, is_liked, name } = workflow || {};
   const [likeWorklow, { isLoading: likeLoad }] = useLikeWorkflowMutation();
   const [dislikeWorkflow, { isLoading: dislikeLoad }] = useDislikeWorkflowMutation();
 
-  //
   const handleLikeDislike = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
