@@ -1,10 +1,7 @@
 import { Dispatch } from "react";
-// Mui
 import { MenuItem } from "@mui/material";
-// Redux
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
-// Queries
 import { useResumeWorkflowMutation } from "@/core/api/workflows";
 
 interface Props {
@@ -14,10 +11,9 @@ interface Props {
 }
 
 function ResumeWorkflow({ workflow_id, setOpen, setIsPaused }: Props) {
-  // Store
   const dispatch = useAppDispatch();
   const [resumeWorkflow] = useResumeWorkflowMutation();
-  ///
+
   const handleResume = async () => {
     try {
       await resumeWorkflow(workflow_id);

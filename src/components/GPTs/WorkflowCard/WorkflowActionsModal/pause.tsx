@@ -1,10 +1,7 @@
-import { Dispatch } from "react";
-// Mui
+import type { Dispatch } from "react";
 import { MenuItem } from "@mui/material";
-// Redux
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
-// Queries
 import { usePauseWorkflowMutation } from "@/core/api/workflows";
 
 interface Props {
@@ -14,10 +11,8 @@ interface Props {
 }
 
 function PauseWorkflow({ workflow_id, setOpen, setIsPaused }: Props) {
-  // Store
   const dispatch = useAppDispatch();
   const [pauseWorkflow] = usePauseWorkflowMutation();
-  ///
   const handlePause = async () => {
     try {
       await pauseWorkflow(workflow_id);

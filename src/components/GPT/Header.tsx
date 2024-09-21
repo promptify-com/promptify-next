@@ -13,7 +13,6 @@ import { initialState } from "@/core/store/chatSlice";
 import { capitalizeString } from "@/common/helpers";
 import { DAYS, TIMES } from "./Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
-// Components
 import WorkflowCardActions from "@/components/GPTs/WorkflowCard/WorkflowCardActions";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
@@ -36,7 +35,8 @@ export default function Header({ workflow }: Props) {
   const [isPause, setIsPause] = useState(false);
 
   useEffect(() => {
-    setIsPause(!!periodicTask ? !periodicTask?.enabled : false);
+    if (!!periodicTask)
+      setIsPause(!periodicTask?.enabled);
   }, [periodicTask]);
 
   return (
