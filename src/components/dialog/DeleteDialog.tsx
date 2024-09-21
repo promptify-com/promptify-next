@@ -25,7 +25,6 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("true");
   return (
     <Dialog
       open={open}

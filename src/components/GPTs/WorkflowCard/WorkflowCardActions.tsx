@@ -1,11 +1,8 @@
 import { Dispatch, useRef, useState } from "react";
-// Mui
 import { Box } from "@mui/material";
 import { GearIcon } from "@/assets/icons/GearIcon";
-// Modals
 import WorkflowActionsModal from "./WorkflowActionsModal";
 import DeleteDialog from "@/modals/layouts/remove_dialog";
-//
 import type { ITemplateWorkflow } from "../../Automation/types";
 
 interface Props {
@@ -17,10 +14,8 @@ interface Props {
 }
 
 function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, sx }: Props) {
-  // Stats
   const [open, setOpen] = useState<boolean>();
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
-  //
   const handleOpenModal = () => {
     setOpen(!open);
   };
@@ -41,6 +36,7 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, 
           borderRadius: "100px",
           border: "1px solid rgba(0, 0, 0, 0.10)",
           background: "#FFF",
+          cursor: "pointer",
         }}
       >
         <GearIcon />
