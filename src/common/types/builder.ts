@@ -1,7 +1,23 @@
-import { InputType } from "./prompt";
+import type { ReactNode } from "react";
+import type { InputType } from "./prompt";
+
+interface ScoreDescription {
+  score: number;
+  description: string;
+}
+
+export interface Parameter {
+  category: number;
+  code: string;
+  id: number;
+  name: string;
+  score_descriptions: ScoreDescription[];
+  type: string;
+}
 
 export interface IPromptParams {
   parameter_id: number;
+  parameter?: Parameter;
   score: number;
   name?: string;
   is_visible: boolean;
@@ -15,6 +31,7 @@ export interface IEngineParams {
   temperature?: number;
   maximumLength?: number;
   topP?: number;
+  topK?: number;
   presencePenalty?: number;
   frequencyPenalty?: number;
 }
@@ -36,6 +53,7 @@ export interface IEditPrompts extends IPromptOptions {
   parameters: IPromptParams[];
   order: number;
   template?: number;
+  default_parameters?: IEngineParams;
 }
 
 export interface HighlightWithinTextareaRef {
@@ -65,4 +83,12 @@ export interface IHandlePreset {
   type: PresetType | null;
   label: string;
   firstAppend?: boolean;
+}
+
+export type LinkName = "templateForm" | "list" | "test_log" | "help" | "api";
+
+export interface ISidebarLink {
+  key: LinkName;
+  name: string;
+  icon: ReactNode;
 }

@@ -45,7 +45,7 @@ export default function LatestAIAppsCarousel({ gpts, isLoading, setActiveAIApp }
           fontSize={{ xs: 24, md: 32 }}
           fontWeight={400}
         >
-          Latest AI Apps
+          AI Apps Workspace
         </Typography>
         {isCarousel && showCarousel && (
           <Stack

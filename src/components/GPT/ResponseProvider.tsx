@@ -59,6 +59,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
   };
 
   const displayName = cleanCredentialName(credentialInput?.displayName ?? "");
+
   const providerNodeName = nameProvider(displayName);
 
   const providerData = useMemo(() => {
@@ -170,6 +171,7 @@ function ResponseProvider({ providerType, workflow, onInject, onUnselect }: Prop
       )}
       {paramsModalOpened && (
         <FormModal
+          isGmail={Boolean(displayName === "Gmail")}
           title={`${displayName} Parameters`}
           inputs={parametersInputs}
           onSubmit={handleAddingProvider}

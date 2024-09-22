@@ -80,6 +80,8 @@ export interface ITemplateWorkflow {
   data: IData;
   created_at: string;
   is_schedulable: boolean;
+  has_output_notification: boolean;
+  estimated_execution_time: string | null;
   is_liked: boolean;
   likes: number;
   category: Category;
@@ -87,12 +89,7 @@ export interface ITemplateWorkflow {
     likes_count: number;
     favorites_count: number;
   };
-  periodic_task?: null | {
-    task: string;
-    name: string;
-    enabled: boolean;
-    crontab: IWorkflowSchedule;
-  };
+  periodic_task?: null | IPeriodicTask;
   enabled: boolean;
   execution_count: number;
 }
@@ -114,14 +111,20 @@ export interface UserWorkflowExecutionsResponse {
   nextCursor: null | string;
 }
 
-export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly";
+export type FrequencyType = "hourly" | "daily" | "weekly" | "bi-weekly" | "monthly" | "none";
+
+export interface FrequencyTime {
+  day_of_week?: number | string;
+  day_of_month?: number | string;
+  time: number;
+}
 
 export interface IWorkflowSchedule {
   frequency: FrequencyType;
   hour: number;
   minute: number;
-  day_of_week: number;
-  day_of_month: number;
+  day_of_week: number | string;
+  day_of_month: number | string;
   timezone: string;
   // month: number,
   workflow_data: {};
@@ -157,15 +160,18 @@ export interface IWorkflowCreateResponse {
     [key: string]: INodeConnection;
   };
   schedule?: IWorkflowSchedule;
-  periodic_task: null | {
-    task: string;
-    name: string;
-    enabled: boolean;
-    crontab: IWorkflowSchedule;
-    kwargs?: string;
-  };
+  periodic_task: null | IPeriodicTask;
   template_workflow: ITemplateWorkflow;
   last_executed: string | null;
+}
+
+export interface IPeriodicTask {
+  task: string;
+  name: string;
+  enabled: boolean;
+  crontab: IWorkflowSchedule;
+  kwargs?: string;
+  frequency: FrequencyType;
 }
 
 export interface IAuthenticateBase {

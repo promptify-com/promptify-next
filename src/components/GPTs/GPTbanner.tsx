@@ -17,11 +17,14 @@ function GPTbanner({ title, description, href, image }: Props) {
   const { isMobile } = useBrowser();
   return (
     <Stack
+      href={href}
+      component={Link}
       width={{ xs: "auto", md: "calc(100% - 128px)" }}
       height={{ md: "260px" }}
       sx={{
         background: "linear-gradient(0deg, #EEE8FF 0%, #EEE8FF 100%)",
         borderRadius: "16px",
+        textDecoration: "none",
       }}
       direction={{ md: "row" }}
       alignItems={{ md: "center" }}

@@ -177,14 +177,14 @@ export const TemplateSidebarLinks: Link[] = [
   },
 ];
 
-export const OUTPUT_FORMATS = ["JSON", "XML", "Markdown", "Custom"] as const;
+export const OUTPUT_FORMATS = ["JSON", "XML", "HTML", "Markdown", "Custom"] as const;
 
 export type OutputFormat = (typeof OUTPUT_FORMATS)[number];
 
 export const LCL_STR_KEY = "promptify:";
 export const COOKIE_STR_KEY = "promptify_";
 
-export const outputFormatOptions = ["JSON", "XML", "Markdown", "Custom"];
+export const outputFormatOptions = ["JSON", "XML", "HTML", "Markdown", "Custom"];
 
 export const SEO_TITLE = "Promptify - Boost Your Creativity";
 export const SEO_DESCRIPTION =

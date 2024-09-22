@@ -24,10 +24,11 @@ export default function Header({ workflow }: Props) {
   const periodicTask = clonedWorkflow?.periodic_task;
   const scheduleData = clonedWorkflow?.periodic_task?.crontab;
 
-  const frequency = capitalizeString(scheduleData?.frequency ?? "");
+  const frequency = capitalizeString(periodicTask?.frequency ?? "");
   const isWeekly = scheduleData?.frequency === "weekly";
   const scheduleDay = isWeekly ? scheduleData?.day_of_week : scheduleData?.day_of_month;
-  const day = (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay] : scheduleDay)) || null;
+  const day =
+    (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay as number] : scheduleDay)) || null;
   const time = TIMES[scheduleData?.hour ?? 0];
 
   const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";

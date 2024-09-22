@@ -66,7 +66,7 @@ export const PROVIDERS = {
 export const RESPOND_TO_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook";
 export const PROMPTIFY_NODE_TYPE = "n8n-nodes-promptify.promptify";
 
-export const FREQUENCY_ITEMS: FrequencyType[] = ["hourly", "daily", "weekly", "bi-weekly", "monthly"];
+export const FREQUENCY_ITEMS: FrequencyType[] = ["hourly", "daily", "weekly", "bi-weekly", "monthly", "none"];
 export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const datetimeOps = Intl.DateTimeFormat().resolvedOptions();
 const utcOffset = new Intl.DateTimeFormat(datetimeOps.locale, {

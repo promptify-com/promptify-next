@@ -22,7 +22,6 @@ import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import { Layout } from "@/layout";
 import Header from "@/components/builder/Header";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
-import TemplateForm from "@/components/common/forms/TemplateForm";
 import { BuilderSidebar } from "@/components/builderSidebar";
 import Sidebar from "@/components/sidebar/Sidebar";
 import type { IEditTemplate } from "@/common/types/editTemplate";
@@ -199,7 +198,10 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
         content: prompt.content,
         engine: (prompt.engine as unknown as { id: number }).id,
         dependencies: prompt.dependencies,
-        parameters: prompt.parameters,
+        parameters: prompt.parameters.map(parameter => ({
+          ...parameter,
+          parameter_id: parameter.parameter_id || parameter.parameter?.id,
+        })),
         order: prompt.order,
         output_format: prompt.output_format,
         model_parameters: prompt.model_parameters,
@@ -260,8 +262,15 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
         >
           <Sidebar />
           <BuilderSidebar
+            createMode={createMode}
+            templateData={templateData}
+            isTemplateLoading={isTemplateLoading}
+            handleSaveTemplate={handleSaveTemplate}
+            isNewTemplate={isNewTemplate}
             prompts={prompts}
             setPrompts={setPrompts}
+            templateDrawerOpen={templateDrawerOpen}
+            setTemplateDrawerOpen={setTemplateDrawerOpen}
           />
 
           <Box
@@ -276,7 +285,9 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
               templateSlug={templateData?.slug}
               onPublish={handlePublishTemplate}
               onSave={handleSaveTemplate}
-              onEditTemplate={() => setTemplateDrawerOpen(true)}
+              onEditTemplate={() => {
+                setTemplateDrawerOpen(true);
+              }}
               type={BUILDER_TYPE.USER}
             />
 
@@ -308,36 +319,6 @@ export const PromptBuilder = ({ isNewTemplate = false }) => {
                 </DndProvider>
               </Box>
             </Box>
-
-            {!!templateData && templateDrawerOpen && (
-              <SwipeableDrawer
-                anchor={"left"}
-                open={templateDrawerOpen}
-                onClose={() => setTemplateDrawerOpen(false)}
-                onOpen={() => setTemplateDrawerOpen(true)}
-                PaperProps={{
-                  sx: {
-                    width: "430px",
-                    minWidth: "30svw",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#FDFBFF",
-                    p: "24px 32px",
-                  }}
-                >
-                  <TemplateForm
-                    type={createMode}
-                    templateData={templateData}
-                    darkMode
-                    onSaved={template => (isNewTemplate ? handleSaveTemplate(template) : window.location.reload())}
-                    onClose={() => setTemplateDrawerOpen(false)}
-                  />
-                </Box>
-              </SwipeableDrawer>
-            )}
           </Box>
         </Box>
       ) : (

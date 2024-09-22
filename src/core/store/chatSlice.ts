@@ -28,6 +28,8 @@ export const initialState: IChatSliceState = {
   chats: [],
   clonedWorkflow: undefined,
   gptGenerationStatus: "pending",
+  requireCredentials: false,
+  runInstantly: true,
 };
 
 export const chatSlice = createSlice({
@@ -100,6 +102,12 @@ export const chatSlice = createSlice({
     setGptGenerationStatus: (state, action: PayloadAction<IChatSliceState["gptGenerationStatus"]>) => {
       state.gptGenerationStatus = action.payload;
     },
+    setRequireCredentials: (state, action: PayloadAction<boolean>) => {
+      state.requireCredentials = action.payload;
+    },
+    setRunInstantly: (state, action: PayloadAction<boolean>) => {
+      state.runInstantly = action.payload;
+    },
   },
 });
 
@@ -126,6 +134,8 @@ export const {
   setClonedWorkflow,
   setChoiceSelected,
   setGptGenerationStatus,
+  setRequireCredentials,
+  setRunInstantly,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

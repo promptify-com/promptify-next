@@ -15,15 +15,23 @@ export default function DateTimeSelect({ type, onChange, defaultValue = 0 }: Pro
   const [selectedItem, setSelectedItem] = useState(defaultValue);
 
   useEffect(() => {
-    onChange?.(selectedItem);
-  }, [selectedItem]);
+    if (selectedItem !== defaultValue) {
+      setSelectedItem(defaultValue);
+    }
+  }, [defaultValue]);
+
+  const handleChange = (e: any) => {
+    const newValue = e.target.value as number;
+    setSelectedItem(newValue);
+    onChange(newValue);
+  };
 
   const items = type === "date" ? DAYS : type === "time" ? TIMES : Array.from({ length: 27 }).map((_, i) => i + 1);
 
   return (
     <Select
       value={selectedItem}
-      onChange={e => setSelectedItem(e.target.value as number)}
+      onChange={handleChange}
       IconComponent={ExpandMore}
       MenuProps={{
         disableScrollLock: true,

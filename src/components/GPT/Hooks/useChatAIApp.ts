@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { createMessage } from "@/components/Chat/helper";
-import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import { setAreCredentialsStored, setClonedWorkflow, setGptGenerationStatus } from "@/core/store/chatSlice";
+import { setClonedWorkflow, setGptGenerationStatus, setRunInstantly } from "@/core/store/chatSlice";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { initialState as initialExecutionsState, setGeneratedExecution } from "@/core/store/executionsSlice";
 import { PROVIDERS, TIMES } from "@/components/GPT/Constants";
@@ -22,6 +21,11 @@ import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from 
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useDebounce from "@/hooks/useDebounce";
 import { formatDateWithOrdinal } from "@/common/helpers/dateWithSuffix";
+import useToken from "@/hooks/useToken";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { parseMessageData } from "@/common/helpers/parseMessageData";
+import useChatActions from "./useChatActions";
+import { allRequiredInputsAnswered } from "@/common/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -33,10 +37,14 @@ type WorkflowData = {
 
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
-  const currentUser = useAppSelector(state => state.user.currentUser);
-  const { answers, areCredentialsStored, clonedWorkflow } = useAppSelector(state => state.chat ?? initialChatState);
-  const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
+  const token = useToken();
 
+  const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const { clonedWorkflow, inputs, answers, areCredentialsStored, credentialsInput, requireCredentials, runInstantly } =
+    useAppSelector(state => state.chat ?? initialChatState);
+
+  const [validatingQuery, setValidatingQuery] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const updateScheduleMode = useRef<boolean | null>(null);
   const selectedProviderType = useRef<ProviderType | null>(null);
@@ -51,10 +59,9 @@ const useChat = ({ workflow }: Props) => {
   });
   const debouncedSchedulingData = useDebounce(schedulingData, 1000);
 
-  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
   const { sendMessageAPI } = useWorkflow(workflow);
+  const { handlePause, handleResume } = useChatActions({ setMessages });
   const { streamExecutionHandler } = useGenerateExecution({});
-
   const [updateWorkflowHandler] = useUpdateWorkflowMutation();
   const [saveAsGPTDocument] = useSaveGPTDocumentMutation();
 
@@ -79,30 +86,7 @@ const useChat = ({ workflow }: Props) => {
 
     let initMessages = [welcomeMessage];
 
-    const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
-    let areAllCredentialsStored = true;
-    if (credentialsInput.length) {
-      areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-
-      const credentialsMessage = createMessage({
-        type: "credentials",
-        text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
-      });
-      initMessages.push(credentialsMessage);
-    }
-    dispatch(setAreCredentialsStored(areAllCredentialsStored));
     setMessages(initMessages);
-
-    if (areAllCredentialsStored) {
-      insertFrequencyMessage();
-    }
-
-    updateScheduleMode.current = !!clonedWorkflow?.periodic_task;
-
-    if (updateScheduleMode.current) {
-      insertFrequencyMessage();
-      handleShowAllSteps();
-    }
   };
 
   const loadWorkflowScheduleData = () => {
@@ -113,37 +97,6 @@ const useChat = ({ workflow }: Props) => {
     });
   };
 
-  const handleShowAllSteps = () => {
-    const availableSteps: IMessage[] = [];
-
-    if (clonedWorkflow?.periodic_task?.frequency !== "hourly") {
-      const schedulesMessage = createMessage({
-        type: "schedule_time",
-        text: "At what time?",
-      });
-      availableSteps.push(schedulesMessage);
-    }
-
-    if (workflow.has_output_notification) {
-      const providersMessage = createMessage({
-        type: "schedule_providers",
-        text: "Where should we send your scheduled AI App?",
-      });
-      availableSteps.push(providersMessage);
-    }
-
-    // Update the state with new messages
-    setMessages(prev => prev.concat(availableSteps));
-  };
-
-  // Handle the case of catching the oauth credential successfully connected
-  useEffect(() => {
-    if (areCredentialsStored && updateScheduleMode.current === false) {
-      insertFrequencyMessage();
-    }
-  }, [areCredentialsStored]);
-
-  // ClonedWorkflow always in sync with schedulingData
   useEffect(() => {
     if (clonedWorkflow) {
       dispatch(setClonedWorkflow({ ...clonedWorkflow, schedule: schedulingData }));
@@ -189,12 +142,42 @@ const useChat = ({ workflow }: Props) => {
     }));
   }, [answers]);
 
-  const insertFrequencyMessage = () => {
-    const frequencyMessage = createMessage({
-      type: "schedule_frequency",
-      text: "How often do you want to repeat this AI App?",
-    });
-    setMessages(prev => prev.filter(msg => msg.type !== "schedule_frequency").concat(frequencyMessage));
+  const insertScheduleMessages = () => {
+    const scheduleMessages: IMessage[] = [];
+
+    if (workflow.is_schedulable) {
+      const frequencyMessage = createMessage({
+        type: "schedule_frequency",
+        text: "How often do you want to repeat this AI App?",
+      });
+
+      scheduleMessages.push(frequencyMessage);
+
+      const isHourly = clonedWorkflow?.schedule?.frequency === "hourly";
+
+      if (!isHourly) {
+        const scheduleTimeMessage = createMessage({
+          type: "schedule_time",
+          text: "How often do you want to repeat this AI App?",
+        });
+
+        scheduleMessages.push(scheduleTimeMessage);
+      }
+
+      if (workflow.has_output_notification) {
+        const scheduleProvidersMessage = createMessage({
+          type: "schedule_providers",
+          text: "How often do you want to repeat this AI App?",
+        });
+        scheduleMessages.push(scheduleProvidersMessage);
+      }
+    } else {
+      scheduleMessages.push(
+        createMessage({ type: "text", text: "The AI app you are using is not eligible for scheduling!" }),
+      );
+    }
+
+    setMessages(prev => prev.concat(scheduleMessages));
   };
 
   const insertProvidersMessages = (scheduleData: IWorkflowSchedule) => {
@@ -236,24 +219,11 @@ const useChat = ({ workflow }: Props) => {
   };
 
   const setScheduleFrequency = (frequency: FrequencyType) => {
-    if (schedulingData.frequency === frequency) return;
+    // if (schedulingData.frequency === frequency) return;
 
     const scheduleData = { ...schedulingData, frequency };
 
     const isHourly = frequency === "hourly";
-    const isNone = frequency === "none";
-
-    if (isNone) {
-      updateScheduleMode.current = true;
-      setSchedulingData(scheduleData);
-      setMessages(prevMessages =>
-        prevMessages
-          .filter(msg => msg.type !== "readyMessage" && !msg.isHighlight)
-          .concat(createMessage({ type: "readyMessage" })),
-      );
-
-      return;
-    }
 
     let _messages = messages;
     if (isHourly) {
@@ -325,7 +295,7 @@ const useChat = ({ workflow }: Props) => {
       const webhook = extractWebhookPath(clonedWorkflow.nodes);
       const frequency = schedulingData?.frequency !== "none" ? schedulingData?.frequency : undefined;
 
-      const response = await sendMessageAPI(webhook, [], frequency);
+      const response = await sendMessageAPI(webhook, answers, frequency);
 
       dispatch(setGptGenerationStatus("generated"));
 
@@ -341,7 +311,7 @@ const useChat = ({ workflow }: Props) => {
               text: response,
               data: clonedWorkflow,
             });
-            setMessages(prev => prev.concat(executionMessage));
+            setMessages(prev => prev.filter(msg => msg.type !== "readyMessage").concat(executionMessage));
           } else if (!match[2] || match[2] === "undefined") {
             failedExecutionHandler();
           } else {
@@ -367,9 +337,14 @@ const useChat = ({ workflow }: Props) => {
     const noInputsChange = currentPeriodicTask?.kwargs === executionPeriodicTask?.kwargs;
 
     const updatedWorkflow = noInputsChange ? executionWorkflow : await updateWorkflow(executionWorkflow);
-
+    dispatch(setRunInstantly(false));
     if (updatedWorkflow) {
       runWorkflow();
+      setMessages(prevMessages =>
+        prevMessages
+          .filter(msg => msg.type !== "readyMessage")
+          .concat(createMessage({ type: "readyMessage", text: "" })),
+      );
       if (!noInputsChange) {
         updateWorkflow(structuredClone(clonedWorkflow));
       }
@@ -401,7 +376,7 @@ const useChat = ({ workflow }: Props) => {
       type: "text",
       text: "Running your AI App failed, please try again.",
     });
-    setMessages(prev => prev.concat(failMessage));
+    setMessages(prev => prev.filter(msg => msg.type !== "readyMessage").concat(failMessage));
   };
 
   const removeProvider = (providerName: string, shouldUpdate = true) => {
@@ -416,6 +391,157 @@ const useChat = ({ workflow }: Props) => {
     return _clonedWorkflow;
   };
 
+  const renderMessage = async (message: string) => {
+    switch (message) {
+      case "configure_workflow":
+        const configMessages: IMessage[] = [];
+        if (credentialsInput.length) {
+          const credentialsMessage = createMessage({
+            type: "credentials",
+            text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
+          });
+          configMessages.push(credentialsMessage);
+        } else if (inputs.length > 0) {
+          const inputsMessage = createMessage({
+            type: "form",
+            text: ``,
+          });
+          configMessages.push(inputsMessage);
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(
+              createMessage({ text: "Your AI app does not require any configuration!", type: "text" }),
+            ),
+          );
+          return;
+        }
+
+        setMessages(prevMessages => prevMessages.concat(configMessages));
+
+        return;
+      case "schedule_workflow":
+        insertScheduleMessages();
+        return;
+
+      case "run_workflow":
+        if (!runInstantly) {
+          dispatch(setRunInstantly(true));
+        }
+        if (
+          (!inputs.length && !requireCredentials) ||
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
+          (requireCredentials && credentialsInput.length > 0 && areCredentialsStored)
+        ) {
+          setMessages(prevMessages =>
+            prevMessages
+              .filter(msg => msg.type !== "readyMessage")
+              .concat(createMessage({ type: "readyMessage", text: "" })),
+          );
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
+          );
+        }
+        return;
+      case "api_instructions":
+        if (
+          (!inputs.length && !requireCredentials) ||
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
+          (requireCredentials && credentialsInput.length > 0 && areCredentialsStored)
+        ) {
+          setMessages(prevMessages => prevMessages.concat(createMessage({ type: "API_instructions", text: "" })));
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
+          );
+        }
+        return;
+      case "pause_workflow":
+        await handlePause();
+        return;
+
+      case "resume_workflow":
+        await handleResume();
+        return;
+      default:
+        setMessages(prevMessages => prevMessages.concat(createMessage({ type: "text", text: message })));
+        return;
+    }
+  };
+
+  const runExecution = (promptId: number, query: string) => {
+    setValidatingQuery(true);
+    const payload = { prompt_params: { query: query }, contextual_overrides: [] };
+
+    let output = "";
+    fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${promptId}/execute`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      openWhenHidden: true,
+      async onopen(res) {
+        if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+          console.error("Client side error ", res);
+        }
+      },
+      async onmessage(msg) {
+        try {
+          const parseData = parseMessageData(msg.data);
+          const message = parseData.message;
+
+          if (message === "[CONNECTED]") {
+            return;
+          }
+
+          if (msg.event === "infer" && msg.data) {
+            if (message) {
+              output += message;
+            }
+          }
+
+          if (message === "[COMPLETED]") {
+            renderMessage(output);
+          }
+        } catch {
+          console.info("invalid incoming msg:", msg);
+        }
+      },
+      onerror(err) {
+        // setIsGenerating(false);
+        throw err; // rethrow to stop the operation
+      },
+      onclose() {
+        // setIsGenerating(false);
+        setValidatingQuery(false);
+      },
+    });
+  };
+
+  const handleSubmit = async (query: string) => {
+    if (query.trim() === "") {
+      return;
+    }
+    const userMessage = createMessage({ text: query, type: "text", fromUser: true });
+
+    setMessages(prevMessages => prevMessages.concat(userMessage));
+
+    try {
+      runExecution(6597, query);
+    } catch (error) {
+      console.error(error);
+      const botMessage = createMessage({
+        type: "text",
+        text: "Something went wrong please try again",
+        isHighlight: true,
+      });
+      setMessages(prevMessages => prevMessages.concat(botMessage));
+    }
+  };
+
   return {
     messages,
     initialMessages,
@@ -426,6 +552,8 @@ const useChat = ({ workflow }: Props) => {
     runWorkflow,
     retryRunWorkflow,
     saveGPTDocument,
+    handleSubmit,
+    validatingQuery,
   };
 };
 

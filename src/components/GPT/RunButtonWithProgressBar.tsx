@@ -16,6 +16,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   sx?: SxProps;
+  estimatedExecutionTime?: string | null;
 }
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
@@ -44,13 +45,26 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 }
 
 const EXECUTE_DURATION_INTERVAL = 100;
-export function LinearWithValueLabel() {
+
+function parseExecutionTime(timeString: string | null): number {
+  if (!timeString) return EXECUTE_DURATION_INTERVAL;
+
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+  // Calculate the interval based on the total time
+  // Assuming 100 steps for the progress bar, so we divide the total time by 100
+  return (totalSeconds * 1000) / 100;
+}
+
+export function LinearWithValueLabel({ estimatedExecutionTime }: { estimatedExecutionTime: string | null }) {
   const [progress, setProgress] = useState(1);
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialState.gptGenerationStatus,
   );
 
   useEffect(() => {
+    const interval = parseExecutionTime(estimatedExecutionTime);
     const timer = setInterval(() => {
       setProgress(prevProgress => {
         if (gptGenerationStatus === "generated") {
@@ -64,15 +78,15 @@ export function LinearWithValueLabel() {
 
         return prevProgress + 1;
       });
-    }, EXECUTE_DURATION_INTERVAL);
+    }, interval);
 
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [estimatedExecutionTime, gptGenerationStatus]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "300px" }}>
       <LinearProgressWithLabel
         value={progress}
         color="success"
@@ -81,9 +95,16 @@ export function LinearWithValueLabel() {
   );
 }
 
-export function RunButtonWithProgressBar({ onClick, text = "Run AI App", disabled, loading, sx = {} }: Props) {
+export function RunButtonWithProgressBar({
+  onClick,
+  text = "Run AI App",
+  disabled,
+  loading,
+  sx = {},
+  estimatedExecutionTime,
+}: Props) {
   if (loading) {
-    return <LinearWithValueLabel />;
+    return <LinearWithValueLabel estimatedExecutionTime={estimatedExecutionTime ?? null} />;
   }
 
   return (

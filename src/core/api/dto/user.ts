@@ -21,6 +21,7 @@ export interface User {
   role: string;
   first_name: string;
   last_name: string;
+  linkedin_url: string;
   profession: string;
   academic_level: string;
   gender: string;
@@ -35,7 +36,10 @@ export interface User {
   is_public?: boolean;
 }
 
-export type UserProfile = Pick<User, "id" | "avatar" | "bio" | "first_name" | "last_name" | "username" | "is_public">;
+export type UserProfile = Pick<
+  User,
+  "id" | "avatar" | "bio" | "first_name" | "last_name" | "linkedin_url" | "username" | "is_public"
+>;
 
 export type UserPartial = Pick<User, "id" | "username" | "first_name" | "last_name" | "avatar">;
 

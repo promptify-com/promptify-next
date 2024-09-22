@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect } from "react";
 import { LANGUAGES_CODE_MAPPING } from "../constants";
+import { IPromptInput } from "../types/prompt";
+import { IAnswer } from "@/components/Prompt/Types/chat";
 
 export const isBrowser = () => typeof window !== "undefined";
 export const isomorphicLayoutEffect = isBrowser() ? useLayoutEffect : useEffect;
@@ -93,4 +95,16 @@ export function formatDate(date: string, locales?: string | string[], options?: 
 
   const formatter = new Intl.DateTimeFormat(locales, options || defaultOptions);
   return formatter.format(_date).replace(/\//g, ".");
+}
+
+export function allRequiredInputsAnswered(inputs: IPromptInput[], answers: IAnswer[]): boolean {
+  const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
+
+  if (!requiredQuestionNames.length) {
+    return true;
+  }
+
+  const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
+
+  return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
 }

@@ -22,6 +22,8 @@ import type { IWorkflowCreateResponse } from "../Automation/types";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
 import { setToast } from "@/core/store/toastSlice";
+import { ShareOutlined } from "@mui/icons-material";
+import { ExportPopupChat } from "./Chat/ExportPopupChat";
 
 interface Props {
   message: IMessage;
@@ -29,6 +31,7 @@ interface Props {
   retryExecution?(): void;
   showInputs?(): void;
   saveAsDocument?(): Promise<boolean>;
+  scrollToBottom?(): void;
 }
 
 interface MessageContentProps {
@@ -37,24 +40,27 @@ interface MessageContentProps {
   onStreamingFinished?: () => void;
 }
 
-export const MessageContentWithHTML = memo(({ content }: { content: string }) => {
-  const [html, setHtml] = useState("");
+export const MessageContentWithHTML = memo(
+  ({ content, scrollToBottom }: { content: string; scrollToBottom?: () => void }) => {
+    const [html, setHtml] = useState("");
 
-  useEffect(() => {
-    if (!content) {
-      return;
-    }
+    useEffect(() => {
+      if (!content) {
+        return;
+      }
 
-    const generateFinalHtml = async () => {
-      const _html = await markdownToHTML(content);
-      setHtml(_html);
-    };
+      const generateFinalHtml = async () => {
+        const _html = await markdownToHTML(content);
+        setHtml(_html);
+      };
 
-    generateFinalHtml();
-  }, [content]);
+      generateFinalHtml();
+      scrollToBottom?.();
+    }, [content]);
 
-  return <ExecutionContent content={sanitizeHTML(html)} />;
-});
+    return <ExecutionContent content={sanitizeHTML(html)} />;
+  },
+);
 
 const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: MessageContentProps) => {
   const dispatch = useAppDispatch();
@@ -80,11 +86,13 @@ export default function Message({
   retryExecution,
   showInputs,
   saveAsDocument,
+  scrollToBottom,
 }: Props) {
   const { fromUser, isHighlight, type, text } = message;
   const dispatch = useAppDispatch();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const [documentSaved, setSaveDocument] = useState(false);
+  const [openExportPopup, setOpenExportPopup] = useState(false);
 
   const gptGenerationStatus = useAppSelector(
     state => state.chat?.gptGenerationStatus ?? initialChatState.gptGenerationStatus,
@@ -110,7 +118,16 @@ export default function Message({
   };
 
   return (
-    <Stack sx={{ gap: "24px" }}>
+    <Stack
+      width={!fromUser && type !== "html" ? "fit-content" : "100%"}
+      alignItems={fromUser ? "end" : "start"}
+      sx={{
+        gap: "24px",
+        ...(message.noHeader && {
+          mt: "-34px",
+        }),
+      }}
+    >
       {type === "workflowExecution" && inputs.length > 0 && (
         <MessageInputs
           message={createMessage({ type: "form", noHeader: true })}
@@ -126,11 +143,11 @@ export default function Message({
           sx={{
             p: "16px 20px",
             borderRadius: fromUser
-              ? "100px 100px 100px 0px"
+              ? "100px 0px 100px 100px"
               : isInitialMessage
                 ? "0px 100px 100px 100px"
                 : "0px 16px 16px 16px",
-            bgcolor: isHighlight ? "#DFDAFF" : "#F8F7FF",
+            bgcolor: fromUser ? "#9aedd3" : isHighlight ? "#DFDAFF" : "#F8F7FF",
           }}
         >
           {["workflowExecution", "html"].includes(type) ? (
@@ -138,68 +155,91 @@ export default function Message({
               width={"100%"}
               minHeight={"40px"}
             >
-              <MessageContentWithHTML content={text} />
+              <MessageContentWithHTML
+                content={text}
+                scrollToBottom={scrollToBottom}
+              />
+              {type === "workflowExecution" && (
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  gap={2}
+                >
+                  <Stack
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    gap={2}
+                  >
+                    <CustomTooltip title={"Repeat"}>
+                      <IconButton
+                        onClick={retryExecution}
+                        disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                        sx={iconBtnStyle}
+                      >
+                        <Replay />
+                      </IconButton>
+                    </CustomTooltip>
+                    {!!inputs.length && (
+                      <CustomTooltip title={"Edit"}>
+                        <IconButton
+                          onClick={showInputs}
+                          disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                          sx={iconBtnStyle}
+                        >
+                          <EditOutlined />
+                        </IconButton>
+                      </CustomTooltip>
+                    )}
+                    <CustomTooltip title={documentSaved ? "Document saved" : "Save to workspace"}>
+                      <IconButton
+                        onClick={saveDocument}
+                        disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
+                        sx={iconBtnStyle}
+                      >
+                        <CreateNewFolderOutlined />
+                      </IconButton>
+                    </CustomTooltip>
+
+                    <CustomTooltip title={"Share"}>
+                      <>
+                        <IconButton
+                          onClick={() => setOpenExportPopup(true)}
+                          disabled={["started", "streaming"].includes(gptGenerationStatus)}
+                          sx={iconBtnStyle}
+                        >
+                          <ShareOutlined />
+                        </IconButton>
+
+                        {openExportPopup && (
+                          <ExportPopupChat
+                            onClose={() => setOpenExportPopup(false)}
+                            content={text}
+                          />
+                        )}
+                      </>
+                    </CustomTooltip>
+                  </Stack>
+                  <Button
+                    onClick={() => copyToClipboard(message.text)}
+                    startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
+                    variant="text"
+                    sx={btnStyle}
+                  >
+                    Copy
+                  </Button>
+                </Stack>
+              )}
             </Stack>
           ) : (
             <MessageContent
               content={text}
               shouldStream={!fromUser}
+              onStreamingFinished={scrollToBottom}
             />
           )}
         </Typography>
-        {type === "workflowExecution" && (
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            gap={2}
-          >
-            <Stack
-              direction={"row"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              gap={2}
-            >
-              <CustomTooltip title={"Repeat"}>
-                <IconButton
-                  onClick={retryExecution}
-                  disabled={["started", "streaming"].includes(gptGenerationStatus)}
-                  sx={iconBtnStyle}
-                >
-                  <Replay />
-                </IconButton>
-              </CustomTooltip>
-              {!!inputs.length && (
-                <CustomTooltip title={"Edit"}>
-                  <IconButton
-                    onClick={showInputs}
-                    disabled={["started", "streaming"].includes(gptGenerationStatus)}
-                    sx={iconBtnStyle}
-                  >
-                    <EditOutlined />
-                  </IconButton>
-                </CustomTooltip>
-              )}
-              <CustomTooltip title={documentSaved ? "Document saved" : "Save as document"}>
-                <IconButton
-                  onClick={saveDocument}
-                  disabled={["started", "streaming"].includes(gptGenerationStatus) || documentSaved}
-                  sx={iconBtnStyle}
-                >
-                  <CreateNewFolderOutlined />
-                </IconButton>
-              </CustomTooltip>
-            </Stack>
-            <Button
-              onClick={() => copyToClipboard(message.text)}
-              startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
-              variant="text"
-              sx={btnStyle}
-            >
-              Copy
-            </Button>
-          </Stack>
-        )}
       </MessageContainer>
     </Stack>
   );

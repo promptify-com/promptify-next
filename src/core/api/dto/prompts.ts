@@ -1,5 +1,6 @@
 import { OutputFormat } from "@/common/constants";
 import { IParameters } from "@/common/types";
+import { IEngineParams } from "@/common/types/builder";
 import { PromptInputType } from "@/components/Prompt/Types";
 
 interface Engine {
@@ -9,6 +10,7 @@ interface Engine {
   output_type: "IMAGE" | "TEXT";
   input_type: "IMAGE" | "TEXT";
   provider: string;
+  default_parameters: IEngineParams;
 }
 
 export interface Prompts {

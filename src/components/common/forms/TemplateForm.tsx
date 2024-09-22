@@ -4,16 +4,12 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import Autocomplete from "@mui/material/Autocomplete";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import Close from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { useGetTagsQuery } from "@/core/api/tags";
@@ -40,7 +36,6 @@ interface Props {
 
 function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
   const token = useToken();
-
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -85,17 +80,14 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
 
   const color = !darkMode ? "common.white" : "common.black";
 
+  const ExecutionExampleValue =
+    formik.values.example_execution && executions
+      ? executions.find(execution => execution.id === formik.values.example_execution)
+      : null;
+
+
   return (
     <Box sx={{ color, width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          cursor: "pointer",
-        }}
-      >
-        <Close onClick={onClose} />
-      </Box>
       <Stack sx={boxStyle}>
         <TextField
           fullWidth
@@ -497,30 +489,31 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               )}
             />
           </Stack>
+
+
           {type === "edit" && (
             <Stack sx={boxStyle}>
-              <FormControl variant="standard">
-                <InputLabel id="execution-label">Execution Example</InputLabel>
-                <Select
-                  disabled={loading}
-                  labelId="execution-label"
-                  value={formik.values.example_execution}
-                  onChange={event => {
-                    formik.setFieldValue("example_execution", event.target.value);
-                  }}
-                >
-                  {executions?.map(execution => (
-                    <MenuItem
-                      key={execution.id}
-                      value={execution.id}
-                    >
-                      {`#${execution.id} - ${execution.title}`}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                disabled={loading}
+                value={ExecutionExampleValue}
+                onChange={(_, newValue) => {
+                  formik.setFieldValue("example_execution", newValue?.id);
+                }}
+                options={executions || []}
+                renderInput={params => {
+                  return (
+                    <TextField
+                      {...params}
+                      label="Execution Example"
+                    />
+                  );
+                }}
+                getOptionLabel={option => `#${option.id} - ${option.title}`}
+              />
             </Stack>
           )}
+
+
           <FormControlLabel
             control={<Switch color="primary" />}
             label="Is Internal?"
