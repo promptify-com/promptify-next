@@ -5,7 +5,14 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
-import chatSlice, { setClonedWorkflow, setGptGenerationStatus, setInputs } from "@/core/store/chatSlice";
+import chatSlice, {
+  setAreCredentialsStored,
+  setClonedWorkflow,
+  setCredentialsInput,
+  setGptGenerationStatus,
+  setInputs,
+  setRequireCredentials,
+} from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import executionsSlice, { clearExecutionsStates } from "@/core/store/executionsSlice";
@@ -13,14 +20,13 @@ import Header from "@/components/GPT/Header";
 import store from "@/core/store";
 import Workflow from "@/components/GPTs/FlowData";
 import useMessageManager from "@/components/GPT/Hooks/useMessageManager";
-import NoScheduleGPTChat from "@/components/GPT/NoScheduleGPTChat";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import ScheduledChatSteps from "@/components/GPT/ScheduledChatSteps";
 import { isValidUserFn } from "@/core/store/userSlice";
-import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
 import templatesSlice from "@/core/store/templatesSlice";
+import ChatInterface from "@/components/GPT/Chat/ChatInterface";
+import { extractCredentialsInput, oAuthTypeMapping } from "@/components/Automation/helpers";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -35,13 +41,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
   const { selectedWorkflow, isWorkflowLoading, createWorkflowIfNeeded } = useWorkflow(workflow);
   const { extractCredentialsInputFromNodes } = useCredentials();
 
-  const {
-    messages,
-    showGenerate,
-    prepareAndQueueMessages,
-    messageWorkflowExecution,
-    showGenerateButton: allowActivateButton,
-  } = useMessageManager({
+  const { prepareAndQueueMessages } = useMessageManager({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
@@ -55,7 +55,8 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
         }
         const { nodes } = createdWorkflow;
 
-        const credentialsInput = await extractCredentialsInputFromNodes(nodes);
+        const credentialsInput = await extractCredentialsInput(selectedWorkflow.data.nodes);
+        dispatch(setCredentialsInput(credentialsInput));
 
         const inputs: IPromptInput[] = nodes
           .filter(node => node.type === "n8n-nodes-base.set")
@@ -90,7 +91,6 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
 
   useEffect(() => {
     processData();
-
     return () => {
       dispatch(setClonedWorkflow(undefined));
       dispatch(setGptGenerationStatus("pending"));
@@ -125,34 +125,12 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
         >
           <Header workflow={selectedWorkflow} />
           <Stack
+            pb={{ md: 2, lg: 4 }}
             direction={{ xs: "column-reverse", md: "row" }}
             justifyContent={"space-between"}
           >
-            {!isValidUser ? (
-              <Stack
-                flex={1}
-                gap={8}
-                sx={{
-                  p: "48px",
-                  height: "40px",
-                }}
-              >
-                <SigninButton onClick={() => router.push("/signin")} />
-              </Stack>
-            ) : selectedWorkflow.is_schedulable ? (
-              <ScheduledChatSteps
-                workflow={selectedWorkflow}
-                allowActivateButton={allowActivateButton}
-              />
-            ) : (
-              <NoScheduleGPTChat
-                workflow={workflow}
-                messages={messages}
-                showGenerate={showGenerate}
-                processData={processData}
-                messageWorkflowExecution={messageWorkflowExecution}
-              />
-            )}
+            <ChatInterface workflow={selectedWorkflow} />
+
             <Workflow workflow={selectedWorkflow} />
           </Stack>
         </Stack>
