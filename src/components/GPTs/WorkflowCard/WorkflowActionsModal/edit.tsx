@@ -1,5 +1,5 @@
 import type { Dispatch } from "react";
-import { MenuItem } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
 import { useRouter } from "next/router";
 
 interface Props {
