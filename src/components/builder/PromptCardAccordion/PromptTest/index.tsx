@@ -158,8 +158,17 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       openWhenHidden: true,
       async onopen(res) {
         if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          console.error("Client side error ", res);
-          setGeneratingResponse("Please enter valid answers");
+          try {
+            const errorResponse = await res.clone().json();
+            const errorMessages = Object.entries(errorResponse)
+              .map(([field, messages]) => `${field}: ${(messages as string[]).join(", ")}`)
+              .join("\n");
+            setGeneratingResponse(errorMessages);
+          } catch (parseError) {
+            console.error("Error parsing error response:", parseError);
+            setGeneratingResponse("Please enter valid answers");
+          }
+          setIsGenerating(false);
         }
       },
       onmessage(msg) {
