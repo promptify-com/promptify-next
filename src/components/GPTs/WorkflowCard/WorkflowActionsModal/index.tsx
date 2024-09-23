@@ -1,5 +1,10 @@
 import { Dispatch } from "react";
-import { Stack, Popper, Fade, ClickAwayListener, Paper, Box } from "@mui/material";
+import { Stack } from "@mui/material";
+import { Popper } from "@mui/material";
+import { Fade } from "@mui/material";
+import { ClickAwayListener } from "@mui/material";
+import { Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { ITemplateWorkflow } from "../../../Automation/types";
 import EditWorkflow from "./edit";
 import PauseWorkflow from "./pause";
