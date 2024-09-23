@@ -131,9 +131,10 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
             textOverflow: "ellipsis",
           }}
         >
-          Max Length: {promptEngine?.default_parameters?.maximumLength || 0}, Temperature:{" "}
-          {promptEngine?.default_parameters?.temperature || 0}, Top P: {promptEngine?.default_parameters?.topP || 0},
-          Frequency Penalty: {promptEngine?.default_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
+          Max Length: {prompt.model_parameters?.maximumLength || promptEngine?.default_parameters?.maximumLength || 0},
+          Temperature: {promptEngine?.default_parameters?.temperature || 0}, Top P:
+          {promptEngine?.default_parameters?.topP || 0}, Frequency Penalty:
+          {promptEngine?.default_parameters?.frequencyPenalty || 0}, Presence Penalty:
           {promptEngine?.default_parameters?.presencePenalty || 0}
         </Typography>
         <Stack
