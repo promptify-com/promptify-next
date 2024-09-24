@@ -507,7 +507,13 @@ const useChat = ({ workflow }: Props) => {
             renderMessage(output);
           }
         } catch {
-          console.info("invalid incoming msg:", msg);
+          let failMessageText = "Running your AI App failed due to an unexpected error. Please try again later.";
+          const failMessage = createMessage({
+            type: "text",
+            text: failMessageText,
+            isHighlight: true,
+          });
+          setMessages(prev => prev.filter(m => m.type !== "readyMessage").concat(failMessage));
         }
       },
       onerror(err) {
