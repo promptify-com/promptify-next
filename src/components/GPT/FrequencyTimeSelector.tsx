@@ -85,7 +85,7 @@ export default function FrequencyTimeSelector({ message, onSelect, selectedFrequ
             defaultValue={scheduleTime.time}
           />
         </Stack>
-        {!clonedWorkflow?.schedule && (
+        {!clonedWorkflow?.periodic_task && (
           <Button
             onClick={() => onSelect(scheduleTime)}
             variant="contained"
