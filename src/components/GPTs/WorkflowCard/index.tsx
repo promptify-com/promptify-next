@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Stack, Box, Typography, Chip } from "@mui/material";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
@@ -32,6 +32,10 @@ function WorkflowCard({
   const [isPaused, setIsPaused] = useState(!periodic_task?.enabled);
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
+
+  useEffect(() => {
+    setIsPaused(!periodic_task?.enabled);
+  }, [periodic_task?.enabled]);
 
   return (
     <Stack sx={{ position: "relative", flex: 1 }}>
