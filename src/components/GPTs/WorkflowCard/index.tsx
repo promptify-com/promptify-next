@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Stack, Box, Typography, Chip } from "@mui/material";
 import BoltOutlined from "@/components/GPTs/Icons/BoltOutlined";
@@ -33,8 +33,16 @@ function WorkflowCard({
   const frequency = capitalizeString(periodic_task?.frequency ?? "");
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
 
+  useEffect(() => {
+    setIsPaused(!periodic_task?.enabled);
+  }, [periodic_task?.enabled]);
+
   return (
-    <Stack sx={{ position: "relative" }}>
+    <Stack
+      sx={{ position: "relative", flex: 1 }}
+      borderRadius={"16px"}
+      bgcolor={"#F9F9F9"}
+    >
       <Link
         href={`/apps/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
@@ -42,11 +50,10 @@ function WorkflowCard({
         <Stack
           flex={1}
           p={"8px"}
+          height="100%"
           width={{ xs: "282px", md: "487px" }}
           minWidth={{ xs: "282px", md: "487px" }}
           direction={{ xs: "column", md: "row" }}
-          bgcolor={"#F9F9F9"}
-          borderRadius={"16px"}
           position={"relative"}
         >
           <Box
@@ -95,13 +102,12 @@ function WorkflowCard({
             </Stack>
           )}
           <Stack
-            p={{ xs: "16px", md: `${!periodic_task ? "16px 24px" : "40px 10px 16px 24px"}` }}
-            flex={1}
-            gap={"24px"}
+            p={{ xs: "16px 0px 16px", md: `${!periodic_task ? "16px 24px" : "40px 80px 24px 24px"}` }}
+            sx={{ flex: 1 }}
             alignItems={"start"}
             justifyContent={"space-between"}
           >
-            <Stack gap={"8px"}>
+            <Stack spacing={1}>
               <Typography
                 fontSize={"16px"}
                 fontWeight={500}
