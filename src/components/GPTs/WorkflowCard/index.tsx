@@ -38,7 +38,11 @@ function WorkflowCard({
   }, [periodic_task?.enabled]);
 
   return (
-    <Stack sx={{ position: "relative", flex: 1 }}>
+    <Stack
+      sx={{ position: "relative", flex: 1 }}
+      borderRadius={"16px"}
+      bgcolor={"#F9F9F9"}
+    >
       <Link
         href={`/apps/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
@@ -50,8 +54,6 @@ function WorkflowCard({
           width={{ xs: "282px", md: "487px" }}
           minWidth={{ xs: "282px", md: "487px" }}
           direction={{ xs: "column", md: "row" }}
-          bgcolor={"#F9F9F9"}
-          borderRadius={"16px"}
           position={"relative"}
         >
           <Box
@@ -100,13 +102,12 @@ function WorkflowCard({
             </Stack>
           )}
           <Stack
-            p={{ xs: "16px", md: `${!periodic_task ? "16px 24px" : "40px 10px 16px 24px"}` }}
-            flex={1}
-            gap={"24px"}
+            p={{ xs: "16px 0px 16px", md: `${!periodic_task ? "16px 24px" : "40px 80px 24px 24px"}` }}
+            sx={{ flex: 1 }}
             alignItems={"start"}
             justifyContent={"space-between"}
           >
-            <Stack gap={"8px"}>
+            <Stack spacing={1}>
               <Typography
                 fontSize={"16px"}
                 fontWeight={500}
