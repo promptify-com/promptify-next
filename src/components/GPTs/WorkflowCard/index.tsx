@@ -34,7 +34,7 @@ function WorkflowCard({
   const time = TIMES[periodic_task?.crontab.hour ?? 0];
 
   return (
-    <Stack sx={{ position: "relative" }}>
+    <Stack sx={{ position: "relative", flex: 1 }}>
       <Link
         href={`/apps/${templateWorkflow?.slug}`}
         style={{ textDecoration: "none" }}
@@ -42,6 +42,7 @@ function WorkflowCard({
         <Stack
           flex={1}
           p={"8px"}
+          height="100%"
           width={{ xs: "282px", md: "487px" }}
           minWidth={{ xs: "282px", md: "487px" }}
           direction={{ xs: "column", md: "row" }}
