@@ -35,8 +35,7 @@ export default function Header({ workflow }: Props) {
   const [isPause, setIsPause] = useState(false);
 
   useEffect(() => {
-    if (!!periodicTask)
-      setIsPause(!periodicTask?.enabled);
+    if (!!periodicTask) setIsPause(!periodicTask?.enabled);
   }, [periodicTask]);
 
   return (
@@ -154,7 +153,7 @@ export default function Header({ workflow }: Props) {
                   color: alpha(theme.palette.onSurface, 0.5),
                 }}
               >
-                Scheduled: {frequency} {formattedDay} @ {time}
+                Scheduled: {frequency} {frequency.toLowerCase() !== "hourly" ? `${formattedDay} @ ${time}` : null}
               </Stack>
             </>
           )}
