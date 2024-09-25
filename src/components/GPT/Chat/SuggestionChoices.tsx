@@ -16,23 +16,19 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
     useAppSelector(state => state.chat ?? initialChatState);
   const { is_schedulable } = workflow;
 
+  const Run =
+    (!inputs.length && !requireCredentials) ||
+    (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
+    (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers));
+  const Reconfigure = (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
+      (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers));
+
   const chipOptions = [
-    { label: "Configure", show: !!inputs.length || requireCredentials },
+    { label: "Reconfigure", show: Reconfigure },
+    { label: "Configure", show: !Run },
     { label: "Schedule", show: is_schedulable },
-    {
-      label: "Run Now",
-      show:
-        (!inputs.length && !requireCredentials) ||
-        (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
-        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
-    },
-    {
-      label: "Get API",
-      show:
-        (!inputs.length && !requireCredentials) ||
-        (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
-        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
-    },
+    { label: "Run Now", show: Run },
+    { label: "Get API", show: Run },
     {
       label: "Pause",
       show: workflow.is_schedulable && !!clonedWorkflow?.periodic_task && clonedWorkflow?.periodic_task?.enabled,
