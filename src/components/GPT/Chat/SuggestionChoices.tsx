@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import { ITemplateWorkflow } from "@/components/Automation/types";
+import { INode, ITemplateWorkflow } from "@/components/Automation/types";
+import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { allRequiredInputsAnswered } from "@/common/helpers";
@@ -11,17 +12,25 @@ interface Props {
   messageType?: string;
 }
 
+const workflowHasAuth = (nodes: INode[]) => {
+  const nodesRequiringAuthentication = nodes.filter(
+    node => node.parameters?.authentication || oAuthTypeMapping[node.type],
+  );
+  return nodesRequiringAuthentication?.length > 0;
+};
+
 const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
   const { clonedWorkflow, inputs, requireCredentials, credentialsInput, areCredentialsStored, answers } =
     useAppSelector(state => state.chat ?? initialChatState);
   const { is_schedulable } = workflow;
 
+  const checkWorkflowAuth = workflowHasAuth(clonedWorkflow?.nodes ?? []);
+
   const Run =
     (!inputs.length && !requireCredentials) ||
     (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
     (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers));
-  const Reconfigure = (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
-      (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers));
+  const Reconfigure = Run && !(inputs.length === 0 && !checkWorkflowAuth);
 
   const chipOptions = [
     { label: "Reconfigure", show: Reconfigure },
