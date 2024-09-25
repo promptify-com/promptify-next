@@ -24,8 +24,6 @@ function DeleteDialog() {
     <Dialog
       open={dialog?.open ?? false}
       onClose={handleCloseDialog}
-      BackdropProps={{ style: { backgroundColor: "rgba(0, 0, 0, 0.2)" } }}
-      PaperProps={{ sx: { boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2)" } }}
     >
       <DialogTitle fontSize={26}>{dialog?.title}</DialogTitle>
       <DialogContent>
