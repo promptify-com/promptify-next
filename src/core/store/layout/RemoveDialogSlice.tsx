@@ -4,6 +4,7 @@ export interface IRemoveDialogSliceState {
   open: boolean;
   title: string;
   content: string;
+  loading: boolean;
   onSubmit: () => void;
 }
 
@@ -11,6 +12,7 @@ export const initialState: IRemoveDialogSliceState = {
   open: false,
   title: "",
   content: "",
+  loading: false,
   onSubmit: () => {},
 };
 
@@ -23,18 +25,23 @@ export const removeDialogSlice = createSlice({
       state.open = true;
       state.title = title;
       state.content = content;
+      state.loading = false;
       state.onSubmit = onSubmit;
     },
     handleClose: state => {
       state.open = false;
       state.title = "";
       state.content = "";
+      state.loading = false;
       state.onSubmit = () => {};
+    },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { handleOpen, handleClose } = removeDialogSlice.actions;
+export const { handleOpen, handleClose, setLoading } = removeDialogSlice.actions;
 
 export default removeDialogSlice.reducer;
