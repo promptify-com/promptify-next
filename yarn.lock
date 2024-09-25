@@ -5871,10 +5871,10 @@ react-highlight-within-textarea@^3.2.1:
   resolved "https://registry.yarnpkg.com/react-highlight-within-textarea/-/react-highlight-within-textarea-3.2.1.tgz#abb608c3bb6f33b551d81f898c8b2e8870f2534b"
   integrity sha512-ettN+GQfNLg6zCcpatsT9yhgpwEh5dV+tRKEmZu9+DnvLL7t1Bm/0wZ2tTC+G7wAZngJ2HbMlusJXR6v3Cs4PQ==
 
-react-image-crop@^11.0.5:
-  version "11.0.6"
-  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-11.0.6.tgz#0f3d60f6ca8b65ccde2bd076a35d1d9d799bc4ad"
-  integrity sha512-T+/RPBhwFxdf8PjD/uoWk+tBkS0Xf2XW0lY5mnsmClvnAujO81EEjDwj0M2pcHX3seXVgKOr/yIiL+Sx4evMNw==
+react-image-crop@^11.0.7:
+  version "11.0.7"
+  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-11.0.7.tgz#25f3d37ccbb65a05d19d23b4740a5912835c741e"
+  integrity sha512-ZciKWHDYzmm366JDL18CbrVyjnjH0ojufGDmScfS4ZUqLHg4nm6ATY+K62C75W4ZRNt4Ii+tX0bSjNk9LQ2xzQ==
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
