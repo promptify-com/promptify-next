@@ -11,7 +11,6 @@ import { AccountSidebarWidth } from "@/components/profile2/Constants";
 import AccountSidebar from "@/components/profile2/AccountSidebar";
 import useBrowser from "./hooks/useBrowser";
 import Footer from "./components/Footer";
-import DeleteDialog from "@/modals/layouts/remove_dialog";
 
 export function Layout({ children, footer = false }: { children: ReactNode; footer?: boolean }) {
   const router = useRouter();
@@ -93,7 +92,6 @@ export function Layout({ children, footer = false }: { children: ReactNode; foot
         </Box>
       </Box>
       {isAccountPage && !isMobile && <AccountSidebar />}
-      <DeleteDialog />
     </Stack>
   );
 }

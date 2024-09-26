@@ -27,6 +27,7 @@ import { useRouter } from "next/router";
 import templatesSlice from "@/core/store/templatesSlice";
 import ChatInterface from "@/components/GPT/Chat/ChatInterface";
 import { extractCredentialsInput, oAuthTypeMapping } from "@/components/Automation/helpers";
+import DeleteDialog from "@/modals/layouts/removeDialog";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -133,6 +134,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
 
             <Workflow workflow={selectedWorkflow} />
           </Stack>
+          <DeleteDialog />
         </Stack>
       )}
     </Layout>
