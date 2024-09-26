@@ -64,7 +64,7 @@ const ChatInterface = ({ workflow }: Props) => {
     workflow,
   });
 
-  const { extractCredentialsInputFromNodes } = useCredentials();
+  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -96,25 +96,27 @@ const ChatInterface = ({ workflow }: Props) => {
     }
 
     const { nodes } = workflow.data;
-    const nodesRequiringAuthentication = nodes.filter(
-      node => node.parameters?.authentication || oAuthTypeMapping[node.type],
-    );
-    const areAllCredentialsAttached = clonedWorkflow?.nodes
-      .filter(node => {
-        return node.parameters.authentication || oAuthTypeMapping[node.type];
-      })
-      .every(node => node.credentials);
-
-    if (nodesRequiringAuthentication?.length && areAllCredentialsAttached) {
-      dispatch(setRequireCredentials(true));
-      dispatch(setAreCredentialsStored(true));
-    } else {
-      dispatch(setRequireCredentials(false));
-      dispatch(setAreCredentialsStored(false));
-    }
 
     const _inputs = await extractCredentialsInputFromNodes(nodes);
     dispatch(setCredentialsInput(_inputs));
+
+    const nodesRequiringAuthentication = nodes.filter(
+      node => node.parameters?.authentication || oAuthTypeMapping[node.type],
+    );
+
+    const areAllCredentialsAttached = checkAllCredentialsStored(_inputs);
+
+    if (areAllCredentialsAttached) {
+      dispatch(setAreCredentialsStored(true));
+    } else {
+      dispatch(setAreCredentialsStored(false));
+    }
+
+    if (nodesRequiringAuthentication?.length) {
+      dispatch(setRequireCredentials(true));
+    } else {
+      dispatch(setRequireCredentials(false));
+    }
   };
 
   useEffect(() => {
