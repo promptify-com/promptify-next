@@ -10,8 +10,8 @@ export interface IRemoveDialogSliceState {
 
 export const initialState: IRemoveDialogSliceState = {
   open: false,
-  title: "",
-  content: "",
+  title: "Remove AI App",
+  content: "Are you sure you want to remove this AI App?",
   loading: false,
   onSubmit: () => {},
 };
@@ -30,8 +30,8 @@ export const removeDialogSlice = createSlice({
     },
     handleClose: state => {
       state.open = false;
-      state.title = "";
-      state.content = "";
+      state.title = "Remove AI App",
+      state.content = "Are you sure you want to remove this AI App?",
       state.loading = false;
       state.onSubmit = () => {};
     },
