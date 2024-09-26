@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
@@ -12,6 +13,7 @@ import { initialState } from "@/core/store/chatSlice";
 import { capitalizeString } from "@/common/helpers";
 import { DAYS, TIMES } from "./Constants";
 import StatusChip from "@/components/GPTs/StatusChip";
+import WorkflowCardActions from "@/components/GPTs/WorkflowCard/WorkflowCardActions";
 
 const LazyDateCPickerCalendar = lazy(() => import("@/components/GPTs/DatePickerCalendar"));
 
@@ -23,16 +25,18 @@ export default function Header({ workflow }: Props) {
   const clonedWorkflow = useAppSelector(store => store.chat?.clonedWorkflow ?? initialState.clonedWorkflow);
   const periodicTask = clonedWorkflow?.periodic_task;
   const scheduleData = clonedWorkflow?.periodic_task?.crontab;
-
   const frequency = capitalizeString(periodicTask?.frequency ?? "");
   const isWeekly = scheduleData?.frequency === "weekly";
   const scheduleDay = isWeekly ? scheduleData?.day_of_week : scheduleData?.day_of_month;
   const day =
     (scheduleDay && scheduleDay.toString() !== "*" && (isWeekly ? DAYS[scheduleDay as number] : scheduleDay)) || null;
   const time = TIMES[scheduleData?.hour ?? 0];
-
   const formattedDay = day ? `on ${isNaN(Number(day)) ? day : `day ${day}`}` : "";
-  const isActive = periodicTask?.enabled;
+  const [isPause, setIsPause] = useState(false);
+
+  useEffect(() => {
+    if (!!periodicTask) setIsPause(!periodicTask?.enabled);
+  }, [periodicTask]);
 
   return (
     <Stack
@@ -129,7 +133,15 @@ export default function Header({ workflow }: Props) {
                 }}
               >
                 Status:
-                <StatusChip status={isActive ? "active" : "paused"} />
+                <StatusChip status={!isPause ? "active" : "paused"} />
+                <Stack sx={{ position: "relative" }}>
+                  <WorkflowCardActions
+                    workflow={workflow}
+                    isPaused={isPause}
+                    setIsPaused={setIsPause}
+                    userWorkflowId={clonedWorkflow?.id}
+                  />
+                </Stack>
               </Stack>
               <Stack
                 direction={"row"}
@@ -141,10 +153,7 @@ export default function Header({ workflow }: Props) {
                   color: alpha(theme.palette.onSurface, 0.5),
                 }}
               >
-                Scheduled: {frequency} {formattedDay} @ {time}
-                {/* <IconButton>
-                  <SettingsOutlined />
-                </IconButton> */}
+                Scheduled: {frequency} {frequency.toLowerCase() !== "hourly" ? `${formattedDay} @ ${time}` : null}
               </Stack>
             </>
           )}

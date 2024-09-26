@@ -1,9 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import type { Action, Middleware, Reducer, ThunkAction } from "@reduxjs/toolkit";
+// Queries
 import { baseApi } from "@/core/api/api";
+// Slices
 import userSlice from "./userSlice";
 import sidebarSlice from "./sidebarSlice";
 import toastSlice, { setToast } from "./toastSlice";
+import layoutSlice, { ILayoutSliceState } from "./layout";
 
 import type {
   IBuilderSliceState,
@@ -18,6 +21,7 @@ import type {
 import RetryRequestError from "../api/errors/RetryRequestError";
 
 export type RootState = {
+  layout?: ILayoutSliceState;
   builder?: IBuilderSliceState;
   chat?: IChatSliceState;
   documents?: IDocumentSliceState;
@@ -36,6 +40,7 @@ type AsyncReducers = {
 };
 
 type StaticReducers = {
+  layout: Reducer<ILayoutSliceState>;
   user: Reducer<IUserSliceState>;
   toast: Reducer<IToastSliceState>;
   sidebar: Reducer<ISidebarSliceState>;
@@ -43,6 +48,7 @@ type StaticReducers = {
 };
 
 const staticReducers: StaticReducers = {
+  layout: layoutSlice,
   user: userSlice,
   sidebar: sidebarSlice,
   toast: toastSlice,
