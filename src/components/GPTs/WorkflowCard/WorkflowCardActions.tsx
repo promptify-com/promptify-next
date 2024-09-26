@@ -2,7 +2,6 @@ import { Dispatch, useRef, useState } from "react";
 import { Box } from "@mui/material";
 import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
-import DeleteDialog from "@/modals/layouts/remove_dialog";
 import type { ITemplateWorkflow } from "../../Automation/types";
 
 interface Props {
@@ -52,7 +51,6 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, 
           setIsPaused={setIsPaused}
         />
       )}
-      <DeleteDialog />
     </>
   );
 }
