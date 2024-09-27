@@ -70,6 +70,7 @@ const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange
         multiline={fold}
         rows={fold ? 3 : 1}
         sx={{ ml: fold ? 0 : 1 }}
+        inputProps={{ style: { fontSize: 12 } }}
       />
     </Stack>
   );

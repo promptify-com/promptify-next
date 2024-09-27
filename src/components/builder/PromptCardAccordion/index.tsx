@@ -255,6 +255,7 @@ const PromptCardAccordion = ({
         >
           <SystemPromptForm
             label="system prompt"
+            placeholder="set a system prompt (optional)"
             value={promptData.system_prompt}
             onChange={val => updatePrompt({ ...promptData, system_prompt: val.trim() })}
           />
