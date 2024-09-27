@@ -10,6 +10,7 @@ import Header from "./Header";
 import StylerAccordion from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { RenameForm } from "@/components/common/forms/RenameForm";
+import SystemPromptForm from "@/components/common/forms/SystemPromptForm";
 import Footer from "./Footer";
 import HighlightTextarea from "../HighlightWithinTextarea";
 import { Selection } from "react-highlight-within-textarea";
@@ -139,6 +140,7 @@ const PromptCardAccordion = ({
             parameters: promptData.parameters,
             prompt_output_variable: savedPrompt.prompt_output_variable,
             show_output: savedPrompt.show_output,
+            system_prompt: savedPrompt.system_prompt,
             title: savedPrompt.title,
           };
           setPromptData(_savedPromptData);
@@ -244,6 +246,19 @@ const PromptCardAccordion = ({
               onCancel={() => setRenameAllow(false)}
             />
           )}
+        </Stack>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          p={"8px 16px 8px 24px"}
+        >
+          <SystemPromptForm
+            label="system prompt"
+            placeholder="set a system prompt (optional)"
+            value={promptData.system_prompt}
+            onChange={val => updatePrompt({ ...promptData, system_prompt: val.trim() })}
+          />
         </Stack>
         <Box p={"8px 16px 8px 24px"}>
           <Typography
