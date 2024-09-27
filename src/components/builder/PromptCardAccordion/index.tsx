@@ -254,7 +254,7 @@ const PromptCardAccordion = ({
           p={"8px 16px 8px 24px"}
         >
           <SystemPromptForm
-            label="SYSTEM PROMPT"
+            label="system prompt"
             value={promptData.system_prompt}
             onChange={val => updatePrompt({ ...promptData, system_prompt: val.trim() })}
           />

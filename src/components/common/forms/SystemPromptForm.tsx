@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
 import Input from "@mui/material/Input";
-import InputAdornment from "@mui/material/InputAdornment";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import Typography from "@mui/material/Typography";
@@ -29,29 +27,49 @@ const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange
   return (
     <Stack
       sx={{
+        flex: 1,
         width: "100%",
         border: "1px solid rgba(0, 0, 0, 0.10)",
         borderRadius: 2,
         position: "relative",
+        p: 0.5,
       }}
       direction={fold ? "column" : "row"}
       alignItems={fold ? "flex-start" : "center"}
     >
       <IconButton
         onClick={() => setFold(!fold)}
-        sx={{ opacity: 0.7, border: "none", position: "absolute", top: 0, right: 4 }}
+        sx={{
+          opacity: 0.7,
+          border: "none",
+          position: "absolute",
+          top: 0,
+          right: 4,
+          zIndex: 2,
+        }}
       >
         {fold ? <UnfoldMoreIcon /> : <UnfoldLessIcon />}
       </IconButton>
-      <Typography>{label}</Typography>
+      <Typography
+        sx={{
+          flexShrink: 0,
+          fontSize: 11,
+          textTransform: "uppercase",
+          color: "text.secondary",
+        }}
+      >
+        {label}
+      </Typography>
       <Input
-        sx={{ width: "80%" }}
+        fullWidth
         placeholder={placeholder}
         value={Value}
         onChange={handleChange}
         disabled={disabled}
+        disableUnderline={true}
         multiline={fold}
         rows={fold ? 3 : 1}
+        sx={{ ml: fold ? 0 : 1 }}
       />
     </Stack>
   );
