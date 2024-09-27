@@ -1,43 +1,47 @@
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Input from "@mui/material/Input";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import Typography from "@mui/material/Typography";
-import { debounce } from "@mui/material/utils";
+import useDebounce from "@/hooks/useDebounce";
 
 interface Props {
   label?: string;
   placeholder?: string;
-  value: string | undefined;
+  value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
 }
 
-const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange = () => {}, disabled }) => {
-  const [inputValue, setInputValue] = useState(value || "");
+const SystemPromptForm: React.FC<Props> = ({
+  label,
+  placeholder,
+  value = "",
+  onChange = () => {},
+  disabled = false,
+}) => {
+  const [inputValue, setInputValue] = useState(value);
   const [fold, setFold] = useState(false);
+  const debouncedInputValue = useDebounce(inputValue, 300);
 
-  const debouncedOnChange = useCallback(
-    debounce((newValue: string) => {
-      onChange(newValue);
-    }, 300),
-    [onChange],
-  );
+  useEffect(() => {
+    onChange(debouncedInputValue);
+  }, [debouncedInputValue, onChange]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setInputValue(newValue);
-    debouncedOnChange(newValue);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
+
+  const toggleFold = () => setFold(prevFold => !prevFold);
 
   return (
     <Stack
       sx={{
         flex: 1,
         width: "100%",
-        border: "1px solid rgba(0, 0, 0, 0.10)",
+        border: "1px solid rgba(0, 0, 0, 0.1)",
         borderRadius: 2,
         position: "relative",
         p: 0.5,
@@ -46,7 +50,7 @@ const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange
       alignItems={fold ? "flex-start" : "center"}
     >
       <IconButton
-        onClick={() => setFold(!fold)}
+        onClick={toggleFold}
         sx={{
           opacity: 0.7,
           border: "none",
@@ -56,25 +60,27 @@ const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange
           zIndex: 2,
         }}
       >
-        {fold ? <UnfoldMoreIcon /> : <UnfoldLessIcon />}
+        {fold ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
       </IconButton>
-      <Typography
-        sx={{
-          flexShrink: 0,
-          fontSize: 11,
-          textTransform: "uppercase",
-          color: "text.secondary",
-        }}
-      >
-        {label}
-      </Typography>
+      {label && (
+        <Typography
+          sx={{
+            flexShrink: 0,
+            fontSize: 11,
+            textTransform: "uppercase",
+            color: "text.secondary",
+          }}
+        >
+          {label}
+        </Typography>
+      )}
       <Input
         fullWidth
         placeholder={placeholder}
         value={inputValue}
-        onChange={handleChange}
+        onChange={handleInputChange}
         disabled={disabled}
-        disableUnderline={true}
+        disableUnderline
         multiline={fold}
         rows={fold ? 3 : 1}
         sx={{ ml: fold ? 0 : 1 }}
