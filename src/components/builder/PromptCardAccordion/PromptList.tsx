@@ -74,6 +74,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
       model_parameters: null,
       is_visible: true,
       show_output: true,
+      system_prompt: "",
       prompt_output_variable: `$temp_id_${temp_id}`,
     };
 
@@ -115,6 +116,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
       model_parameters: duplicateData.model_parameters,
       is_visible: duplicateData.is_visible,
       show_output: duplicateData.show_output,
+      system_prompt: duplicateData.system_prompt,
       prompt_output_variable: `$temp_id_${temp_id}`,
     };
 

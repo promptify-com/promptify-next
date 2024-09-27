@@ -53,6 +53,7 @@ export interface IEditPrompts extends IPromptOptions {
   parameters: IPromptParams[];
   order: number;
   template?: number;
+  system_prompt?: string
   default_parameters?: IEngineParams;
 }
 
