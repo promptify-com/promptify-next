@@ -57,7 +57,14 @@ export const addPreset = ({
     } else {
       const _var = label.slice(2, label.indexOf(":"));
       const _type = label.slice(label.indexOf(":") + 1, label.indexOf("}}"));
-      const choices = _type === "choices" ? ":1,2,3" : _type === "file" ? ":pdf,docx,txt" : "";
+      const choices =
+        _type === "choices"
+          ? ":1,2,3"
+          : _type === "file"
+            ? ":pdf,docx,txt"
+            : _type === "audio"
+              ? ":mp3,wav,webm,mp4,mpeg,mpga,m4a"
+              : "";
       preset = `{{${_var}:${_type}:true${choices}}}`;
     }
   }

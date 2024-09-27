@@ -52,6 +52,17 @@ export const isPromptVariableValid = (content: string) => {
         };
       }
     }
+
+    if (type === "audio") {
+      const extensions = (parts[3]?.split(",") || []).map(ext => ext.trim());
+      const validExtensions = ["mp3", "wav", "webm", "mp4", "mpeg", "mpga", "m4a"];
+      if (extensions.length === 0 || extensions.length > 7 || extensions.some(ext => !validExtensions.includes(ext))) {
+        return {
+          isValid: false,
+          message: `"${match[0]}"`,
+        };
+      }
+    }
   }
 
   return {

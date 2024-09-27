@@ -136,7 +136,7 @@ export enum BUILDER_TYPE {
   ADMIN = "admin",
 }
 
-export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
+export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file", "audio"];
 
 export const TemplateSidebarLinks: Link[] = [
   {

@@ -71,7 +71,7 @@ function SuggestionsListDetailed({
   };
 
   const showPreviousOutputs = (optionType === "output" || highlightValue === "{{") && previousPresets.length > 0;
-  const types: InputType[] = ["text", "number", "choices", "code", "file"];
+  const types: InputType[] = ["text", "number", "choices", "code", "file", "audio"];
 
   return (
     <>

@@ -12,6 +12,8 @@ const getType = (str: string): InputType => {
       return "choices";
     case "file":
       return "file";
+    case "audio":
+      return "audio";
     default:
       return "text";
   }
@@ -28,7 +30,7 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
     const type = getType(parts[1]);
     const options = parts[3] ? Array.from(new Set(parts[3].split(",").filter(option => option.trim()))) : [];
 
-    if (["choices", "file"].includes(type) && !options?.length) continue;
+    if (["choices", "file", "audio"].includes(type) && !options?.length) continue;
 
     const obj = {
       name: parts[0],
@@ -38,8 +40,9 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
         .replace(/^./, parts[0][0]?.toUpperCase()),
       type: type,
       required: parts[2] ? parts[2].toLowerCase() !== "false" : true, // required by default
-      choices: options,
-      fileExtensions: options,
+      choices: type === "choices" ? options : [],
+      fileExtensions: type === "file" ? options : [],
+      audioExtensions: type === "audio" ? options : [],
     };
 
     matches.push(obj);

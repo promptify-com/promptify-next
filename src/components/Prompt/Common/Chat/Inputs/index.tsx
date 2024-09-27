@@ -61,6 +61,17 @@ function RenderInputType({ input, value: initialValue, onChange, disabled }: Pro
           value={initialValue as File}
           onChange={handleOnChange}
           disabled={disabled}
+          inputType={inputType}
+        />
+      );
+    case "audio":
+      return (
+        <File
+          input={input}
+          value={initialValue as File}
+          onChange={handleOnChange}
+          disabled={disabled}
+          inputType={inputType}
         />
       );
     case "credentials":
