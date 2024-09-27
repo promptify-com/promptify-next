@@ -12,7 +12,7 @@ import HeroSection from "@/components/GPTs/Sections/HeroSection";
 import CarouselSection from "@/components/GPTs/Sections/CarouselSection";
 import WorkflowCard from "@/components/GPTs/WorkflowCard";
 import CarouselSectionAuto from "@/components/GPTs/Sections/CarouselSectionAuto";
-import DeleteDialog from "@/modals/layouts/removeDialog";
+import DeleteDialog from "@/components/modals/RemoveDialog";
 
 const GPTsSection = lazy(() => import("@/components/GPTs/Sections/GPTsSection"), {
   ssr: false,

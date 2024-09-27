@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { MenuItem } from "@mui/material";
 // Redux
 import { useAppDispatch } from "@/hooks/useStore";
-import { handleClose, handleOpen } from "@/core/store/layout/RemoveDialogSlice";
+import { handleClose, handleOpen } from "@/core/store/removeDialogSlice";
 import { setToast } from "@/core/store/toastSlice";
 // Queries
 import { useDeleteWorkflowMutation } from "@/core/api/workflows";

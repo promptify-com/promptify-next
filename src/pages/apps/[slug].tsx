@@ -27,7 +27,7 @@ import { useRouter } from "next/router";
 import templatesSlice from "@/core/store/templatesSlice";
 import ChatInterface from "@/components/GPT/Chat/ChatInterface";
 import { extractCredentialsInput, oAuthTypeMapping } from "@/components/Automation/helpers";
-import DeleteDialog from "@/modals/layouts/removeDialog";
+import DeleteDialog from "@/components/modals/RemoveDialog";
 
 interface Props {
   workflow: ITemplateWorkflow;

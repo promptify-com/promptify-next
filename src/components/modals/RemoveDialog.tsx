@@ -7,11 +7,11 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { red } from "@mui/material/colors/";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { handleClose, setLoading } from "@/core/store/layout/RemoveDialogSlice";
+import { handleClose, setLoading } from "@/core/store/removeDialogSlice";
 
 function DeleteDialog() {
   const dispatch = useAppDispatch();
-  const dialog = useAppSelector(({ layout }) => layout?.remove_dialog);
+  const dialog = useAppSelector(({ remove_dialog }) => remove_dialog);
   const handleSubmit = () => {
     dispatch(setLoading(true));
     dialog?.onSubmit();
