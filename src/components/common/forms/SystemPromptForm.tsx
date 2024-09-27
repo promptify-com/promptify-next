@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Input from "@mui/material/Input";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import Typography from "@mui/material/Typography";
+import { debounce } from "@mui/material/utils";
 
 interface Props {
   label?: string;
@@ -15,13 +16,20 @@ interface Props {
 }
 
 const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange = () => {}, disabled }) => {
-  const [Value, setValue] = useState(value || "");
+  const [inputValue, setInputValue] = useState(value || "");
   const [fold, setFold] = useState(false);
+
+  const debouncedOnChange = useCallback(
+    debounce((newValue: string) => {
+      onChange(newValue);
+    }, 300),
+    [onChange],
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    setValue(newValue);
-    onChange(newValue);
+    setInputValue(newValue);
+    debouncedOnChange(newValue);
   };
 
   return (
@@ -63,7 +71,7 @@ const SystemPromptForm: React.FC<Props> = ({ label, placeholder, value, onChange
       <Input
         fullWidth
         placeholder={placeholder}
-        value={Value}
+        value={inputValue}
         onChange={handleChange}
         disabled={disabled}
         disableUnderline={true}
