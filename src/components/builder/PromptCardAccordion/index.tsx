@@ -257,7 +257,7 @@ const PromptCardAccordion = ({
             label="system prompt"
             placeholder="set a system prompt (optional)"
             value={promptData.system_prompt}
-            onChange={val => updatePrompt({ ...promptData, system_prompt: val.trim() })}
+            onChange={val => updatePrompt({ ...promptData, system_prompt: val?.trim() })}
           />
         </Stack>
         <Box p={"8px 16px 8px 24px"}>
