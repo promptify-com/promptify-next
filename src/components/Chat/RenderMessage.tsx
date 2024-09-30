@@ -194,6 +194,13 @@ function RenderMessage({
         />
       )}
 
+      {message.type === "file" && (
+        <QuestionMessage
+          variant="input"
+          message={message}
+        />
+      )}
+
       {message.type === "readyMessage" && (
         <ReadyMessage
           content={message.text}

@@ -109,6 +109,8 @@ const useSaveChatInteractions = () => {
           case "readyMessage":
           case "choices":
           case "code":
+          case "audio":
+          case "file":
             _message = {
               chat: chatId,
               text: message.text,
@@ -175,10 +177,10 @@ const useSaveChatInteractions = () => {
             inputMessage.type === "text"
               ? "text"
               : inputMessage.type === "html"
-              ? "html"
-              : inputMessage.text.includes("ready to run")
-              ? "readyMessage"
-              : "questionInput",
+                ? "html"
+                : inputMessage.text.includes("ready to run")
+                  ? "readyMessage"
+                  : "questionInput",
         };
       case "templates_suggestion":
         return {

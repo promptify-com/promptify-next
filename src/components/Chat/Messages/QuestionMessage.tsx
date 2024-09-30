@@ -82,7 +82,7 @@ function QuestionMessage({ message, variant }: Props) {
           </Stack>
         )}
 
-        {type === "audio" && (
+        {(type === "audio" || type === "file") && (
           <Stack>
             <FileButton message={message} />
           </Stack>

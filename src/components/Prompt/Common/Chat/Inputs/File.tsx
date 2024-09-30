@@ -4,10 +4,10 @@ import { getFileTypeExtensionsAsString } from "@/components/Prompt/Utils/uploadF
 import useTruncate from "@/hooks/useTruncate";
 import type { FileType, IPromptInput } from "@/common/types/prompt";
 import { isUrl } from "@/common/helpers";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Tooltip from "@mui/material/Tooltip";
 import Error from "@mui/icons-material/Error";
-import { initialState } from "@/core/store/chatSlice";
+import { initialState, setFileData } from "@/core/store/chatSlice";
 
 interface Props {
   value: File;
@@ -18,6 +18,7 @@ interface Props {
 }
 
 function File({ input, value, onChange, disabled, inputType }: Props) {
+  const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
   const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
@@ -56,6 +57,7 @@ function File({ input, value, onChange, disabled, inputType }: Props) {
           onChange={e => {
             if (e.target.files && e.target.files.length > 0) {
               onChange(e.target.files[0], input);
+              dispatch(setFileData(e.target.files[0] as File));
             }
           }}
         />

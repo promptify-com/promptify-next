@@ -35,7 +35,6 @@ const FileButton = ({ message }: Props) => {
     } else {
       updateAnswers(value);
       setLocalValue(value as string);
-      dispatch(setFileData(value as File));
     }
   };
 
