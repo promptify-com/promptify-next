@@ -59,7 +59,7 @@ export default function MessageRender() {
       alignItems={"start"}
       sx={{ gap: "24px" }}
     >
-      <MessageContainer>{renderContent({ content: streamedSnippet })}</MessageContainer>
+      <MessageContainer>{renderContent({ content: testReactSnippet })}</MessageContainer>
     </Stack>
   );
 }
@@ -132,9 +132,6 @@ const cryptoData = [
 ];
 
 const formatLargeNumber = (num) => {
-  if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
-  if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-  if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
   return num.toFixed(2);
 };
 
@@ -175,7 +172,6 @@ const CryptoDashboard = () => {
             <BarChart data={cryptoData}>
               <XAxis dataKey="symbol" />
               <YAxis tickFormatter={formatLargeNumber} />
-              <Tooltip formatter={(value) => ['$' + formatLargeNumber(value), 'Market Cap']} />
               <Bar dataKey="market_cap" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
