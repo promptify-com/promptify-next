@@ -58,7 +58,7 @@
     "rete-area-plugin": "2.1.1",
     "rete-auto-arrange-plugin": "^2.0.2",
     "rete-connection-plugin": "2.0.0-beta.11",
-    "rete-react-render-plugin": "2.0.0-beta.12",
+    "rete-react-render-plugin": "2.0.0-beta.23",
     "rete-render-utils": "2.0.3",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.13",
