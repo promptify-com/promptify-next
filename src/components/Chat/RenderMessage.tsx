@@ -187,14 +187,7 @@ function RenderMessage({
         </Fade>
       )}
 
-      {message.type === "audio" && (
-        <QuestionMessage
-          variant="input"
-          message={message}
-        />
-      )}
-
-      {message.type === "file" && (
+      {(message.type === "audio" || message.type === "file") && (
         <QuestionMessage
           variant="input"
           message={message}
