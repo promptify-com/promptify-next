@@ -25,7 +25,7 @@ function File({ input, value, onChange, disabled, inputType }: Props) {
   const acceptedTypes =
     inputType === "file"
       ? getFileTypeExtensionsAsString(input.fileExtensions as FileType[])
-      : getFileTypeExtensionsAsString(input.audioExtensions as FileType[]);
+      : getFileTypeExtensionsAsString(input?.audioExtensions as FileType[]);
 
   return (
     <Stack

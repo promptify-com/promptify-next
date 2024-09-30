@@ -47,6 +47,7 @@ export interface IChatSliceState {
   gptGenerationStatus: "pending" | "started" | "generated" | "streaming";
   requireCredentials?: boolean;
   runInstantly?: boolean;
+  fileData?: File;
 }
 
 export type DocumentFilterStatusType = "draft" | "saved" | null;
