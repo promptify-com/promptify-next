@@ -22,7 +22,7 @@ const AntArtifactComponent = ({ content }: Props) => {
   return (
     <Card
       elevation={0}
-      sx={{ borderRadius: 4, marginY: 2 }}
+      sx={{ borderRadius: 4, marginY: 2, pY: 2 }}
     >
       <Stack
         direction="row"
