@@ -24,6 +24,8 @@ import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined
 import { setToast } from "@/core/store/toastSlice";
 import { ShareOutlined } from "@mui/icons-material";
 import { ExportPopupChat } from "./Chat/ExportPopupChat";
+import AntArtifactComponent from "@/components/GPT/AntArtifact";
+import AntThinkingComponent from "@/components/GPT/AntThinking";
 
 interface Props {
   message: IMessage;
@@ -42,23 +44,61 @@ interface MessageContentProps {
 
 export const MessageContentWithHTML = memo(
   ({ content, scrollToBottom }: { content: string; scrollToBottom?: () => void }) => {
-    const [html, setHtml] = useState("");
+    const [htmlParts, setHtmlParts] = useState<React.ReactNode[]>([]);
 
     useEffect(() => {
-      if (!content) {
-        return;
-      }
+      if (!content) return;
 
       const generateFinalHtml = async () => {
-        const _html = await markdownToHTML(content);
-        setHtml(_html);
+        // Split by <antThinking> and <antArtifact> tags
+        const parts = content.split(/(<\/?antThinking>|<\/?antArtifact)/g);
+        const renderedComponents: React.ReactNode[] = [];
+        console.log(parts);
+
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i]?.trim();
+
+          // Detect and render <antThinking>
+          if (part.startsWith("<antThinking>")) {
+            const content = parts[++i]?.trim();
+            renderedComponents.push(
+              <AntThinkingComponent
+                key={`thinking-${i}`}
+                content={content}
+              />,
+            );
+          }
+          // Detect and render <antArtifact>
+          else if (part.startsWith("<antArtifact")) {
+            const content = parts[++i]?.trim();
+            console.log(content);
+            renderedComponents.push(
+              <AntArtifactComponent
+                key={`artifact-${i}`}
+                content={content}
+              />,
+            );
+          }
+          // Apply HTML transformation to parts without the special tags
+          else if (part && !part.startsWith("<")) {
+            const _html = await markdownToHTML(part);
+            renderedComponents.push(
+              <span
+                key={i}
+                dangerouslySetInnerHTML={{ __html: sanitizeHTML(_html) }}
+              />,
+            );
+          }
+        }
+
+        setHtmlParts(renderedComponents);
       };
 
       generateFinalHtml();
       scrollToBottom?.();
     }, [content]);
 
-    return <ExecutionContent content={sanitizeHTML(html)} />;
+    return <div>{htmlParts}</div>;
   },
 );
 
@@ -258,7 +298,6 @@ const btnStyle = {
     color: "onSurface",
   },
 };
-
 const iconBtnStyle = {
   ...btnStyle,
   border: "none",

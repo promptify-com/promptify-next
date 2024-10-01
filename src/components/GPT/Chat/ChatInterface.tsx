@@ -29,7 +29,6 @@ import MessageInputs from "@/components/GPT/MessageInputs";
 import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ApiAccessMessage from "@/components/Chat/ApiAccess";
-import MessageRender from "@/components/GPT/MessageRender";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -254,7 +253,6 @@ const ChatInterface = ({ workflow }: Props) => {
                     </Stack>
                   </Stack>
                 )}
-                <MessageRender />
                 {index === messages.length - 1 &&
                   !validatingQuery &&
                   !message.fromUser &&
