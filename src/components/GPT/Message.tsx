@@ -70,9 +70,11 @@ export const MessageContentWithHTML = memo(
           // Detect and render <antArtifact>
           else if (part.startsWith("<antArtifact")) {
             const content = parts[++i]?.trim();
+            const title = (content.match(/title="([^"]*)"/) || [])[1];
             renderedComponents.push(
               <AntArtifactComponent
                 key={`artifact-${i}`}
+                title={title}
                 content={content}
               />,
             );
