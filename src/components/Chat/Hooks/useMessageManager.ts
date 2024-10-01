@@ -295,7 +295,7 @@ const useMessageManager = () => {
     const currentQuestion = questions[currentIndex];
 
     const { required, inputName, question, prompt, type } = currentQuestion;
-    console.log("currentQuestion", value);
+
     const userMessage = createMessage({
       type: "text",
       text: value as string,
