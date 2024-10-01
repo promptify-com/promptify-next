@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { getFileTypeExtensionsAsString } from "@/components/Prompt/Utils/uploadFileHelper";
@@ -21,12 +22,17 @@ function File({ input, value, onChange, disabled, inputType }: Props) {
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const answers = useAppSelector(state => state.chat?.answers ?? initialState.answers);
+  const [fileError, setFileError] = useState<string | null>(null);
+
   const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
   const hasError = answers.find(answer => answer.inputName === input.name && answer.error);
   const acceptedTypes =
     inputType === "file"
       ? getFileTypeExtensionsAsString(input.fileExtensions as FileType[])
       : getFileTypeExtensionsAsString(input?.audioExtensions as FileType[]);
+
+  const MAX_AUDIO_SIZE_MB = 25;
+  const MAX_AUDIO_SIZE_BYTES = MAX_AUDIO_SIZE_MB * 1024 * 1024;
 
   return (
     <Stack
@@ -56,15 +62,23 @@ function File({ input, value, onChange, disabled, inputType }: Props) {
           }}
           onChange={e => {
             if (e.target.files && e.target.files.length > 0) {
-              onChange(e.target.files[0], input);
-              dispatch(setFileData(e.target.files[0] as File));
+              const file = e.target.files[0];
+
+              if (inputType === "audio" && file.size > MAX_AUDIO_SIZE_BYTES) {
+                setFileError(`Audio file size should not exceed ${MAX_AUDIO_SIZE_MB}MB.`);
+                return;
+              }
+
+              setFileError(null);
+              onChange(file, input);
+              dispatch(setFileData(file as File));
             }
           }}
         />
       </Button>
-      {hasError && (
+      {(hasError || fileError) && (
         <Tooltip
-          title={"The uploaded file is invalid"}
+          title={fileError || "The uploaded file is invalid"}
           placement="right"
           arrow
           componentsProps={{
