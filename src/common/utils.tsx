@@ -5,6 +5,7 @@ import { CONNECTIONS } from "./constants";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
 import { LocalStorage } from "./storage";
+import { authClient } from "./axios";
 
 interface TokenResponse {
   token: string;
@@ -43,6 +44,16 @@ export const getPathURL = () => {
   }
 
   return path;
+};
+
+
+export const getBasicToken = async () => {
+  try {
+    const response = await authClient.get("/api/n8n/users/basic_token/");
+    return { error: false, token: response.data.basic_token as string };
+  } catch (error) {
+    return { error: true, token: "" };
+  }
 };
 
 export const deletePathURL = () => {
