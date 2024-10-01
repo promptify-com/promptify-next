@@ -53,7 +53,6 @@ export const MessageContentWithHTML = memo(
         // Split by <antThinking> and <antArtifact> tags
         const parts = content.split(/(<\/?antThinking>|<\/?antArtifact)/g);
         const renderedComponents: React.ReactNode[] = [];
-        console.log(parts);
 
         for (let i = 0; i < parts.length; i++) {
           const part = parts[i]?.trim();
@@ -71,7 +70,6 @@ export const MessageContentWithHTML = memo(
           // Detect and render <antArtifact>
           else if (part.startsWith("<antArtifact")) {
             const content = parts[++i]?.trim();
-            console.log(content);
             renderedComponents.push(
               <AntArtifactComponent
                 key={`artifact-${i}`}
@@ -98,7 +96,7 @@ export const MessageContentWithHTML = memo(
       scrollToBottom?.();
     }, [content]);
 
-    return <div>{htmlParts}</div>;
+    return htmlParts
   },
 );
 
