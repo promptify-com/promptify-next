@@ -4,7 +4,7 @@ import { Window, LinkedIn, Reddit, GitHub } from "@mui/icons-material";
 import { CONNECTIONS } from "./constants";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
-import { LocalStorage } from "./storage";
+import { LocalStorage, SessionStorage } from "./storage";
 import { authClient } from "./axios";
 
 interface TokenResponse {
@@ -49,10 +49,14 @@ export const getPathURL = () => {
 
 export const getBasicToken = async () => {
   try {
+    let basicToken = SessionStorage.get("basic_token")
+    if (basicToken) return { token: basicToken };
     const response = await authClient.get("/api/n8n/users/basic_token/");
-    return { error: false, token: response.data.basic_token as string };
+    basicToken = response.data.basic_token as string
+    SessionStorage.set('basic_token',basicToken)
+    return { token: basicToken };
   } catch (error) {
-    return { error: true, token: "" };
+    return { token: "" };
   }
 };
 
