@@ -22,7 +22,7 @@ const AntArtifactComponent = ({ content }: Props) => {
   return (
     <Card
       elevation={0}
-      sx={{ borderRadius: 4, marginY: 2, pY: 2 }}
+      sx={{ borderRadius: 4, marginY: 2, pY: 2, maxWidth: "100%" }}
     >
       <Stack
         direction="row"
@@ -39,7 +39,7 @@ const AntArtifactComponent = ({ content }: Props) => {
         language={"javascript"}
       >
         {tab === "code" && <LiveEditor />}
-        {tab === "preview" && <LivePreview />}
+        {tab === "preview" && <LivePreview Component={"div"} />}
         <LiveError />
       </LiveProvider>
     </Card>

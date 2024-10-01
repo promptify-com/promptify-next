@@ -81,9 +81,9 @@ export const MessageContentWithHTML = memo(
           else if (part && !part.startsWith("<")) {
             const _html = await markdownToHTML(part);
             renderedComponents.push(
-              <span
+              <ExecutionContent
                 key={i}
-                dangerouslySetInnerHTML={{ __html: sanitizeHTML(_html) }}
+                content={sanitizeHTML(_html)}
               />,
             );
           }
@@ -96,7 +96,7 @@ export const MessageContentWithHTML = memo(
       scrollToBottom?.();
     }, [content]);
 
-    return htmlParts
+    return htmlParts;
   },
 );
 
