@@ -53,7 +53,7 @@ const HighlightContent = ({ content, promptId }: Props) => {
   };
 
   const highlightContent = () => {
-    const regex = /\```{\{(\w+):[^}]*\}\}```/g;
+    const regex = /\{\{(\w+):[^}]*\}\}/g;
     let match;
     let lastIndex = 0;
     let highlightedContent = [];
