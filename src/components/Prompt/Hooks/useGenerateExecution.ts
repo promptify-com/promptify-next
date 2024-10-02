@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
-import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import useChatBox from "@/components/Prompt/Hooks/useChatBox";
@@ -166,7 +165,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       },
       onmessage(msg) {
         try {
-          const parseData = parseMessageData(msg.data);
+          const parseData = JSON.parse(msg.data);
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
