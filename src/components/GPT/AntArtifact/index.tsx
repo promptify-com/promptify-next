@@ -9,13 +9,11 @@ import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live-run
 import AntArtifactTabs from "@/components/GPT/AntArtifact/tabs";
 import CopyButton from "./copyButton";
 
-// Types
 interface Props {
   content: string;
   title?: string;
 }
 
-// Scope libraries
 const scope = { import: { react: React, recharts: Recharts, "@mui/material": Materiel } };
 
 const AntArtifactComponent = ({ content, title }: Props) => {

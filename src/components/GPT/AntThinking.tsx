@@ -1,6 +1,5 @@
 import React from "react";
 
-// Types
 interface Props {
   content: string;
 }
