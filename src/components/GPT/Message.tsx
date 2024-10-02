@@ -1,31 +1,31 @@
+import { memo, useEffect, useState, lazy, Suspense } from "react";
 import Typography from "@mui/material/Typography";
-import type { IMessage } from "@/components/Prompt/Types/chat";
-import MessageContainer from "./MessageContainer";
-import { memo, useEffect, useState } from "react";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import { ExecutionContent } from "../common/ExecutionContent";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { initialState as initialChatState, setIsSimulationStreaming } from "@/core/store/chatSlice";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import Done from "@mui/icons-material/Done";
 import ContentCopy from "@mui/icons-material/ContentCopy";
-import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
+import Done from "@mui/icons-material/Done";
+import { ShareOutlined } from "@mui/icons-material";
 import Replay from "@mui/icons-material/Replay";
+import EditOutlined from "@mui/icons-material/EditOutlined";
+import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import { setToast } from "@/core/store/toastSlice";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import MessageContainer from "./MessageContainer";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { initialState as initialChatState, setIsSimulationStreaming } from "@/core/store/chatSlice";
+import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import MessageInputs from "./MessageInputs";
 import { createMessage } from "../Chat/helper";
 import { getWorkflowInputsValues } from "../GPTs/helpers";
 import type { IWorkflowCreateResponse } from "../Automation/types";
-import EditOutlined from "@mui/icons-material/EditOutlined";
-import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined";
-import { setToast } from "@/core/store/toastSlice";
-import { ShareOutlined } from "@mui/icons-material";
-import { ExportPopupChat } from "./Chat/ExportPopupChat";
-import AntArtifactComponent from "@/components/GPT/AntArtifact";
-import AntThinkingComponent from "@/components/GPT/AntThinking";
+import { ExecutionContent } from "../common/ExecutionContent";
+import { ExportPopupChat } from "@/components/GPT/Chat/ExportPopupChat";
+const AntThinkingComponent = lazy(() => import("@/components/GPT/AntThinking"));
+const AntArtifactComponent = lazy(() => import("@/components/GPT/AntArtifact"));
 
 interface Props {
   message: IMessage;
@@ -61,10 +61,9 @@ export const MessageContentWithHTML = memo(
           if (part.startsWith("<antThinking>")) {
             const content = parts[++i]?.trim();
             renderedComponents.push(
-              <AntThinkingComponent
-                key={`thinking-${i}`}
-                content={content}
-              />,
+              <Suspense key={`thinking-${i}`}>
+                <AntThinkingComponent content={content} />
+              </Suspense>,
             );
           }
           // Detect and render <antArtifact>
@@ -72,11 +71,12 @@ export const MessageContentWithHTML = memo(
             const content = parts[++i]?.trim();
             const title = (content.match(/title="([^"]*)"/) || [])[1];
             renderedComponents.push(
-              <AntArtifactComponent
-                key={`artifact-${i}`}
-                title={title}
-                content={content}
-              />,
+              <Suspense key={`artifact-${i}`}>
+                <AntArtifactComponent
+                  title={title}
+                  content={content}
+                />
+              </Suspense>,
             );
           }
           // Apply HTML transformation to parts without the special tags
