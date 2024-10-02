@@ -204,3 +204,6 @@ export const highlight = [
     className: "output-variable",
   },
 ];
+
+export const VALID_AUDIO_EXTENSIONS = ["mp3", "wav", "webm", "mp4", "mpeg", "mpga", "m4a"];
+export const VALID_FILE_EXTENSIONS = ["pdf", "docx", "txt"];

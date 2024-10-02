@@ -1,4 +1,4 @@
-import { BuilderInputTypes } from "@/common/constants";
+import { BuilderInputTypes, VALID_AUDIO_EXTENSIONS, VALID_FILE_EXTENSIONS } from "@/common/constants";
 import { InputType } from "@/common/types/prompt";
 
 export const isPromptVariableValid = (content: string) => {
@@ -43,9 +43,12 @@ export const isPromptVariableValid = (content: string) => {
 
     if (type === "file") {
       const extensions = (parts[3]?.split(",") || []).map(ext => ext.trim());
-      const validExtensions = ["pdf", "docx", "txt"];
 
-      if (extensions.length === 0 || extensions.length > 3 || extensions.some(ext => !validExtensions.includes(ext))) {
+      if (
+        extensions.length === 0 ||
+        extensions.length > 3 ||
+        extensions.some(ext => !VALID_FILE_EXTENSIONS.includes(ext))
+      ) {
         return {
           isValid: false,
           message: `"${match[0]}"`,
@@ -55,8 +58,11 @@ export const isPromptVariableValid = (content: string) => {
 
     if (type === "audio") {
       const extensions = (parts[3]?.split(",") || []).map(ext => ext.trim());
-      const validExtensions = ["mp3", "wav", "webm", "mp4", "mpeg", "mpga", "m4a"];
-      if (extensions.length === 0 || extensions.length > 7 || extensions.some(ext => !validExtensions.includes(ext))) {
+      if (
+        extensions.length === 0 ||
+        extensions.length > 7 ||
+        extensions.some(ext => !VALID_AUDIO_EXTENSIONS.includes(ext))
+      ) {
         return {
           isValid: false,
           message: `"${match[0]}"`,

@@ -1,5 +1,6 @@
 import { MutableRefObject } from "react";
 import { InputVariable, OutputVariable, PresetType } from "../types/builder";
+import { VALID_AUDIO_EXTENSIONS, VALID_FILE_EXTENSIONS } from "../constants";
 
 interface AddPresetParams {
   type: PresetType;
@@ -61,9 +62,9 @@ export const addPreset = ({
         _type === "choices"
           ? ":1,2,3"
           : _type === "file"
-            ? ":pdf,docx,txt"
+            ? `:${VALID_FILE_EXTENSIONS.join(",")}`
             : _type === "audio"
-              ? ":mp3,wav,webm,mp4,mpeg,mpga,m4a"
+              ? `:${VALID_AUDIO_EXTENSIONS.join(",")}`
               : "";
       preset = `{{${_var}:${_type}:true${choices}}}`;
     }
