@@ -28,7 +28,7 @@ function File({ input, value, onChange, disabled, inputType }: Props) {
   const hasError = answers.find(answer => answer.inputName === input.name && answer.error);
   const acceptedTypes =
     inputType === "file"
-      ? getFileTypeExtensionsAsString(input.fileExtensions as FileType[])
+      ? getFileTypeExtensionsAsString(input?.fileExtensions as FileType[])
       : getFileTypeExtensionsAsString(input?.audioExtensions as FileType[]);
 
   const MAX_AUDIO_SIZE_MB = 25;

@@ -293,7 +293,7 @@ const useMessageManager = () => {
     const currentIndex = isChoice ? answers.length - 1 : answers.length;
 
     const currentQuestion = questions[currentIndex];
-
+    if (!currentQuestion) return;
     const { required, inputName, question, prompt, type } = currentQuestion;
 
     const userMessage = createMessage({

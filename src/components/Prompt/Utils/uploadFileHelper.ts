@@ -48,6 +48,6 @@ const extensionType = {
 };
 
 export const getFileTypeExtensionsAsString = (types: FileType[]): string => {
-  const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
-  return extensionTypes.join(",");
+  const extensionTypes = types?.map(type => extensionType[type]).filter(Boolean);
+  return extensionTypes?.join(",");
 };

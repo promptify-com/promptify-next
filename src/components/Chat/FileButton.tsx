@@ -7,6 +7,7 @@ import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import Stack from "@mui/material/Stack";
 import File from "@/components/Prompt/Common/Chat/Inputs/File";
 import { useState } from "react";
+import { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   message: IMessage;
@@ -62,7 +63,7 @@ const FileButton = ({ message }: Props) => {
       alignItems={"center"}
     >
       <File
-        input={input!}
+        input={input as IPromptInput}
         value={localValue as File}
         onChange={handleOnChange}
         disabled={!!answer}
