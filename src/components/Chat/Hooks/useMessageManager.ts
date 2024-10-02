@@ -20,6 +20,7 @@ import {
   clearParameterSelection,
   setSelectedTemplate,
   setChoiceSelected,
+  setFileData,
   initialState as initialChatState,
   setChats,
 } from "@/core/store/chatSlice";
@@ -33,7 +34,6 @@ import type { IAnswer, IMessage, IQuestion } from "@/components/Prompt/Types/cha
 import type { PromptParams } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { ITemplateWorkflow } from "@/components/Automation/types";
-import type { IChat } from "@/core/api/dto/chats";
 
 const useMessageManager = () => {
   const dispatch = useAppDispatch();
@@ -55,6 +55,7 @@ const useMessageManager = () => {
     currentExecutionDetails = { id: null, isFavorite: false },
     selectedChatOption = null,
     choiceSelected,
+    fileData,
     chats,
   } = useAppSelector(state => state.chat ?? initialChatState);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -82,8 +83,11 @@ const useMessageManager = () => {
     } else if (choiceSelected) {
       questionAnswerSubmitMessage(choiceSelected, true);
       dispatch(setChoiceSelected(undefined));
+    } else if (fileData) {
+      questionAnswerSubmitMessage(fileData, true);
+      dispatch(setFileData(undefined));
     }
-  }, [parameterSelected, choiceSelected]);
+  }, [parameterSelected, choiceSelected, fileData]);
 
   useEffect(() => {
     if (!currentExecutionDetails.id) {
@@ -282,27 +286,27 @@ const useMessageManager = () => {
     }
   };
 
-  const questionAnswerSubmitMessage = async (value: string, isChoice = false) => {
+  const questionAnswerSubmitMessage = async (value: string | File, isChoice = false) => {
     if (!value) {
       return;
     }
     const currentIndex = isChoice ? answers.length - 1 : answers.length;
 
     const currentQuestion = questions[currentIndex];
-
+    if (!currentQuestion) return;
     const { required, inputName, question, prompt, type } = currentQuestion;
 
     const userMessage = createMessage({
       type: "text",
-      text: value,
+      text: value as string,
       fromUser: true,
-      isEditable: type !== "param" && type !== "choices",
+      isEditable: type !== "param" && type !== "choices" && type !== "audio" && type !== "file",
       questionInputName: inputName,
     });
     setMessages(prevMessages => prevMessages.concat(userMessage));
     setQueueSavedMessages(newMessages => newMessages.concat(userMessage));
 
-    if (type !== "param" && type !== "choices") {
+    if (type !== "param" && type !== "choices" && type !== "audio" && type !== "file") {
       const newAnswer: IAnswer = {
         question: question || inputName,
         required,

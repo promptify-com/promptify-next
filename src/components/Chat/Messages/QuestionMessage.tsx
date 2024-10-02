@@ -7,6 +7,7 @@ import FormParam from "@/components/Prompt/Common/Chat/FormParam";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import ChoicesButton from "../ChoicesButton";
 import CodeButton from "../CodeButton";
+import FileButton from "../FileButton";
 
 interface Props {
   message: IMessage;
@@ -78,6 +79,12 @@ function QuestionMessage({ message, variant }: Props) {
         {type === "code" && (
           <Stack>
             <CodeButton message={message} />
+          </Stack>
+        )}
+
+        {(type === "audio" || type === "file") && (
+          <Stack>
+            <FileButton message={message} />
           </Stack>
         )}
       </Stack>
