@@ -3,6 +3,7 @@ import * as Materiel from "@mui/material";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import * as Recharts from "recharts";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live-runner";
@@ -22,47 +23,49 @@ const AntArtifactComponent = ({ content, title }: Props) => {
   const [tab, setTab] = React.useState("preview");
 
   return (
-    <Card
-      elevation={0}
-      sx={{ borderRadius: 4, marginY: 2, pY: 2, maxWidth: "100%", position: "relative" }}
-    >
-      <Stack
-        direction="row"
-        sx={{ p: 1, alignItems: "center", justifyContent: "space-between" }}
+    <Container maxWidth={"md"}>
+      <Card
+        elevation={0}
+        sx={{ borderRadius: 4, marginY: 2, pY: 2 }}
       >
-        <Typography
-          variant="subtitle2"
-          fontWeight={600}
-        >
-          {title}
-        </Typography>
-        <AntArtifactTabs
-          setTab={setTab}
-          tab={tab}
-        />
-      </Stack>
-      <LiveProvider
-        code={code}
-        scope={scope}
-        language={"javascript"}
-      >
-        {tab === "code" && (
-          <LiveEditor
-            style={{ margin: "auto" }}
-            disabled
-          />
-        )}
-        {tab === "preview" && <LivePreview Component={"div"} />}
         <Stack
           direction="row"
           sx={{ p: 1, alignItems: "center", justifyContent: "space-between" }}
         >
-          <LiveError />
-          <Box sx={{ flexGrow: 1 }} />
-          <CopyButton code={code} />
+          <Typography
+            variant="subtitle2"
+            fontWeight={600}
+          >
+            {title}
+          </Typography>
+          <AntArtifactTabs
+            setTab={setTab}
+            tab={tab}
+          />
         </Stack>
-      </LiveProvider>
-    </Card>
+        <LiveProvider
+          code={code}
+          scope={scope}
+          language={"javascript"}
+        >
+          {tab === "code" && (
+            <LiveEditor
+              style={{ margin: "auto" }}
+              disabled
+            />
+          )}
+          {tab === "preview" && <LivePreview Component={"div"} />}
+          <Stack
+            direction="row"
+            sx={{ p: 1, alignItems: "center", justifyContent: "space-between" }}
+          >
+            <LiveError />
+            <Box sx={{ flexGrow: 1 }} />
+            <CopyButton code={code} />
+          </Stack>
+        </LiveProvider>
+      </Card>
+    </Container>
   );
 };
 

@@ -1,4 +1,5 @@
 import React from "react";
+import Container from "@mui/material/Container";
 
 interface Props {
   content: string;
@@ -6,10 +7,12 @@ interface Props {
 
 const AntThinkingComponent = ({ content }: Props) => {
   return (
-    <div style={{ backgroundColor: "#fff3cd", padding: "10px", borderRadius: "5px" }}>
-      <h4>Thinking Content:</h4>
-      <em>{content}</em>
-    </div>
+    <Container maxWidth={"md"}>
+      <div style={{ backgroundColor: "#fff3cd", padding: "10px", borderRadius: "5px" }}>
+        <h4>Thinking Content:</h4>
+        <em>{content}</em>
+      </div>
+    </Container>
   );
 };
 
