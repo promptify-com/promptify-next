@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "./utils";
+import { getBasicToken, getToken } from "./utils";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const n8nApiUrl = process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL;
@@ -31,4 +31,17 @@ authClient.interceptors.request.use(
     return config;
   },
   err => console.log("error"),
+);
+
+n8nClient.interceptors.request.use(
+  async config => {
+    const { token } = await getBasicToken();
+    if (!token) throw new Error("You are not authorized to execute this AI app workflow");
+    config.headers["Authorization"] = `Basic ${token}`;
+
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  },
 );

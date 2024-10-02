@@ -25,6 +25,7 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import useChatActions from "./useChatActions";
 import { allRequiredInputsAnswered } from "@/common/helpers";
+import { getToken } from "@/common/utils";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -485,7 +486,7 @@ const useChat = ({ workflow }: Props) => {
     fetchEventSource(url, {
       method: "POST",
       headers: {
-        Authorization: "Token 4c296ad8611e2eb9c73cb4d7882861ef05816198",
+        Authorization: `Token ${getToken()}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
