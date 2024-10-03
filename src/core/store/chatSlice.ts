@@ -99,6 +99,9 @@ export const chatSlice = createSlice({
     setChoiceSelected: (state, action: PayloadAction<string | undefined>) => {
       state.choiceSelected = action.payload;
     },
+    setFileData: (state, action: PayloadAction<File | undefined>) => {
+      state.fileData = action.payload;
+    },
     setGptGenerationStatus: (state, action: PayloadAction<IChatSliceState["gptGenerationStatus"]>) => {
       state.gptGenerationStatus = action.payload;
     },
@@ -136,6 +139,7 @@ export const {
   setGptGenerationStatus,
   setRequireCredentials,
   setRunInstantly,
+  setFileData,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -1,8 +1,10 @@
 import { PromptInputType } from "@/components/Prompt/Types";
 
-export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file" | "credentials";
+export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file" | "credentials" | "audio";
 
 export type FileType = "pdf" | "docx" | "txt";
+
+export type AudioType = "mp3" | "wav" | "webm" | "mp4" | "mpeg" | "mpga" | "m4a";
 
 export interface PromptLiveResponseData {
   message: string;
@@ -31,6 +33,7 @@ export interface IPromptInput {
   fileExtensions?: string[];
   prompt?: number;
   question?: string;
+  audioExtensions?: string[];
 }
 
 export type FormMode = "input" | "chat";

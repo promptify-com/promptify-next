@@ -68,6 +68,7 @@ export interface InputVariable {
   required: boolean;
   choices?: string[];
   fileExtensions?: string[];
+  audioExtentions?: string[];
 }
 
 export interface Preset extends OutputVariable {}
