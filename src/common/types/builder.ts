@@ -53,6 +53,7 @@ export interface IEditPrompts extends IPromptOptions {
   parameters: IPromptParams[];
   order: number;
   template?: number;
+  system_prompt?: string
   default_parameters?: IEngineParams;
 }
 
@@ -67,6 +68,7 @@ export interface InputVariable {
   required: boolean;
   choices?: string[];
   fileExtensions?: string[];
+  audioExtentions?: string[];
 }
 
 export interface Preset extends OutputVariable {}

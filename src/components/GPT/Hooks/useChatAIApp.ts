@@ -21,11 +21,11 @@ import { N8N_RESPONSE_REGEX, attachCredentialsToNode, extractWebhookPath } from 
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import useDebounce from "@/hooks/useDebounce";
 import { formatDateWithOrdinal } from "@/common/helpers/dateWithSuffix";
-import useToken from "@/hooks/useToken";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import useChatActions from "./useChatActions";
 import { allRequiredInputsAnswered } from "@/common/helpers";
+import { getToken } from "@/common/utils";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -37,7 +37,6 @@ type WorkflowData = {
 
 const useChat = ({ workflow }: Props) => {
   const dispatch = useAppDispatch();
-  const token = useToken();
 
   const { generatedExecution } = useAppSelector(state => state.executions ?? initialExecutionsState);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -57,6 +56,7 @@ const useChat = ({ workflow }: Props) => {
     day_of_week: 0,
     day_of_month: 0,
   });
+
   const debouncedSchedulingData = useDebounce(schedulingData, 1000);
 
   const { sendMessageAPI } = useWorkflow(workflow);
@@ -469,26 +469,35 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  const runExecution = (promptId: number, query: string) => {
+  const runExecution = (query: string) => {
     setValidatingQuery(true);
-    const payload = { prompt_params: { query: query }, contextual_overrides: [] };
+
+    const url = "https://promptify.adtitan.io/api/meta/templates/1250/execute/";
+    const payload = JSON.stringify([
+      {
+        prompt: 6597,
+        prompt_params: { query: query },
+        contextual_overrides: [],
+      },
+    ]);
 
     let output = "";
-    fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${promptId}/execute`, {
+
+    fetchEventSource(url, {
       method: "POST",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Token ${getToken()}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: payload,
       openWhenHidden: true,
       async onopen(res) {
         if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          console.error("Client side error ", res);
+          console.error("Client side error", res);
         }
       },
-      async onmessage(msg) {
+      onmessage(msg) {
         try {
           const parseData = parseMessageData(msg.data);
           const message = parseData.message;
@@ -506,8 +515,8 @@ const useChat = ({ workflow }: Props) => {
           if (message === "[COMPLETED]") {
             renderMessage(output);
           }
-        } catch {
-          let failMessageText = "Running your AI App failed due to an unexpected error. Please try again later.";
+        } catch (error) {
+          const failMessageText = "Running your AI App failed due to an unexpected error. Please try again later.";
           const failMessage = createMessage({
             type: "text",
             text: failMessageText,
@@ -517,16 +526,15 @@ const useChat = ({ workflow }: Props) => {
         }
       },
       onerror(err) {
-        // setIsGenerating(false);
+        console.error("Error in fetchEventSource:", err);
+        setValidatingQuery(false);
         throw err; // rethrow to stop the operation
       },
       onclose() {
-        // setIsGenerating(false);
         setValidatingQuery(false);
       },
     });
   };
-
   const handleSubmit = async (query: string) => {
     if (query.trim() === "") {
       return;
@@ -536,7 +544,7 @@ const useChat = ({ workflow }: Props) => {
     setMessages(prevMessages => prevMessages.concat(userMessage));
 
     try {
-      runExecution(6597, query);
+      runExecution(query);
     } catch (error) {
       console.error(error);
       const botMessage = createMessage({

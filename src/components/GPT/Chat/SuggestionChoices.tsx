@@ -16,15 +16,17 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
     useAppSelector(state => state.chat ?? initialChatState);
   const { is_schedulable } = workflow;
 
+  const readyToBeExecuted =
+    (!inputs.length && !requireCredentials) ||
+    (is_schedulable && requireCredentials && areCredentialsStored) ||
+    (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers));
+
   const chipOptions = [
-    { label: "Configure", show: !!inputs.length || requireCredentials },
+    { label: readyToBeExecuted ? "Reconfigure" : "Configure", show: !!inputs.length || requireCredentials },
     { label: "Schedule", show: is_schedulable },
     {
       label: "Run Now",
-      show:
-        (!inputs.length && !requireCredentials) ||
-        (requireCredentials && credentialsInput.length > 0 && areCredentialsStored) ||
-        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
+      show: readyToBeExecuted,
     },
     {
       label: "Get API",

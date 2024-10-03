@@ -38,9 +38,16 @@ const extensionType = {
   pdf: ".pdf",
   docx: ".docx",
   txt: ".txt",
+  mp3: ".mp3",
+  wav: ".wav",
+  webm: ".webm",
+  mp4: ".mp4",
+  mpeg: ".mpeg",
+  mpga: ".mpga",
+  m4a: ".m4a",
 };
 
 export const getFileTypeExtensionsAsString = (types: FileType[]): string => {
-  const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
-  return extensionTypes.join(",");
+  const extensionTypes = types?.map(type => extensionType[type]).filter(Boolean);
+  return extensionTypes?.join(",");
 };

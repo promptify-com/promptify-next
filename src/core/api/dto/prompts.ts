@@ -34,6 +34,7 @@ export interface Prompts {
   } | null;
   output_format: string;
   prompt_output_variable: string;
+  system_prompt: string;
   execution_priority: number;
   parameters: PromptParams[];
 }
