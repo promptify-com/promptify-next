@@ -1,4 +1,6 @@
 import React from "react";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 interface Props {
   content: string;
@@ -6,10 +8,15 @@ interface Props {
 
 const AntThinkingComponent = ({ content }: Props) => {
   return (
-    <div style={{ backgroundColor: "#fff3cd", padding: "10px", borderRadius: "5px" }}>
-      <h4>Thinking Content:</h4>
-      <em>{content}</em>
-    </div>
+    <Stack sx={{ p: 1, justifyContent: "center", backgroundColor: "#fff3cd", borderRadius: 4 }}>
+      <Typography
+        variant="subtitle2"
+        fontWeight={600}
+      >
+        Thinking Content:
+      </Typography>
+      <Typography variant="subtitle2">{content}</Typography>
+    </Stack>
   );
 };
 
