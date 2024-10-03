@@ -1,12 +1,9 @@
 import { Dispatch, useState } from "react";
 import { useRouter } from "next/router";
-// Mui
 import { MenuItem } from "@mui/material";
-// Redux
 import { useAppDispatch } from "@/hooks/useStore";
 import { handleClose, handleOpen } from "@/core/store/removeDialogSlice";
 import { setToast } from "@/core/store/toastSlice";
-// Queries
 import { useDeleteWorkflowMutation } from "@/core/api/workflows";
 
 interface Props {
@@ -15,12 +12,10 @@ interface Props {
 }
 
 function RemoveWorkflow({ workflow_id, setOpen }: Props) {
-  // Store
   const dispatch = useAppDispatch();
   const [deleteWorkflow] = useDeleteWorkflowMutation();
-  // Route
   const router = useRouter();
-  ///
+
   const handleRemove = async () => {
     try {
       await deleteWorkflow(workflow_id);
