@@ -13,11 +13,37 @@ function wrapImages(content: string) {
 
 export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProps }) => {
   useEffect(() => {
-    // Handle click events for copying code and toggling preview/code views
+    const initializePreview = () => {
+      const previewButtons = document.querySelectorAll(".preview-button.active");
+
+      previewButtons.forEach(button => {
+        const codeWrapper = button.closest(".code-wrapper") as HTMLElement | null;
+        if (codeWrapper) {
+          const codeBlock = codeWrapper.querySelector("code") as HTMLElement | null;
+          const previewContainer = codeWrapper.querySelector(".preview") as HTMLElement | null;
+
+          if (codeBlock && previewContainer && !previewContainer.querySelector("iframe")) {
+            const iframe = document.createElement("iframe");
+            iframe.style.width = "100%";
+            iframe.style.height = "400px";
+            iframe.style.border = "none";
+            iframe.srcdoc = codeBlock.textContent || "";
+            previewContainer.innerHTML = "";
+            previewContainer.appendChild(iframe);
+            previewContainer.style.display = "block";
+            codeBlock.style.display = "none";
+          }
+        }
+      });
+    };
+
+    setTimeout(() => {
+      initializePreview();
+    }, 300);
+
     const handleClick = async (event: MouseEvent) => {
       const clickTarget = event.target as HTMLElement;
 
-      // Handle code copy
       if (clickTarget.classList.contains("copy-button")) {
         const codeWrapper = clickTarget.closest("pre") as HTMLElement | null;
         if (codeWrapper) {
@@ -34,7 +60,6 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
         }
       }
 
-      // Handle toggle between preview (iframe) and code view
       if (clickTarget.classList.contains("preview-button")) {
         const codeWrapper = clickTarget.closest(".code-wrapper") as HTMLElement | null;
         if (codeWrapper) {
@@ -44,32 +69,27 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
           const codeButton = codeWrapper.querySelector(".code-button") as HTMLElement | null;
 
           if (codeBlock && previewContainer && previewButton && codeButton) {
-            // Inject HTML content into the iframe if not already done
             if (!previewContainer.querySelector("iframe")) {
               const iframe = document.createElement("iframe");
               iframe.style.width = "100%";
               iframe.style.height = "400px";
               iframe.style.border = "none";
 
-              // Use srcdoc to inject the HTML content into the iframe
-              iframe.srcdoc = codeBlock.textContent || ""; // Ensure raw HTML is inserted
+              iframe.srcdoc = codeBlock.textContent || "";
 
-              previewContainer.innerHTML = ""; // Clear any existing preview
-              previewContainer.appendChild(iframe); // Insert the iframe into the preview container
+              previewContainer.innerHTML = "";
+              previewContainer.appendChild(iframe);
             }
 
-            // Toggle the visibility of the preview (iframe) and code block
             previewContainer.style.display = "block";
             codeBlock.style.display = "none";
 
-            // Update active tab styles
             previewButton.classList.add("active");
             codeButton.classList.remove("active");
           }
         }
       }
 
-      // Handle code view toggle
       if (clickTarget.classList.contains("code-button")) {
         const codeWrapper = clickTarget.closest(".code-wrapper") as HTMLElement | null;
         if (codeWrapper) {
@@ -79,11 +99,8 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
           const codeButton = codeWrapper.querySelector(".code-button") as HTMLElement | null;
 
           if (codeBlock && previewContainer && previewButton && codeButton) {
-            // Show code block and hide preview
             previewContainer.style.display = "none";
             codeBlock.style.display = "block";
-
-            // Update active tab styles
             codeButton.classList.add("active");
             previewButton.classList.remove("active");
           }
@@ -154,9 +171,6 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
             color: "#efefef",
           },
         },
-        ".preview": {
-          display: "none", // Preview hidden by default
-        },
         ".tab-buttons": {
           display: "flex",
           gap: "10px",
@@ -171,9 +185,10 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
           borderBottom: "2px solid transparent",
         },
         ".toggle-button.active": {
-          backgroundColor: "#ffffff",
+          backgroundColor: "surfaceContainer",
           color: "#4d5562",
           borderBottom: "2px solid #4d5562",
+          borderRadius: "16px",
         },
         ...(sx || {}),
       }}

@@ -19,11 +19,13 @@ export const markdownToHTML = async (markdown: string) => {
           <div class="code-wrapper">
             <div class="code-wrapper-header">
               <span class="language-label">${language}</span>
-              <button class="toggle-button preview-button active" onclick="togglePreview(this)">Preview</button>
-              <button class="toggle-button code-button" onclick="toggleCode(this)">Code</button>
+              <div>
+                <button class="toggle-button preview-button active" onclick="togglePreview(this)">Preview</button>
+                <button class="toggle-button code-button" onclick="toggleCode(this)">Code</button>
+              </div>
             </div>
-            <div class="preview" style="display:none;">${codeContent}</div>
-            <code class="language-${language}" style="display:block;">${formattedCodeContent}</code>
+            <div class="preview" style="display:block;">${codeContent}</div>
+            <code class="language-${language}" style="display:none;">${formattedCodeContent}</code>
           </div>
         `;
       }
