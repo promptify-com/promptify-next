@@ -7,11 +7,26 @@ export const markdownToHTML = async (markdown: string) => {
     .use(html, { sanitize: false })
     .process(markdown.replace(/^(\s+){5,}(?![ ])/gm, "\n"));
 
-  // remark set language name as <code class="language-js"></code>. extract language name and put in a separated div
+  // Convert processed markdown to HTML and handle code blocks
   const htmlContent = processedContent
     .toString()
     .replace(/<code class="language-([^"]+)"[^>]*>([\s\S]*?)<\/code>/g, (match, language, codeContent) => {
       const formattedCodeContent = codeContent.replace(/\n/g, "<br>");
+
+      // If the language is 'html', add preview and code buttons
+      if (language === "html") {
+        return `
+          <div class="code-wrapper">
+            <div class="code-wrapper-header">
+              <span class="language-label">${language}</span>
+              <button class="toggle-button preview-button active" onclick="togglePreview(this)">Preview</button>
+              <button class="toggle-button code-button" onclick="toggleCode(this)">Code</button>
+            </div>
+            <div class="preview" style="display:none;">${codeContent}</div>
+            <code class="language-${language}" style="display:block;">${formattedCodeContent}</code>
+          </div>
+        `;
+      }
 
       return `
         <div class="code-wrapper-header">
