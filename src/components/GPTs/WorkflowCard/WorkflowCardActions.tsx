@@ -2,8 +2,8 @@ import { Dispatch, useRef, useState } from "react";
 import { Box } from "@mui/material";
 import { GearIcon } from "@/assets/icons/GearIcon";
 import WorkflowActionsModal from "./WorkflowActionsModal";
-import DeleteDialog from "@/modals/layouts/remove_dialog";
 import type { ITemplateWorkflow } from "../../Automation/types";
+import DeleteDialog from "@/components/modals/RemoveDialog";
 
 interface Props {
   workflow?: ITemplateWorkflow;
@@ -14,7 +14,8 @@ interface Props {
 }
 
 function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, sx }: Props) {
-  const [open, setOpen] = useState<boolean>();
+  const [open, setOpen] = useState<boolean>(false);
+  const [openRemoveDialog, setOpenRemoveDialog] = useState<boolean>(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
   const handleOpenModal = () => {
     setOpen(!open);
@@ -41,18 +42,25 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, 
       >
         <GearIcon />
       </Box>
+      {openRemoveDialog && (
+        <DeleteDialog
+          open={openRemoveDialog}
+          setOpen={setOpenRemoveDialog}
+          userWorkflowId={userWorkflowId ?? ""}
+        />
+      )}
       {open && (
         <WorkflowActionsModal
           workflow={workflow}
           anchorEl={actionsAnchorRef.current}
           setOpen={setOpen}
           open={open}
+          setOpenRemoveDialog={setOpenRemoveDialog}
           userWorkflowId={userWorkflowId}
           isPaused={isPaused}
           setIsPaused={setIsPaused}
         />
       )}
-      <DeleteDialog />
     </>
   );
 }
