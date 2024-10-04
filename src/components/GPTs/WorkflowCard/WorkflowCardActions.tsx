@@ -15,7 +15,7 @@ interface Props {
 
 function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, sx }: Props) {
   const [open, setOpen] = useState<boolean>(false);
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openRemoveDialog, setOpenRemoveDialog] = useState<boolean>(false);
   const actionsAnchorRef = useRef<HTMLButtonElement>(null);
   const handleOpenModal = () => {
     setOpen(!open);
@@ -42,10 +42,10 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, 
       >
         <GearIcon />
       </Box>
-      {openDialog && (
+      {openRemoveDialog && (
         <DeleteDialog
-          open={openDialog}
-          setOpen={setOpenDialog}
+          open={openRemoveDialog}
+          setOpen={setOpenRemoveDialog}
           userWorkflowId={userWorkflowId ?? ""}
         />
       )}
@@ -55,7 +55,7 @@ function WorkflowCardActions({ workflow, userWorkflowId, isPaused, setIsPaused, 
           anchorEl={actionsAnchorRef.current}
           setOpen={setOpen}
           open={open}
-          setOpenDialog={setOpenDialog}
+          setOpenRemoveDialog={setOpenRemoveDialog}
           userWorkflowId={userWorkflowId}
           isPaused={isPaused}
           setIsPaused={setIsPaused}

@@ -2,13 +2,13 @@ import { MenuItem } from "@mui/material";
 
 interface Props {
   setOpen: (value: boolean) => void;
-  setOpenDialog: (value: boolean) => void;
+  setOpenRemoveDialog: (value: boolean) => void;
 }
 
-function RemoveWorkflow({ setOpenDialog, setOpen }: Props) {
+function RemoveWorkflow({ setOpenRemoveDialog, setOpen }: Props) {
   const handleOpenModal = () => {
     setOpen(false);
-    setOpenDialog(true);
+    setOpenRemoveDialog(true);
   };
 
   return (
