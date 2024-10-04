@@ -15,9 +15,10 @@ interface Props {
   userWorkflowId?: string;
   isPaused: boolean;
   setIsPaused: Dispatch<boolean>;
+  setOpenDialog: (value: boolean) => void;
 }
 
-function WorkflowActionsModal({ open, setOpen, workflow, anchorEl, userWorkflowId, isPaused, setIsPaused }: Props) {
+function WorkflowActionsModal({ open, setOpen, workflow, anchorEl, userWorkflowId, isPaused, setIsPaused, setOpenDialog }: Props) {
   const router = useRouter();
   const isEditPage = router.pathname === "/apps/[slug]";
 
@@ -89,10 +90,7 @@ function WorkflowActionsModal({ open, setOpen, workflow, anchorEl, userWorkflowI
                     setIsPaused={setIsPaused}
                   />
                 )}
-                <RemoveWorkflow
-                  setOpen={setOpen}
-                  workflow_id={String(userWorkflowId)}
-                />
+                <RemoveWorkflow  setOpen={setOpen} setOpenDialog={setOpenDialog} />
               </Stack>
             </ClickAwayListener>
           </Paper>

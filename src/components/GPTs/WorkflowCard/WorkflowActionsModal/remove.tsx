@@ -1,53 +1,23 @@
-import { Dispatch, useState } from "react";
-import { useRouter } from "next/router";
 import { MenuItem } from "@mui/material";
-import { useAppDispatch } from "@/hooks/useStore";
-import { handleClose, handleOpen } from "@/core/store/removeDialogSlice";
-import { setToast } from "@/core/store/toastSlice";
-import { useDeleteWorkflowMutation } from "@/core/api/workflows";
 
 interface Props {
-  workflow_id: string;
-  setOpen: Dispatch<boolean>;
+  setOpen: (value: boolean) => void;
+  setOpenDialog: (value: boolean) => void;
 }
 
-function RemoveWorkflow({ workflow_id, setOpen }: Props) {
-  const dispatch = useAppDispatch();
-  const [deleteWorkflow] = useDeleteWorkflowMutation();
-  const router = useRouter();
-
-  const handleRemove = async () => {
-    try {
-      await deleteWorkflow(workflow_id);
-      setOpen(false);
-      dispatch(handleClose());
-      if (router.pathname === "/apps/[slug]") router.push(`/apps`);
-      dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
-    } catch (err) {
-      console.error("Failed to pause workflow", err);
-      dispatch(setToast({ message: "Failed to delete workflow. Please try again.", severity: "error" }));
-    }
-  };
+function RemoveWorkflow({ setOpenDialog, setOpen }: Props) {
   const handleOpenModal = () => {
     setOpen(false);
-    dispatch(
-      handleOpen({
-        title: "Remove AI App",
-        content: "Are you sure you want to remove this AI App?",
-        onSubmit: handleRemove,
-      }),
-    );
+    setOpenDialog(true);
   };
 
   return (
-    <>
-      <MenuItem
-        sx={menuItemStyle}
-        onClick={handleOpenModal}
-      >
-        Remove AI App
-      </MenuItem>
-    </>
+    <MenuItem
+      sx={menuItemStyle}
+      onClick={handleOpenModal}
+    >
+      Remove AI App
+    </MenuItem>
   );
 }
 

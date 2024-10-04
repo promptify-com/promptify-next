@@ -6,28 +6,49 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { red } from "@mui/material/colors/";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { handleClose, setLoading } from "@/core/store/removeDialogSlice";
+import { useState } from "react";
+import { setToast } from "@/core/store/toastSlice";
+import { useDeleteWorkflowMutation } from "@/core/api/workflows";
+import { useRouter } from "next/router";
+import { useAppDispatch } from "@/hooks/useStore";
 
-function DeleteDialog() {
+interface Props {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  userWorkflowId: string;
+}
+function DeleteDialog({ open, setOpen, userWorkflowId }: Props) {
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const dialog = useAppSelector(({ remove_dialog }) => remove_dialog);
-  const handleSubmit = () => {
-    dispatch(setLoading(true));
-    dialog?.onSubmit();
+  const [deleteWorkflow] = useDeleteWorkflowMutation();
+  const router = useRouter();
+
+  const handleRemove = async () => {
+    setLoading(true);
+    try {
+      await deleteWorkflow(userWorkflowId);
+      setOpen(false);
+      setLoading(false);
+      if (router.pathname === "/apps/[slug]") router.push(`/apps`);
+      dispatch(setToast({ message: "Workflow deleted successfully", severity: "success" }));
+    } catch (err) {
+      setLoading(false);
+      console.error("Failed to pause workflow", err);
+      dispatch(setToast({ message: "Failed to delete workflow. Please try again.", severity: "error" }));
+    }
   };
   const handleCloseDialog = () => {
-    dispatch(handleClose());
+    setOpen(false);
   };
 
   return (
     <Dialog
-      open={dialog?.open ?? false}
+      open={open}
       onClose={handleCloseDialog}
     >
-      <DialogTitle fontSize={26}>{dialog?.title}</DialogTitle>
+      <DialogTitle fontSize={26}>Remove AI App</DialogTitle>
       <DialogContent>
-        <DialogContentText>{dialog?.content}</DialogContentText>
+        <DialogContentText>Are you sure you want to remove this AI App?</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
@@ -37,16 +58,16 @@ function DeleteDialog() {
           Cancel
         </Button>
         <Button
-          onClick={handleSubmit}
+          onClick={handleRemove}
           sx={{
             bgcolor: red[400],
             color: "white",
             minWidth: "90px",
             "&:hover": { bgcolor: red[700] },
           }}
-          disabled={dialog?.loading ?? false}
+          disabled={loading ?? false}
         >
-          {dialog?.loading ?? false ? <CircularProgress size={20} /> : <span>Confirm</span>}
+          {loading ?? false ? <CircularProgress size={20} /> : <span>Confirm</span>}
         </Button>
       </DialogActions>
     </Dialog>
