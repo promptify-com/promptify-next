@@ -1,3 +1,4 @@
+import { useAppSelector } from "@/hooks/useStore";
 import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
@@ -5,13 +6,12 @@ import { useEffect } from "react";
 // Function to wrap image URLs in <img> tags
 function wrapImages(content: string) {
   const imgRegex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|bmp|svg))/g;
-
-  return content.replace(imgRegex, match => {
-    return `<img src="${match}" alt="image" width="100%" />`;
-  });
+  return content.replace(imgRegex, match => `<img src="${match}" alt="image" width="100%" />`);
 }
 
 export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProps }) => {
+  const gptGenerationStatus = useAppSelector(state => state.chat?.gptGenerationStatus ?? "pending");
+
   useEffect(() => {
     const initializePreview = () => {
       const previewButtons = document.querySelectorAll(".preview-button.active");
@@ -37,9 +37,9 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
       });
     };
 
-    setTimeout(() => {
+    if (gptGenerationStatus === "generated") {
       initializePreview();
-    }, 300);
+    }
 
     const handleClick = async (event: MouseEvent) => {
       const clickTarget = event.target as HTMLElement;
@@ -74,16 +74,13 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
               iframe.style.width = "100%";
               iframe.style.height = "400px";
               iframe.style.border = "none";
-
               iframe.srcdoc = codeBlock.textContent || "";
-
               previewContainer.innerHTML = "";
               previewContainer.appendChild(iframe);
             }
 
             previewContainer.style.display = "block";
             codeBlock.style.display = "none";
-
             previewButton.classList.add("active");
             codeButton.classList.remove("active");
           }
@@ -110,7 +107,7 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
 
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
-  }, []);
+  }, [gptGenerationStatus]);
 
   return (
     <Box
@@ -133,7 +130,7 @@ export const ExecutionContent = ({ content, sx }: { content: string; sx?: SxProp
           overflowX: "auto",
           whiteSpace: "nowrap",
           code: {
-            display: "block",
+            display: gptGenerationStatus === "streaming" ? "block" : "none", // Show code block first
             padding: "16px 24px",
             borderRadius: 0,
             margin: 0,

@@ -43,7 +43,15 @@ interface MessageContentProps {
 }
 
 export const MessageContentWithHTML = memo(
-  ({ content, scrollToBottom }: { content: string; scrollToBottom?: () => void }) => {
+  ({
+    content,
+    scrollToBottom,
+    gptGenerationStatus,
+  }: {
+    content: string;
+    scrollToBottom?: () => void;
+    gptGenerationStatus?: boolean;
+  }) => {
     const [htmlParts, setHtmlParts] = useState<React.ReactNode[]>([]);
 
     useEffect(() => {
@@ -81,7 +89,7 @@ export const MessageContentWithHTML = memo(
           }
           // Apply HTML transformation to parts without the special tags
           else if (part && !part.startsWith("<")) {
-            const _html = await markdownToHTML(part);
+            const _html = await markdownToHTML(part, gptGenerationStatus);
             renderedComponents.push(
               <ExecutionContent
                 key={i}
@@ -198,6 +206,7 @@ export default function Message({
               <MessageContentWithHTML
                 content={text}
                 scrollToBottom={scrollToBottom}
+                gptGenerationStatus={gptGenerationStatus === "generated"}
               />
               {type === "workflowExecution" && (
                 <Stack

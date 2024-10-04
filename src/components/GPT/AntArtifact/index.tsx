@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Materiel from "@mui/material";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
@@ -8,6 +8,7 @@ import * as Recharts from "recharts";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live-runner";
 import AntArtifactTabs from "@/components/GPT/AntArtifact/tabs";
 import CopyButton from "./copyButton";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   content: string;
@@ -19,8 +20,14 @@ const scope = { import: { react: React, recharts: Recharts, "@mui/material": Mat
 const AntArtifactComponent = ({ content, title }: Props) => {
   const startIndex = content.indexOf(">") + 1;
   const code = content.substring(startIndex).trim();
-  const [tab, setTab] = React.useState("preview");
+  const [tab, setTab] = React.useState<"code" | "preview">("preview");
+  const GPTgeneratingStatus = useAppSelector(state => state.chat?.gptGenerationStatus);
 
+  useEffect(() => {
+    if (GPTgeneratingStatus === "streaming") {
+      setTab("code");
+    }
+  }, [GPTgeneratingStatus]);
   return (
     <Card
       elevation={0}

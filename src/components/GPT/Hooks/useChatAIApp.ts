@@ -112,19 +112,36 @@ const useChat = ({ workflow }: Props) => {
 
   // Pass run workflow generated execution as a new message after all prompts completed
   useEffect(() => {
-    if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
+    if (generatedExecution?.data?.length) {
       const title = generatedExecution.temp_title;
       const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
       const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
-      const executionMessage = createMessage({
-        type: "workflowExecution",
-        text: output,
-        data: clonedWorkflow,
+
+      setMessages(prevMessages => {
+        const existingExecutionMessageIndex = prevMessages.findIndex(msg => msg.type === "workflowExecution");
+
+        // If the message exists, update it
+        if (existingExecutionMessageIndex !== -1) {
+          const updatedMessages = [...prevMessages];
+          updatedMessages[existingExecutionMessageIndex] = {
+            ...updatedMessages[existingExecutionMessageIndex],
+            text: output,
+          };
+          return updatedMessages;
+        }
+
+        // If the message doesn't exist, create a new one
+        const executionMessage = createMessage({
+          type: "workflowExecution",
+          text: output,
+          data: clonedWorkflow,
+        });
+        return [...prevMessages.filter(msg => msg.type !== "readyMessage"), executionMessage];
       });
-      setMessages(prev => prev.concat(executionMessage));
+
       dispatch(setGeneratedExecution(null));
     }
-  }, [generatedExecution]);
+  }, [generatedExecution, clonedWorkflow, dispatch]);
 
   // Keep track of workflow data changes coming from answers state
   useEffect(() => {
@@ -323,7 +340,7 @@ const useChat = ({ workflow }: Props) => {
     } catch (error) {
       failedExecutionHandler();
     } finally {
-      dispatch(setGptGenerationStatus("pending"));
+      dispatch(setGptGenerationStatus("generated"));
     }
   };
 
