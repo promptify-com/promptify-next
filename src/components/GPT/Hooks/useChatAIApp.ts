@@ -110,39 +110,6 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [debouncedSchedulingData]);
 
-  // Pass run workflow generated execution as a new message after all prompts completed
-  // useEffect(() => {
-  //   if (generatedExecution?.data?.length) {
-  //     const title = generatedExecution.temp_title;
-  //     const promptsOutput = generatedExecution.data.map(data => data.message).join(" ");
-  //     const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
-
-  //     setMessages(prevMessages => {
-  //       const existingExecutionMessageIndex = prevMessages.findIndex(msg => msg.type === "workflowExecution");
-
-  //       // If the message exists, update it
-  //       if (existingExecutionMessageIndex !== -1) {
-  //         const updatedMessages = [...prevMessages];
-  //         updatedMessages[existingExecutionMessageIndex] = {
-  //           ...updatedMessages[existingExecutionMessageIndex],
-  //           text: output,
-  //         };
-  //         return updatedMessages;
-  //       }
-
-  //       // If the message doesn't exist, create a new one
-  //       const executionMessage = createMessage({
-  //         type: "workflowExecution",
-  //         text: output,
-  //         data: clonedWorkflow,
-  //       });
-  //       return [...prevMessages.filter(msg => msg.type !== "readyMessage"), executionMessage];
-  //     });
-
-  //     dispatch(setGeneratedExecution(null));
-  //   }
-  // }, [generatedExecution, clonedWorkflow, dispatch]);
-
   useEffect(() => {
     if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
       const title = generatedExecution.temp_title;
