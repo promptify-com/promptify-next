@@ -6,9 +6,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as Recharts from "recharts";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live-runner";
-import AntArtifactTabs from "@/components/GPT/AntArtifact/tabs";
-import CopyButton from "./copyButton";
 import { useAppSelector } from "@/hooks/useStore";
+import CopyButton from "./CopyButton";
+import AntArtifactTabs from "./Tabs";
 
 interface Props {
   content: string;
@@ -31,7 +31,7 @@ const AntArtifactComponent = ({ content, title }: Props) => {
   return (
     <Card
       elevation={0}
-      sx={{ borderRadius: 4, marginY: 2, pY: 2 }}
+      sx={{ borderRadius: 4, marginY: 2, pY: 2, maxWidth: { sm: 500, md: 600, lg: 1000, xl: 1400 } }}
     >
       <Stack
         direction="row"
