@@ -589,8 +589,6 @@ const useChat = ({ workflow }: Props) => {
     }
   };
 
-  console.log(messages);
-
   return {
     messages,
     initialMessages,

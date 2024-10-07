@@ -22,6 +22,7 @@ export const markdownToHTML = async (markdown: string) => {
               <div>
                 <button class="toggle-button preview-button" onclick="togglePreview(this)">Preview</button>
                 <button class="toggle-button code-button active" onclick="toggleCode(this)">Code</button>
+                <button class="copy-button" label="Copy">Copy</button>
               </div>
             </div>
             <div class="preview" style="display:none;">${codeContent}</div>
