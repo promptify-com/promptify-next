@@ -173,7 +173,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       },
       onmessage(msg) {
         try {
-          const parseData = parseMessageData(msg.data);
+          const parseData = JSON.parse(msg.data);
           const message = parseData.message;
 
           if (message === "[CONNECTED]") {
@@ -211,9 +211,10 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
     <Dialog
       open={open}
       onClose={handleClose}
+      maxWidth={"lg"}
       PaperProps={{
         sx: {
-          width: "400px",
+          width: "1400px",
         },
       }}
     >

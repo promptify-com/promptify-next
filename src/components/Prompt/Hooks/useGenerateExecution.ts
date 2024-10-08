@@ -166,6 +166,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       onmessage(msg) {
         try {
           const parseData = JSON.parse(msg.data);
+
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
