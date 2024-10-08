@@ -110,7 +110,6 @@ const useChat = ({ workflow }: Props) => {
     }
   }, [debouncedSchedulingData]);
 
-  // Pass run workflow generated execution as a new message after all prompts completed
   useEffect(() => {
     if (generatedExecution?.data?.length && generatedExecution.hasNext === false) {
       const title = generatedExecution.temp_title;
@@ -123,6 +122,7 @@ const useChat = ({ workflow }: Props) => {
       });
       setMessages(prev => prev.concat(executionMessage));
       dispatch(setGeneratedExecution(null));
+      dispatch(setGptGenerationStatus("pending"));
     }
   }, [generatedExecution]);
 
@@ -323,7 +323,7 @@ const useChat = ({ workflow }: Props) => {
     } catch (error) {
       failedExecutionHandler();
     } finally {
-      dispatch(setGptGenerationStatus("pending"));
+      dispatch(setGptGenerationStatus("generated"));
     }
   };
 

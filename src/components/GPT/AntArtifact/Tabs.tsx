@@ -1,16 +1,15 @@
 import React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { theme } from "@/theme";
 
 // Types
 interface Props {
-  tab: string;
-  setTab: (newValue: string) => void;
+  tab: "code" | "preview";
+  setTab: (newValue: "code" | "preview") => void;
 }
 
 const AntArtifactTabs = ({ tab, setTab }: Props) => {
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: "code" | "preview") => {
     setTab(newValue);
   };
 

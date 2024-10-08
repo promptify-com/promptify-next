@@ -20,12 +20,13 @@ export const markdownToHTML = async (markdown: string) => {
             <div class="code-wrapper-header">
               <span class="language-label">${language}</span>
               <div>
-                <button class="toggle-button preview-button active" onclick="togglePreview(this)">Preview</button>
-                <button class="toggle-button code-button" onclick="toggleCode(this)">Code</button>
+                <button class="toggle-button preview-button" onclick="togglePreview(this)">Preview</button>
+                <button class="toggle-button code-button active" onclick="toggleCode(this)">Code</button>
+                <button class="copy-button" label="Copy">Copy</button>
               </div>
             </div>
-            <div class="preview" style="display:block;">${codeContent}</div>
-            <code class="language-${language}" style="display:none;">${formattedCodeContent}</code>
+            <div class="preview" style="display:none;">${codeContent}</div>
+            <code class="language-${language}" style="display:block;">${formattedCodeContent}</code>
           </div>
         `;
       }

@@ -29,6 +29,7 @@ import MessageInputs from "@/components/GPT/MessageInputs";
 import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { FrequencyType, ITemplateWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import ApiAccessMessage from "@/components/Chat/ApiAccess";
+import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 
 interface Props {
   workflow: ITemplateWorkflow;
@@ -71,6 +72,8 @@ const ChatInterface = ({ workflow }: Props) => {
     content: messages,
     skipScroll: false,
   });
+
+  const generatedExecution = useAppSelector(state => state.executions?.generatedExecution ?? null);
 
   useEffect(() => {
     if (clonedWorkflow && !workflowLoaded.current) {
@@ -253,6 +256,7 @@ const ChatInterface = ({ workflow }: Props) => {
                     </Stack>
                   </Stack>
                 )}
+
                 {index === messages.length - 1 &&
                   !validatingQuery &&
                   !message.fromUser &&
@@ -265,6 +269,12 @@ const ChatInterface = ({ workflow }: Props) => {
                   )}
               </Fragment>
             ))}
+
+            {generatedExecution && (
+              <>
+                <ExecutionMessage execution={generatedExecution} />
+              </>
+            )}
           </Stack>
         </Stack>
         <Stack>
