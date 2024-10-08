@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as Recharts from "recharts";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live-runner";
-import AntArtifactTabs from "@/components/GPT/AntArtifact/Tabs";
+import AntArtifactTabs from "./Tabs";
 import CopyButton from "./CopyButton";
 
 interface Props {

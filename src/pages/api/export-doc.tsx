@@ -1,26 +1,22 @@
 import { Document, Packer, Paragraph, TextRun, ImageRun } from "docx";
 import { NextApiRequest, NextApiResponse } from "next";
-import sizeOf from "image-size"; // Built-in package for image dimensions
+import sizeOf from "image-size";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+    res.status(405).json({ message: "Method not allowed" });
+    return;
   }
 
   const { data } = req.body;
 
   if (!data || !Array.isArray(data)) {
-    return res.status(400).json({ message: "Invalid data format" });
+    res.status(400).json({ message: "Invalid data format" });
+    return;
   }
 
   try {
-    const doc = new Document({
-      sections: [
-        {
-          children: [],
-        },
-      ],
-    });
+    const sections = [];
 
     for (const item of data) {
       if (item.type === "text" || item.type === "thinking") {
@@ -30,19 +26,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               children: [new TextRun(line)],
             }),
         );
-        doc.addSection({
+        sections.push({
           children: textLines,
         });
       } else if (item.type === "artifact") {
-        const base64Image = item.data.split(",")[1];
+        const base64Image: string = item.data.split(",")[1];
         const imageBuffer = Buffer.from(base64Image, "base64");
 
-        // Get original image dimensions
         const dimensions = sizeOf(imageBuffer);
-        const originalWidth = dimensions.width;
-        const originalHeight = dimensions.height;
+        const originalWidth = dimensions.width ?? 100;
+        const originalHeight = dimensions.height ?? 100;
 
-        doc.addSection({
+        sections.push({
           children: [
             new Paragraph({
               alignment: "center",
@@ -57,6 +52,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
     }
+
+    const doc = new Document({ sections });
 
     const buffer = await Packer.toBuffer(doc);
 
