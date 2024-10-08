@@ -1,8 +1,10 @@
 import { Dialog, Divider, Stack, Typography } from "@mui/material";
-import ExportPdf from "./ExportPdf";
 import { useAppSelector } from "@/hooks/useStore";
+import ExportPdf from "./ExportPdf";
 import { format } from "date-fns";
 import ExportDocx from "./ExportDoc";
+import SendEmail from "./SendEmail";
+import { initialState as initialChatState } from "@/core/store/chatSlice";
 
 interface ExportPopupChatProps {
   onClose: () => void;
@@ -10,7 +12,7 @@ interface ExportPopupChatProps {
 }
 
 export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
-  const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? {});
+  const clonedWorkflow = useAppSelector(state => state.chat?.clonedWorkflow ?? initialChatState.clonedWorkflow);
   const currentDate = format(new Date(), "MM-dd-yyyy");
   const title = `${clonedWorkflow?.name} - ${currentDate}`
     .replace(/[\s,:]+/g, "-")
@@ -35,6 +37,11 @@ export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
         />
         <Divider />
         <ExportDocx
+          title={title}
+          content={content}
+        />
+        <Divider />
+        <SendEmail
           title={title}
           content={content}
         />

@@ -12,11 +12,11 @@ interface Props {
   content: string;
 }
 
-const ExportPdf = ({ title, content }: Props) => {
+const ExportDoc = ({ title, content }: Props) => {
   const { captureScreenshots } = useScreenshot("artifact");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleExportPdf = async () => {
+  const handleExportDoc = async () => {
     setLoading(true);
     const data = [];
     if (!content) return;
@@ -95,7 +95,7 @@ const ExportPdf = ({ title, content }: Props) => {
         </Typography>
       </Stack>
       <IconButton
-        onClick={handleExportPdf}
+        onClick={handleExportDoc}
         sx={{ border: "none", opacity: 0.6, justifyContent: "center", alignItems: "center" }}
       >
         {loading ? <CircularProgress size={16} /> : <GetAppRounded />}
@@ -104,4 +104,4 @@ const ExportPdf = ({ title, content }: Props) => {
   );
 };
 
-export default ExportPdf;
+export default ExportDoc;
