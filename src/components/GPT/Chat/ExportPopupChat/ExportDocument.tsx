@@ -10,13 +10,27 @@ import useScreenshot from "@/hooks/useScreenshot";
 interface Props {
   title: string;
   content: string;
+  format: string;
 }
 
-const ExportDoc = ({ title, content }: Props) => {
+const ExportDocument = ({ title, content, format }: Props) => {
   const { captureScreenshots } = useScreenshot("artifact");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleExportDoc = async () => {
+  const filename =
+    format === "pdf"
+      ? `${title
+          .replace(/[\s,:]+/g, "-")
+          .replace(/-+/g, "-")
+          .trim()}.pdf`
+      : `${title
+          .replace(/[\s,:]+/g, "-")
+          .replace(/-+/g, "-")
+          .trim()}.docx`;
+  const label = format === "pdf" ? "Export as PDF" : "Export as Word";
+  const Icon = format === "pdf" ? GetAppRounded : WordIcon;
+
+  const handleExportPdf = async () => {
     setLoading(true);
     const data = [];
     if (!content) return;
@@ -36,13 +50,12 @@ const ExportDoc = ({ title, content }: Props) => {
       }
     }
     setLoading(false);
-    console.log(data);
     // Send the captured data to the API
     try {
-      const response = await fetch("/api/export-doc", {
+      const response = await fetch("/api/export-document", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data }),
+        body: JSON.stringify({ data, format }),
       });
 
       if (!response.ok) {
@@ -56,11 +69,11 @@ const ExportDoc = ({ title, content }: Props) => {
       a.download = `${title
         .replace(/[\s,:]+/g, "-")
         .replace(/-+/g, "-")
-        .trim()}.docx`;
+        .trim()}.${format}`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error exporting PDF:", error);
+      console.error(`Error exporting ${format}:`, error);
     } finally {
       setLoading(false);
     }
@@ -81,27 +94,23 @@ const ExportDoc = ({ title, content }: Props) => {
           fontWeight={500}
           sx={{ opacity: 0.8 }}
         >
-          Export as Word Document
+          {label}
         </Typography>
         <Typography
           fontSize={12}
           sx={{ opacity: 0.5 }}
         >
-          {title
-            .replace(/[\s,:]+/g, "-")
-            .replace(/-+/g, "-")
-            .trim()}
-          .docx
+          {filename}
         </Typography>
       </Stack>
       <IconButton
-        onClick={handleExportDoc}
+        onClick={handleExportPdf}
         sx={{ border: "none", opacity: 0.6, justifyContent: "center", alignItems: "center" }}
       >
-        {loading ? <CircularProgress size={16} /> : <GetAppRounded />}
+        {loading ? <CircularProgress size={16} /> : <Icon />}
       </IconButton>
     </Stack>
   );
 };
 
-export default ExportDoc;
+export default ExportDocument;

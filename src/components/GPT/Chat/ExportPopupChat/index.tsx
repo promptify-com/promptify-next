@@ -1,8 +1,10 @@
-import { Dialog, Divider, Stack, Typography } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
-import ExportPdf from "./ExportPdf";
+import ExportDocument from "./ExportDocument";
 import { format } from "date-fns";
-import ExportDocx from "./ExportDoc";
 import SendEmail from "./SendEmail";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 
@@ -31,14 +33,16 @@ export const ExportPopupChat = ({ onClose, content }: ExportPopupChatProps) => {
       </Stack>
       <Divider />
       <Stack spacing={1}>
-        <ExportPdf
+        <ExportDocument
           title={title}
           content={content}
+          format="pdf"
         />
         <Divider />
-        <ExportDocx
+        <ExportDocument
           title={title}
           content={content}
+          format="docx"
         />
         <Divider />
         <SendEmail
