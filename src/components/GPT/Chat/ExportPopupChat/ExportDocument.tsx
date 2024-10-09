@@ -30,7 +30,7 @@ const ExportDocument = ({ title, content, format }: Props) => {
   const label = format === "pdf" ? "Export as PDF" : "Export as Word";
   const Icon = format === "pdf" ? GetAppRounded : WordIcon;
 
-  const handleExportPdf = async () => {
+  const handleExport = async () => {
     setLoading(true);
     const data = [];
     if (!content) return;
@@ -104,7 +104,7 @@ const ExportDocument = ({ title, content, format }: Props) => {
         </Typography>
       </Stack>
       <IconButton
-        onClick={handleExportPdf}
+        onClick={handleExport}
         sx={{ border: "none", opacity: 0.6, justifyContent: "center", alignItems: "center" }}
       >
         {loading ? <CircularProgress size={16} /> : <Icon />}
