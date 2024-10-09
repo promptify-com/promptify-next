@@ -9,7 +9,7 @@ import { useStopExecutionMutation } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
-import { initialState as initialChatState, setAnswers } from "@/core/store/chatSlice";
+import { initialState as initialChatState, setAnswers, setGptGenerationStatus } from "@/core/store/chatSlice";
 import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";

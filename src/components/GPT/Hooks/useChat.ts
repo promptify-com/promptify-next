@@ -353,7 +353,7 @@ const useChat = ({ workflow }: Props) => {
     } catch (error) {
       failedExecutionHandler();
     } finally {
-      dispatch(setGptGenerationStatus("pending"));
+      dispatch(setGptGenerationStatus("generated"));
     }
   };
 

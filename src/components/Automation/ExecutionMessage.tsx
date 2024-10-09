@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { ExecutionContent } from "@/components/common/ExecutionContent";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
+
+const AntThinkingComponent = lazy(() => import("@/components/GPT/AntThinking"));
+const AntArtifactComponent = lazy(() => import("@/components/GPT/AntArtifact"));
 
 interface Props {
   execution: PromptLiveResponse;
@@ -12,12 +15,13 @@ interface Props {
 export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
   const executionPrompts = execution.data;
   const [prompts, setPrompts] = useState<DisplayPrompt[]>([]);
+  const [htmlParts, setHtmlParts] = useState<React.ReactNode[]>([]);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
       const processedOutputs: DisplayPrompt[] = await Promise.all(
         executionPrompts.map(async exec => {
-          const content = await markdownToHTML(exec.message);
+          const content = exec.message;
           return {
             content,
             prompt: exec.prompt,
@@ -28,12 +32,65 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
           };
         }),
       );
-
       setPrompts(processedOutputs);
     };
 
-    sortAndProcessExecutions();
+    if (executionPrompts && executionPrompts.length > 0) {
+      sortAndProcessExecutions();
+    }
   }, [executionPrompts]);
+
+  useEffect(() => {
+    const processHtmlParts = async () => {
+      const allHtmlParts = await Promise.all(
+        prompts.map(async exec => {
+          const content = exec.content;
+          const parts = content.split(/(<\/?antThinking>|<\/?antArtifact)/g);
+          const renderedComponents: React.ReactNode[] = [];
+
+          for (let i = 0; i < parts.length; i++) {
+            const part = parts[i]?.trim();
+
+            if (part.startsWith("<antThinking>")) {
+              const content = parts[++i]?.trim();
+              renderedComponents.push(
+                <Suspense key={`thinking-${i}`}>
+                  <AntThinkingComponent content={content} />
+                </Suspense>,
+              );
+            } else if (part.startsWith("<antArtifact")) {
+              const content = parts[++i]?.trim();
+              const title = (content.match(/title="([^"]*)"/) || [])[1];
+              renderedComponents.push(
+                <Suspense key={`artifact-${i}`}>
+                  <AntArtifactComponent
+                    title={title}
+                    content={content}
+                  />
+                </Suspense>,
+              );
+            } else if (part && !part.startsWith("<")) {
+              const _html = await markdownToHTML(part);
+              renderedComponents.push(
+                <ExecutionContent
+                  key={i}
+                  content={sanitizeHTML(_html)}
+                />,
+              );
+            }
+          }
+
+          return renderedComponents;
+        }),
+      );
+
+      setHtmlParts(allHtmlParts.flat());
+    };
+
+    if (prompts.length > 0) {
+      processHtmlParts();
+    }
+  }, [prompts]);
 
   return (
     <Stack
@@ -60,22 +117,7 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
               {execution.temp_title}
             </Typography>
           )}
-          <Stack gap={1}>
-            {prompts?.map((exec, index) => (
-              <Stack
-                key={index}
-                gap={1}
-                sx={{ pb: "24px" }}
-              >
-                <Stack
-                  direction={{ md: "row" }}
-                  gap={2}
-                >
-                  <ExecutionContent content={sanitizeHTML(exec.content)} />
-                </Stack>
-              </Stack>
-            ))}
-          </Stack>
+          <Stack gap={1}>{htmlParts}</Stack>
         </Stack>
       )}
     </Stack>
