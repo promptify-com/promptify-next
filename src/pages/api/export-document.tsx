@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
-  const { data, format } = req.body;
+  const { data, format }: { data: any; format: string } = req.body;
 
   if (!data || !Array.isArray(data)) {
     res.status(400).json({ message: "Invalid data format" });
@@ -84,8 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       pdfDoc.end();
-    }
-    else if (format === "docx") {
+    } else if (format === "docx") {
       // DOCX Generation
       const sections = [];
 
