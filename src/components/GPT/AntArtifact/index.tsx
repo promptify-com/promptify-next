@@ -6,9 +6,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as Recharts from "recharts";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live-runner";
-import AntArtifactTabs from "./Tabs";
 import { useAppSelector } from "@/hooks/useStore";
 import CopyButton from "./CopyButton";
+import AntArtifactTabs from "./Tabs";
 
 interface Props {
   content: string;
