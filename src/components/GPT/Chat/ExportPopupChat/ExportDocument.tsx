@@ -10,23 +10,17 @@ import useScreenshot from "@/hooks/useScreenshot";
 interface Props {
   title: string;
   content: string;
-  format: string;
+  format: "pdf" | "docx";
 }
 
 const ExportDocument = ({ title, content, format }: Props) => {
   const { captureScreenshots } = useScreenshot("artifact");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const filename =
-    format === "pdf"
-      ? `${title
-          .replace(/[\s,:]+/g, "-")
-          .replace(/-+/g, "-")
-          .trim()}.pdf`
-      : `${title
-          .replace(/[\s,:]+/g, "-")
-          .replace(/-+/g, "-")
-          .trim()}.docx`;
+  const filename = `${title
+    .replace(/[\s,:]+/g, "-")
+    .replace(/-+/g, "-")
+    .trim()}.${format}`;
   const label = format === "pdf" ? "Export as PDF" : "Export as Word";
   const Icon = format === "pdf" ? GetAppRounded : WordIcon;
 
@@ -59,17 +53,14 @@ const ExportDocument = ({ title, content, format }: Props) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate PDF");
+        throw new Error(`Failed to generate ${format.toUpperCase()}`);
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${title
-        .replace(/[\s,:]+/g, "-")
-        .replace(/-+/g, "-")
-        .trim()}.${format}`;
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
