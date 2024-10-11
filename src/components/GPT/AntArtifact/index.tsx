@@ -28,6 +28,13 @@ const AntArtifactComponent = ({ content, title }: Props) => {
       setTab("code");
     }
   }, [GPTgeneratingStatus]);
+
+  useEffect(() => {
+    if (content.includes("export default")) {
+      setTab("preview");
+    }
+  }, [content]);
+
   return (
     <Card
       elevation={0}
