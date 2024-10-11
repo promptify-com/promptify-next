@@ -33,15 +33,15 @@ authClient.interceptors.request.use(
   err => console.log("error"),
 );
 
-n8nClient.interceptors.request.use(
-  async config => {
-    const { token } = await getBasicToken();
-    if (!token) throw new Error("You are not authorized to execute this AI app workflow");
-    config.headers["Authorization"] = `Basic ${token}`;
+// n8nClient.interceptors.request.use(
+//   async config => {
+//     const { token } = await getBasicToken();
+//     if (!token) throw new Error("You are not authorized to execute this AI app workflow");
+//     config.headers["Authorization"] = `Basic ${token}`;
 
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  },
-);
+//     return config;
+//   },
+//   error => {
+//     return Promise.reject(error);
+//   },
+// );
