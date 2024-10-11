@@ -7,6 +7,9 @@ interface Props {
 }
 
 const AntThinkingComponent = ({ content }: Props) => {
+  // Remove </antThinking> tag from the content
+  const cleanedContent = content.replace(/<\/antThinking>/g, '');
+
   return (
     <Stack sx={{ p: 1, justifyContent: "center", backgroundColor: "#fff3cd", borderRadius: 4 }}>
       <Typography
@@ -15,7 +18,7 @@ const AntThinkingComponent = ({ content }: Props) => {
       >
         Thinking Content:
       </Typography>
-      <Typography variant="subtitle2">{content}</Typography>
+      <Typography variant="subtitle2">{cleanedContent}</Typography>
     </Stack>
   );
 };

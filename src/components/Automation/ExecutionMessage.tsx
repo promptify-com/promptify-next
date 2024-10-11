@@ -45,27 +45,39 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
       const allHtmlParts = await Promise.all(
         prompts.map(async exec => {
           const content = exec.content;
-          const parts = content.split(/(<\/?antThinking>|<\/?antArtifact)/g);
+          const parts = content.split(/(<antThinking>|<\/antThinking>|<antArtifact|<\/antArtifact>)/g);
           const renderedComponents: React.ReactNode[] = [];
 
           for (let i = 0; i < parts.length; i++) {
             const part = parts[i]?.trim();
 
-            if (part.startsWith("<antThinking>")) {
-              const content = parts[++i]?.trim();
+            if (part === "<antThinking>") {
+              let thinkingContent = "";
+              while (i + 1 < parts.length && parts[i + 1] !== "</antThinking>") {
+                thinkingContent += parts[++i];
+              }
+              if (i + 1 < parts.length && parts[i + 1] === "</antThinking>") {
+                thinkingContent += parts[++i]; // Include closing tag
+              }
               renderedComponents.push(
                 <Suspense key={`thinking-${i}`}>
-                  <AntThinkingComponent content={content} />
+                  <AntThinkingComponent content={thinkingContent} />
                 </Suspense>,
               );
             } else if (part.startsWith("<antArtifact")) {
-              const content = parts[++i]?.trim();
-              const title = (content.match(/title="([^"]*)"/) || [])[1];
+              let artifactContent = part;
+              while (i + 1 < parts.length && !parts[i + 1].startsWith("</antArtifact>")) {
+                artifactContent += parts[++i];
+              }
+              if (i + 1 < parts.length && parts[i + 1].startsWith("</antArtifact>")) {
+                artifactContent += parts[++i]; // Include closing tag
+              }
+              const title = (artifactContent.match(/title="([^"]*)"/) || [])[1];
               renderedComponents.push(
                 <Suspense key={`artifact-${i}`}>
                   <AntArtifactComponent
                     title={title}
-                    content={content}
+                    content={artifactContent}
                   />
                 </Suspense>,
               );

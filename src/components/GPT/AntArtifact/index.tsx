@@ -19,7 +19,7 @@ const scope = { import: { react: React, recharts: Recharts, "@mui/material": Mat
 
 const AntArtifactComponent = ({ content, title }: Props) => {
   const startIndex = content.indexOf(">") + 1;
-  const code = content.substring(startIndex).trim();
+  const code = content.substring(startIndex).trim().replace('</antArtifact>', '');
   const [tab, setTab] = React.useState<"code" | "preview">("preview");
   const GPTgeneratingStatus = useAppSelector(state => state.chat?.gptGenerationStatus);
 
@@ -30,7 +30,7 @@ const AntArtifactComponent = ({ content, title }: Props) => {
   }, [GPTgeneratingStatus]);
 
   useEffect(() => {
-    if (content.includes("export default")) {
+    if (content.includes("</antArtifact>")) {
       setTab("preview");
     }
   }, [content]);

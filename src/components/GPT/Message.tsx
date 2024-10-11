@@ -50,37 +50,44 @@ export const MessageContentWithHTML = memo(
       if (!content) return;
 
       const generateFinalHtml = async () => {
-        // Split by <antThinking> and <antArtifact> tags
-        const parts = content.split(/(<\/?antThinking>|<\/?antArtifact)/g);
+        // Split by <antThinking> and <antArtifact> tags, including closing tags
+        const parts = content.split(/(<antThinking>|<\/antThinking>|<antArtifact|<\/antArtifact>)/g);
         const renderedComponents: React.ReactNode[] = [];
 
         for (let i = 0; i < parts.length; i++) {
           const part = parts[i]?.trim();
 
-          // Detect and render <antThinking>
-          if (part.startsWith("<antThinking>")) {
-            const content = parts[++i]?.trim();
+          if (part === "<antThinking>") {
+            let thinkingContent = "";
+            while (i + 1 < parts.length && parts[i + 1] !== "</antThinking>") {
+              thinkingContent += parts[++i];
+            }
+            if (i + 1 < parts.length && parts[i + 1] === "</antThinking>") {
+              thinkingContent += parts[++i]; // Include closing tag
+            }
             renderedComponents.push(
               <Suspense key={`thinking-${i}`}>
-                <AntThinkingComponent content={content} />
+                <AntThinkingComponent content={thinkingContent} />
               </Suspense>,
             );
-          }
-          // Detect and render <antArtifact>
-          else if (part.startsWith("<antArtifact")) {
-            const content = parts[++i]?.trim();
-            const title = (content.match(/title="([^"]*)"/) || [])[1];
+          } else if (part.startsWith("<antArtifact")) {
+            let artifactContent = part;
+            while (i + 1 < parts.length && !parts[i + 1].startsWith("</antArtifact>")) {
+              artifactContent += parts[++i];
+            }
+            if (i + 1 < parts.length && parts[i + 1].startsWith("</antArtifact>")) {
+              artifactContent += parts[++i]; // Include closing tag
+            }
+            const title = (artifactContent.match(/title="([^"]*)"/) || [])[1];
             renderedComponents.push(
               <Suspense key={`artifact-${i}`}>
                 <AntArtifactComponent
                   title={title}
-                  content={content}
+                  content={artifactContent}
                 />
               </Suspense>,
             );
-          }
-          // Apply HTML transformation to parts without the special tags
-          else if (part && !part.startsWith("<")) {
+          } else if (part && !part.startsWith("<")) {
             const _html = await markdownToHTML(part);
             renderedComponents.push(
               <ExecutionContent
