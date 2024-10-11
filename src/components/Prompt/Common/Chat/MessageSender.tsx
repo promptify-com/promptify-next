@@ -20,7 +20,7 @@ function MessageSender({
   onSubmit,
   onChange,
   disabled,
-  placeholder = "Chat with Promptify...",
+  placeholder = "Chat with onePanel...",
   maxLength,
   loading,
 }: MessageSenderProps) {

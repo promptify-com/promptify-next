@@ -45,7 +45,7 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
               fontWeight={400}
               color={"onSurface"}
             >
-              Promptify Thinking...
+              onePanel Thinking...
             </Typography>
           </Stack>
         </Stack>
@@ -77,7 +77,7 @@ const ChatInput = ({ onSubmit, disabled, isValidating, isFadeIn }: ChatInputProp
           display: { xs: "none", md: "block" },
         }}
       >
-        Promptify uses various LLM models to achieve better results. Promptify may be wrong and can make mistakes, just
+        onePanel uses various LLM models to achieve better results. onePanel may be wrong and can make mistakes, just
         double-check the information received from the chat. Check our{" "}
         <a
           href="https://staging.d3gvg02vbse3to.amplifyapp.com/terms-of-use"

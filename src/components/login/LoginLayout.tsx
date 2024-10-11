@@ -67,7 +67,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               letterSpacing: "0.15px",
             }}
           >
-            Unleash your creative potential using Promptify
+            Unleash your creative potential using onePanel
           </Typography>
 
           {!isMobile && (
@@ -130,7 +130,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
               m: { xs: "-10px 0 0 0", md: "-31px 0 0 0" },
             }}
           >
-            Promptify
+            onePanel
           </Typography>
         </Box>
 
@@ -166,7 +166,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
                   letterSpacing: "0.17px",
                 }}
               >
-                Welcome to Promptify
+                Welcome to onePanel
               </Typography>
             )}
             <Typography

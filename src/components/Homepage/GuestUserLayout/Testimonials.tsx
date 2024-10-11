@@ -19,7 +19,7 @@ const TestimonialExamples: ITestimonial[] = [
   {
     image: require("@/assets/images/testimonial1.png"),
     content:
-      "Before Promptify.com, I'd spend hours staring at a blank page. Now? Essays are a breeze, and I even have time for video games afterward! 🎮📝",
+      "Before onePanel.com, I'd spend hours staring at a blank page. Now? Essays are a breeze, and I even have time for video games afterward! 🎮📝",
     name: "Alex",
     profession: "High School Student",
   },
@@ -152,7 +152,7 @@ function Testimonials() {
             fontWeight={400}
             color={"#2A2A3C"}
           >
-            What people says about Promptify
+            What people says about onePanel
           </Typography>
         </Stack>
         {TestimonialExamples.length > 2 && (

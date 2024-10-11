@@ -63,7 +63,7 @@ function Onboarding() {
             m: "-10px 0px 0 4px",
           }}
         >
-          Promptify
+          onePanel
         </Typography>
       </Box>
 

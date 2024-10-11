@@ -87,7 +87,7 @@ function Footer() {
                 sx={{ fontSize: 19, ml: 1 }}
                 fontWeight={500}
               >
-                Promptify
+                onePanel
               </Typography>
             </Stack>
             <Stack

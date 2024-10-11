@@ -56,7 +56,7 @@ export const WelcomeCard = () => {
             marginBottom: "8px",
           }}
         >
-          Welcome to Promptify
+          Welcome to onePanel
         </Typography>
         <Typography
           sx={{
@@ -70,8 +70,8 @@ export const WelcomeCard = () => {
             textAlign: { xs: "center", sm: "left" },
           }}
         >
-          Unleash your creative potential using Promptify, the ultimate ChatGPT and AI-driven content generation and
-          idea inspiration platform. Try it today!
+          Unleash your creative potential using onePanel, the ultimate ChatGPT and AI-driven content generation and idea
+          inspiration platform. Try it today!
         </Typography>
 
         <Stack

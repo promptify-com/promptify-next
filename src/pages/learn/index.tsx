@@ -68,7 +68,7 @@ export default function LearnPage() {
                 fontSize={18}
                 fontWeight={400}
               >
-                Empowering Your Experience with Promptify
+                Empowering Your Experience with onePanel
               </Typography>
             </Stack>
             <Button

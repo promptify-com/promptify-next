@@ -60,7 +60,7 @@ const ChatBoxVariantA: React.FC<Props> = ({
             letterSpacing={2}
             textTransform={"uppercase"}
           >
-            Chat With Promptify
+            Chat With onePanel
           </Typography>
         </Stack>
       )}

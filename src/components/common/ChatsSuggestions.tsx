@@ -157,8 +157,8 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
               }}
             >
               <SuggestionCard
-                title="CHAT WITH Promptify"
-                description="Make more happen with Promptify and stand out!"
+                title="CHAT WITH onePanel"
+                description="Make more happen with onePanel and stand out!"
                 avatar={
                   <Avatar variant="chat">
                     <AddCircleOutlineRounded sx={{ color: "onPrimary", fontSize: 32 }} />
@@ -290,7 +290,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
             >
               <SuggestionCard
                 title="Customize Your Experience"
-                description="Tailor Promptify to your style and make your work unique!"
+                description="Tailor onePanel to your style and make your work unique!"
                 avatar={
                   <Avatar variant="profile">
                     <AccountCircleOutlined sx={{ color: "onSurface", fontSize: 32 }} />
