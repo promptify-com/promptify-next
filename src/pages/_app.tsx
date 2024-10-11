@@ -12,7 +12,7 @@ import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
 import { LocalStorage } from "@/common/storage";
-import { deletePathURL, savePathURL } from "@/common/utils";
+import { deletePathURL, savePathURL, saveToken } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
 import type { User } from "@/core/api/dto/user";
@@ -29,9 +29,20 @@ function App({ Component, pageProps }: AppProps) {
   const storedToken = useToken();
   const router = useRouter();
 
+  const TOKEN = "5d5a9738727980e156696cf7d54f3c7fa1c872ee";
+
+  useEffect(() => {
+    const handleAutoLogin = async () => {
+      saveToken({ token: TOKEN });
+    };
+    handleAutoLogin();
+  }, []);
+
   useEffect(() => {
     const _updateUser = async () => {
-      const payload = await store.dispatch(userApi.endpoints.getCurrentUser.initiate(storedToken));
+      const payload = await store.dispatch(
+        userApi.endpoints.getCurrentUser.initiate("5d5a9738727980e156696cf7d54f3c7fa1c872ee"),
+      );
 
       if (!payload.data) {
         return;

@@ -313,12 +313,12 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, keyWord = "
           }}
         >
           <LogoApp width={23} />
-          <Typography
+          {/* <Typography
             sx={{ fontSize: 19, ml: 1 }}
             fontWeight={500}
           >
             Promptify
-          </Typography>
+          </Typography> */}
         </Link>
 
         {isMobile ? (

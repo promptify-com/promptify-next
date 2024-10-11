@@ -64,20 +64,20 @@ function Navigations({ onCloseDrawer }: Props) {
       active: pathname === "/apps",
       external: false,
     },
-    {
-      label: "Chats",
-      icon: <TryRounded />,
-      href: "/chat",
-      active: pathname === "/chat",
-      external: false,
-    },
-    {
-      label: "Prompts",
-      icon: <StickyNote2 />,
-      href: "/explore",
-      active: pathname == "/explore",
-      external: false,
-    },
+    // {
+    //   label: "Chats",
+    //   icon: <TryRounded />,
+    //   href: "/chat",
+    //   active: pathname === "/chat",
+    //   external: false,
+    // },
+    // {
+    //   label: "Prompts",
+    //   icon: <StickyNote2 />,
+    //   href: "/explore",
+    //   active: pathname == "/explore",
+    //   external: false,
+    // },
     {
       label: "Documents",
       icon: <FolderSpecial />,
@@ -85,27 +85,27 @@ function Navigations({ onCloseDrawer }: Props) {
       active: pathname == "/sparks",
       external: false,
     },
-    {
-      label: "Editor",
-      href: isValidUser ? `/prompt-builder/create` : "/signin",
-      icon: <EditorIcon />,
-      active: pathname.includes("/prompt-builder"),
-      external: isValidUser,
-    },
-    {
-      label: "Chrome Extension",
-      href: "#",
-      icon: <ExtensionRounded />,
-      active: false,
-      external: false,
-    },
-    {
-      label: "Learn",
-      icon: <Book3 />,
-      href: "https://blog.promptify.com/",
-      active: isLearnPage,
-      external: false,
-    },
+    // {
+    //   label: "Editor",
+    //   href: isValidUser ? `/prompt-builder/create` : "/signin",
+    //   icon: <EditorIcon />,
+    //   active: pathname.includes("/prompt-builder"),
+    //   external: isValidUser,
+    // },
+    // {
+    //   label: "Chrome Extension",
+    //   href: "#",
+    //   icon: <ExtensionRounded />,
+    //   active: false,
+    //   external: false,
+    // },
+    // {
+    //   label: "Learn",
+    //   icon: <Book3 />,
+    //   href: "https://blog.promptify.com/",
+    //   active: isLearnPage,
+    //   external: false,
+    // },
   ];
 
   useEffect(() => {

@@ -63,7 +63,7 @@ function HomepageLayout({ categories }: { categories: Category[] }) {
         <Stack minHeight={"300px"}>
           <HomepageTemplates
             title="You may like these AI Apps:"
-            templates={workflows}
+            templates={workflows.filter(workflow => workflow.name.includes("Crypto"))}
             templatesLoading={isLoadingAllWorkflows}
             showAdsBox
           />

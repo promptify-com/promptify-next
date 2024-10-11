@@ -42,14 +42,14 @@ function Header({ type, onCloseDrawer, setSidebarType }: Props) {
         }}
       >
         <LogoApp width={23} />
-        <Typography
+        {/* <Typography
           sx={{ fontSize: 19, ml: 1 }}
           fontWeight={500}
           letterSpacing={"-0.5px"}
           lineHeight={"26.6px"}
         >
           Promptify
-        </Typography>
+        </Typography> */}
       </Link>
       <Stack
         display={{ xs: "flex", md: "none" }}

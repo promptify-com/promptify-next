@@ -37,6 +37,9 @@ function SidebarItem({ navItem }: Props) {
               color: "secondary.main",
             },
             ".MuiListItemIcon-root": {
+              mx: "auto",
+              width: "40px",
+              height: "40px",
               backgroundColor: "surface.1",
             },
           }),
@@ -54,6 +57,9 @@ function SidebarItem({ navItem }: Props) {
             },
             ".MuiListItemIcon-root": {
               backgroundColor: "surface.1",
+              mx: "auto",
+              width: "40px",
+              height: "40px",
             },
           },
           ".MuiListItemButton-root.Mui-disabled": {
