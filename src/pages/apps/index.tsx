@@ -70,7 +70,15 @@ function GPTsPage() {
   );
 
   const filteredAllWorkflows = isFiltering
-    ? allWorkflows?.filter(workflow => workflow.name.toLowerCase().includes(filter.toLowerCase()))
+    ? allWorkflows?.filter(
+        workflow =>
+          workflow.name.toLowerCase().includes(filter.toLowerCase()) &&
+          [
+            "ai-crypto-market-analysis",
+            "ai-crypto-market-analysis-rich-version",
+            "ai-crypto-market-analysis-advanced",
+          ].includes(workflow.slug),
+      )
     : [];
 
   useEffect(() => {
@@ -133,24 +141,6 @@ function GPTsPage() {
                 isLoading={isLoadingUserWorkflows}
                 isGPTScheduled
               />
-
-              <Stack
-                ref={bannerRef}
-                px={"10px"}
-              >
-                {showBanner && <CarouselSectionAuto items={allWorkflows?.slice(0, 3)} />}
-              </Stack>
-
-              <Stack ref={newGPTsCarouselRef}>
-                {showNewGPTsCarousel && (
-                  <GPTsSection
-                    header="Most popular AI apps"
-                    subheader="Discover top AI tools that boost productivity and creativity across industries."
-                    workflows={allWorkflows?.slice(0, 3)}
-                    isLoading={isLoadingAllWorkflows}
-                  />
-                )}
-              </Stack>
 
               <Stack ref={historicalCarouselRef}>
                 {showHistoricalCarousel && (

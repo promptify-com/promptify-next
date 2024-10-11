@@ -16,9 +16,13 @@ function CategoryGPTsSection({ workflowCategories, isLoading }: Props) {
     return <WorkflowCardPlaceholder />;
   }
 
+  const filteredCategories = workflowCategories?.filter(
+    (category) => category.name === "Financial Market Insights"
+  );
+
   return (
     <Stack gap={"48px"}>
-      {workflowCategories?.map((workflows, index) => (
+      {filteredCategories?.map((workflows, index) => (
         <GPTsSection
           key={`${workflows.name}-${index}`}
           workflows={workflows.templates}
