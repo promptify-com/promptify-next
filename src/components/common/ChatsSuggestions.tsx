@@ -74,7 +74,7 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
   if (templatesExecutions[0]) {
     const promptsData = templatesExecutions[0].template?.prompts.reduce(
       (acc, prompt) => {
-        acc[prompt.id] = { show_output: prompt.show_output, engineOutputType: prompt.engine.output_type };
+        acc[prompt.id] = { show_output: prompt?.show_output, engineOutputType: prompt.engine?.output_type };
 
         return acc;
       },
@@ -84,8 +84,8 @@ function ChatsSuggestions({ carouselRef, slice = 1 }: Props) {
       execution =>
         !execution.errors &&
         execution.output.length > 0 &&
-        promptsData?.[execution.prompt].show_output &&
-        promptsData?.[execution.prompt].engineOutputType === "TEXT",
+        promptsData?.[execution.prompt]?.show_output &&
+        promptsData?.[execution.prompt]?.engineOutputType === "TEXT",
     );
     documentDescription = firstFoundExecution ? firstFoundExecution.output : "";
   }
