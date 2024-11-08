@@ -33,7 +33,7 @@ function Details({ gpt, workflow, isLoading }: Props) {
           </Typography>
         )}
         <Link
-          href={`gpts/${workflow?.slug}`}
+          href={`apps/${workflow?.slug}`}
           target="_blank"
           style={{ textDecoration: "none" }}
         >
