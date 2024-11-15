@@ -33,6 +33,7 @@ const useWorkflow = (workflow: ITemplateWorkflow) => {
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     let createdWorkflow: IWorkflowCreateResponse | undefined;
+    const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
     try {
       createdWorkflow = await createWorkflow(selectedWorkflowId).unwrap();
@@ -44,50 +45,43 @@ const useWorkflow = (workflow: ITemplateWorkflow) => {
           return;
         }
 
-        const nodesRequiringAuthentication = createdWorkflow.nodes.filter(
-          node => (node.parameters?.authentication || oAuthTypeMapping[node.type]) && !node.credentials,
-        );
+        const updatedWorkflow = structuredClone(createdWorkflow);
 
-        if (nodesRequiringAuthentication.length) {
-          const updatedWorkflow = structuredClone(createdWorkflow);
-
-          updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
-
-          const areAllCredentialsAttached = updatedWorkflow.nodes
-            .filter(node => {
-              return node.parameters.authentication || oAuthTypeMapping[node.type];
-            })
-            .every(node => node.credentials);
-
-          // if at least one credential was attached to a node, then we need to update the workflow
-          if (
-            updatedWorkflow.nodes.some(
-              node =>
-                node.credentials && !["n8n-nodes-base.openAi", "n8n-nodes-promptify.promptify"].includes(node.type),
-            )
-          ) {
-            try {
-              updateWorkflow({
-                workflowId: updatedWorkflow.id,
-                data: updatedWorkflow,
-              });
-            } catch (error) {
-              console.error("Error updating workflow:", error);
-            }
+        updatedWorkflow.nodes = updatedWorkflow.nodes.map(node => {
+          if (node.type === "n8n-nodes-promptify.promptify") {
+            return {
+              ...node,
+              parameters: {
+                ...node.parameters,
+                base_url: baseUrl || "",
+              },
+            };
           }
+          return node;
+        });
 
-          if (areAllCredentialsAttached) {
-            dispatch(setAreCredentialsStored(true));
-          } else {
-            dispatch(setAreCredentialsStored(false));
-          }
+        updatedWorkflow.nodes.forEach(node => attachCredentialsToNode(node));
+
+        const areAllCredentialsAttached = updatedWorkflow.nodes
+          .filter(node => node.parameters.authentication || oAuthTypeMapping[node.type])
+          .every(node => node.credentials);
+
+        try {
+          const response = await updateWorkflow({
+            workflowId: updatedWorkflow.id,
+            data: updatedWorkflow,
+          }).unwrap();
+
+          dispatch(setClonedWorkflow(response));
+        } catch (error) {
+          console.error("Error updating workflow:", error);
         }
+
+        dispatch(setAreCredentialsStored(areAllCredentialsAttached));
       }
     } catch (error) {
       createdWorkflow = undefined;
       console.error("Error creating workflow:", error);
-    } finally {
-      dispatch(setClonedWorkflow(createdWorkflow));
     }
 
     return createdWorkflow;
