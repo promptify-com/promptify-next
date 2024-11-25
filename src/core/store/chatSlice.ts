@@ -4,7 +4,7 @@ import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
-import type { IApp } from "@/core/api/apps/types";
+import { IApp } from "@/components/Automation/app/hooks/types";
 
 export type IGeneratingStatus = "pending" | "started" | "generated" | "streaming";
 export interface ExecutionsProps {

@@ -158,3 +158,6 @@ export const extractWebhookPath = (nodes: INode[]) => {
   const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
   return webhookNode?.parameters?.path;
 };
+
+export const cleanCredentialName = (name: string) => name.replace(/Api\s*|Oauth2\s*/gi, "").trim();
+export const nameProvider = (name: string) => `_send__provider__$${name}$__message_`;
