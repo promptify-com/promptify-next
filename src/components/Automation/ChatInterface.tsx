@@ -26,6 +26,7 @@ import RefreshIcon from "@mui/icons-material/RefreshRounded";
 import useCredentials from "./Hooks/useCredentials";
 import { setToast } from "@/core/store/toastSlice";
 import Typography from "@mui/material/Typography";
+import useChat from "./app/hooks/useChatApp";
 
 const currentDate = getCurrentDateFormatted();
 

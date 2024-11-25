@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
+import { resetStates, setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
@@ -22,6 +22,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
 import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
+import useApp from "@/components/Automation/app/hooks/useApp";
 
 interface Props {
   workflow: IWorkflow;
@@ -31,6 +32,19 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { createApp, prepareInputs } = useApp();
+
+  useEffect(() => {
+    if (workflow) {
+      createApp(workflow.id);
+      prepareInputs();
+    }
+
+    return () => {
+      dispatch(resetStates());
+    };
+  }, [workflow]);
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
   const { generatedExecution } = useAppSelector(state => state.executions);

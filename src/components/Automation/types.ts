@@ -12,11 +12,20 @@ interface IParameters {
       stringValue?: string;
     }[];
   };
+  assignments?: {
+    assignments: {
+      id: string;
+      name: string;
+      type: string;
+      value: string;
+    }[];
+  };
 }
 
 export interface INode {
   id: string;
   name: string;
+  iconUrl?: string;
   type: string;
   position: [number, number];
   webhookId: string;
@@ -35,7 +44,7 @@ export interface INode {
   responseMode?: string;
 }
 
-export type NodesFileData = Record<string, Pick<INode, "name" | "type">>;
+export type NodesFileData = Record<string, Pick<INode, "name" | "type" | "iconUrl">>;
 
 interface IConnections {
   [key: string]: [{ node: string; type: string; index: number }][];
@@ -105,6 +114,7 @@ export interface ICredentialInput {
   name: string;
   displayName: string;
   properties: ICredentialProperty[];
+  iconUrl?: string;
 }
 
 export interface INodeCredentials {

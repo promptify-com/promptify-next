@@ -30,6 +30,7 @@
     "@types/react-syntax-highlighter": "^15.5.7",
     "@types/yup": "^0.32.0",
     "axios": "^1.4.0",
+    "date-fns": "^4.1.0",
     "draft-js": "^0.11.7",
     "elkjs": "^0.8.2",
     "embla-carousel-autoplay": "^8.0.0-rc22",
