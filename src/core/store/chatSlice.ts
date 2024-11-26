@@ -23,7 +23,7 @@ export interface ExecutionsProps {
   executionStatus: boolean;
 }
 
-const initialState: ExecutionsProps = {
+export const initialState: ExecutionsProps = {
   answers: [],
   inputs: [],
   params: [],
