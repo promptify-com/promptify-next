@@ -65,6 +65,7 @@ export interface IWorkflow {
   created_by: User;
   data: IData;
   created_at: string;
+  is_schedulable?: boolean;
 }
 
 export interface IWorkflowCreateResponse {

@@ -6,6 +6,8 @@ import type { IWorkflow } from "../types";
 import { IMessage } from "./types";
 import { Typography } from "@mui/material";
 import WorkflowPlaceholder from "../WorkflowPlaceholder";
+import SuggestionChoices from "@/components/Automation/ChatInterface/SuggestionChoices";
+import useChat from "@/components/Automation/app/hooks/useChatApp";
 
 interface Props {
   workflow: IWorkflow;
@@ -16,6 +18,7 @@ interface Props {
 
 function ChatInterface({ workflow, messages, onGenerate, showRunButton }: Props) {
   const { selectedApp } = useAppSelector(state => state.chat);
+  const { handleSubmit, validatingQuery } = useChat();
   return (
     <Stack
       gap={6}
@@ -33,9 +36,16 @@ function ChatInterface({ workflow, messages, onGenerate, showRunButton }: Props)
         <WorkflowPlaceholder />
       )}
       <Stack>
-        {messages.map(msg => (
+        {messages.map((msg, index) => (
           <Fragment key={msg.id}>
             <Typography>{msg.type}</Typography>
+            {index === messages.length - 1 && !validatingQuery && !msg.fromUser && msg.type !== "readyMessage" && (
+              <SuggestionChoices
+                workflow={workflow}
+                onSubmit={handleSubmit}
+                messageType={msg.type}
+              />
+            )}
           </Fragment>
         ))}
       </Stack>
