@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { extractCredentialsInput } from "../helpers";
 import Storage from "@/common/storage";
-import type { ICredential, ICredentialInput, INode, IWorkflowCreateResponse } from "@/components/Automation/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { RootState } from "@/core/store";
 import { useGetUserWorkflowsQuery, useUpdateWorkflowMutation, workflowsApi } from "@/core/api/workflows";
 import { setCredentialsInput, setSelectedApp } from "@/core/store/chatSlice";
-import { IApp } from "@/components/Automation/app/hooks/types";
+import type { ICredential, ICredentialInput, INode, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { IApp } from "@/components/Automation/app/hooks/types";
 
 const useCredentials = () => {
-  const { selectedApp } = useAppSelector((state: RootState) => state.chat);
+  const { selectedApp } = useAppSelector(state => state.chat);
   const dispatch = useAppDispatch();
 
   const [updateApp] = useUpdateWorkflowMutation();
@@ -70,7 +69,7 @@ const useCredentials = () => {
     if (!allWorkflows && selectedApp?.id) {
       const _updatedWorkflow = structuredClone(selectedApp)!;
       let credentialFound = false;
-      _updatedWorkflow.nodes.forEach((node: INode) => {
+      _updatedWorkflow.nodes.forEach(node => {
         if (node.credentials?.[credentialType]) {
           node.credentials[credentialType].name = "to_be_deleted";
           credentialFound = true;

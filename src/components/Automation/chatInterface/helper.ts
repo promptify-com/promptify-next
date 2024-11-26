@@ -1,6 +1,6 @@
 import type { IAnswer, Input, PromptInputType } from "@/core/store/appSlice/types";
 import type { IApp } from "@/core/api/apps/types";
-import type { IMessage } from "@/components/Automation/chatInterface/types";
+import type { IMessage } from "@/components/Automation/ChatInterface/types";
 
 import { format, getDate, parseISO } from "date-fns";
 

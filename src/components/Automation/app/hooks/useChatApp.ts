@@ -2,18 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useSelector, useDispatch } from "react-redux";
 
-import {
-  allRequiredInputsAnswered,
-  createMessage,
-  formatDateWithOrdinal,
-} from "@/components/Automation/chatInterface/helper";
-import { cleanCredentialName, extractWebhookPath, N8N_RESPONSE_REGEX } from "@/components/Automation/app/helpers";
+import { extractWebhookPath, N8N_RESPONSE_REGEX } from "@/components/Automation/app/helpers";
 
 import { RootState } from "@/core/store";
 import { getToken } from "@/common/utils";
 
-// import useChatActions from "@/components/app/hooks/use-chat-actions";
-import type { IMessage } from "@/components/Automation/chatInterface/types";
 import { setToast } from "@/core/store/toastSlice";
 import useApp from "@/components/Automation/app/hooks/useApp";
 import { INode, IWorkflowCreateResponse } from "@/components/Automation/types";
@@ -26,6 +19,12 @@ import {
   setRunInstantly,
 } from "@/core/store/chatSlice";
 import { IApp, IGPTDocumentPayload } from "@/components/Automation/app/hooks/types";
+import { IMessage } from "../../ChatInterface/types";
+import {
+  allRequiredInputsAnswered,
+  createMessage,
+  formatDateWithOrdinal,
+} from "@/components/Automation/ChatInterface/helper";
 
 const useChat = () => {
   const {
@@ -68,6 +67,8 @@ const useChat = () => {
       return () => clearTimeout(timer);
     }
   }, [hasInitialized]);
+
+  console.log(messages);
 
   const showRunButton = useMemo((): boolean => {
     return (
