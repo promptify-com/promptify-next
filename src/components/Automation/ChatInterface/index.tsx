@@ -5,6 +5,7 @@ import React, { Fragment } from "react";
 import type { IWorkflow } from "../types";
 import { IMessage } from "./types";
 import { Typography } from "@mui/material";
+import WorkflowPlaceholder from "../WorkflowPlaceholder";
 
 interface Props {
   workflow: IWorkflow;
@@ -20,14 +21,16 @@ function ChatInterface({ workflow, messages, onGenerate, showRunButton }: Props)
       gap={6}
       px={{ xs: "8px", md: "40px" }}
     >
-      {selectedApp && (
+      {workflow ? (
         <TemplateDetailsCard
           title={workflow.name}
-          categoryName={selectedApp.category?.name ?? ""}
+          categoryName={selectedApp?.category?.name ?? ""}
           thumbnail={workflow.image ?? ""}
           tags={[]}
           description={workflow.description ?? ""}
         />
+      ) : (
+        <WorkflowPlaceholder />
       )}
       <Stack>
         {messages.map(msg => (

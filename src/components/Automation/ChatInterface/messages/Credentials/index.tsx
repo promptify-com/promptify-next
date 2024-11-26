@@ -1,55 +1,112 @@
-import Paper from "@mui/material/Paper";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import useCredentials from "@/components/Automation/Hooks/useCredentials";
+import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
+import Credentials from "@/components/Prompt/Common/Chat/Inputs/Credentials";
+import { CardMedia, Typography } from "@mui/material";
+import Image from "@/components/design-system/Image";
+import { cleanCredentialName } from "@/components/Automation/helpers";
+import CredentialCard from "./CredentialCard";
 
-import { useAppSelector } from "@/hooks/useStore";
-import SystemAvatar from "@/components/Automation/ChatInterface/SystemAvatar";
-import CredentialsContainer from "@/components/Automation/ChatInterface/messages/Credentials/CredentialsContainer";
+interface Props {
+  message: string;
+  workflow: IWorkflow;
+  isScheduled?: boolean;
+  scrollToBottom?: () => void;
+}
 
-function MessageCredentials() {
-  const credentialInputs = useAppSelector(state => state.chat.credentialsInput);
+function CredentialsContainer({ message, workflow, scrollToBottom }: Props) {
+  const [localInputs, setLocalInputs] = useState<ICredentialInput[]>([]);
 
-  if (!credentialInputs?.length) {
-    return null;
-  }
+  const { extractCredentialsInputFromNodes, checkCredentialInserted } = useCredentials();
+
+  const prepareCredential = async () => {
+    const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
+
+    setLocalInputs(credentialsInput);
+  };
+
+  useEffect(() => {
+    prepareCredential();
+    scrollToBottom?.();
+  }, [workflow]);
+
   return (
-    <Paper
-      sx={{
-        p: 2,
-        borderRadius: "12px",
-        border: "1px solid",
-        borderColor: "primary.main",
-        maxWidth: 700,
-        bgcolor: "#fff",
-      }}
+    <Stack
+      gap={4}
+      minHeight={"200px"}
     >
+      {message && (
+        <Typography
+          fontSize={16}
+          fontWeight={500}
+          color={"common.black"}
+        >
+          {message}
+        </Typography>
+      )}
       <Stack
-        direction="row"
-        spacing={2}
+        gap={2}
+        minWidth={{ md: "600px" }}
       >
-        <SystemAvatar />
-        <Stack sx={{ width: "100%" }}>
-          <Typography
-            variant="caption"
-            fontWeight={700}
-            color="primary.main"
-            sx={{ textTransform: "uppercase" }}
+        {localInputs.map(input => (
+          <Stack
+            key={input.name}
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={2}
+            sx={{
+              p: "24px",
+              borderRadius: "16px",
+              border: "1px solid",
+              borderColor: checkCredentialInserted(input) ? "#4EB972" : "#E9E7EC",
+              bgcolor: checkCredentialInserted(input) ? "#F2FFF7" : "#F8F7FF",
+            }}
           >
-            Workflow Credentials (Required)
-          </Typography>
-          <Typography
-            variant="caption"
-            color="text.primary"
-          >
-            Please connect the following credentials for the workflow:
-          </Typography>
-          <Stack mt={2}>
-            <CredentialsContainer showMessage={false} />
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
+            >
+              <CardMedia
+                sx={{
+                  width: 22,
+                  height: 22,
+                  p: "9px",
+                  borderRadius: "50%",
+                  border: "1px solid",
+                  borderColor: "#E9E7EC",
+                  bgcolor: "#FFF",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  src={
+                    `${process.env.NEXT_PUBLIC_N8N_CHAT_BASE_URL}/${input.iconUrl}` ||
+                    require("@/assets/images/default-avatar.jpg")
+                  }
+                  alt={input.displayName}
+                  style={{ objectFit: "contain", width: "100%", height: "100%" }}
+                />
+              </CardMedia>
+              <Typography
+                fontSize={16}
+                fontWeight={500}
+                color={"onSurface"}
+              >
+                {cleanCredentialName(input.displayName)}
+              </Typography>
+            </Stack>
+
+            <CredentialCard input={input} />
           </Stack>
-        </Stack>
+        ))}
       </Stack>
-    </Paper>
+    </Stack>
   );
 }
 
-export default MessageCredentials;
+export default CredentialsContainer;

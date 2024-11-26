@@ -99,6 +99,22 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "put",
         }),
       }),
+
+      exportWorkflow: builder.mutation<ResponseType, { content: string; fileType: "word" | "pdf" }>({
+        query: ({ content, fileType }: { content: string; fileType: "word" | "pdf" }) => {
+          const contentType = fileType === "pdf" ? "application/pdf" : "application/msword";
+          return {
+            url: `/api/n8n/workflows/export?file_format=${fileType}`,
+            method: "post",
+            headers: {
+              "Content-Type": contentType,
+            },
+            data: content,
+            responseType: "arraybuffer",
+            keepUnusedDataFor: 1,
+          };
+        },
+      }),
     };
   },
 });
@@ -117,4 +133,5 @@ export const {
   useGetUserWorkflowsQuery,
   usePauseWorkflowMutation,
   useResumeWorkflowMutation,
+  useExportWorkflowMutation,
 } = workflowsApi;
