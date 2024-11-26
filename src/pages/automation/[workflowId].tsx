@@ -27,7 +27,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
   const { createApp, prepareInputs } = useApp();
 
-  const { messages, handleSubmit, validatingQuery } = useChat();
+  const { messages, showRunButton, runWorkflow, validatingQuery, handleSubmit } = useChat();
 
   useEffect(() => {
     if (workflow) {
@@ -58,7 +58,12 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
           justifyContent={"flex-end"}
           overflow={"auto"}
         >
-          <ChatInterface workflow={workflow} />
+          <ChatInterface
+            workflow={workflow}
+            messages={messages}
+            showRunButton={showRunButton}
+            onGenerate={runWorkflow}
+          />
         </Stack>
 
         {currentUser?.id ? (
@@ -88,7 +93,6 @@ export async function getServerSideProps({ params }: any) {
   try {
     const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
 
-    console.log(res);
     const workflow: IWorkflow = res.data;
 
     return {
