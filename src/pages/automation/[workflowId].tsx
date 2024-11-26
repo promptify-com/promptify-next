@@ -13,6 +13,7 @@ import useApp from "@/components/Automation/app/hooks/useApp";
 
 import type { IWorkflow } from "@/components/Automation/types";
 import useChat from "@/components/Automation/app/hooks/useChatApp";
+import ChatInterface from "@/components/Automation/ChatInterface/index";
 
 interface Props {
   workflow: IWorkflow;
@@ -56,6 +57,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
           justifyContent={"flex-end"}
           overflow={"auto"}
         >
+          <ChatInterface workflow={workflow} />
           {/* <ChatInterface
               template={workflowAsTemplate as unknown as Templates}
               messages={messages}
@@ -93,6 +95,8 @@ export async function getServerSideProps({ params }: any) {
   const { workflowId } = params;
   try {
     const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
+
+    console.log(res);
     const workflow: IWorkflow = res.data;
 
     return {
