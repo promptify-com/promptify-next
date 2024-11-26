@@ -443,7 +443,7 @@ const useChat = ({ workflow }: Props) => {
           );
         }
         return;
-      case "api_instructions":
+      case "api_instruction":
         if (
           (!inputs.length && !requireCredentials) ||
           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
