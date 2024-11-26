@@ -14,6 +14,7 @@ import useApp from "@/components/Automation/app/hooks/useApp";
 import type { IWorkflow } from "@/components/Automation/types";
 import useChat from "@/components/Automation/app/hooks/useChatApp";
 import ChatInterface from "@/components/Automation/ChatInterface/index";
+import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 
 interface Props {
   workflow: IWorkflow;
@@ -26,7 +27,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
   const { createApp, prepareInputs } = useApp();
 
-  const { messages } = useChat();
+  const { messages, handleSubmit, validatingQuery } = useChat();
 
   useEffect(() => {
     if (workflow) {
@@ -58,24 +59,15 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
           overflow={"auto"}
         >
           <ChatInterface workflow={workflow} />
-          {/* <ChatInterface
-              template={workflowAsTemplate as unknown as Templates}
-              messages={messages}
-              showGenerate={showGenerate}
-              onGenerate={executeWorkflow}
-              isValidating={isValidatingAnswer}
-              processData={processData}
-            /> */}
         </Stack>
 
         {currentUser?.id ? (
           <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
-            {/* <ChatInput
-                onSubmit={validateVary}
-                disabled={isValidatingAnswer || !areCredentialsStored}
-                isValidating={isValidatingAnswer}
-             
-              /> */}
+            <ChatInput
+              onSubmit={handleSubmit}
+              disabled={validatingQuery}
+              isValidating={validatingQuery}
+            />
           </Stack>
         ) : (
           <Stack

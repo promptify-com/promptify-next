@@ -1,8 +1,10 @@
-import type { IAnswer, Input, PromptInputType } from "@/core/store/appSlice/types";
-import type { IApp } from "@/core/api/apps/types";
-import type { IMessage } from "@/components/Automation/ChatInterface/types";
+import { IAnswer } from "@/components/Prompt/Types/chat";
+import { IPromptInput } from "@/common/types/prompt";
+import { IMessage } from "@/components/Automation/ChatInterface/types";
+import { IApp } from "@/components/Automation/app/hooks/types";
 
 import { format, getDate, parseISO } from "date-fns";
+import { PromptInputType } from "@/components/Prompt/Types";
 
 export const randomId = () => Math.floor(Math.random() * 1000000000);
 
@@ -31,7 +33,7 @@ export const createMessage = ({
   choices,
 });
 
-export function allRequiredInputsAnswered(inputs: Input[], answers: IAnswer[]): boolean {
+export function allRequiredInputsAnswered(inputs: IPromptInput[], answers: IAnswer[]): boolean {
   const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
 
   if (!requiredQuestionNames.length) {

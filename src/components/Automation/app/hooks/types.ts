@@ -175,7 +175,7 @@ export interface INodeConnection {
   }[][];
 }
 
-interface ICategory {
+export interface ICategory {
   name: string;
   description: string;
   slug: null | string;

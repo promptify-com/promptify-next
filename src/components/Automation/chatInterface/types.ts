@@ -1,5 +1,5 @@
-import { IApp } from "@/core/api/apps/types";
-import type { IAnswer, ITemplateApp } from "@/core/store/appSlice/types";
+import { IApp, ITemplateApp } from "@/components/Automation/app/hooks/types";
+import { IAnswer } from "@/components/Prompt/Types/chat";
 
 export interface IMessage {
   id?: number;
@@ -17,7 +17,7 @@ export interface IMessage {
 
 type MessageDataType = ITemplateApp[] | IApp | IAnswer[];
 
-export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file" | "credentials" | "audio";
+export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file" | "credentials" | "audio" | "form";
 
 export type MessageType =
   | "text"

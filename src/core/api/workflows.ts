@@ -87,6 +87,18 @@ export const workflowsApi = baseApi.injectEndpoints({
         }),
         keepUnusedDataFor: 21600,
       }),
+      pauseWorkflow: builder.mutation<void, { workflowId: string }>({
+        query: ({ workflowId }) => ({
+          url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/pause`,
+          method: "put",
+        }),
+      }),
+      resumeWorkflow: builder.mutation<void, { workflowId: string }>({
+        query: ({ workflowId }) => ({
+          url: `/api/n8n/workflows/${workflowId}/toggle-periodic-task/resume`,
+          method: "put",
+        }),
+      }),
     };
   },
 });
@@ -103,4 +115,6 @@ export const {
   useGetWorkflowQuery,
   useSaveDocumentMutation,
   useGetUserWorkflowsQuery,
+  usePauseWorkflowMutation,
+  useResumeWorkflowMutation,
 } = workflowsApi;

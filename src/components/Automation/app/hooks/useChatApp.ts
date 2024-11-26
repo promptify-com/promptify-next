@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useSelector, useDispatch } from "react-redux";
 
-import { extractWebhookPath, N8N_RESPONSE_REGEX } from "@/components/Automation/app/helpers";
+import { cleanCredentialName, extractWebhookPath, N8N_RESPONSE_REGEX } from "@/components/Automation/app/helpers";
 
 import { RootState } from "@/core/store";
 import { getToken } from "@/common/utils";
@@ -19,14 +19,24 @@ import {
   setRunInstantly,
 } from "@/core/store/chatSlice";
 import { IApp, IGPTDocumentPayload } from "@/components/Automation/app/hooks/types";
-import { IMessage } from "../../ChatInterface/types";
+import { IMessage } from "@/components/Automation/ChatInterface/types";
 import {
   allRequiredInputsAnswered,
   createMessage,
   formatDateWithOrdinal,
 } from "@/components/Automation/ChatInterface/helper";
+import useChatActions from "@/components/Automation/app/hooks/useChatActions";
 
 const useChat = () => {
+  const dispatch = useDispatch();
+  const { executeN8nApp } = useApp();
+  const [updateApp] = useUpdateWorkflowMutation();
+  const [saveDocument] = useSaveDocumentMutation();
+  const [validatingQuery, setValidatingQuery] = useState(false);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [buttonRenderDelay, setButtonRenderDelay] = useState(false);
+
   const {
     selectedApp,
     inputs,
@@ -38,14 +48,9 @@ const useChat = () => {
     executionStatus,
   } = useSelector((state: RootState) => state.chat);
 
-  const dispatch = useDispatch();
-  const { executeN8nApp } = useApp();
-  const [updateApp] = useUpdateWorkflowMutation();
-  const [saveDocument] = useSaveDocumentMutation();
-  const [validatingQuery, setValidatingQuery] = useState(false);
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [hasInitialized, setHasInitialized] = useState(false);
-  const [buttonRenderDelay, setButtonRenderDelay] = useState(false);
+  const { handlePause, handleResume } = useChatActions({
+    setMessages,
+  });
 
   const initialMessages = () => {
     const initialMessages: IMessage[] = [];
@@ -210,107 +215,121 @@ const useChat = () => {
     return false;
   };
 
-  //   const renderMessage = async (message: string) => {
-  //     switch (message) {
-  //       case "configure_workflow":
-  //         const configMessages: IMessage[] = [];
-  //         if (credentialInputs?.length) {
-  //           const credentialsMessage = createMessage({
-  //             type: "credentials",
-  //             text: `Connect your ${credentialInputs.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
-  //           });
-  //           configMessages.push(credentialsMessage);
-  //         } else if (inputs.length > 0) {
-  //           const inputsMessage = createMessage({
-  //             type: "workflow_data",
-  //             text: ``,
-  //           });
-  //           configMessages.push(inputsMessage);
-  //         } else {
-  //           setMessages(prevMessages =>
-  //             prevMessages.concat(
-  //               createMessage({
-  //                 text: "Your AI app does not require any configuration!",
-  //                 type: "text",
-  //               }),
-  //             ),
-  //           );
-  //           return;
-  //         }
-  //         setMessages(prevMessages => prevMessages.concat(configMessages));
-  //         return;
+  const insertScheduleMessages = () => {
+    const scheduleMessages: IMessage[] = [];
 
-  //       case "run_workflow":
-  //         if (
-  //           (!inputs.length && !credentialInputs?.length) ||
-  //           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
-  //           (!!credentialInputs && areCredentialsStored)
-  //         ) {
-  //           if (!runInstantly) {
-  //             dispatch(setRunInstantly(true));
-  //           }
-  //           setMessages(prevMessages =>
-  //             prevMessages
-  //               .filter(msg => msg.type !== "readyMessage")
-  //               .concat(createMessage({ type: "readyMessage", text: "" })),
-  //           );
-  //         } else {
-  //           setMessages(prevMessages =>
-  //             prevMessages.concat(
-  //               createMessage({
-  //                 type: "text",
-  //                 text: "Please make sure you configure your AI App!",
-  //               }),
-  //             ),
-  //           );
-  //         }
-  //         return;
-  //       case "api_instructions":
-  //         if (
-  //           (!inputs.length && !credentialInputs?.length) ||
-  //           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
-  //           (!!credentialInputs && areCredentialsStored)
-  //         ) {
-  //           dispatch(setActiveContents("api_instructions"));
-  //         } else {
-  //           setMessages(prevMessages =>
-  //             prevMessages.concat(
-  //               createMessage({
-  //                 type: "text",
-  //                 text: "Please make sure you configure your AI App!",
-  //               }),
-  //             ),
-  //           );
-  //         }
-  //         return;
-  //       case "pause_workflow":
-  //         await handlePause();
-  //         return;
+    if (selectedApp?.template_workflow?.is_schedulable) {
+      const frequencyMessage = createMessage({
+        type: "text",
+        text: "How often do you want to repeat this AI App?",
+      });
 
-  //       case "resume_workflow":
-  //         await handleResume();
-  //         return;
+      scheduleMessages.push(frequencyMessage);
 
-  //       case "schedule_workflow":
-  //         if (selectedApp?.template_workflow.is_schedulable) {
-  //           dispatch(setActiveContents("schedule"));
-  //           return;
-  //         }
-  //         setMessages(prevMessages =>
-  //           prevMessages.concat(
-  //             createMessage({
-  //               type: "text",
-  //               text: "This app is not schedulable!",
-  //             }),
-  //           ),
-  //         );
-  //         return;
+      const isHourly = selectedApp?.schedule?.frequency === "hourly";
 
-  //       default:
-  //         setMessages(prevMessages => prevMessages.concat(createMessage({ type: "text", text: message })));
-  //         return;
-  //     }
-  //   };
+      if (!isHourly) {
+        const scheduleTimeMessage = createMessage({
+          type: "text",
+          text: "How often do you want to repeat this AI App?",
+        });
+
+        scheduleMessages.push(scheduleTimeMessage);
+      }
+
+      if (selectedApp?.template_workflow?.has_output_notification) {
+        const scheduleProvidersMessage = createMessage({
+          type: "text",
+          text: "How often do you want to repeat this AI App?",
+        });
+        scheduleMessages.push(scheduleProvidersMessage);
+      }
+    } else {
+      scheduleMessages.push(
+        createMessage({ type: "text", text: "The AI app you are using is not eligible for scheduling!" }),
+      );
+    }
+
+    setMessages(prev => prev.concat(scheduleMessages));
+  };
+
+  const renderMessage = async (message: string) => {
+    switch (message) {
+      case "configure_workflow":
+        const configMessages: IMessage[] = [];
+        if (credentialsInput.length) {
+          const credentialsMessage = createMessage({
+            type: "credentials",
+            text: `Connect your ${credentialsInput.map(cred => cleanCredentialName(cred.displayName)).join(", ")}:`,
+          });
+          configMessages.push(credentialsMessage);
+        } else if (inputs.length > 0) {
+          const inputsMessage = createMessage({
+            type: "form",
+            text: ``,
+          });
+          configMessages.push(inputsMessage);
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(
+              createMessage({ text: "Your AI app does not require any configuration!", type: "text" }),
+            ),
+          );
+          return;
+        }
+
+        setMessages(prevMessages => prevMessages.concat(configMessages));
+
+        return;
+      case "schedule_workflow":
+        insertScheduleMessages();
+        return;
+
+      case "run_workflow":
+        if (!runInstantly) {
+          dispatch(setRunInstantly(true));
+        }
+        if (
+          (!inputs.length && !credentialsInput?.length) ||
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
+          (!!credentialsInput && credentialsInput.length > 0 && areCredentialsStored)
+        ) {
+          setMessages(prevMessages =>
+            prevMessages
+              .filter(msg => msg.type !== "readyMessage")
+              .concat(createMessage({ type: "readyMessage", text: "" })),
+          );
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
+          );
+        }
+        return;
+      case "api_instruction":
+        if (
+          (!inputs.length && !credentialsInput?.length) ||
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)) ||
+          (!!credentialsInput && credentialsInput.length > 0 && areCredentialsStored)
+        ) {
+          setMessages(prevMessages => prevMessages.concat(createMessage({ type: "API_instructions", text: "" })));
+        } else {
+          setMessages(prevMessages =>
+            prevMessages.concat(createMessage({ type: "text", text: "Please make sure you configure your AI App!" })),
+          );
+        }
+        return;
+      case "pause_workflow":
+        await handlePause();
+        return;
+
+      case "resume_workflow":
+        await handleResume();
+        return;
+      default:
+        setMessages(prevMessages => prevMessages.concat(createMessage({ type: "text", text: message })));
+        return;
+    }
+  };
 
   useEffect(() => {
     if (generatedExecution?.data?.length && generatedExecution?.hasNext === false) {
@@ -373,7 +392,7 @@ const useChat = () => {
           }
 
           if (message === "[COMPLETED]") {
-            // renderMessage(output);
+            renderMessage(output);
           }
         } catch (error) {
           const failMessageText = "Running your AI App failed due to an unexpected error. Please try again later.";

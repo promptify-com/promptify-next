@@ -1,4 +1,6 @@
 import type { User, UserPartial } from "@/core/api/dto/user";
+import type { ICategory } from "@/components/Automation/app/hooks/types";
+import { Tag } from "@/core/api/dto/templates";
 
 interface IParameters {
   path?: string;

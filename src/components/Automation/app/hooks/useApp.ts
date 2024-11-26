@@ -98,7 +98,7 @@ const useApp = () => {
 
         const appCopy = structuredClone(createdApp);
         appCopy.nodes = await processNodeInputs(appCopy.nodes as INode[]);
-        console.log({ appCopy });
+
         try {
           await updateAppMutation({
             workflowId: createdApp.id,
