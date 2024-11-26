@@ -125,7 +125,7 @@ export default function GPT({ workflow = {} as ITemplateWorkflow }: Props) {
         >
           <Header workflow={selectedWorkflow} />
           <Stack
-            pb={{ md: 2, lg: 4 }}
+            pb={1.5}
             direction={{ xs: "column-reverse", md: "row" }}
             justifyContent={"space-between"}
           >
