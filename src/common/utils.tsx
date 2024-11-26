@@ -46,14 +46,13 @@ export const getPathURL = () => {
   return path;
 };
 
-
 export const getBasicToken = async () => {
   try {
-    let basicToken = SessionStorage.get("basic_token")
+    let basicToken = SessionStorage.get("basic_token");
     if (basicToken) return { token: basicToken };
     const response = await authClient.get("/api/n8n/users/basic_token/");
-    basicToken = response.data.basic_token as string
-    SessionStorage.set('basic_token',basicToken)
+    basicToken = response.data.basic_token as string;
+    SessionStorage.set("basic_token", basicToken);
     return { token: basicToken };
   } catch (error) {
     return { token: "" };
