@@ -30,7 +30,7 @@ export interface INode {
   iconUrl?: string;
   type: string;
   position: [number, number];
-  webhookId: string;
+  webhookId?: string;
   parameters: IParameters;
   typeVersion: number;
   credentials?: INodeCredentials;

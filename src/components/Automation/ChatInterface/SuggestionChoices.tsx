@@ -54,7 +54,7 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
         gap: "8px",
         flexWrap: "wrap",
         mb: "10px",
-        mt: messageType === "credentials" ? "-50px" : "-50px",
+        mt: messageType === "credentials" ? "-50px" : "-30px",
         ...(messageType !== "credentials" && messageType !== "schedule_time" && messageType !== "API_instructions"
           ? { ml: "60px" }
           : {}),

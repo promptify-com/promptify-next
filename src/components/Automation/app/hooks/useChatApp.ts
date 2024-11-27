@@ -26,68 +26,45 @@ import {
   formatDateWithOrdinal,
 } from "@/components/Automation/ChatInterface/helper";
 import useChatActions from "@/components/Automation/app/hooks/useChatActions";
+import { useAppSelector } from "@/hooks/useStore";
 
-const useChat = () => {
+const useChat = ({ appTitle }: { appTitle: string }) => {
   const dispatch = useDispatch();
   const { executeN8nApp } = useApp();
   const [updateApp] = useUpdateWorkflowMutation();
   const [saveDocument] = useSaveDocumentMutation();
   const [validatingQuery, setValidatingQuery] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [hasInitialized, setHasInitialized] = useState(false);
-  const [buttonRenderDelay, setButtonRenderDelay] = useState(false);
 
-  const {
-    selectedApp,
-    inputs,
-    answers,
-    credentialsInput,
-    areCredentialsStored,
-    generatedExecution,
-    runInstantly,
-    executionStatus,
-  } = useSelector((state: RootState) => state.chat);
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { selectedApp, inputs, answers, credentialsInput, areCredentialsStored, generatedExecution, runInstantly } =
+    useSelector((state: RootState) => state.chat);
 
   const { handlePause, handleResume } = useChatActions({
     setMessages,
   });
 
   const initialMessages = () => {
-    const initialMessages: IMessage[] = [];
+    const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${appTitle}`;
 
-    if (!!credentialsInput?.length) {
-      initialMessages.push(createMessage({ type: "credentials" }));
-    }
-    if (!!inputs?.length) {
-      initialMessages.push(createMessage({ type: "workflow_data" }));
-    }
+    const initialMessage = createMessage({ text: greeting, type: "text" });
+    const initialMessages: IMessage[] = [initialMessage];
+
     setMessages(initialMessages);
-
-    setHasInitialized(true);
   };
-
-  useEffect(() => {
-    if (hasInitialized) {
-      const timer = setTimeout(() => setButtonRenderDelay(true), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [hasInitialized]);
-
-  console.log(messages);
 
   const showRunButton = useMemo((): boolean => {
     return (
-      hasInitialized &&
-      buttonRenderDelay &&
-      ((!inputs.length && !credentialsInput?.length) ||
-        (credentialsInput && credentialsInput.length > 0 && areCredentialsStored) ||
-        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)))
+      (!inputs.length && !credentialsInput?.length) ||
+      (credentialsInput && credentialsInput.length > 0 && areCredentialsStored) ||
+      (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers))
     );
-  }, [hasInitialized, inputs, answers, areCredentialsStored, credentialsInput]);
+  }, [inputs, answers, areCredentialsStored, credentialsInput]);
 
   useEffect(() => {
     initialMessages();
-  }, [inputs, credentialsInput]);
+  }, []);
 
   const setGeneratingStatusHandler = (status: IGeneratingStatus) => {
     dispatch(setGeneratingStatus(status));
