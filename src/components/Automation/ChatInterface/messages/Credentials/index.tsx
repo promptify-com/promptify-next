@@ -1,55 +1,46 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
-import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
-import Credentials from "@/components/Prompt/Common/Chat/Inputs/Credentials";
-import { CardMedia, Typography } from "@mui/material";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+
 import Image from "@/components/design-system/Image";
 import { cleanCredentialName } from "@/components/Automation/helpers";
-import CredentialCard from "./CredentialCard";
+import CredentialCard from "@/components/Automation/ChatInterface/messages/Credentials/CredentialCard";
+import { useAppSelector } from "@/hooks/useStore";
+import useCredentials from "@/components/Automation/app/hooks/useCrendentials";
+import type { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
-  message: string;
   workflow: IWorkflow;
-  isScheduled?: boolean;
   scrollToBottom?: () => void;
 }
 
-function CredentialsContainer({ message, workflow, scrollToBottom }: Props) {
-  const [localInputs, setLocalInputs] = useState<ICredentialInput[]>([]);
+function CredentialsContainer({ workflow, scrollToBottom }: Props) {
+  const { checkCredentialInserted } = useCredentials();
 
-  const { extractCredentialsInputFromNodes, checkCredentialInserted } = useCredentials();
-
-  const prepareCredential = async () => {
-    const credentialsInput = await extractCredentialsInputFromNodes(workflow.data.nodes);
-
-    setLocalInputs(credentialsInput);
-  };
+  const credentials = useAppSelector(state => state.chat.credentialsInput);
 
   useEffect(() => {
-    prepareCredential();
     scrollToBottom?.();
   }, [workflow]);
 
   return (
     <Stack
       gap={4}
-      minHeight={"200px"}
+      maxWidth={"700px"}
     >
-      {message && (
-        <Typography
-          fontSize={16}
-          fontWeight={500}
-          color={"common.black"}
-        >
-          {message}
-        </Typography>
-      )}
+      <Typography
+        fontSize={16}
+        fontWeight={500}
+        color={"common.black"}
+      >
+        Please connect the following credentials for the workflow:
+      </Typography>
       <Stack
         gap={2}
         minWidth={{ md: "600px" }}
       >
-        {localInputs.map(input => (
+        {credentials.map(input => (
           <Stack
             key={input.name}
             direction={"row"}

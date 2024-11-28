@@ -3,14 +3,6 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useSelector, useDispatch } from "react-redux";
 
 import { cleanCredentialName, extractWebhookPath, N8N_RESPONSE_REGEX } from "@/components/Automation/app/helpers";
-
-import { RootState } from "@/core/store";
-import { getToken } from "@/common/utils";
-
-import { setToast } from "@/core/store/toastSlice";
-import useApp from "@/components/Automation/app/hooks/useApp";
-import { INode, IWorkflowCreateResponse } from "@/components/Automation/types";
-import { useSaveDocumentMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import {
   IGeneratingStatus,
   setExecutionStatus,
@@ -18,21 +10,21 @@ import {
   setGeneratingStatus,
   setRunInstantly,
 } from "@/core/store/chatSlice";
-import { IApp, IGPTDocumentPayload } from "@/components/Automation/app/hooks/types";
-import { IMessage } from "@/components/Automation/ChatInterface/types";
-import {
-  allRequiredInputsAnswered,
-  createMessage,
-  formatDateWithOrdinal,
-} from "@/components/Automation/ChatInterface/helper";
+import { RootState } from "@/core/store";
+import { getToken } from "@/common/utils";
+import useApp from "@/components/Automation/app/hooks/useApp";
+import { INode, IWorkflowCreateResponse } from "@/components/Automation/types";
+import { useUpdateWorkflowMutation } from "@/core/api/workflows";
+import { allRequiredInputsAnswered, createMessage } from "@/components/Automation/ChatInterface/helper";
 import useChatActions from "@/components/Automation/app/hooks/useChatActions";
 import { useAppSelector } from "@/hooks/useStore";
+import type { IApp } from "@/components/Automation/app/hooks/types";
+import type { IMessage } from "@/components/Automation/ChatInterface/types";
 
 const useChat = ({ appTitle }: { appTitle: string }) => {
   const dispatch = useDispatch();
   const { executeN8nApp } = useApp();
   const [updateApp] = useUpdateWorkflowMutation();
-  const [saveDocument] = useSaveDocumentMutation();
   const [validatingQuery, setValidatingQuery] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
@@ -155,80 +147,43 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
     setMessages(prev => prev.filter(msg => msg.type !== "readyMessage").concat(failMessage));
   };
 
-  const saveGPTDocument = async (executionWorkflow: IApp, content: string) => {
-    if (!executionWorkflow) {
-      return false;
-    }
+  // const insertScheduleMessages = () => {
+  //   const scheduleMessages: IMessage[] = [];
 
-    const payload: IGPTDocumentPayload = {
-      output: content,
-      title: executionWorkflow.name + ", " + formatDateWithOrdinal(new Date().toISOString()),
-      workflow_id: executionWorkflow.id,
-    };
+  //   if (selectedApp?.template_workflow?.is_schedulable) {
+  //     const frequencyMessage = createMessage({
+  //       type: "text",
+  //       text: "How often do you want to repeat this AI App?",
+  //     });
 
-    try {
-      await saveDocument({ payload }).unwrap();
-      dispatch(
-        setToast({
-          message: "Document saved",
-          severity: "info",
-          duration: 6000,
-        }),
-      );
+  //     scheduleMessages.push(frequencyMessage);
 
-      return true;
-    } catch (error) {
-      dispatch(
-        setToast({
-          message: "Something went wrong, please try again! ",
-          severity: "error",
-          duration: 6000,
-          position: { vertical: "bottom", horizontal: "right" },
-        }),
-      );
-      console.error(error);
-    }
+  //     const isHourly = selectedApp?.schedule?.frequency === "hourly";
 
-    return false;
-  };
+  //     if (!isHourly) {
+  //       const scheduleTimeMessage = createMessage({
+  //         type: "text",
+  //         text: "How often do you want to repeat this AI App?",
+  //       });
 
-  const insertScheduleMessages = () => {
-    const scheduleMessages: IMessage[] = [];
+  //       scheduleMessages.push(scheduleTimeMessage);
+  //     }
 
-    if (selectedApp?.template_workflow?.is_schedulable) {
-      const frequencyMessage = createMessage({
-        type: "text",
-        text: "How often do you want to repeat this AI App?",
-      });
+  //     if (selectedApp?.template_workflow?.has_output_notification) {
+  //       const scheduleProvidersMessage = createMessage({
+  //         type: "text",
+  //         text: "How often do you want to repeat this AI App?",
+  //       });
+  //       scheduleMessages.push(scheduleProvidersMessage);
+  //     }
+  //   } else {
+  //     scheduleMessages.push(
+  //       createMessage({ type: "text", text: "The AI app you are using is not eligible for scheduling!" }),
+  //     );
+  //   }
 
-      scheduleMessages.push(frequencyMessage);
-
-      const isHourly = selectedApp?.schedule?.frequency === "hourly";
-
-      if (!isHourly) {
-        const scheduleTimeMessage = createMessage({
-          type: "text",
-          text: "How often do you want to repeat this AI App?",
-        });
-
-        scheduleMessages.push(scheduleTimeMessage);
-      }
-
-      if (selectedApp?.template_workflow?.has_output_notification) {
-        const scheduleProvidersMessage = createMessage({
-          type: "text",
-          text: "How often do you want to repeat this AI App?",
-        });
-        scheduleMessages.push(scheduleProvidersMessage);
-      }
-    } else {
-      scheduleMessages.push(
-        createMessage({ type: "text", text: "The AI app you are using is not eligible for scheduling!" }),
-      );
-    }
-
-    setMessages(prev => prev.concat(scheduleMessages));
-  };
+  //   setMessages(prev => prev.concat(scheduleMessages));
+  // };
 
   const renderMessage = async (message: string) => {
     switch (message) {
@@ -258,9 +213,9 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
         setMessages(prevMessages => prevMessages.concat(configMessages));
 
         return;
-      case "schedule_workflow":
-        insertScheduleMessages();
-        return;
+      // case "schedule_workflow":
+      //   insertScheduleMessages();
+      //   return;
 
       case "run_workflow":
         if (!runInstantly) {
@@ -423,7 +378,6 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
     retryRunWorkflow,
     handleSubmit,
     validatingQuery,
-    saveGPTDocument,
     showRunButton,
   };
 };

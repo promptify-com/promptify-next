@@ -17,7 +17,6 @@ import CheckIcon from "@mui/icons-material/Check";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAreCredentialsStored, setSelectedApp } from "@/core/store/chatSlice";
-import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import {
   useCreateCredentialsMutation,
@@ -26,7 +25,8 @@ import {
   workflowsApi,
 } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
-import type { ICredentialInput, ICredentialProperty } from "@/components/Automation/types";
+import type { ICredentialInput, ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
+import useCredentials from "@/components/Automation/app/hooks/useCrendentials";
 
 interface Props {
   input: ICredentialInput;
@@ -124,8 +124,8 @@ function CredentialCard({ input }: Props) {
 
       try {
         updateWorkflow({
-          workflowId: Number(selectedApp.id),
-          data: _updatedApp,
+          workflowId: _updatedApp.id,
+          data: _updatedApp as unknown as IWorkflowCreateResponse,
         });
         dispatch(setSelectedApp(_updatedApp));
       } catch (error) {
@@ -334,7 +334,7 @@ function CredentialCard({ input }: Props) {
               onClick={async e => {
                 e.preventDefault();
                 deleteCredential(_credential?.id);
-                await updateWorkflowAfterCredentialsDeletion(_credential.type);
+                await updateWorkflowAfterCredentialsDeletion(_credential.type, false);
                 dispatch(
                   setToast({
                     message: "Credential was successfully deleted.",

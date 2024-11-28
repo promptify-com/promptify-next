@@ -27,7 +27,9 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
   const { createApp, prepareInputs } = useApp();
 
-  const { messages, showRunButton, runWorkflow, validatingQuery, handleSubmit } = useChat({ appTitle: workflow.name });
+  const { messages, showRunButton, runWorkflow, validatingQuery, handleSubmit, retryRunWorkflow } = useChat({
+    appTitle: workflow.name,
+  });
 
   useEffect(() => {
     if (workflow) {
@@ -65,6 +67,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
             onGenerate={runWorkflow}
             validateQuery={validatingQuery}
             handleSubmit={handleSubmit}
+            retryWorkflow={retryRunWorkflow}
           />
         </Stack>
 

@@ -12,7 +12,7 @@ const useCredentials = () => {
   const dispatch = useAppDispatch();
 
   const [updateApp] = useUpdateWorkflowMutation();
-  const { refetch: getUserAppsQuery } = useGetUserWorkflowsQuery();
+  const [getUserWorkflows] = workflowsApi.endpoints.getUserWorkflows.useLazyQuery();
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
 
   const [credentials, setCredentials] = useState<ICredential[]>(
@@ -83,7 +83,7 @@ const useCredentials = () => {
         dispatch(setSelectedApp(response as unknown as IApp));
       }
     } else {
-      const { data: apps } = await getUserAppsQuery();
+      const { data: apps } = await getUserWorkflows();
 
       if (!apps || !apps.length) {
         console.warn("No apps found or apps data is undefined");

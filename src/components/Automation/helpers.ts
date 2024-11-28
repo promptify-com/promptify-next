@@ -6,6 +6,7 @@ import type {
   ICredentialInput,
   ICredential,
 } from "@/components/Automation/types";
+import { apiAuthTypeMapping } from "./app/helpers";
 
 export const N8N_RESPONSE_REGEX = /#([^<]+)<PROMPT_EXECUTION_(\d+|\w*)>?/g;
 
@@ -62,37 +63,51 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     )
   ).default as unknown as ICredentialJson;
 
+  const nodesData = (
+    await import(
+      /* webpackChunkName: "workflow_nodes" */
+      /* webpackMode: "lazy" */
+      "@/components/Automation/nodes.json"
+    )
+  ).default as unknown as NodesFileData;
+
   for (const node of nodes) {
-    if (oAuthTypeMapping[node.type!]) {
-      const authType = oAuthTypeMapping[node.type!];
+    // if (node.credentials) {
+    //   continue;
+    // }
+    const iconUrl = nodesData[node.type]?.iconUrl;
+
+    if (oAuthTypeMapping[node.type]) {
+      const authType = oAuthTypeMapping[node.type];
+
       if (authType && creds[authType]) {
-        const properties = [
-          {
-            displayName: "Client ID",
-            name: "clientId",
-            type: "string",
-            default: "",
-          },
-          {
-            displayName: "Client Secret",
-            name: "clientSecret",
-            type: "string",
-            typeOptions: {
-              password: true,
-            },
-            default: "",
-          },
-        ];
+        credentialsInput.push({
+          name: authType,
+          displayName: creds[authType].displayName,
+          properties: [],
+          iconUrl,
+        });
+      }
+      continue;
+    }
+    if (apiAuthTypeMapping[node.type]) {
+      const authType = apiAuthTypeMapping[node.type];
+
+      if (authType && creds[authType]) {
+        const properties = creds[authType].properties;
+
         credentialsInput.push({
           name: authType,
           displayName: creds[authType].displayName,
           properties,
+          iconUrl,
         });
       }
       continue;
     }
 
     const parameters = node.parameters;
+
     if (parameters && parameters.authentication) {
       const authenticationType = parameters.authentication;
       const nodeCredentialType = parameters.nodeCredentialType;
@@ -107,12 +122,19 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
           name: authType,
           displayName: creds[authType].displayName,
           properties: creds[authType].properties,
+          iconUrl,
         });
       }
     }
   }
 
-  return credentialsInput;
+  const credentialsSet = new Set<string>();
+  return credentialsInput.filter(credentials => {
+    const seen = credentialsSet.has(credentials.name);
+    credentialsSet.add(credentials.name);
+
+    return !seen;
+  });
 }
 
 export const attachCredentialsToNode = (node: INode) => {

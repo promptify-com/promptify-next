@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 
@@ -7,45 +8,52 @@ import { allRequiredInputsAnswered } from "@/components/Automation/ChatInterface
 import { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
-  workflow: IWorkflow;
+  is_schedulable: boolean;
   onSubmit: (value: string) => void;
   messageType?: string;
 }
 
-const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
+const SuggestionChoicesComponent = ({ is_schedulable, onSubmit, messageType }: Props) => {
   const { selectedApp, inputs, credentialsInput, areCredentialsStored, answers } = useAppSelector(
     state => state.chat ?? initialChatState,
   );
-  const { is_schedulable } = workflow;
 
-  const readyToBeExecuted =
-    (!inputs.length && !credentialsInput?.length) ||
-    (is_schedulable && credentialsInput?.length && areCredentialsStored) ||
-    (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers));
+  const readyToBeExecuted = useMemo(
+    () =>
+      (!inputs.length && !credentialsInput?.length) ||
+      (is_schedulable && credentialsInput?.length && areCredentialsStored) ||
+      (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
+    [inputs, credentialsInput, is_schedulable, areCredentialsStored, answers],
+  );
 
-  const chipOptions = [
-    { label: readyToBeExecuted ? "Reconfigure" : "Configure", show: !!inputs.length || credentialsInput?.length },
-    { label: "Schedule", show: is_schedulable },
-    {
-      label: "Run Now",
-      show: readyToBeExecuted,
-    },
-    {
-      label: "Get API",
-      show:
-        (!inputs.length && !credentialsInput?.length) ||
-        (credentialsInput?.length && credentialsInput.length > 0 && areCredentialsStored) ||
-        (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
-    },
-    {
-      label: "Pause",
-      show: workflow.is_schedulable && !!selectedApp?.periodic_task && selectedApp?.periodic_task?.enabled,
-    },
-    {
-      label: "Resume",
-      show: workflow.is_schedulable && !!selectedApp?.periodic_task && !selectedApp?.periodic_task?.enabled,
-    },
-  ];
+  const chipOptions = useMemo(
+    () => [
+      {
+        label: readyToBeExecuted ? "Reconfigure" : "Configure",
+        show: !!inputs.length || credentialsInput?.length,
+      },
+      {
+        label: "Run Now",
+        show: readyToBeExecuted,
+      },
+      {
+        label: "Get API",
+        show:
+          (!inputs.length && !credentialsInput?.length) ||
+          (credentialsInput?.length && credentialsInput.length > 0 && areCredentialsStored) ||
+          (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
+      },
+      {
+        label: "Pause",
+        show: is_schedulable && !!selectedApp?.periodic_task && selectedApp?.periodic_task?.enabled,
+      },
+      {
+        label: "Resume",
+        show: is_schedulable && !!selectedApp?.periodic_task && !selectedApp?.periodic_task?.enabled,
+      },
+    ],
+    [readyToBeExecuted, inputs, credentialsInput, areCredentialsStored, answers, is_schedulable, selectedApp],
+  );
 
   return (
     <Box
@@ -54,7 +62,7 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
         gap: "8px",
         flexWrap: "wrap",
         mb: "10px",
-        mt: messageType === "credentials" ? "-50px" : "-30px",
+        mt: "-30px",
         ...(messageType !== "credentials" && messageType !== "schedule_time" && messageType !== "API_instructions"
           ? { ml: "60px" }
           : {}),
@@ -85,5 +93,8 @@ const SuggestionChoices = ({ workflow, onSubmit, messageType }: Props) => {
     </Box>
   );
 };
+
+// Wrap with memo
+const SuggestionChoices = React.memo(SuggestionChoicesComponent);
 
 export default SuggestionChoices;
