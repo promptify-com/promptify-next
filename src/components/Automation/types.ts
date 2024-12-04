@@ -1,4 +1,6 @@
 import type { User, UserPartial } from "@/core/api/dto/user";
+import type { ICategory, IPeriodicTask } from "@/components/Automation/app/hooks/types";
+import { Category, Tag } from "@/core/api/dto/templates";
 
 interface IParameters {
   path?: string;
@@ -12,14 +14,23 @@ interface IParameters {
       stringValue?: string;
     }[];
   };
+  assignments?: {
+    assignments: {
+      id: string;
+      name: string;
+      type: string;
+      value: string;
+    }[];
+  };
 }
 
 export interface INode {
   id: string;
   name: string;
+  iconUrl?: string;
   type: string;
   position: [number, number];
-  webhookId: string;
+  webhookId?: string;
   parameters: IParameters;
   typeVersion: number;
   credentials?: INodeCredentials;
@@ -35,7 +46,7 @@ export interface INode {
   responseMode?: string;
 }
 
-export type NodesFileData = Record<string, Pick<INode, "name" | "type">>;
+export type NodesFileData = Record<string, Pick<INode, "name" | "type" | "iconUrl">>;
 
 interface IConnections {
   [key: string]: [{ node: string; type: string; index: number }][];
@@ -47,6 +58,7 @@ interface IData {
 }
 
 export interface IWorkflow {
+  slug: string;
   id: number;
   name: string;
   description?: string;
@@ -54,6 +66,19 @@ export interface IWorkflow {
   created_by: User;
   data: IData;
   created_at: string;
+  is_schedulable: boolean;
+  has_output_notification: boolean;
+  estimated_execution_time: string | null;
+  is_liked: boolean;
+  likes: number;
+  category: Category;
+  activities?: {
+    likes_count: number;
+    favorites_count: number;
+  };
+  periodic_task?: null | IPeriodicTask;
+  enabled: boolean;
+  execution_count: number;
 }
 
 export interface IWorkflowCreateResponse {
@@ -105,6 +130,7 @@ export interface ICredentialInput {
   name: string;
   displayName: string;
   properties: ICredentialProperty[];
+  iconUrl?: string;
 }
 
 export interface INodeCredentials {

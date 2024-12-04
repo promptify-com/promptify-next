@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { IPromptInput } from "@/common/types/prompt";
+import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
+import { IApp } from "@/components/Automation/app/hooks/types";
 
+export type IGeneratingStatus = "pending" | "started" | "generated" | "streaming";
 export interface ExecutionsProps {
   answers: IAnswer[];
   inputs: IPromptInput[];
@@ -14,9 +16,14 @@ export interface ExecutionsProps {
   credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
   tmpMessages?: IMessage[];
+  selectedApp?: IApp;
+  runInstantly: boolean;
+  generatedExecution: PromptLiveResponse | null;
+  gptGenerationStatus: IGeneratingStatus;
+  executionStatus: boolean;
 }
 
-const initialState: ExecutionsProps = {
+export const initialState: ExecutionsProps = {
   answers: [],
   inputs: [],
   params: [],
@@ -25,6 +32,11 @@ const initialState: ExecutionsProps = {
   credentialsInput: [],
   areCredentialsStored: false,
   tmpMessages: [],
+  selectedApp: undefined,
+  runInstantly: false,
+  generatedExecution: null,
+  gptGenerationStatus: "pending",
+  executionStatus: false,
 };
 
 export const chatSlice = createSlice({
@@ -58,6 +70,24 @@ export const chatSlice = createSlice({
     setTmpMessages: (state, action: PayloadAction<IMessage[]>) => {
       state.tmpMessages = action.payload;
     },
+    setSelectedApp: (state, action: PayloadAction<IApp>) => {
+      state.selectedApp = action.payload;
+    },
+    setRunInstantly: (state, action: PayloadAction<boolean>) => {
+      state.runInstantly = action.payload;
+    },
+    setGeneratedExecution: (state, action: PayloadAction<PromptLiveResponse | null>) => {
+      state.generatedExecution = action.payload;
+    },
+    setGeneratingStatus: (state, action: PayloadAction<IGeneratingStatus>) => {
+      state.gptGenerationStatus = action.payload;
+    },
+    setExecutionStatus: (state, action: PayloadAction<boolean>) => {
+      state.executionStatus = action.payload;
+    },
+    resetStates: _state => {
+      return initialState;
+    },
   },
 });
 
@@ -71,6 +101,12 @@ export const {
   clearChatStates,
   setAreCredentialsStored,
   setTmpMessages,
+  setSelectedApp,
+  setRunInstantly,
+  setGeneratedExecution,
+  setGeneratingStatus,
+  setExecutionStatus,
+  resetStates,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

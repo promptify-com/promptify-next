@@ -16,8 +16,8 @@ interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
-  onGenerate: () => void;
-  showGenerate: boolean;
+  onGenerate?: () => void;
+  showGenerate?: boolean;
 }
 
 export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate }: ChatInputProps) => {

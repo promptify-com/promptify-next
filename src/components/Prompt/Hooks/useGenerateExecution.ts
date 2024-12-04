@@ -25,7 +25,7 @@ interface IStreamExecution {
 
 interface Props {
   template?: Templates;
-  messageAnswersForm: (message: string) => void;
+  messageAnswersForm?: (message: string) => void;
 }
 const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const token = useToken();
@@ -66,7 +66,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
         .filter(answers => answers.error)
         .map(answer => inputs.find(input => input.name === answer.inputName)?.fullName);
 
-      messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
+      messageAnswersForm?.(`Please enter valid answers for "${invalids.join(", ")}"`);
       return;
     }
 
@@ -86,6 +86,8 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     let regex = new RegExp(N8N_RESPONSE_REGEX);
     while ((executionMatch = regex.exec(response)) !== null) {
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
+
+      console.log("here", currentExecution);
 
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
       await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
