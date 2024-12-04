@@ -178,7 +178,7 @@ function CredentialCard({ input }: Props) {
         }
       }
 
-      _updateWorkflow();
+      await _updateWorkflow();
 
       setOpenModal(false);
 

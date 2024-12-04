@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -18,6 +18,7 @@ import { useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { allRequiredInputsAnswered, createMessage } from "@/components/Automation/ChatInterface/helper";
 import useChatActions from "@/components/Automation/app/hooks/useChatActions";
 import { useAppSelector } from "@/hooks/useStore";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import type { IApp } from "@/components/Automation/app/hooks/types";
 import type { IMessage } from "@/components/Automation/ChatInterface/types";
 
@@ -27,6 +28,8 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
   const [updateApp] = useUpdateWorkflowMutation();
   const [validatingQuery, setValidatingQuery] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
+
+  const { streamExecutionHandler } = useGenerateExecution({});
 
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -45,14 +48,6 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
 
     setMessages(initialMessages);
   };
-
-  const showRunButton = useMemo((): boolean => {
-    return (
-      (!inputs.length && !credentialsInput?.length) ||
-      (credentialsInput && credentialsInput.length > 0 && areCredentialsStored) ||
-      (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers))
-    );
-  }, [inputs, answers, areCredentialsStored, credentialsInput]);
 
   useEffect(() => {
     initialMessages();
@@ -97,7 +92,7 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
             failedExecutionHandler();
           } else {
             setGeneratingStatusHandler("streaming");
-            // await streamExecutionHandler(response);
+            await streamExecutionHandler(response);
           }
         }
       }
@@ -305,12 +300,20 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
       openWhenHidden: true,
       async onopen(res) {
         if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          console.error("Client side error", res);
+          console.error("Client-side error", res);
+          throw new Error("Client-side error occurred");
         }
       },
       onmessage(msg) {
         try {
-          const parseData = JSON.parse(msg.data);
+          // Attempt to parse the data
+          let parseData;
+          if (msg.data.startsWith("{") || msg.data.startsWith("[")) {
+            parseData = JSON.parse(msg.data.replace(/'/g, '"'));
+          } else {
+            throw new Error("Malformed JSON data");
+          }
+
           const message = parseData.message;
 
           if (message === "[CONNECTED]") {
@@ -327,26 +330,28 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
             renderMessage(output);
           }
         } catch (error) {
+          console.error("Error parsing message data:", error, msg.data);
+
           const failMessageText = "Running your AI App failed due to an unexpected error. Please try again later.";
           const failMessage = createMessage({
             type: "text",
             text: failMessageText,
             isHighlight: true,
           });
-          console.error(error);
           setMessages(prev => prev.filter(m => m.type !== "readyMessage").concat(failMessage));
         }
       },
       onerror(err) {
         console.error("Error in fetchEventSource:", err);
         setValidatingQuery(false);
-        throw err; // rethrow to stop the operation
+        throw err; // Stop the operation
       },
       onclose() {
         setValidatingQuery(false);
       },
     });
   };
+
   const handleSubmit = async (query: string) => {
     if (query.trim() === "") {
       return;
@@ -378,7 +383,6 @@ const useChat = ({ appTitle }: { appTitle: string }) => {
     retryRunWorkflow,
     handleSubmit,
     validatingQuery,
-    showRunButton,
   };
 };
 export default useChat;

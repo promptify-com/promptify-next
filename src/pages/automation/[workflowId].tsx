@@ -27,7 +27,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
 
   const { createApp, prepareInputs } = useApp();
 
-  const { messages, showRunButton, runWorkflow, validatingQuery, handleSubmit, retryRunWorkflow } = useChat({
+  const { messages, runWorkflow, validatingQuery, handleSubmit, retryRunWorkflow } = useChat({
     appTitle: workflow.name,
   });
 
@@ -63,7 +63,6 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
           <ChatInterface
             workflow={workflow}
             messages={messages}
-            showRunButton={showRunButton}
             onGenerate={runWorkflow}
             validateQuery={validatingQuery}
             handleSubmit={handleSubmit}

@@ -87,6 +87,8 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     while ((executionMatch = regex.exec(response)) !== null) {
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
 
+      console.log("here", currentExecution);
+
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
       await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
     }

@@ -1,6 +1,6 @@
 import type { User, UserPartial } from "@/core/api/dto/user";
-import type { ICategory } from "@/components/Automation/app/hooks/types";
-import { Tag } from "@/core/api/dto/templates";
+import type { ICategory, IPeriodicTask } from "@/components/Automation/app/hooks/types";
+import { Category, Tag } from "@/core/api/dto/templates";
 
 interface IParameters {
   path?: string;
@@ -58,6 +58,7 @@ interface IData {
 }
 
 export interface IWorkflow {
+  slug: string;
   id: number;
   name: string;
   description?: string;
@@ -65,7 +66,19 @@ export interface IWorkflow {
   created_by: User;
   data: IData;
   created_at: string;
-  is_schedulable?: boolean;
+  is_schedulable: boolean;
+  has_output_notification: boolean;
+  estimated_execution_time: string | null;
+  is_liked: boolean;
+  likes: number;
+  category: Category;
+  activities?: {
+    likes_count: number;
+    favorites_count: number;
+  };
+  periodic_task?: null | IPeriodicTask;
+  enabled: boolean;
+  execution_count: number;
 }
 
 export interface IWorkflowCreateResponse {

@@ -5,7 +5,6 @@ import Chip from "@mui/material/Chip";
 import { useAppSelector } from "@/hooks/useStore";
 import { initialState as initialChatState } from "@/core/store/chatSlice";
 import { allRequiredInputsAnswered } from "@/components/Automation/ChatInterface/helper";
-import { IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   is_schedulable: boolean;
@@ -13,7 +12,7 @@ interface Props {
   messageType?: string;
 }
 
-const SuggestionChoicesComponent = ({ is_schedulable, onSubmit, messageType }: Props) => {
+const SuggestionChoices = ({ is_schedulable, onSubmit, messageType }: Props) => {
   const { selectedApp, inputs, credentialsInput, areCredentialsStored, answers } = useAppSelector(
     state => state.chat ?? initialChatState,
   );
@@ -42,14 +41,6 @@ const SuggestionChoicesComponent = ({ is_schedulable, onSubmit, messageType }: P
           (!inputs.length && !credentialsInput?.length) ||
           (credentialsInput?.length && credentialsInput.length > 0 && areCredentialsStored) ||
           (inputs.length > 0 && allRequiredInputsAnswered(inputs, answers)),
-      },
-      {
-        label: "Pause",
-        show: is_schedulable && !!selectedApp?.periodic_task && selectedApp?.periodic_task?.enabled,
-      },
-      {
-        label: "Resume",
-        show: is_schedulable && !!selectedApp?.periodic_task && !selectedApp?.periodic_task?.enabled,
       },
     ],
     [readyToBeExecuted, inputs, credentialsInput, areCredentialsStored, answers, is_schedulable, selectedApp],
@@ -95,6 +86,5 @@ const SuggestionChoicesComponent = ({ is_schedulable, onSubmit, messageType }: P
 };
 
 // Wrap with memo
-const SuggestionChoices = React.memo(SuggestionChoicesComponent);
 
 export default SuggestionChoices;
