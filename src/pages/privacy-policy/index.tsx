@@ -74,7 +74,7 @@ export default function PrivacyPolicy() {
             fontWeight={400}
             color={"onSurface"}
           >
-            ℹ️ Updated: June 23, 2023
+            ℹ️ Updated: December 20, 2024
           </Typography>
           <Stack
             sx={{
