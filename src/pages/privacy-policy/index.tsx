@@ -190,6 +190,24 @@ export default function PrivacyPolicy() {
                   legal processes.
                 </Box>
               </Box>
+              <br />
+              <Box component={"p"}>
+                We adhere to Google&apos;s Limited Use Requirements for Workspace API data. This means that:
+              </Box>
+              <Box component={"ul"}>
+                <Box component={"li"}>
+                  We only use Workspace API data to provide or improve user-facing features that are prominent in our
+                  application interface.
+                </Box>
+                <Box component={"li"}>
+                  We do not allow humans to read Workspace API data unless required by law or with the user&apos;s
+                  explicit consent for specific actions.
+                </Box>
+                <Box component={"li"}>
+                  We do not transfer, sell, or use Workspace API data for personalized or interest-based advertising,
+                  training generalized AI models, or creating creditworthiness assessments.
+                </Box>
+              </Box>
             </Box>
             <Box component={"h2"}>2. Disclosure of Personal Information</Box>
             <Box>
@@ -209,6 +227,23 @@ export default function PrivacyPolicy() {
                   To fulfill the purpose for which you provide it.For any other purpose disclosed by us when you provide
                   the information.
                 </Box>
+              </Box>
+              <br />
+              <Box component={"p"}>
+                We do not disclose, share, or sell data obtained through Google Workspace APIs for purposes other than:
+              </Box>
+              <Box component={"ul"}>
+                <Box component={"li"}>
+                  Providing or improving user-facing features within our application, as outlined in this Privacy
+                  Policy.
+                </Box>
+                <Box component={"li"}>
+                  Complying with legal or regulatory requirements, or responding to lawful requests.
+                </Box>
+              </Box>
+              <Box component={"p"}>
+                Workspace API data is not used for training or improving generalized AI/ML models and is not transferred
+                to third parties for such purposes.
               </Box>
             </Box>
             <Box component={"h2"}>3. Disclosure of personal information</Box>
@@ -265,6 +300,12 @@ export default function PrivacyPolicy() {
                   Some of these rights can be exercised through your Promptify account. If you&apos;re unable to
                   exercise your rights through your account, please direct your request to our designated email.
                 </Box>
+              </Box>
+              <br />
+              <Box component={"p"}>
+                You have the right to request information about how your data is used, including whether any data
+                obtained via Google Workspace APIs is used for AI/ML purposes. You may request deletion of any such
+                data, subject to our compliance obligations.
               </Box>
               <br />
               <b>A Note on Accuracy:</b> Services like ours generate responses by interpreting a user&apos;s request and
@@ -429,12 +470,29 @@ export default function PrivacyPolicy() {
                 Information processing.
               </Box>
             </Box>
-            <Box component={"h2"}>10. Changes to the Privacy Policy</Box>
+            <Box component={"h2"}>10. Artificial Intelligence and Machine Learning Usage</Box>
+            <Box component={"p"}>
+              We do not use any data obtained through Google Workspace APIs for developing, improving, or training
+              generalized or non-personalized AI and/or machine learning (ML) models. All data obtained through Google
+              Workspace APIs is used solely for providing or improving our user-facing features and services as
+              described in this Privacy Policy.
+              <br />
+              <br />
+              We also do not transfer Google Workspace API data to third-party AI tools for any purpose, including the
+              development or training of generalized or non-personalized AI/ML models.
+            </Box>
+            <Box component={"h2"}>11. Changes to Privacy Policy</Box>
             <Box component={"p"}>
               We may make changes to this Privacy Policy as needed. Whenever we do, we&apos;ll post the updated version
               right here, unless another kind of notice is needed by the law.
             </Box>
-            <Box component={"h2"}>11. How to Contact Us</Box>
+            <Box component={"h2"}>12. Compliance with Google Workspace API Requirements</Box>
+            <Box component={"p"}>
+              The use of information received from Google Workspace APIs will adhere to the Google Workspace API User
+              Data Policy, including the Limited Use Requirements. We do not use Workspace API data for developing or
+              improving generalized AI/ML models.
+            </Box>
+            <Box component={"h2"}>13. How to Contact Us</Box>
             <Box component={"p"}>
               If you have questions or concerns that we haven&apos;t covered in this Privacy Policy, please contact{" "}
               <a href="mailto:privacy@promptify.com">privacy@promptify.com</a>. We&apos;re here to help!
