@@ -24,6 +24,7 @@ import { PROMPTIFY_NODE_TYPE, RESPOND_TO_WEBHOOK_NODE_TYPE } from "@/components/
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { PromptInputType } from "@/components/Prompt/Types";
+import antArtifactToImage from "@/components/GPT/ant-artifact-to-image.json";
 
 export interface IRelation {
   nextNode: string;
@@ -261,9 +262,51 @@ export function injectProviderNode(workflow: IWorkflowCreateResponse, { nodePara
       },
     };
 
+    const promptifyNode = nodes.find(node => node.type === PROMPTIFY_NODE_TYPE);
+
+    if (!promptifyNode || !promptifyNode.credentials?.promptifyApi) {
+      throw new Error("Promptify credentials not found in the workflow");
+    }
+
+    const antArtifactToImageWithCreds = structuredClone(antArtifactToImage);
+
+    antArtifactToImageWithCreds.nodes.forEach((node: any) => {
+      if (node.type === "n8n-nodes-base.httpRequest" && node.name === "Upload to Promptify") {
+        node.credentials = {
+          promptifyApi: promptifyNode.credentials?.promptifyApi,
+        };
+      }
+    });
+
+    const executeWorkflowNode = {
+      id: "0e443bf3-534b-4485-9be0-332e439d0b3f",
+      name: "AntArtefact code to Image",
+      type: "n8n-nodes-base.executeWorkflow",
+      typeVersion: 1,
+      position: [920, -60] as [number, number],
+      parameters: {
+        source: "parameter",
+        workflowJson: JSON.stringify(antArtifactToImageWithCreds),
+        options: {},
+      },
+    };
+
     nodes.push(markdownNode);
+    nodes.push(executeWorkflowNode);
 
     connections[markdownNode.name] = {
+      [MAIN_CONNECTION_KEY]: [
+        [
+          {
+            node: executeWorkflowNode.name,
+            type: MAIN_CONNECTION_KEY,
+            index: 0,
+          },
+        ],
+      ],
+    };
+
+    connections[executeWorkflowNode.name] = {
       [MAIN_CONNECTION_KEY]: [
         [
           {
@@ -357,8 +400,9 @@ export const removeProviderNode = (
   nodes = nodes.filter(node => node.name !== removedProviderName);
 
   if (removedProviderName.toLowerCase().includes("gmail")) {
-    nodes = nodes.filter(node => node.name !== MARKDOWN_NODE_NAME);
+    nodes = nodes.filter(node => node.name !== MARKDOWN_NODE_NAME && node.name !== "AntArtefact code to Image");
     delete connections[MARKDOWN_NODE_NAME];
+    delete connections["AntArtefact code to Image"];
   } else {
     const hasGmailProvider = remainingProviders.some(provider => provider.name.toLowerCase().includes("gmail"));
 

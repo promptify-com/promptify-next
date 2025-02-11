@@ -1,0 +1,349 @@
+{
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "262a061fa8e6cb1ba14b1aa10eb4090157a8b84951fab134feadeee4d720f548"
+  },
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ace4de4e-685b-4b11-98bf-8c3c22da1ca2",
+      "name": "Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-180, 780]
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Interactive React App Engine</title>\n    <!-- Optionally, include global CSS like MUI fonts/icons -->\n    <link\n      rel=\"stylesheet\"\n      href=\"https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap\"\n    />\n    <link\n      rel=\"stylesheet\"\n      href=\"https://fonts.googleapis.com/icon?family=Material+Icons\"\n    />\n  </head>\n  <body>\n    <!-- Container where the React app will be mounted -->\n    <div id=\"output\"></div>\n\n    <!-- 1. Load React and ReactDOM (using React 17 for full synchronous API support) -->\n    <script src=\"https://unpkg.com/react@17/umd/react.development.js\"></script>\n    <script src=\"https://unpkg.com/react-dom@17/umd/react-dom.development.js\"></script>\n\n    <!-- 2. Load Babel Standalone to transform JSX in the browser -->\n    <script src=\"https://unpkg.com/@babel/standalone/babel.min.js\"></script>\n\n    <!-- 3. Load PropTypes, Material-UI, and Recharts (all exposing globals) -->\n    <script src=\"https://unpkg.com/prop-types@latest/prop-types.min.js\"></script>\n    <script\n      src=\"https://unpkg.com/@mui/material@5.3.1/umd/material-ui.development.js\"\n      crossorigin\n    ></script>\n    <script\n      src=\"https://unpkg.com/recharts@2.15.1/umd/Recharts.js\"\n      crossorigin\n    ></script>\n\n    <!-- 4. User's React code (using globals instead of import statements) -->\n    <script type=\"text/babel\" data-presets=\"env,react\" id=\"react-code\">\n      {{ $json.code }}\n    </script>\n\n    <!-- 5. Engine logic: Transform and mount the React component interactively -->\n    <script>\n      (function () {\n        // Grab the user code from the script element.\n        const codeScript = document.getElementById(\"react-code\");\n        const jsxCode = codeScript.textContent || codeScript.innerText;\n        \n        // Transform the code using Babel with the specified presets.\n        const transformed = Babel.transform(jsxCode, {\n          presets: [\"env\", \"react\"]\n        }).code;\n        \n        // Evaluate the transformed code in this context. This will define window.App.\n        try {\n          new Function(\"React\", \"MaterialUI\", \"Recharts\", `\"use strict\"; ${transformed}`)(\n            React,\n            MaterialUI,\n            Recharts\n          );\n        } catch (e) {\n          console.error(\"Error evaluating transformed code:\", e);\n        }\n        \n        // Now, mount the App component interactively into the #output container.\n        if (window.App) {\n          ReactDOM.render(\n            React.createElement(window.App),\n            document.getElementById(\"output\")\n          );\n        } else {\n          console.error(\"Component 'App' is not defined.\");\n        }\n      })();\n    </script>\n  </body>\n</html>"
+      },
+      "id": "e9764ebb-0a5b-4582-8d95-46d002de90cb",
+      "name": "Generate HTML template",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1,
+      "position": [1160, 820]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "html",
+        "options": {
+          "dataIsBase64": false,
+          "encoding": "utf8",
+          "fileName": "index.html",
+          "mimeType": "text/html"
+        }
+      },
+      "id": "b98b36ae-3879-4155-b17b-e0c534b1ea33",
+      "name": "Convert to HTML",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1,
+      "position": [1380, 820]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://demo.gotenberg.dev/forms/chromium/screenshot/html",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "format",
+              "value": "jpg"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "waitDelay",
+              "value": "3s"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "ba0b9a9b-b98f-4e25-b20e-5bbfa3beeb66",
+      "name": "Convert to IMAGE [GOTENBERG]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1620, 820]
+    },
+    {
+      "parameters": {
+        "jsCode": "function cleanUpCode(code) {\n  // Remove single-line comments (// ...)\n  let noSingleComments = code.replace(/\\/\\/.*$/gm, '');\n\n  // Remove multi-line (block) comments (/* ... */)\n  let noComments = noSingleComments.replace(/\\/\\*[\\s\\S]*?\\*\\//g, '');\n\n  // Remove literal \"\\n\" sequences (the backslash character followed by an \"n\")\n  let cleanedCode = noComments.replace(/\\\\n/g, '');\n\n  // Optionally, if you also want to remove actual newline characters,\n  // uncomment the following line:\n  // cleanedCode = cleanedCode.replace(/\\n/g, '');\n\n  return cleanedCode;\n}\n\nfunction convertReactToBabelFriendly(code) {\n  // If the newlines are literal \"\\n\", convert them to actual newline characters.\n  const normalizedCode = code.replace(/\\\\n/g, '\\n');\n\n  // Define a mapping from module name to global variable name.\n  const moduleMapping = {\n    'recharts': 'Recharts',\n    '@mui/material': 'MaterialUI'\n  };\n\n  // Remove \"import React from 'react';\"\n  let transformedCode = normalizedCode.replace(/import\\s+React\\s+from\\s+['\"]react['\"];\\s*/g, '');\n\n  // Replace import statements for each module in the mapping.\n  for (const [moduleName, globalName] of Object.entries(moduleMapping)) {\n    const importRegex = new RegExp(\n      `import\\\\s+\\\\{([\\\\s\\\\S]+?)\\\\}\\\\s+from\\\\s+['\"]${moduleName}['\"];?\\\\s*`,\n      'g'\n    );\n    transformedCode = transformedCode.replace(importRegex, (match, imports) => {\n      // Clean up the import names: remove newlines and extra spaces.\n      const cleanedImports = imports\n        .split(',')\n        .map((imp) => imp.trim())\n        .join(', ');\n      return `// Instead of import statements, reference the globals loaded by the CDN.\\nconst { ${cleanedImports} } = ${globalName};\\n`;\n    });\n  }\n\n  // Replace default export with a global assignment.\n  transformedCode = transformedCode.replace(\n    /export\\s+default\\s+([A-Za-z0-9_]+)/,\n    (match, componentName) => {\n      return `\\n// Expose the component as \"App\" for later mounting\\nwindow.App = ${componentName};`;\n    }\n  );\n\n  return transformedCode;\n}\n\nfor (const item of $input.all()) {\n  item.json.code = convertReactToBabelFriendly(item.json.code);\n}\n\nreturn $input.all();"
+      },
+      "id": "f506ff8a-89ea-4f3a-9249-ea3dbd4dcf97",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 820]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://promptify.adtitan.io/api/upload/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "promptifyApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "37affa3b-0c01-4741-b448-a8fe166b56f1",
+      "name": "Upload to Promptify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1820, 820]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items[0]?.json?.code;\n\n// Define the regex to match <antArtifact> tags and their content\nconst regex = /<antArtifact[^>]*>([\\s\\S]*?)<\\/antArtifact>/g;\n\n// Use matchAll to find all occurrences of <antArtifact> tags\nconst matches = [...input.matchAll(regex)];\n\nif (matches.length > 0) {\n  // Extract the content of each <antArtifact> tag and create an array of objects\n  const extractedItems = matches.map(match => ({\n    json: {\n      code: match[1].trim()\n    }\n  }));\n\n  return extractedItems; // Return an array of objects, one for each extracted code\n} else {\n  return [{\n    json: {\n      noAntArtifact: true // Indicate that no <antArtifact> tags were found\n    }\n  }];\n}"
+      },
+      "id": "16d9b10c-9dee-4256-af5c-a3fb4ba87a1a",
+      "name": "Extract AntArtiface",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 780]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a842c167-f7f5-4313-a04c-b6e09c497dba",
+              "name": "code",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b25b4451-6288-459e-8c0f-b539663c8659",
+      "name": "Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [20, 780]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "37d27fcb-49f4-4932-98d9-aed2a83803e0",
+              "leftValue": "={{ $json.noAntArtifact }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "09e2f48e-ddb8-4803-960d-729cd9b6b496",
+      "name": "Check AntArtifact Not Exist",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [400, 780]
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  json: {\n    data: $input.first().json.code\n  }\n}"
+      },
+      "id": "6b1a84e3-8898-4605-9754-8ee06644307d",
+      "name": "Return data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 460]
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = JSON.stringify($('Content').first().json.code)\n\nconst unescapedInput = JSON.parse(content);\n\nconst fileUrlList = items.map(item => item.json.file_url); \n\nif (!Array.isArray(fileUrlList) || fileUrlList.length === 0) {\n  return [\n    {\n      json: {\n        error: \"No file URLs provided.\"\n      }\n    }\n  ];\n}\n\nlet replacedContent = unescapedInput;\nlet urlIndex = 0;\n\nreplacedContent = replacedContent.replace(\n  /<antArtifact[^>]*>[\\s\\S]*?<\\/antArtifact>/g,\n  () => {\n    if (urlIndex < fileUrlList.length) {\n      const file_url = fileUrlList[urlIndex++];\n      return `<img src=\"${file_url}\" alt=\"Artifact Image\" />`;\n    } else {\n      throw new Error(\"More <antArtifact> tags found than available URLs.\");\n    }\n  }\n);\n\nreturn [\n  {\n    json: {\n      data: replacedContent\n    }\n  }\n];"
+      },
+      "id": "ff4b2825-71b2-4a0a-bf67-7c39e604f06e",
+      "name": "Returned data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 460]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "de8d02d7-2b87-49ce-b067-1d102625aff6",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 800]
+    }
+  ],
+  "connections": {
+    "Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate HTML template": {
+      "main": [
+        [
+          {
+            "node": "Convert to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert to IMAGE [GOTENBERG]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to IMAGE [GOTENBERG]": {
+      "main": [
+        [
+          {
+            "node": "Upload to Promptify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Generate HTML template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Promptify": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract AntArtiface": {
+      "main": [
+        [
+          {
+            "node": "Check AntArtifact Not Exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content": {
+      "main": [
+        [
+          {
+            "node": "Extract AntArtiface",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check AntArtifact Not Exist": {
+      "main": [
+        [
+          {
+            "node": "Return data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Returned data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}
