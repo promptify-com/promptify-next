@@ -188,7 +188,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return {\n  json: {\n    data: $input.first().json.code\n  }\n}"
+        "jsCode": "return {\n  json: {\n    data: $('Content').first().json.code\n  }\n}"
       },
       "id": "6b1a84e3-8898-4605-9754-8ee06644307d",
       "name": "Return data",
