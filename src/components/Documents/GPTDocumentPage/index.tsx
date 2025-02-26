@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import Header from "./Header";
 import { IGPTDocumentResponse } from "@/components/Automation/types";
-import { MessageContentWithHTML } from "@/components/GPT/Message";
+import MessageContentWithHTML from "@/components/GPT/MessageContentWithHTML";
 
 import { useGetWorkflowByIdQuery } from "@/core/api/workflows";
 import Details from "./Details";

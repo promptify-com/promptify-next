@@ -31,7 +31,7 @@ const AntArtifactComponent = ({ content, title }: Props) => {
   return (
     <Card
       elevation={0}
-      sx={{ borderRadius: 4, marginY: 2, pY: 2, maxWidth: { sm: 500, md: 600, lg: 1000, xl: 1400 } }}
+      sx={{ borderRadius: 4, marginY: 2, py: 2, maxWidth: { sm: 500, md: 600, lg: 1000, xl: 1400 } }}
     >
       <Stack
         direction="row"
