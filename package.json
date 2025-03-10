@@ -21,7 +21,7 @@
     "@mui/material": "5.16.7",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.7",
-    "@sentry/nextjs": "8.32.0",
+    "@sentry/nextjs": "9.5.0",
     "@types/node": "22.7.4",
     "@types/react": "18.3.10",
     "@types/react-dom": "18.3.0",
