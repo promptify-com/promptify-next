@@ -15,5 +15,3 @@ updates:
       prefix: "chore(deps_prod)"
       prefix-development: "chore(deps_dev)"
     open-pull-requests-limit: 10
-    assignees:
-      - "belyas"
